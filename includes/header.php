@@ -407,7 +407,7 @@
             <ul aria-expanded="false">
               <li><a href="waitingpatients">Waiting List </a></li>
               <li><a href="admitted">Admission</a></li>
-              <li><a href="outpatient">Outpatient</a></li>
+              <li><a href="outpatients">Outpatient</a></li>
               <li><a href="inpatients">Inpatients</a></li>
               <li><a href="registrationrequests">Pending Registrations</a></li>
             </ul>

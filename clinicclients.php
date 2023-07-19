@@ -88,6 +88,9 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                         <tbody>
                                             <?php
                                             $getpatients = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status='1'");
+                                            if (mysqli_num_rows($getpatients) ==0) {
+                                                echo '<tr><td colspan="8" class="text-center">No Clients Found</td></tr>';
+                                            }else{
                                             while ($row = mysqli_fetch_array($getpatients)) {
                                              $id = $row['id'];
                                              $name = $row['name'];
@@ -146,7 +149,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 
                                                 </tr>
 
-                                            <?php } ?>
+                                            <?php } }?>
                                         </tbody>
                                     </table>
                                 </div>

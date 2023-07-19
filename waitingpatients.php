@@ -109,8 +109,12 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                                                     $pimage = "noimage.png";
 
                                                 $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
-                                                $rows = mysqli_fetch_array($getstaff);
-                                                $fullname = $rows['fullname'];
+                                                if (mysqli_num_rows($getstaff) > 0){
+                                                    $rows = mysqli_fetch_array($getstaff);
+                                                    $fullname = $rows['fullname'];
+                                                }else{
+                                                    $fullname = " ";
+                                                }
 
                                                 if (strlen($patient_id) == 1) {
                                                     $pin = '000' . $patient_id;
