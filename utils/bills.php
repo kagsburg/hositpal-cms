@@ -1,0 +1,187 @@
+<?php 
+
+function get_all_bills(PDO $conn, $status=1)
+{
+    $stmt = $conn->prepare("SELECT * FROM bills WHERE status=?");
+    $stmt->execute([$status]);
+    $getallbills = $stmt->fetchAll();
+    return $getallbills;
+}
+function get_all_bills_group_patient(PDO $conn, $status=1)
+{
+    $stmt = $conn->prepare("SELECT * FROM bills WHERE status=? GROUP BY patient_id");
+    $stmt->execute([$status]);
+    $getallbills = $stmt->fetchAll();
+    return $getallbills;
+}
+
+function get_all_payments(PDO $conn, $payment_method=null)
+{
+    if ($payment_method) {
+        $stmt = $conn->prepare("SELECT * FROM bill_payments WHERE payment_method=? ORDER BY bill_payment_id DESC");
+        $stmt->execute([$payment_method]);
+    } else {
+        $stmt = $conn->prepare("SELECT * FROM bill_payments ORDER BY bill_payment_id DESC");
+        $stmt->execute();
+    }
+    $getallpayments = $stmt->fetchAll();
+    return $getallpayments;
+}
+
+function get_all_bills_by_patient(PDO $conn, $patient_id, $status=1)
+{
+    $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND status=?");
+    $stmt->execute([$patient_id, $status]);
+    $getallbills = $stmt->fetchAll();
+    return $getallbills;
+}
+
+function has_bill(PDO $conn, $patient_id, $type, $type_id, $status=null)
+{
+    $statusql = is_null($status) ? "" : " AND status='?'";
+    $args = [$patient_id, $type, $type_id];
+    if (!is_null($status)) $args[] = $status;
+    $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND type=? AND type_id=? $statusql");
+    $stmt->execute($args);
+    $getbill = $stmt->fetch();
+    if ($getbill) return true;
+    else return false;
+}
+
+function get_all_bills_by_admission(PDO $conn, $admission_id, $status=1)
+{
+    $stmt = $conn->prepare("SELECT * FROM bills WHERE admission_id=? AND status=?");
+    $stmt->execute([$admission_id, $status]);
+    $getallbills = $stmt->fetchAll();
+    return $getallbills;
+}
+
+function get_admission_bills_for_paymethod(PDO $conn, $admission_id, $payment_method)
+{
+    $stmt = $conn->prepare("SELECT * FROM bills WHERE admission_id=? AND status IN (1,2) AND payment_method=?");
+    $stmt->execute([$admission_id, $payment_method]);
+    $getallbills = $stmt->fetchAll();
+    return $getallbills;
+}
+
+function   get_bill_by_id(PDO $conn, $bill_id, $status=1)
+{
+    $stmt = $conn->prepare("SELECT * FROM bills WHERE bill_id=? AND status=?");
+    $stmt->execute([$bill_id, $status]);
+    $getbill = $stmt->fetch();
+    return $getbill;
+}
+
+function get_bill_by_patient_only(PDO $conn, $patient_id, $status=1)
+{
+    $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND status=?");
+    $stmt->execute([$patient_id, $status]);
+    $getbill = $stmt->fetchAll();
+    return $getbill;
+}
+
+function get_bill_by_type_and_patient(PDO $conn, $type, $type_id, $patient_id, $status=1)
+{
+    $stmt = $conn->prepare("SELECT * FROM bills WHERE type=? AND type_id=? AND patient_id=? AND status=?");
+    $stmt->execute([$type, $type_id, $patient_id, $status]);
+    $getbill = $stmt->fetch();
+    return $getbill;
+}
+
+// adding patientsque_id for backward compatibility
+function create_bill(PDO $conn, $patient_id, $admission_id, $queue_id, $type, $type_id, $amount, $payment_method="", $status=1)
+{
+    $stmt = $conn->prepare("INSERT INTO bills (patient_id, admission_id, patientsque_id, type, type_id, amount, payment_method, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$patient_id, $admission_id, $queue_id, $type, $type_id, $amount, $payment_method, $status]);
+    return $conn->lastInsertId();
+}
+
+function update_bill_amount(PDO $conn, $bill_id, $amount)
+{
+    $stmt = $conn->prepare("UPDATE bills SET amount=? WHERE bill_id=?");
+    $stmt->execute([$amount, $bill_id]);
+}
+
+function update_bill(PDO $conn, $bill_id, $updates) {
+    $set_clause = implode(',', array_map(function($col) { return "$col=?"; }, array_keys($updates)));
+    $values = array_values($updates);
+    array_push($values, $bill_id);
+    $stmt = $conn->prepare("UPDATE bills SET $set_clause WHERE bill_id=?");
+    $stmt->execute($values);
+}
+
+function update_bill_status(PDO $conn, $bill_id, $status, $payment_method=null)
+{
+    if ($payment_method) {
+        $stmt = $conn->prepare("UPDATE bills SET status=?, payment_method=? WHERE bill_id=?");
+        $stmt->execute([$status, $payment_method, $bill_id]);
+    } else {
+        $stmt = $conn->prepare("UPDATE bills SET status=? WHERE bill_id=?");
+        $stmt->execute([$status, $bill_id]);
+    }
+}
+
+function make_bill_payment(PDO $conn, $bill_id, $amount, $payment_method,$countbills,$patient_id)
+{
+    if ($countbills > 1){
+        #get all bills amount 
+        $bills = get_bill_by_patient_only($conn, $patient_id, 1);
+        foreach($bills as $bl){
+            $stmt = $conn->prepare("INSERT INTO bill_payments (bill_id, amount, payment_method) VALUES (?, ?, ?)");
+            $stmt->execute([$bl['bill_id'],$bl['amount'],$bl['payment_method']]);    
+            update_bill_status($conn,$bl['bill_id'],2,$bl['payment_method']);       
+        }   
+
+    }else{
+        $stmt = $conn->prepare("INSERT INTO bill_payments (bill_id, amount, payment_method) VALUES (?, ?, ?)");
+        $stmt->execute([$bill_id, $amount, $payment_method]);
+        update_bill_status($conn, $bill_id, 2, $payment_method);    
+    }
+}
+
+function clear_bill(PDO $conn,$patient_id)
+{ 
+    $bills =get_all_bills_by_patient($conn,$patient_id);
+    foreach($bills as $bl ){
+        $stmt = $conn->prepare("UPDATE bills SET status=5 WHERE bill_id=?");
+        $stmt->execute([$bl['bill_id']]);
+    }
+    // remove patient admission
+    $admstmt = $conn->prepare("UPDATE admissions set status=0 where patient_id =?");
+    $admstmt->execute([$patient_id]);
+}
+
+// SQL to create bill and payment tables
+// CREATE TABLE `bills` (
+//   `bill_id` int(11) NOT NULL,
+//   `patient_id` int(11) NOT NULL,
+//   `admission_id` int(11),
+//   `type` varchar(50) NOT NULL,
+//   `type_id` int(11),
+//   `amount` double NOT NULL,
+//   `payment_method` varchar(50) DEFAULT NULL,
+//   `status` int(11) NOT NULL DEFAULT 1,
+//   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+//   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+// ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+// CREATE TABLE `bill_payments` (
+//   `bill_payment_id` int(11) NOT NULL,
+//   `bill_id` int(11) NOT NULL,
+//   `amount` double NOT NULL,
+//   `payment_method` varchar(50) NOT NULL,
+//   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+//   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+// ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+// ALTER TABLE `bills`
+//   ADD PRIMARY KEY (`bill_id`);
+
+// ALTER TABLE `bill_payments`
+//   ADD PRIMARY KEY (`bill_payment_id`);
+
+// ALTER TABLE `bills`
+//   MODIFY `bill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+// ALTER TABLE `bill_payments`
+//   MODIFY `bill_payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
