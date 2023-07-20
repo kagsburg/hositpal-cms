@@ -100,25 +100,25 @@ $id = $_GET['id'];
                             $getpatient = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
                             $row2 = mysqli_fetch_array($getpatient);
                             $firstname = $row2['firstname'];
-                            $headfirstname = $row2['headfirstname'];
-                            $lastname = $row2['lastname'];
-                            $headlastname = $row2['headlastname'];
-                            $age = $row2['age'];
-                            $agecategory = $row2['agecategory'];
+                            // $headfirstname = $row2['headfirstname'];
+                            $lastname = $row2['secondname'];
+                            // $headlastname = $row2['headlastname'];
+                            $age = $row2['dob'];
+                            // $agecategory = $row2['agecategory'];
                             $gender = $row2['gender'];
-                            $referred = $row2['referred'];
-                            $province = $row2['province'];
-                            $town = $row2['town'];
-                            $zone = $row2['zone'];
-                            $quarter = $row2['quarter'];
-                            $agegroup = $row2['agegroup'];
+                            // $referred = $row2['referred'];
+                            // $province = $row2['province'];
+                            $town = $row2['address'];
+                            // $zone = $row2['zone'];
+                            // $quarter = $row2['quarter'];
+                            // $agegroup = $row2['agegroup'];
                             $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$admin_id'") or die(mysqli_error($con));
                             $rows = mysqli_fetch_array($getstaff);
                             $fullname = $rows['fullname'];
                             $getbed = mysqli_query($con, "SELECT * FROM beds WHERE bed_id='$bed_id' AND status=1") or die(mysqli_error($con));
                             $rowb = mysqli_fetch_array($getbed);
                             $ward_id = $rowb['ward_id'];
-                            $bednumber = $rowb['bednumber'];
+                            $bednumber = $rowb['bedname'];
                             $getward =  mysqli_query($con, "SELECT * FROM wards WHERE status=1 AND ward_id='$ward_id'");
                             $roww = mysqli_fetch_array($getward);
                             $wardname = $roww['wardname'];
@@ -137,11 +137,11 @@ $id = $_GET['id'];
                             if (strlen($patient_id) >= 5) {
                                 $pin = $patient_id;
                             }
-                            $getgroups = mysqli_query($con, "SELECT * FROM agegroups WHERE status=1 AND agegroup_id='$agegroup'") or die(mysqli_error($con));
-                            $row1 = mysqli_fetch_array($getgroups);
-                            $agegroup_id = $row1['agegroup_id'];
-                            $agegroup1 = $row1['agegroup'];
-                            $code1 = $row1['code'];
+                            // $getgroups = mysqli_query($con, "SELECT * FROM agegroups WHERE status=1 AND agegroup_id='$agegroup'") or die(mysqli_error($con));
+                            // $row1 = mysqli_fetch_array($getgroups);
+                            // $agegroup_id = $row1['agegroup_id'];
+                            // $agegroup1 = $row1['agegroup'];
+                            // $code1 = $row1['code'];
                         ?>
 
                         <div class="col-lg-8">
@@ -160,8 +160,16 @@ $id = $_GET['id'];
                                                     <td><?php echo $firstname . ' ' . $lastname; ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Age</th>
-                                                    <td><?php echo $age; ?></td>
+                                                    <th>Age </th>
+                                                    <td><?php 
+                                                    if ($age == '') {
+                                                        $age = '';
+                                                    }else{
+                                                    $dob = date('Y', $age);
+                                                    $today = date('Y');
+                                                    $age = $today - $dob;
+                                                }
+                                                    echo $age; ?></td>
                                                 </tr>
                                                 <tr>
                                                     <th>Gender</th>
@@ -171,14 +179,14 @@ $id = $_GET['id'];
                                                     <th>Town</th>
                                                     <td><?php echo $town; ?></td>
                                                 </tr>
-                                                <tr>
+                                                <!-- <tr>
                                                     <th>Province</th>
                                                     <td><?php echo $province; ?></td>
-                                                </tr>
-                                                <tr>
+                                                </tr> -->
+                                                <!-- <tr>
                                                     <th>Age Group</th>
                                                     <td><?php echo $agegroup1 . ' (' . $code1 . ')'; ?></td>
-                                                </tr>
+                                                </tr> -->
                                                 <tr>
                                                     <th>Admission Date</th>
                                                     <td><?php echo date('d/M/Y', $admissiondate); ?></td>

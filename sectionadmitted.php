@@ -101,7 +101,7 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                               $getpatient=mysqli_query($con,"SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");  
                                $row2= mysqli_fetch_array($getpatient);
                                 $firstname=$row2['firstname'];    
-                              $lastname=$row2['lastname'];    
+                              $lastname=$row2['secondname'];    
                             $gender=$row2['gender'];    
                             $getstaff= mysqli_query($con,"SELECT * FROM staff WHERE staff_id='$admin_id'") or die(mysqli_error($con));                        
                             $rows= mysqli_fetch_array($getstaff);
@@ -109,11 +109,11 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                  $getbed= mysqli_query($con,"SELECT * FROM beds WHERE bed_id='$bed_id' AND status=1") or die(mysqli_error($con));
      $rowb= mysqli_fetch_array($getbed);
      $ward_id=$rowb['ward_id'];
-     $bednumber=$rowb['bednumber'];
+     $bednumber=$rowb['bedname'];
       $getward=  mysqli_query($con,"SELECT * FROM wards WHERE status=1 AND ward_id='$ward_id'");
       $roww= mysqli_fetch_array($getward);
        $wardname=$roww['wardname'];
-       $section_id=$roww['section_id'];
+       $section_id=$roww['wardtype_id'];
       
       if(strlen($patient_id)==1){
       $pin='0000'.$patient_id;

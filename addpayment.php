@@ -255,7 +255,31 @@ $id = $_GET['q'];
                                                         <td><?php echo $unitcharge; ?></td>
                                                     </tr>
                                                 <?php 
-                                                }
+                                                } else if ($type == "admission"){
+                                                    // get admission details
+                                                    $getorder = mysqli_query($con, "SELECT * FROM admitted WHERE admitted_id='$bill_type_id'");
+                                                    if (mysqli_num_rows( $getorder) > 0){
+                                                        $rowo = mysqli_fetch_array($getorder);
+                                                        // print_r($rowo);
+                                                        $bed = $rowo['bed_id'];
+                                                        $price =$rowo['price'];
+                                                        $total = $total + $price;
+                                                        $bed_name = mysqli_query($con, "SELECT * FROM beds WHERE bed_id='$bed'");
+                                                        $row2 = mysqli_fetch_array($bed_name);
+                                                        $bed_no = $row2['bedname'];
+                                                        $ward_id = $row2['ward_id'];
+                                                        $ward_name = mysqli_query($con, "SELECT * FROM wards WHERE ward_id='$ward_id'");
+                                                        $row3 = mysqli_fetch_array($ward_name);
+                                                        $ward_no = $row3['wardname'];
+                                                    
+                                                ?>
+                                                    <tr>
+                                                        <td><?php echo $room; ?></td>
+                                                        <td><?php echo $ward_no ."Ward Bed Number".$bed_no; ?></td>
+                                                        <td><?php echo $price; ?></td>
+                                                    </tr>
+                                                <?php
+                                                }}
                                             }
                                                 ?>
                                                 <tr>
@@ -367,6 +391,8 @@ $id = $_GET['q'];
                                             }
                                             else if ($type == "unselective" && $bill_type_id == REGISTRATION_SERVICE_ID)
                                                 update_patient_status($pdo, $patient_id, 1);
+                                            // else if ($type == "admission")
+
                                             echo '<div class="alert alert-success">Payment Successfully Approved.Click <a href="paymentinvoice?id=' . $id . '" target="_blank"><strong>Here</strong></a> to Print Invoice</div>';
                                         }
                                     }

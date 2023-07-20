@@ -94,7 +94,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                 $getadmission= mysqli_query($con,"SELECT * FROM admissions WHERE admission_id='$admission_id'");
                                                 $row2= mysqli_fetch_array($getadmission);
                                                 $patient_id=$row2['patient_id'];
-                                                $timestamp = $row1['timestamp'];
+                                                $timestamp = $row1['admissiondate'];
                                                 $getpatients = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
                                                 $row = mysqli_fetch_array($getpatients);
                                                 $firstname = $row['firstname'];
@@ -154,9 +154,10 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                                     return confirm('You are about To Discharge Patient. Are you sure you want to proceed?');
                                                                 }
                                                             </script>
-                                                        <?php }
+                                                            <?php } ?>
+                                                        
 
-                                                        ?>
+                                                        
 
                                                     </td>
 

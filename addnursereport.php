@@ -70,6 +70,7 @@ include 'includes/header.php';
                                     $row = mysqli_fetch_array($getque);
                                           $patientsque_id=$row['patientsque_id'];
                                           $admission_id=$row['admission_id'];
+                                          $admin_id= $row['admin_id'];
                                           $room=$row['room'];
                                           $attendant=$row['attendant'];
                                  $getadmission= mysqli_query($con,"SELECT * FROM admissions WHERE admission_id='$admission_id'");
@@ -119,16 +120,10 @@ include 'includes/header.php';
                                 <div class="basic-form">      
                                     <?php
                                     if(isset($_POST['details'])){
-                                        $doctor=$_POST['doctor'];
-                                        $details=$_POST['details'];           
-                                     if(!empty($doctor)){
-                            $getprevque=mysqli_query($con,"SELECT * FROM patientsque WHERE admission_id='$admission_id'   AND status=1 AND room='doctor' ORDER BY patientsque_id DESC");  
-             if(mysqli_num_rows($getprevque)>0){              
-                       mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$doctor','1','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),1,'$id')") or die(mysqli_error($con));
-             }else{
-                       mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$doctor','0','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),1,'$id')") or die(mysqli_error($con));
-                  
-             }
+                                        // $doctor=$_POST['doctor'];
+                                        $details=$_POST['details']; 
+                            
+                       mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$admin_id','0','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),1,'$id')") or die(mysqli_error($con));
                        mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
                        if(isset($_POST['type'],$_POST['measurement'])){
                                       $type=$_POST['type'];
@@ -142,7 +137,7 @@ for($i=0;$i<$allmeasurements;$i++){
                           
  <?php
 echo '<div class="alert alert-success">Patient Report Successfully Added</div>';
-    }             
+                
     }             
    ?>
      <form method="post" name='form' class="form" action=""  enctype="multipart/form-data">      

@@ -360,7 +360,33 @@ $id = $_GET['id'];
                     <?php }
                         }
                     
+                      }else if ($type == "admission"){
+                        // get admission details
+                        $getorder = mysqli_query($con, "SELECT * FROM admitted WHERE admitted_id='$bill_type_id'");
+                        if (mysqli_num_rows( $getorder) > 0){
+                            $rowo = mysqli_fetch_array($getorder);
+                            // print_r($rowo);
+                            $bed = $rowo['bed_id'];
+                            $price =$rowo['price'];
+                            $total = $total + $price;
+                            $bed_name = mysqli_query($con, "SELECT * FROM beds WHERE bed_id='$bed'");
+                            $row2 = mysqli_fetch_array($bed_name);
+                            $bed_no = $row2['bedname'];
+                            $ward_id = $row2['ward_id'];
+                            $ward_name = mysqli_query($con, "SELECT * FROM wards WHERE ward_id='$ward_id'");
+                            $row3 = mysqli_fetch_array($ward_name);
+                            $ward_no = $row3['wardname'];
+                            ?>
+                            <tr>
+                                <td><?php echo "Admission"; ?></td>
+                                <td><?php echo $ward_no." ".$bed_no; ?> </td>
+                                <td>1</td>
+                                <td><?php echo $price; ?></td>
+                                <td><?php echo $price; ?></td>
+                            </tr>
+                            <?php
                       }
+                    }
                     }
                       if (false && $insurer > 0 && $paymethod == "insurance") {
                         ?>

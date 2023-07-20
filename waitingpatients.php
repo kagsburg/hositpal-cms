@@ -102,7 +102,7 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                                                 $thirdname = $row2['thirdname'];
                                                 $gender = $row2['gender'];
                                                 $ext = $row2['ext'];
-
+// print_r($admission_id);
                                                 if (!empty($ext))
                                                     $pimage = md5($patient_id) . '.' . $ext . '?' .  time();
                                                 else 
@@ -144,10 +144,11 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
 
                                                         <a href="addnursereport?id=<?php echo $patientsque_id; ?>" class="btn btn-xs btn-info">Add Report</a>
                                                         <?php
-                                                        $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'   AND status=1 AND room='doctor' ORDER BY patientsque_id DESC");
+                                                        $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'   AND status=0 AND admintype='doctor' ");
                                                         if (mysqli_num_rows($getprevque) > 0) {
                                                             $rowp = mysqli_fetch_array($getprevque);
                                                             $patientsque_id2 = $rowp['patientsque_id'];
+                                                            $Zprevid = $rowp['prev_id'];
                                                         ?>
                                                             <button data-toggle="modal" data-target="#modal<?php echo $patientsque_id; ?>" class="btn btn-xs btn-success">Doctor Report</button>
                                                             <div class="modal fade" id="modal<?php echo $patientsque_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -161,12 +162,13 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                                                                         </div>
                                                                         <div class="modal-body">
                                                                             <?php
-                                                                            $nursereports = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$patientsque_id2'") or die(mysqli_error($con));
-                                                                            while ($row = mysqli_fetch_array($nursereports)) {
-                                                                                $details = $row['details'];
+                                                                            $nursereports = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$Zprevid'") or die(mysqli_error($con));
+                                                                            while ($row43 = mysqli_fetch_array($nursereports)) {
+                                                                                $details = $row43['details'];
                                                                             ?>
 
-                                                                            <?php } ?>
+                                                                            
+                                                                                            <?php } ?>
                                                                             <label class="text-primary"><strong>Details</strong></label>
                                                                             <?php echo $details; ?>
                                                                         </div>

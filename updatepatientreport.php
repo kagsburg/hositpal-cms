@@ -102,6 +102,7 @@ $id = $_GET['id'];
                     $patientsque_id = $row['patientsque_id'];
                     $admission_id = $row['admission_id'];
                     $room = $row['room'];
+                    $prev_id= $row['prev_id'];
                     $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id'");
                     $row1 = mysqli_fetch_array($getadmission);
                     $patient_id = $row1['patient_id'];
@@ -122,6 +123,28 @@ $id = $_GET['id'];
                     $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
                     $rows = mysqli_fetch_array($getstaff);
                     $fullname = isset($rows['fullname']) ? $rows['fullname'] : "";
+                    $getnextque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('nurse','lab','doctor','radiography') and status='1' AND patientsque_id = '$prev_id'");
+                                                if (mysqli_num_rows($getnextque) > 0) {
+                                                    $rown = mysqli_fetch_array($getnextque);
+                                                    $npatientsque_id = $rown['patientsque_id'];                                                
+                                                    $attendant = $_SESSION['elcthospitaladmin'];
+                                                    $room = isset($rown) ? $rown['room'] : "";
+                                                    // $room = $rown['room'];
+                                                    // $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
+                                                    // $rows = mysqli_fetch_array($getstaff);
+                                                    // $fullname = $rows['fullname'];
+                                                    $prev22_id= $rown['prev_id'];
+                                                    // $getnextque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND room IN('nurse','lab') AND status=1 ORDER BY patientsque_id DESC");
+                                                }else{
+                                                    $npatientsque_id = $patientsque_id;
+                                                    $attendant = $_SESSION['elcthospitaladmin'];
+                                                    $room = isset($row) ? $row['room'] : "";
+                                                    // $room = $rown['room'];
+                                                    // $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
+                                                    // $rows = mysqli_fetch_array($getstaff);
+                                                    // $fullname = $rows['fullname'];
+                                                    $prev22_id=$row['prev_id'];
+                                                }
                     if (strlen($patient_id) == 1) {
                         $pin = '000' . $patient_id;
                     }
@@ -237,6 +260,9 @@ $id = $_GET['id'];
                                                     if ($reference == 'admission'){
                                                         $attendant=$nurse;
                                                     }
+                                                    if ($reference == 'referral'){
+                                                        $attendant=$nurse;
+                                                    }
                                                     if ($reference == 'admission'){                                                       
                                                         $ward= $reference_obj['ward'];
                                                         $days= $reference_obj['days'];
@@ -250,7 +276,7 @@ $id = $_GET['id'];
                                                             foreach ($errors as $error) {
                                                                 echo '<div class="alert alert-danger">' . $error . '</div>';
                                                             }
-                                                            exit();
+                                                            
                                                         } else {
                                                             $getward =  mysqli_query($con, "SELECT * FROM wards WHERE status=1 AND ward_id='$ward_id'");
                                                             $row12 = mysqli_fetch_array($getward);
@@ -268,6 +294,25 @@ $id = $_GET['id'];
                                                                 // redirect to doctorwaiting
                                                                 echo '<script>window.location.href = "doctorwaiting.php";</script>';
                                                         }                                                      
+                                                    }
+                                                    if ($reference == 'referral'){
+                                                        $referral = $reference_obj['referral'];
+                                                        $ros = $reference_obj['ros'];
+                                                        $pmh = $reference_obj['pmh'];
+                                                        $dia = $reference_obj['dia'];
+                                                        $treat = $reference_obj['treat'];
+                                                        $details = $reference_obj['ros'];
+                                                        $hpi = $reference_obj['hpi'];
+                                                        $getreferral =  mysqli_query($con, "SELECT * FROM referrals WHERE status=1 AND referral_id='$referral'");
+                                                        $row12 = mysqli_fetch_array($getreferral);
+                                                        $referralfee = $row12['referralfee'];
+                                                        mysqli_query($con, "INSERT INTO referrals(admission_id,referral_id,referralfee,admin_id,timestamp,status) VALUES('$admission_id','$referral','$referralfee','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
+                                                        $last_id = mysqli_insert_id($con);
+                                                        mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                                        create_bill($pdo,$patient_id,$admission_id,$id,'referral',$last_id,$referralfee,$paymenttype);
+                                                        $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully Added.Click Here to <a href="referrals">View</a> Referrals</div>';
+                                                            // redirect to doctorwaiting
+                                                            echo '<script>window.location.href = "doctorwaiting.php";</script>';
                                                     }
         
                                                     mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
@@ -555,6 +600,7 @@ $id = $_GET['id'];
                                         </div>
                                         <?php 
                                         $rooms = [];
+                                        $patient_ids =[];
                                         $patient_reports= mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room ='doctor'AND status='1'and admission_id='$admission_id' and attendant='" . $_SESSION['elcthospitaladmin'] . "'");
                                         if (mysqli_num_rows($patient_reports) > 0){
                                            while($row23 = mysqli_fetch_array($patient_reports)){
@@ -564,6 +610,7 @@ $id = $_GET['id'];
                                                while ($row = mysqli_fetch_array($getprevid)) {
                                                    $room = $row['room'];
                                                    $rooms[] = $room;
+                                                   $patient_ids[] = $row['patientsque_id'];
                                                }
                                            }
                                         }
@@ -892,21 +939,46 @@ $id = $_GET['id'];
                                                 }
                                             ?>
                                            >
-                                           <div class='row'>
+                                           <?php
+                                           if (in_array('lab', $rooms)) {
+                                            ?>
+                                            
+                                            <div class='row'>
+                                            <?php
+                                            foreach($patient_ids as $npatientsque_id){
+                                                                    $getreports = mysqli_query($con, "SELECT * FROM labreports WHERE patientsque_id='$npatientsque_id'");
+                                                                
+                                                                    while ($row = mysqli_fetch_array($getreports)) {
+                                                                        $medicalservice_id = $row['test'];
+                                                                                    $presult = $row['result'];
+                                                                                    $details = $row['details']; 
+                                                                        $getservice = mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'");
+                                                                                    $row2 = mysqli_fetch_array($getservice);
+                                                                                    $test = $row2['investigationtype'];
+                                                                                    $unit_id = $row2['unit_id'];                                                                      
+                                                                        
+                                                                    ?>
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Test done</label>
                                                                     <!-- <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>"> -->
-                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo ''; ?>" disabled>
+                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $test; ?>" disabled>
                                                                 </div>
                                                                 <div class="form-group col-lg-5">
                                                                     <label>Result</label>
-                                                                    <input type="text" name="result[<?php echo ''; ?>]" class="form-control " placeholder="Enter result" disabled>
+                                                                    <input type="text" name="result[<?php echo $presult; ?>]" class="form-control " value="<?php echo $presult; ?>" placeholder="Enter result" disabled>
                                                                 </div>
+                                                                <?php } ?>
+                                                                <div>
+                                                                    <label>Details</label>
+                                                                    <textarea class="form-control" cols="70" id="editor1" rows="8" name="" disabled><?php echo $details ; ?></textarea>
+                                                                </div>
+                                                                </div>
+                                                                <?php } }?>
 
                                                                 <!-- <div class="form-group col-lg-1">
                                                                     <a href='#' class="subobj1_button btn btn-success" style="margin-top:30px">+</a>
                                                                 </div> -->
-                                                            </div>
+                                                            <!-- </div> -->
 
                                                 <label class="control-label">Measurement</label>
                                                 <select name="ref[lab][labmeasure][]" id="mname" class="form-control select2 msnr multi-select_1" multiple>
@@ -1069,10 +1141,10 @@ $id = $_GET['id'];
                                                 </div> -->
                                                 <div class="form-group">
                                                     <label class="control-label">Select Ward and Bed Number</label>
-                                                    <select name="" id="bedname" class="form-control">
+                                                    <select name="ref[admission][ward]" id="bedname" class="form-control">
                                                         <option value="" selected="">Select ward and Bed Number</option>
                                                    
-                                                    <?php
+                                                        <?php
                                                     $getwards =  mysqli_query($con, "SELECT * FROM wards WHERE status=1");
                                                     while ($row = mysqli_fetch_array($getwards)) {
                                                         $ward_id = $row['ward_id'];
@@ -1086,7 +1158,7 @@ $id = $_GET['id'];
                                                                 $checkbed = mysqli_query($con, "SELECT * FROM admitted WHERE bed_id='$bed_id' AND status=1");
                                                                 if (mysqli_num_rows($checkbed) == 0) {
                                                             ?>
-                                                                    <option value="addadmission?id=<?php echo $id; ?>&&b=<?php echo $bed_id; ?>">Ward <?php echo $ward_name; ?> (<?php echo $bednumber; ?>)</option>
+                                                                    <option value="<?php echo $ward_id ?>_<?php echo $bed_id ?>">Ward <?php echo $ward_name; ?> (<?php echo $bednumber; ?>)</option>
                                                             <?php }
                                                             } ?>
                                                     <?php } ?>
@@ -1094,13 +1166,74 @@ $id = $_GET['id'];
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="control-label">Number of Days </label>
-                                                    <input type="text" class="form-control" name="noofdays" value=""/>
+                                                    <input type="text" class="form-control" name="ref[admission][days]" value=""/>
 
                                                 </div>
                                             </div>
                                             
                                         </div> 
                                         <div class="tab-pane nref" id="radiography" role="tabpanel" aria-labelledby="radiography-tab">
+                                        <?php 
+                                            if (in_array('radiography', $rooms)) {
+                                                ?>
+                                                <?php
+                                            foreach($patient_ids as $npatientsque_id){
+
+                                                                            $radioreports = mysqli_query($con, "SELECT * FROM radiologyreports WHERE patientsque_id='$npatientsque_id'") or die(mysqli_error($con));
+                                                                            
+                                                                            if (mysqli_num_rows($radioreports) > 0) {
+                                                                            while ($row = mysqli_fetch_array($radioreports)) {
+                                                                                // print_r($row);
+                                                                                $radiologyreport_id = $row['radiologyreport_id'];
+                                                                                $reason = $row['reason'];
+                                                                                $description = $row['description'];
+                                                                                $results = $row['results'];
+                                                                                $conclusion = $row['conclusion'];
+                                                                                $responsible = $row['responsible'];
+                                                                                $getservice = mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1 AND radioinvestigationtype_id='$results'");
+                                                                                $row2 = mysqli_fetch_array($getservice);
+                                                                                $medicalservice = $row2['investigationtype'];
+                                                                                // $getservice = mysqli_query($con, "SELECT * FROM radiologyimages WHERE status=1 AND radiology_report_id='$radiologyreport_id'");
+                                                                                // $row2 = mysqli_fetch_array($getservice);
+                                                                            ?>
+                                                                             <!-- <div class="row form-group">
+                                                                                <div class="col col-md-2"><label for="website"
+                                                                                        class=" form-control-label">Reason:</label>
+                                                                                </div>
+                                                                                <div class="col-12 col-md-9"><?php echo $reason; ?></div>
+                                                                            </div> -->
+                                                                            <div class="row form-group">
+                                                                                <div class="col col-md-2"><label for="website"
+                                                                                        class=" form-control-label">Tests:</label>
+                                                                                </div>
+                                                                                <div class="col-12 col-md-9"><?php echo $medicalservice; ?></div>
+                                                                            </div>
+                                                                                
+                                                                           
+                                                                            <label class="text-primary"><strong>Images</strong></label>
+                                                                            <div class="row">
+                                                                                <?php
+                                                                                $getservice = mysqli_query($con, "SELECT * FROM radiologyimages WHERE status=1 AND radiology_report_id='$radiologyreport_id'");
+                                                                                while ($row2 = mysqli_fetch_array($getservice)) {
+                                                                                    // $image = $row2['image'];
+                                                                                    $ext = $row2['image'];
+                                                                                    $image_id = $row2['radioimage_id'];
+                                                                                    if (!empty($ext))
+                                                                                        $pimage = md5($image_id) . '.' . $ext;
+                                                                                    else 
+                                                                                        $pimage = "noimage.png";
+                                                                                ?>
+                                                                                    <div class="col-md-6">
+                                                                                        <a href="#" target="_blank">
+                                                                                            <img src="<?php echo BASE_URL ?>/images/radiology/<?php echo $pimage; ?>" width="100%">
+                                                                                        </a>
+                                                                                    </div>
+                                                                                <?php } ?>
+                                                                        </div>
+                                                                        <label class="text-primary mt-3"><strong>Description</strong></label>
+                                                                        <p><?php echo $description; ?></p>
+                                                                        <?php } ?>
+                                                                        <?php } } }?>
                                             <div class="form-check mb-3">
                                                 <input class="form-check-input reference" name="reference[]" type="checkbox" value="radiography" data-ref="radiography" id="send-radiography"
                                                 <?php 
@@ -1170,36 +1303,36 @@ $id = $_GET['id'];
                                                 <div class="row">
                                                     <div class="col-sm-6 form-group">
                                                         <label class="control-label">Date </label>
-                                                        <input type="date" class="form-control" name="noofdays" value=""/>
+                                                        <input type="date" class="form-control" name="ref[referral][date]" value=""/>
                                                     </div>
                                                     <div class="col-sm-6 form-group">
                                                         <label class="control-label">Time </label>
-                                                        <input type="time" class="form-control" name="noofdays" value=""/>
+                                                        <input type="time" class="form-control" name="ref[referral][time]" value=""/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                         <label class="control-label">HPI </label>
-                                                        <input type="text" class="form-control" name="noofdays" value=""/>
+                                                        <input type="text" class="form-control" name="ref[referral][hpi]" value=""/>
                                                 </div>
                                                 <div class="form-group">
                                                         <label class="control-label">ROS </label>
-                                                        <input type="text" class="form-control" name="noofdays" value=""/>
+                                                        <input type="text" class="form-control" name="ref[referral][ros]" value=""/>
                                                 </div>
                                                 <div class="form-group">
                                                         <label class="control-label">PMH </label>
-                                                        <input type="text" class="form-control" name="noofdays" value=""/>
+                                                        <input type="text" class="form-control" name="ref[referral][pmh]" value=""/>
                                                 </div>
                                                 <div class="form-group">
                                                         <label class="control-label">Diagnosis investigation </label>
-                                                        <input type="text" class="form-control" name="noofdays" value=""/>
+                                                        <textarea type="text" class="form-control" name="ref[referral][dia]" value=""></textarea>
                                                 </div>
                                                 <div class="form-group">
                                                         <label class="control-label">Treatments </label>
-                                                        <input type="text" class="form-control" name="noofdays" value=""/>
+                                                        <textarea type="text" class="form-control" name="ref[referral][treat]" value=""></textarea>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="control-label">* Reason for referral</label>
-                                                    <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[radiography][details]"></textarea>
+                                                    <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[referral][reason]"></textarea>
                                                 </div>
                                             </div>
                                             <div class="form-group forradiography" style="display: none;">

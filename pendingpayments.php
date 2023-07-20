@@ -89,7 +89,7 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                             <?php
 
                                             $bills = get_all_bills_group_patient($pdo);
-
+                                            // print_r($bills);
                                             foreach ($bills as $bill) {
                                                 $bill_id = $bill['bill_id'];
                                                 $patient_id = $bill['patient_id'];
@@ -126,7 +126,11 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                                     } else if ($type == "unselective") {
                                                         $getorder = mysqli_query($con, "SELECT * FROM medicalservices WHERE medicalservice_id='$type_id'");
                                                         $key = "medicalservice_id";
+                                                    } else if ($type == "admission"){
+                                                        $getorder = mysqli_query($con, "SELECT * FROM admitted WHERE admitted_id='$type_id'");
+                                                        $key = "admission_id";
                                                     }
+
 
                                                     if (isset($getorder) && mysqli_num_rows($getorder) > 0) {
                                                         while ($rowo = mysqli_fetch_array($getorder)) {
@@ -171,6 +175,12 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                                                 $service_charge = get_service_charge($pdo, $serviceorder_id, $paymenttype, $insurance_id, 2);
                                                                 $paymenttype = $service_charge['payment_type'];
                                                                 $service_html .= '<li>' . $medicalservice . '</li>';
+                                                            }
+                                                            else if ($type == "admission") {
+                                                                // $medicalservice = $rowo['medicalservice'];
+                                                                // $service_charge = get_service_charge($pdo, $serviceorder_id, $paymenttype, $insurance_id, 2);
+                                                                // $paymenttype = $service_charge['payment_type'];
+                                                                // $service_html .= '<li>' . $medicalservice . '</li>';
                                                             }
 
 
