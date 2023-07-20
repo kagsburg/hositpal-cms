@@ -205,9 +205,9 @@ $id = $_GET['id'];
                                     <li class="nav-item">
                                         <a class="nav-link" href="#referral" data-toggle="tab" data-target="#referral" role="tab" aria-controls="referral" aria-selected="false">Referral</a>
                                     </li>
-                                    <!-- <li class="nav-item">
+                                    <li class="nav-item">
                                         <a class="nav-link" href="#acts" data-toggle="tab" data-target="#acts" role="tab" aria-controls="acts" aria-selected="false">Acts</a>
-                                    </li> -->
+                                    </li>
 
 
 
@@ -296,21 +296,17 @@ $id = $_GET['id'];
                                                         }                                                      
                                                     }
                                                     if ($reference == 'referral'){
-                                                        $referral = $reference_obj['referral'];
                                                         $ros = $reference_obj['ros'];
                                                         $pmh = $reference_obj['pmh'];
                                                         $dia = $reference_obj['dia'];
                                                         $treat = $reference_obj['treat'];
                                                         $details = $reference_obj['ros'];
                                                         $hpi = $reference_obj['hpi'];
-                                                        $getreferral =  mysqli_query($con, "SELECT * FROM referrals WHERE status=1 AND referral_id='$referral'");
-                                                        $row12 = mysqli_fetch_array($getreferral);
-                                                        $referralfee = $row12['referralfee'];
-                                                        mysqli_query($con, "INSERT INTO referrals(admission_id,referral_id,referralfee,admin_id,timestamp,status) VALUES('$admission_id','$referral','$referralfee','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
+                                                        mysqli_query($con, "INSERT INTO referral(patient_id,date,HPI,ROS,PMH,diagnosis,treatment,reason,admin_id,status) VALUES('$patient_id',UNIX_TIMESTAMP(),'$hpi','$ros','$pmh','$dia','$treat','$reason','" . $_SESSION['elcthospitaladmin'] . "',1)") or die(mysqli_error($con));
                                                         $last_id = mysqli_insert_id($con);
                                                         mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
-                                                        create_bill($pdo,$patient_id,$admission_id,$id,'referral',$last_id,$referralfee,$paymenttype);
-                                                        $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully Added.Click Here to <a href="referrals">View</a> Referrals</div>';
+                                                        // create_bill($pdo,$patient_id,$admission_id,$id,'referral',$last_id,$referralfee,$paymenttype);
+                                                        $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully Referred.</div>';
                                                             // redirect to doctorwaiting
                                                             echo '<script>window.location.href = "doctorwaiting.php";</script>';
                                                     }
@@ -488,7 +484,7 @@ $id = $_GET['id'];
                                             }
                                             // redirect to doctorwaiting 
                                                 // set alert message to session message 
-                                                $_SESSION['success'] = '<div class="alert alert-success">Patient Report Successfully Added</div>';
+                                                $_SESSION['success'] = '<div class="alert alert-success">Patient Report Successfully Updated</div>';
                                                 // redirect to doctorwaiting
                                                 echo '<script>window.location.href = "doctorwaiting.php";</script>';
                                                 
@@ -618,23 +614,47 @@ $id = $_GET['id'];
 
                                         <div class="tab-pane nref" id="nurse" role="tabpanel" aria-labelledby="nurse-tab">
                                             <div class="form-check mb-3">
-                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="nurse" data-ref="nurse" id="send-nurse"
-                                                <?php 
-                                                    if (in_array('nurse', $rooms)) {
-                                                        echo 'checked';
-                                                    }
-                                                ?>
-                                                >
+                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="nurse" data-ref="nurse" id="send-nurse">
                                                 <label class="form-check-label" for="send-nurse">
                                                     Send to nurse
                                                 </label>
                                             </div>
+                                            <?php
+                                           if (in_array('nurse', $rooms)) {
+                                            ?>
+                                            
+                                            <div class='row'>
+                                            <?php
+                                            foreach($patient_ids as $npatientsque_id){
+                                                                    $getreports = mysqli_query($con, "SELECT * FROM nursereports WHERE patientsque_id='$npatientsque_id'");
+                                                                
+                                                                    while ($row = mysqli_fetch_array($getreports)) {
+                                                                        $medicalservice_id = $row['nursereport_id'];
+                                                                                    $test = $row['type'];
+                                                                                    $presult = $row['measurement'];
+                                                                                    $details = $row['details']; 
+                                                                                                                                           
+                                                                        
+                                                                    ?>
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>Test done</label>
+                                                                    <!-- <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>"> -->
+                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $test; ?>" disabled>
+                                                                </div>
+                                                                <div class="form-group col-lg-5">
+                                                                    <label>Result</label>
+                                                                    <input type="text" class="form-control " value="<?php echo $presult; ?>" placeholder="Enter result" disabled>
+                                                                </div>
+                                                                <?php } ?>
+                                                                <div>
+                                                                    <label>Details</label>
+                                                                    <textarea class="form-control" cols="70" id="editor1" rows="8"  disabled><?php echo $details ; ?></textarea>
+                                                                </div>
+                                                                <?php }?>
+                                                            </div>
+                                                            <?php } ?>
 
-                                            <div class="form-group notmedic" <?php 
-                                                if (!in_array('nurse', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="form-group notmedic" style="display: none;" >
                                                 <label class="control-label">Section</label>
                                                 <select name="ref[nurse][section][]" class="sections form-control">
                                                     <option value="">Select Section</option>
@@ -649,11 +669,7 @@ $id = $_GET['id'];
                                                 </select>
                                             </div>
 
-                                            <div class="form-group notmedic" <?php 
-                                                if (!in_array('nurse', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="form-group notmedic" style="display: none;">
                                                 <label class="control-label">Medical Services</label>
                                                 <select name="ref[nurse][servicename]" class="form-control servicename msnr multi-select_1">
                                                     <option value="">Select Medical Service</option>
@@ -698,11 +714,7 @@ $id = $_GET['id'];
                                                     <?php } ?>
                                                 </select>
                                             </div> -->
-                                            <div class="form-group fornurse" <?php 
-                                                if (!in_array('nurse', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="form-group fornurse" style="display: none;" >
                                                 <label class="control-label">* Details & Instructions</label>
                                                 <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[nurse][details]"></textarea>
                                             </div>
@@ -710,77 +722,14 @@ $id = $_GET['id'];
 
                                         <div class="tab-pane nref" id="pharmacy" role="tabpanel" aria-labelledby="pharmacy-tab">
                                             <div class="form-check mb-3">
-                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="pharmacy" data-ref="pharmacy" id="send-pharmacy"
-                                                <?php 
-                                                    if (in_array('pharmacy', $rooms)) {
-                                                        echo 'checked';
-                                                    }
-                                                    ?>
-                                                >
+                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="pharmacy" data-ref="pharmacy" id="send-pharmacy">
                                                 <label class="form-check-label" for="send-pharmacy">
                                                     Send to pharmacy
                                                 </label>
                                             </div>
 
-                                            <div class="form-group notmedic" <?php 
-                                                if (!in_array('pharmacy', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
-                                                <label class="control-label">Section</label>
-                                                <select name="ref[pharmacy][section][]" class="sections form-control">
-                                                    <option value="">Select Section</option>
-                                                    <?php
-                                                    $getsections =  mysqli_query($con, "SELECT * FROM sections WHERE status=1");
-                                                    while ($row1 =  mysqli_fetch_array($getsections)) {
-                                                        $section_id = $row1['section_id'];
-                                                        $section = $row1['section'];
-                                                    ?>
-                                                        <option value="<?php echo $section_id; ?>"><?php echo $section; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
 
-                                            <div class="form-group notmedic" <?php 
-                                                if (!in_array('pharmacy', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
-                                                <label class="control-label">Medical Services</label>
-                                                <select name="ref[pharmacy][servicename]" class="form-control servicename msnr multi-select_1">
-                                                    <option value="">Select Medical Service</option>
-                                                </select>
-                                                <?php
-                                                $getsection =  mysqli_query($con, "SELECT * FROM sections WHERE status=1");
-                                                while ($row =  mysqli_fetch_array($getsection)) {
-                                                    $section_id = $row['section_id'];
-                                                ?>
-                                                    <div id="" style="display:none;width:100%;" class="row services service<?php echo $section_id; ?> form-group">
-
-                                                        <?php
-                                                        $getmedicalservices =  mysqli_query($con, "SELECT * FROM medicalservices WHERE status=1 AND section_id='$section_id' ORDER BY medicalservice");
-                                                        while ($row1 =  mysqli_fetch_array($getmedicalservices)) {
-                                                            $medicalservice_id = $row1['medicalservice_id'];
-                                                            $medicalservice = $row1['medicalservice'];
-                                                            $charge = $row1['charge'];
-                                                        ?>
-                                                            <div class="col-lg-6">
-                                                                <div class="form-check form-check-inline">
-                                                                    <label class="form-check-label" style="font-size:14px">
-                                                                        <input type="checkbox" class="form-check-input" value="<?php echo $medicalservice_id; ?>" name="ref[pharmacy][medicalservices][]"><?php echo $medicalservice; ?>
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-
-                                                        <?php } ?>
-                                                    </div>
-                                                <?php } ?>
-                                            </div>
-                                            <div class="pharmacy" <?php 
-                                                if (!in_array('pharmacy', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="pharmacy" style="display: none;">
                                                 <div class="col-lg-12">
                                                     <h4>Recommended Drugs</h4>
                                                 </div>
@@ -831,23 +780,14 @@ $id = $_GET['id'];
                                         <div class="tab-pane nref" id="patron" role="tabpanel" aria-labelledby="patron-tab">
 
                                             <div class="form-check mb-3">
-                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="patron" data-ref="patron" id="send-patron"
-                                                <?php 
-                                                    if (in_array('patron', $rooms)) {
-                                                        echo 'checked';
-                                                    }
-                                                    ?>
-                                                >
+                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="patron" data-ref="patron" id="send-patron">
+                                                
                                                 <label class="form-check-label" for="send-patron">
                                                     Send to patron/matron
                                                 </label>
                                             </div>
 
-                                            <div class="form-group notmedic"  <?php 
-                                                if (!in_array('patron', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="form-group notmedic"  style="display: none;">
                                                 <label class="control-label">Section</label>
                                                 <select name="ref[patron][section][]" class="sections form-control">
                                                     <option value="">Select Section</option>
@@ -861,11 +801,7 @@ $id = $_GET['id'];
                                                     <?php } ?>
                                                 </select>
                                             </div>
-                                            <div class="form-group notmedic"  <?php 
-                                                if (!in_array('patron', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="form-group notmedic"  style="display: none;">
                                                 <label class="control-label">Medical Services</label>
                                                 <select name="ref[patron][servicename]" class="form-control servicename msnr multi-select_1">
                                                     <option value="">Select Medical Service</option>
@@ -910,36 +846,14 @@ $id = $_GET['id'];
                                                     <?php } ?>
                                                 </select>
                                             </div> -->
-                                            <div class="form-group forpatron"  <?php 
-                                                if (!in_array('patron', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="form-group forpatron"  style="display: none;">
                                                 <label class="control-label">* Details & Instructions</label>
                                                 <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[patron][details]"></textarea>
                                             </div>
                                         </div>
                                         <div class="tab-pane nref" id="lab" role="tabpanel" aria-labelledby="lab-tab">
-                                            <div class="form-check mb-3">
-                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="lab" data-ref="lab" id="send-lab"
-                                                <?php 
-                                                    if (in_array('lab', $rooms)) {
-                                                        echo 'checked';
-                                                    }
-                                                    ?>
-                                                >
-                                                <label class="form-check-label" for="send-lab">
-                                                    Send to lab
-                                                </label>
-                                            </div>
-                                            <div class="form-group forlab" 
-                                            <?php 
-                                                if (!in_array('lab', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>
-                                           >
-                                           <?php
+                                           
+                                             <?php
                                            if (in_array('lab', $rooms)) {
                                             ?>
                                             
@@ -968,12 +882,22 @@ $id = $_GET['id'];
                                                                     <input type="text" name="result[<?php echo $presult; ?>]" class="form-control " value="<?php echo $presult; ?>" placeholder="Enter result" disabled>
                                                                 </div>
                                                                 <?php } ?>
+                                                                
+                                                                <?php }?>
                                                                 <div>
                                                                     <label>Details</label>
-                                                                    <textarea class="form-control" cols="70" id="editor1" rows="8" name="" disabled><?php echo $details ; ?></textarea>
+                                                                    <?php echo $details ; ?>
                                                                 </div>
-                                                                </div>
-                                                                <?php } }?>
+                                                            </div>
+                                                            <?php } ?>
+                                                            <div class="form-check mb-3">
+                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="lab" data-ref="lab" id="send-lab">
+                                                <label class="form-check-label" for="send-lab">
+                                                    Send to lab
+                                                </label>
+                                            </div>
+                                            <div class="form-group forlab" style="display: none;">
+                                          
 
                                                                 <!-- <div class="form-group col-lg-1">
                                                                     <a href='#' class="subobj1_button btn btn-success" style="margin-top:30px">+</a>
@@ -1010,35 +934,21 @@ $id = $_GET['id'];
                                                     <?php } ?>
                                                 </select>
                                             </div> -->
-                                            <div class="form-group forlab" <?php 
-                                                if (!in_array('lab', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="form-group forlab" style="display: none;">
                                                 <label class="control-label">* Details & Instructions</label>
                                                 <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[lab][details]"></textarea>
                                             </div>
                                         </div>
                                         <div class="tab-pane nref" id="anesthesiology" role="tabpanel" aria-labelledby="anesthesiology-tab">
                                             <div class="form-check mb-3">
-                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="anesthesiology" data-ref="anesthesiology" id="send-anesthesiology"
-                                                <?php 
-                                                    if (in_array('anesthesiology', $rooms)) {
-                                                        echo 'checked';
-                                                    }
-                                                    ?>
-                                                >
+                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="anesthesiology" data-ref="anesthesiology" id="send-anesthesiology">
                                                 <label class="form-check-label" for="send-anesthesiology">
                                                     Send to anesthesiology
                                                 </label>
                                             </div>
 
 
-                                            <div class="form-group notmedic" <?php 
-                                                if (!in_array('anesthesiology', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="form-group notmedic"style="display: none;">
                                                 <label class="control-label">Section</label>
                                                 <select name="ref[anesthesiology][section][]" class="sections form-control">
                                                     <option value="">Select Section</option>
@@ -1053,11 +963,7 @@ $id = $_GET['id'];
                                                 </select>
                                             </div>
 
-                                            <div class="form-group notmedic" <?php 
-                                                if (!in_array('anesthesiology', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="form-group notmedic" style="display: none;">
                                                 <label class="control-label">Medical Services</label>
                                                 <select name="ref[anesthesiology][servicename]" class="form-control servicename msnr multi-select_1">
                                                     <option value="">Select Medical Service</option>
@@ -1102,11 +1008,7 @@ $id = $_GET['id'];
                                                     <?php } ?>
                                                 </select>
                                             </div> -->
-                                            <div class="form-group foranesthesiology" <?php 
-                                                if (!in_array('anesthesiology', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="form-group foranesthesiology" style="display: none;">
                                                 <label class="control-label">* Details & Instructions</label>
                                                 <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[anesthesiology][details]"></textarea>
                                             </div>
@@ -1235,13 +1137,7 @@ $id = $_GET['id'];
                                                                         <?php } ?>
                                                                         <?php } } }?>
                                             <div class="form-check mb-3">
-                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="radiography" data-ref="radiography" id="send-radiography"
-                                                <?php 
-                                                    if (in_array('radiography', $rooms)) {
-                                                        echo 'checked';
-                                                    }
-                                                    ?>
-                                                >
+                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="radiography" data-ref="radiography" id="send-radiography">
                                                 <label class="form-check-label" for="send-radiography">
                                                     Send to Radiology
                                                 </label>
@@ -1260,11 +1156,7 @@ $id = $_GET['id'];
                                                     <?php } ?>
                                                 </select>
                                             </div> -->
-                                            <div class="form-group forradiography" <?php 
-                                                if (!in_array('radiography', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="form-group forradiography" style="display: none;">
                                                 <label class="control-label">Measurement</label>
                                                 <select name="ref[radiography][radiomeasure][]" id="rmname" class="form-control select2 msnr multi-select_1" multiple>
                                                     <option value="">Select Measurement</option>
@@ -1283,11 +1175,7 @@ $id = $_GET['id'];
                                                 </select>
 
                                             </div>
-                                            <div class="form-group forradiography" <?php 
-                                                if (!in_array('radiography', $rooms)) {
-                                                    echo 'style="display: none;"';
-                                                }
-                                            ?>>
+                                            <div class="form-group forradiography" style="display: none;">
                                                 <label class="control-label">* Details & Instructions</label>
                                                 <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[radiography][details]"></textarea>
                                             </div>
@@ -1300,7 +1188,7 @@ $id = $_GET['id'];
                                                 </label>
                                             </div>
                                             <div class="forreferral" style="display:none">
-                                                <div class="row">
+                                                <!-- <div class="row">
                                                     <div class="col-sm-6 form-group">
                                                         <label class="control-label">Date </label>
                                                         <input type="date" class="form-control" name="ref[referral][date]" value=""/>
@@ -1309,7 +1197,7 @@ $id = $_GET['id'];
                                                         <label class="control-label">Time </label>
                                                         <input type="time" class="form-control" name="ref[referral][time]" value=""/>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                                 <div class="form-group">
                                                         <label class="control-label">HPI </label>
                                                         <input type="text" class="form-control" name="ref[referral][hpi]" value=""/>
@@ -1335,7 +1223,7 @@ $id = $_GET['id'];
                                                     <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[referral][reason]"></textarea>
                                                 </div>
                                             </div>
-                                            <div class="form-group forradiography" style="display: none;">
+                                            <!-- <div class="form-group forradiography" style="display: none;">
                                                 <label class="control-label">Measurement</label>
                                                 <select name="ref[radiography][radiomeasure][]" id="rmname" class="form-control select2 msnr multi-select_1" multiple>
                                                     <option value="">Select Measurement</option>
@@ -1357,46 +1245,352 @@ $id = $_GET['id'];
                                             <div class="form-group forradiography" style="display: none;">
                                                 <label class="control-label">* Details & Instructions</label>
                                                 <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[radiography][details]"></textarea>
-                                            </div>
+                                            </div> -->
                                         </div>
                                         <div class="tab-pane nref" id="acts" role="tabpanel" aria-labelledby="acts-tab">
                                             <div class="form-check mb-3">
                                                 <input class="form-check-input reference" name="reference[]" type="checkbox" value="acts" data-ref="acts" id="send-acts">
-                                                <label class="form-check-label" for="send-radiography">
+                                                <label class="form-check-label" for="send-acts">
                                                 Acts
                                                 </label>
                                             </div>
-                                            <!-- <div class="form-group forradiography" style="display: none">
-                                                <label>Select Radiologist</label>
-                                                <select class="form-control room" name="ref[radiography][radiographer]">
-                                                    <option selected="selected" value="">Select option..</option>
-                                                    <?php
-                                                    $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE status=1 AND role='radiographer'");
-                                                    while ($row = mysqli_fetch_array($getstaff)) {
-                                                        $staff_id = $row['staff_id'];
-                                                        $fullname = $row['fullname'];
-                                                    ?>
-                                                        <option value="<?php echo $staff_id; ?>"><?php echo $fullname; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div> -->
-                                            <div class="form-group forradiography" style="display: none;">
-                                                <label class="control-label">Measurement</label>
-                                                <select name="ref[radiography][radiomeasure][]" id="rmname" class="form-control select2 msnr multi-select_1" multiple>
-                                                    <option value="">Select Measurement</option>
+                                            <div class="form-group foracts" style="display: none;">
+                                                <h2>Presonal Details</h2>
+                                                <div class="row">
+                                                    <div class="col-sm-6 form-group">
+                                                        <label class="control-label">Full Name </label>
+                                                        <input type="text" class="form-control" name="ref[acts][fullname]" value=""/>
+                                                    </div>
+                                                    <div class="col-sm-6 form-group">
+                                                        <label class="control-label">Location Address </label>
+                                                        <input type="text" class="form-control" name="ref[acts][address]" value=""/>
+                                                    </div>
+                                                    <div class="col-sm-6 form-group">
+                                                        <label class="control-label">Gender </label>
+                                                        <input type="text" class="form-control" name="ref[acts][gender]" value=""/>
+                                                    </div>
+                                                    <div class="col-sm-6 form-group">
+                                                        <label class="control-label">Birth date </label>
+                                                        <input type="date" class="form-control" name="ref[acts][bage]" value=""/>
+                                                    </div>
+                                                    <div class="col-sm-6 form-group">
+                                                        <label class="control-label">Death Date </label>
+                                                        <input type="date" class="form-control" name="ref[acts][ddate]" value=""/>
+                                                    </div>
+                                                    <div class="col-sm-6 form-group">
+                                                        <label class="control-label">Locations of Death </label>
+                                                        <input type="text" class="form-control" name="ref[acts][locatedead]" value=""/>
+                                                    </div>
+                                                </div>
+                                                <h2>Medical Informations</h2>
+                                                <div class="row">
+                                                    <div class="col-sm-12 form-group">
+                                                        <!-- radio button group -->
+                                                        <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][type]">Immediate cause of death
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][type]">Other causes of death
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][type]">Underlying cause of death
+                                                            </label>
+                                                            </div> 
+                                                        
+                                                    </div>
+                                                    <div class="fortype1" style="display: none;">
+                                                    <div class="col-sm-6 form-group">
+                                                        <label class="control-label">ICD 10 code</label>
+                                                        <input type="text" class="form-control" name="ref[acts][icd]" value=""/>
+                                                    </div>
+                                                    <div class="col-sm-6 form-group">
+                                                        <label class="control-label">Time of the cause</label>
+                                                        <input type="time" class="form-control" name="ref[acts][icdtime]" value=""/>
+                                                    </div>
+                                                    </div>
+                                                    <div class="fortype2" style="display: none;">
+                                                        <div class="col-sm-6 form-group">
+                                                            <label class="control-label">ICD 10 code</label>
+                                                            <input type="text" class="form-control" name="ref[acts][icd]" value=""/>
+                                                        </div>
+                                                        <div class="col-sm-6 form-group">
+                                                            <label class="control-label">Time of the cause</label>
+                                                            <input type="time" class="form-control" name="ref[acts][icdtime]" value=""/>
+                                                        </div>
+                                                        <div class="col-sm-6 form-group">
+                                                            <label class="control-label">Time of the cause</label>
+                                                            <input type="text" class="form-control" name="ref[acts][icdduration]" value=""/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="fortype3" style="display:none;">
+                                                        <div class="col-sm-6 form-group">
+                                                                <label class="control-label">ICD 10 code</label>
+                                                                <input type="text" class="form-control" name="ref[acts][icd]" value=""/>
+                                                        </div>
+                                                        <div class="col-sm-6 form-group">
+                                                            <label class="control-label">Time of the cause</label>
+                                                            <input type="time" class="form-control" name="ref[acts][icdtime]" value=""/>
+                                                        </div>
+                                                        <div class="col-sm-6 form-group">
+                                                            <label class="control-label">Time of the cause</label>
+                                                            <input type="text" class="form-control" name="ref[acts][icdduration]" value=""/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <h2>Other Informations</h2>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <label class="control-label"> Did the victim had any medical operation within the past 4 weeks?</label> <br/>
+                                                        <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][medop]" value="yes">Yes
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][medop]" value="no">No
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][medop]" value="Unknown">Unknown
+                                                            </label>
+                                                            </div>
+                                                       
+                                                    </div>
+                                                    <div class="col-sm-6 formedicalop" style="display: none;">
+                                                        <label class="control-label">If yes, when was the operation?</label>
+                                                        <input type="date" class="form-control" name="ref[acts][medopdate]" value=""/>
+                                                    </div>
+                                                    <div class="col-sm-6 formedicalop" style="display: none;">
+                                                        <label class="control-label"> Reason for operation</label>
+                                                        <input type="text" class="form-control" name="ref[acts][medopdate]" value=""/>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <label class="control-label"> Was the cause of death investigated? </label> <br/>
+                                                        <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadinves]" value="yes">Yes
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadinves]" value="no">No
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadinves]" value="Unknown">Unknown
+                                                            </label>
+                                                            </div>
+                                                    </div>
+                                                    <div class="fordeadinves" style="display: none;">
+                                                        <label class="control-label"> Was the results of the investigation used to verify death?</label>
+                                                        <br/>
+                                                        <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadinvesresu]" value="yes">Yes
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadinvesresu]" value="no">No
+                                                            </label>
+                                                            </div>
+                                                        
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <label class="control-label"> How the death occurred ?</label> <br/>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="">Illness
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="">Victim was attacked
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="" >Poison
+                                                            </label>
+                                                            </div> 
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="" > Death sentence
+                                                            </label>
+                                                            </div> 
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="" >Investigation is still continuing
+                                                            </label>
+                                                            </div> 
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="" >Hanging (suicide)
+                                                            </label>
+                                                            </div> 
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="" >War
+                                                            </label>
+                                                            </div> 
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="" >Unknown
+                                                            </label>
+                                                            </div> 
+                                                            <div>
+                                                                <label class="control-label">Explaination</label>
+                                                                <textarea type="text" class="form-control" name="ref[acts][deadinvesresu]" value=""></textarea>
+                                                            </div>
 
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <label class="control-label">  Place where the death occurred ?</label> <br/>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="">Home
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="">In a street
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="" >At working place
+                                                            </label>
+                                                            </div> 
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="" > On a way to a health centre
+                                                            </label>
+                                                            </div> 
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="" >At school or any other community place
+                                                            </label>
+                                                            </div> 
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="" >At a manufacturing place or any other construction place
+                                                            </label>
+                                                            </div> 
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="" >At a sport/entertainment place
+                                                            </label>
+                                                            </div> 
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="checkbox" class="form-check-input" value="" >At the farm
+                                                            </label>
+                                                            </div> 
+                                                            <div>
+                                                                <label class="control-label">Other place</label>
+                                                                <textarea type="text" class="form-control" name="ref[acts][deadinvesresu]" value=""></textarea>
+                                                            </div>
 
-                                                    <?php
-                                                    $getmedicalservices =  mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1");
-                                                    while ($row1 =  mysqli_fetch_array($getmedicalservices)) {
-                                                        $medicalservice_id = $row1['radioinvestigationtype_id'];
-                                                        $medicalservice = $row1['investigationtype'];
-                                                        $charge = $row1['charge'];
-                                                    ?>
-                                                        <option value="<?php echo $medicalservice_id; ?>"><?php echo $medicalservice; ?></option>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <label class="control-label"> The death of unborn child or infant ? </label> <br/>
+                                                        <div class="" >
+                                                            <label class="control-label">Were twins ?</label>
+                                                            <br/>
+                                                             <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadunborn]" value="yes">Yes
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadunborn]" value="no">No
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadunborn]" value="unknown">Unknown
+                                                            </label>
+                                                            </div>
+                                                        
+                                                        </div>
+                                                        <div class="" >
+                                                            <label class="control-label"> Was the child/children born already dead ?</label>
+                                                            <br/>
+                                                             <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadborndead]" value="yes">Yes
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadborndead]" value="no">No
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadborndead]" value="Unknown">Unknown
+                                                            </label>
+                                                            </div>
+                                                        
+                                                        </div>
+                                                        <div class="" >
+                                                            <label class="control-label">  Was the child/children's death occurred within 24 hours after birth ?</label>
+                                                            <br/>
+                                                             <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadborndead24]" value="yes">Yes
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadborndead24]" value="no">No
+                                                            </label>
+                                                            </div>
+                                                            <div class="form-check-inline">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" name="ref[acts][deadborndead24]" value="Unknown">Unknown
+                                                            </label>
+                                                            </div>
+                                                            <div>
+                                                                <div class="form-group">
+                                                                    <label class="control-label"> If yes, what was the child/children living duration ?</label>
+                                                                    <textarea type="text" class="form-control" name="ref[acts][deadborndead24living]" value=""></textarea>
+                                                                </div>
+                                                            </div>
+                                                        
+                                                        </div>
+                                                        <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <label class="control-label">  weight of the child/children during birth (kg/gm) ?</label>
+                                                            <input type="text" class="form-control" name="ref[acts][deadbornweight]" value=""/>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <label class="control-label"> How old was the child/children's pregnancy period? (Duration in weeks)</label>
+                                                            <input type="text" class="form-control" name="ref[acts][deadbornpregper]" value=""/>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <label class="control-label">  Mother’s age ?</label>
+                                                            <input type="text" class="form-control" name="ref[acts][deadbornmother]" value=""/>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <label class="control-label">  Mother’s Condition ?</label>
+                                                            <textarea type="text" class="form-control" name="ref[acts][deadbornmother]" value=""></textarea>
+                                                        </div>
+                                                        </div>
 
-                                                    <?php } ?>
-                                                </select>
+                                                    </div>
+
+                                                </div>
+                                                
 
                                             </div>
                                             <div class="form-group forradiography" style="display: none;">
@@ -1859,6 +2053,19 @@ $id = $_GET['id'];
                     nref.find('.foranesthesiology').hide();
                     nref.find('.foradmission').hide();
                     nref.find('.forreferral').show()
+                }
+                if ((getselect == 'acts')) {
+                    nref.find('.pharmacy').hide();
+                    nref.find('.notmedic').show();
+                    nref.find('.forlab').hide();
+                    nref.find('.fornurse').hide();
+                    nref.find('.forpatron').hide();
+                    nref.find('.forradiography').hide();
+                    nref.find('.foranesthesiology').hide();
+                    nref.find('.foradmission').hide();
+                    nref.find('.forreferral').hide()
+                    nref.find('.foracts').show()
+
                 }
             }
 

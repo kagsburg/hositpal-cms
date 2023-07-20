@@ -182,9 +182,9 @@ $id = $_GET['id'];
                                     <li class="nav-item">
                                         <a class="nav-link" href="#referral" data-toggle="tab" data-target="#referral" role="tab" aria-controls="referral" aria-selected="false">Referral</a>
                                     </li>
-                                    <li class="nav-item">
+                                    <!-- <li class="nav-item">
                                         <a class="nav-link" href="#acts" data-toggle="tab" data-target="#acts" role="tab" aria-controls="acts" aria-selected="false">Acts</a>
-                                    </li>
+                                    </li> -->
 
 
 
@@ -236,6 +236,24 @@ $id = $_GET['id'];
                                                     }
                                                     if ($reference == 'admission'){
                                                         $attendant=$nurse;
+                                                    }
+                                                    if ($reference == 'referral'){
+                                                        $attendant=$nurse;
+                                                    }
+                                                    if ($reference == 'referral'){
+                                                        $ros = $reference_obj['ros'];
+                                                        $pmh = $reference_obj['pmh'];
+                                                        $dia = $reference_obj['dia'];
+                                                        $treat = $reference_obj['treat'];
+                                                        $details = $reference_obj['ros'];
+                                                        $hpi = $reference_obj['hpi'];
+                                                        mysqli_query($con, "INSERT INTO referral(patient_id,date,HPI,ROS,PMH,diagnosis,treatment,reason,admin_id,status) VALUES('$patient_id',UNIX_TIMESTAMP(),'$hpi','$ros','$pmh','$dia','$treat','$reason','" . $_SESSION['elcthospitaladmin'] . "',1)") or die(mysqli_error($con));
+                                                        $last_id = mysqli_insert_id($con);
+                                                        mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                                        // create_bill($pdo,$patient_id,$admission_id,$id,'referral',$last_id,$referralfee,$paymenttype);
+                                                        $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully Referred.</div>';
+                                                            // redirect to doctorwaiting
+                                                            echo '<script>window.location.href = "doctorwaiting.php";</script>';
                                                     }
                                                     
         
@@ -409,9 +427,9 @@ $id = $_GET['id'];
                                                             $last_id = mysqli_insert_id($con);
                                                             mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
                                                             create_bill($pdo,$patient_id,$admission_id,$id,'admission',$last_id,$price,$paymenttype);
-                                                            $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully Added.Click Here to <a href="admitted">View</a> Admissions</div>';
+                                                            $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully Admitted.Click Here to <a href="admitted">View</a> Admissions</div>';
                                                                 // redirect to doctorwaiting
-                                                                // echo '<script>window.location.href = "doctorwaiting.php";</script>';
+                                                                echo '<script>window.location.href = "doctorwaiting.php";</script>';
                                                         }                                                      
                                                     }
                                                     elseif ($reference == 'pharmacy') {
@@ -582,53 +600,7 @@ $id = $_GET['id'];
                                                     Send to pharmacy
                                                 </label>
                                             </div>
-
-                                            <div class="form-group notmedic" style="display: none;">
-                                                <label class="control-label">Section</label>
-                                                <select name="ref[pharmacy][section][]" class="sections form-control">
-                                                    <option value="">Select Section</option>
-                                                    <?php
-                                                    $getsections =  mysqli_query($con, "SELECT * FROM sections WHERE status=1");
-                                                    while ($row1 =  mysqli_fetch_array($getsections)) {
-                                                        $section_id = $row1['section_id'];
-                                                        $section = $row1['section'];
-                                                    ?>
-                                                        <option value="<?php echo $section_id; ?>"><?php echo $section; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group notmedic" style="display: none;">
-                                                <label class="control-label">Medical Services</label>
-                                                <select name="ref[pharmacy][servicename]" class="form-control servicename msnr multi-select_1">
-                                                    <option value="">Select Medical Service</option>
-                                                </select>
-                                                <?php
-                                                $getsection =  mysqli_query($con, "SELECT * FROM sections WHERE status=1");
-                                                while ($row =  mysqli_fetch_array($getsection)) {
-                                                    $section_id = $row['section_id'];
-                                                ?>
-                                                    <div id="" style="display:none;width:100%;" class="row services service<?php echo $section_id; ?> form-group">
-
-                                                        <?php
-                                                        $getmedicalservices =  mysqli_query($con, "SELECT * FROM medicalservices WHERE status=1 AND section_id='$section_id' ORDER BY medicalservice");
-                                                        while ($row1 =  mysqli_fetch_array($getmedicalservices)) {
-                                                            $medicalservice_id = $row1['medicalservice_id'];
-                                                            $medicalservice = $row1['medicalservice'];
-                                                            $charge = $row1['charge'];
-                                                        ?>
-                                                            <div class="col-lg-6">
-                                                                <div class="form-check form-check-inline">
-                                                                    <label class="form-check-label" style="font-size:14px">
-                                                                        <input type="checkbox" class="form-check-input" value="<?php echo $medicalservice_id; ?>" name="ref[pharmacy][medicalservices][]"><?php echo $medicalservice; ?>
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-
-                                                        <?php } ?>
-                                                    </div>
-                                                <?php } ?>
-                                            </div>
+                                            
                                             <div class="pharmacy" style="display: none">
                                                 <div class="col-lg-12">
                                                     <h4>Recommended Drugs</h4>
@@ -964,36 +936,36 @@ $id = $_GET['id'];
                                                 <div class="row">
                                                     <div class="col-sm-6 form-group">
                                                         <label class="control-label">Date </label>
-                                                        <input type="date" class="form-control" name="noofdays" value=""/>
+                                                        <input type="date" class="form-control" name="ref[referral][date]" value=""/>
                                                     </div>
                                                     <div class="col-sm-6 form-group">
                                                         <label class="control-label">Time </label>
-                                                        <input type="time" class="form-control" name="noofdays" value=""/>
+                                                        <input type="time" class="form-control" name="ref[referral][time]" value=""/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                         <label class="control-label">HPI </label>
-                                                        <input type="text" class="form-control" name="noofdays" value=""/>
+                                                        <input type="text" class="form-control" name="ref[referral][hpi]" value=""/>
                                                 </div>
                                                 <div class="form-group">
                                                         <label class="control-label">ROS </label>
-                                                        <input type="text" class="form-control" name="noofdays" value=""/>
+                                                        <input type="text" class="form-control" name="ref[referral][ros]" value=""/>
                                                 </div>
                                                 <div class="form-group">
                                                         <label class="control-label">PMH </label>
-                                                        <input type="text" class="form-control" name="noofdays" value=""/>
+                                                        <input type="text" class="form-control" name="ref[referral][pmh]" value=""/>
                                                 </div>
                                                 <div class="form-group">
                                                         <label class="control-label">Diagnosis investigation </label>
-                                                        <input type="text" class="form-control" name="noofdays" value=""/>
+                                                        <textarea type="text" class="form-control" name="ref[referral][dia]" value=""></textarea>
                                                 </div>
                                                 <div class="form-group">
                                                         <label class="control-label">Treatments </label>
-                                                        <input type="text" class="form-control" name="noofdays" value=""/>
+                                                        <textarea type="text" class="form-control" name="ref[referral][treat]" value=""></textarea>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="control-label">* Reason for referral</label>
-                                                    <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[radiography][details]"></textarea>
+                                                    <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[referral][reason]"></textarea>
                                                 </div>
                                             </div>
                                             <div class="form-group forradiography" style="display: none;">

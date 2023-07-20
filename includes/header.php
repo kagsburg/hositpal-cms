@@ -672,10 +672,14 @@
         if (($_SESSION['elcthospitallevel'] == 'anesthesiologist')) {
         ?>
           <li>
-            <a class="ai-icon" href="labwaiting" aria-expanded="false">
+            <a class="ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Patient Management</span>
             </a>
+            <ul aria-expanded="false">
+              <li><a href="anaethwaiting">Waiting Patients</a></li>
+              <li><a href="anaeoperated">Operated Patients</a></li>
+            </ul>
           </li>
           <li>
             <a class="ai-icon" href="pharmacyorders" aria-expanded="false">
