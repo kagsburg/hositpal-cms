@@ -74,7 +74,7 @@ $id = $_GET['id'];
                     </div>
                     <div class="row">
                         <div class="col-lg-12">
-                            <a href="admissionprint?id=<?php echo $id; ?>" class="btn btn-success mb-2 btn-xs">Print</a>
+                            <!-- <a href="admissionprint?id=<?php echo $id; ?>" class="btn btn-success mb-2 btn-xs">Print</a> -->
                             <?php
                             $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE status IN (1,2) AND admitted_id='$id'");
                             $row = mysqli_fetch_array($getadmitted);
@@ -94,6 +94,7 @@ $id = $_GET['id'];
                             <?php } ?>
                         </div>
                         <?php
+                        
                             $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id'");
                             $row1 = mysqli_fetch_array($getadmission);
                             $patient_id = $row1['patient_id'];
@@ -248,9 +249,124 @@ $id = $_GET['id'];
                                     <!-- Tab panes -->
                                     <div class="tab-content tabcontent-border">
                                         <div class="tab-pane fade show active" id="doctorsreport" role="tabpanel">
+                                            <!-- check if patient is scheduled for operation -->
+                                            <?php
+                                            if (isset($_POST['submitupdate'])) {
+                                                $operation_id = $_POST['operation_id'];
+                                                $status = $_POST['status'];
+                                                $update = mysqli_query($con, "UPDATE operations SET status='$status' WHERE operation_id='$operation_id'") or die(mysqli_error($con));
+                                                if ($update) {
+                                                    echo '<script>alert("Operation status updated successfully")</script>';
+                                                    echo '<script>window.location.href = "admission?id=' . $id . '";</script>';
+                                                }
+                                            }
+                                            $getoperation = mysqli_query($con, "SELECT * FROM operations WHERE  patient_id='$patient_id'") or die(mysqli_error($con));
+                                            if (mysqli_num_rows($getoperation) > 0) {
+                                                $row = mysqli_fetch_array($getoperation);
+                                                $operation_id = $row['operation_id'];
+                                                $operationdate = $row['date'];
+                                                $operationtime = $row['time'];
+                                                $operationname = $row['anesthesiologist'];
+                                                $operationadmin_id = $row['admin_id'];
+                                                $status = $row['status'];
+                                                $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$operationadmin_id'") or die(mysqli_error($con));
+                                                $rows = mysqli_fetch_array($getstaff);
+                                                $fullname = $rows['fullname'];
+                                                $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$operationname'") or die(mysqli_error($con));
+                                                $rows = mysqli_fetch_array($getstaff);
+                                                $fullnam2e = $rows['fullname'];
+                                            ?>
+                                                <div class="table-responsive pt-4">
+                                                    <h4><strong>OPERATION REPORT ON <?php echo  $operationdate; ?></strong></h4>
+                                                    <table class="table  table-striped table-responsive-sm table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <!-- <th>OPERATION TYPE</th> -->
+                                                                <th>OPERATION NAME</th>
+                                                                <!-- <th>OPERATION NOTES</th> -->
+                                                                <th>OPERATION STATUS</th>
+                                                                <th>OPERATION TIME</th>
+                                                                <th>OPERATION DATE</th>
+                                                                <th>OPERATION NURSE</th>
+                                                                <th>OPERATION DOCTOR</th>
+                                                                <?php 
+                                                                 if($_SESSION['elcthospitaladmin']==$operationadmin_id){
+                                                                ?>
+                                                                <th>ACTION</th>
+                                                                <?php } ?>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <!-- <td><?php echo $operationtype; ?></td> -->
+                                                                <td><?php echo $operationname; ?></td>
+                                                                <!-- <td><?php echo $operationnotes; ?></td> -->
+                                                                <td>
+                                                                    <?php
+                                                                    if ($status == 1) {
+                                                                        echo '<span class="badge badge-primary">Booked</span>';
+                                                                    }
+                                                                    if ($status == 2) {
+                                                                        echo '<span class="badge badge-success">Done</span>';
+                                                                    }
+                                                                    if ($status == 3) {
+                                                                        echo '<span class="badge badge-danger">Cancelled</span>';
+                                                                    }
+                                                                    ?>
+                                                                </td>
+                                                                <td><?php echo $operationtime; ?></td>
+                                                                <td><?php echo  $operationdate ?></td>
+                                                                <td><?php echo $fullnam2e; ?></td>
+                                                                <td><?php echo $fullname; ?></td>
+                                                                <?php 
+                                                                 if($_SESSION['elcthospitaladmin']==$operationadmin_id){
+                                                                ?>
+                                                                <td>
+                                                                    <button data-toggle="modal" data-target="#modal<?php echo $operation_id; ?>" class="btn btn-success ">Update</button>
+                                                                </td>
+                                                                <div class="modal fade" id="modal<?php echo $operation_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="exampleModalLabel">Update Patient Operation status </h5>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <form method="post" name='form' class="form" action="" enctype="multipart/form-data" >
+                                                                        <div class="form-group " >
+                                                                            <input type="hidden" name="operation_id" value="<?php echo $operation_id; ?>" required>
+                                                                            <label class="control-label">Operation Status</label>
+                                                                            <select class="form-control" name="status" required>
+                                                                                <option value="">Select Operation Status</option>
+                                                                                <option value="1">Booked</option>
+                                                                                <option value="2">Done</option>
+                                                                                <option value="3">Cancelled</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    <div class="form-group pull-right"><button class="btn btn-primary" type="submit" name="submitupdate">Save</button>
+                                                                        </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                                <?php } ?>
+
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <hr>
+                                            <?php } ?>
+
                                             <div class="table-responsive pt-4">
                                                 <?php
                                                 $getprogress = mysqli_query($con, "SELECT * FROM progress WHERE admitted_id='$id'") or die(mysqli_error($con));
+                                                if (mysqli_num_rows($getprogress) == 0) {
+                                                    echo '<div class="alert alert-danger">No Progress Report Found</div>';
+                                                }
                                                 while ($row = mysqli_fetch_array($getprogress)) {
                                                     $date = $row['date'];
                                                     $progress_id = $row['progress_id'];
@@ -343,6 +459,9 @@ $id = $_GET['id'];
                                             <div class="table-responsive pt-4">
                                                 <?php
                                                 $getnursingsheets = mysqli_query($con, "SELECT * FROM nursingsheets WHERE admitted_id='$id' AND status=1 ORDER BY date") or die(mysqli_error($con));
+                                                if (mysqli_num_rows($getnursingsheets) == 0) {
+                                                    echo '<div class="alert alert-danger">No Nursing Sheet Found</div>';
+                                                }
                                                 while ($row = mysqli_fetch_array($getnursingsheets)) {
                                                     $date = $row['date'];
                                                     $time = $row['time'];
@@ -403,6 +522,9 @@ $id = $_GET['id'];
                                             <div class="table-responsive pt-4">
                                                 <?php
                                                 $getconsumed = mysqli_query($con, "SELECT * FROM consumed WHERE admitted_id='$id' AND status=1") or die(mysqli_error($con));
+                                                if (mysqli_num_rows($getconsumed) == 0) {
+                                                    echo '<div class="alert alert-danger">No Consumed Items Found</div>';
+                                                }
                                                 while ($row = mysqli_fetch_array($getconsumed)) {
                                                     $date = $row['date'];
                                                     $consumed_id = $row['consumed_id'];

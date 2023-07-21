@@ -149,8 +149,8 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                                        <?php
                                                        if($_SESSION['elcthospitaladmin']==$admin_id){
                                                        ?>
-                                                      <a href="editadmitted?id=<?php echo $admitted_id; ?>" class="btn btn-info btn-xs">Edit</a>  
-                                                      <a href="addprogress?id=<?php echo $admitted_id; ?>" class="btn btn-primary btn-xs">Add Progress</a>  
+                                                      <!-- <a href="editadmitted?id=<?php echo $admitted_id; ?>" class="btn btn-info btn-xs">Edit</a>   -->
+                                                      <!-- <a href="addprogress?id=<?php echo $admitted_id; ?>" class="btn btn-primary btn-xs">Add Progress</a>   -->
                                                        <?php }
                                                            if($_SESSION['elcthospitallevel']=='admin'){
                                                        ?>

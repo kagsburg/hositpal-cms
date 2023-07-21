@@ -1,8 +1,9 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'anesthesiologist')) {
+if (($_SESSION['elcthospitallevel'] != 'doctor')) {
     header('Location:login.php');
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -77,7 +78,7 @@ if (($_SESSION['elcthospitallevel'] != 'anesthesiologist')) {
                                                 
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
-                                                <th>Previous Room</th>
+                                                <!-- <th>Previous Room</th> -->
                                                 <th>Attendant</th>
                                                 <th>Action</th>
 
@@ -85,16 +86,17 @@ if (($_SESSION['elcthospitallevel'] != 'anesthesiologist')) {
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room='anesthesiology' AND status=0");
+                                            $getque = mysqli_query($con, "SELECT * FROM anaesthesiareport WHERE status=1");
+                                            if (mysqli_num_rows($getque) > 0){
                                             while ($row = mysqli_fetch_array($getque)) {
-                                                $patientsque_id = $row['patientsque_id'];
-                                                $admission_id = $row['admission_id'];
-                                                $prev_id = $row['prev_id'];
+                                                $anareport_id  = $row['anareport_id'];
+                                                $patient_id = $row['patient_id'];
 
-                                                $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id' and status ='1'");
+                                                $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE patient_id='$patient_id' and status ='1'");
                                                 if (mysqli_num_rows($getadmission) > 0){
                                                 $row1 = mysqli_fetch_array($getadmission);
                                                 $patient_id = $row1['patient_id'];
+                                                $admission_id = $row1['admission_id'];
                                                 $getpatient = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
                                                 $row2 = mysqli_fetch_array($getpatient);
                                                 $firstname = $row2['firstname'];
@@ -103,12 +105,12 @@ if (($_SESSION['elcthospitallevel'] != 'anesthesiologist')) {
                                                 $gender = $row2['gender'];
                                                 $ext = $row2['ext'];
 
-                                                $filter = empty($prev_id) ? "ORDER BY patientsque_id DESC" : "AND patientsque_id = '$prev_id'";
-                                                $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND patientsque_id < '$patientsque_id'  AND status=1 $filter LIMIT 1");
-                                                $rowp = mysqli_fetch_array($getprevque);
+                                                // $filter = empty($prev_id) ? "ORDER BY patientsque_id DESC" : "AND patientsque_id = '$prev_id'";
+                                                // $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND patientsque_id < '$patientsque_id'  AND status=1 $filter LIMIT 1");
+                                                // $rowp = mysqli_fetch_array($getprevque);
                                                 $attendant = $_SESSION['elcthospitaladmin'];
-                                                $patientsque_id2 = $rowp['patientsque_id'];
-                                                $room = $rowp['room'];
+                                                // $patientsque_id2 = $rowp['patientsque_id'];
+                                                // $room = $rowp['room'];
                                                 $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
                                                 $rows = mysqli_fetch_array($getstaff);
                                                 $fullname = $rows['fullname'];
@@ -124,7 +126,6 @@ if (($_SESSION['elcthospitallevel'] != 'anesthesiologist')) {
                                                 if (strlen($patient_id) >= 4) {
                                                     $pin = $patient_id;
                                                 }
-                                               
                                             ?>
                                             <tr class="gradeA">
                                                 <td><?php echo $pin; ?></td>
@@ -138,17 +139,17 @@ if (($_SESSION['elcthospitallevel'] != 'anesthesiologist')) {
                                                 <td><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?>
                                                 </td>
                                                 <td><?php echo $gender; ?></td>
-                                                <td><?php echo $room; ?></td>
+                                                <!-- <td><?php echo $room; ?></td> -->
                                                 <td><?php echo $fullname; ?></td>
                                                 <td>
-                                                    <a href="addanaereport?id=<?php echo $patient_id; ?>&patientsque_id=<?php echo $patientsque_id; ?>"
-                                                        class="btn btn-xs btn-info">Add Report</a>
+                                                    <a href="viewanaereport?id=<?php echo $anareport_id; ?>"
+                                                        class="btn btn-xs btn-info">View Report</a>
                                                 </td>
 
 
                                             </tr>
 
-                                            <?php } }?>
+                                            <?php } }}?>
                                         </tbody>
                                     </table>
                                 </div>

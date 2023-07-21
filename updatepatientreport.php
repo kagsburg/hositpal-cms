@@ -193,15 +193,25 @@ $id = $_GET['id'];
                                     <li class="nav-item">
                                         <a class="nav-link" href="#radiography" data-toggle="tab" data-target="#radiography" role="tab" aria-controls="radiography" aria-selected="false">Radiology </a>
                                     </li>
+                                    <?php 
+                                    // get admitted details
+                                    $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE admission_id='$admission_id' AND status=1");
+                                    if (mysqli_num_rows($getadmitted)>0){
+                                    ?>
                                     <li class="nav-item">
                                         <a class="nav-link" href="#anesthesiology" data-toggle="tab" data-target="#anesthesiology" role="tab" aria-controls="anesthesiology" aria-selected="false">Anesthesiology</a>
                                     </li>
+                                    <?php } ?>
                                     <li class="nav-item">
                                         <a class="nav-link" href="#patron" data-toggle="tab" data-target="#patron" role="tab" aria-controls="patron" aria-selected="false">Patron</a>
                                     </li>
+                                    <?php
+                                    if (mysqli_num_rows($getadmitted)==0){
+                                        ?>
                                     <li class="nav-item">
                                         <a class="nav-link" href="#admission" data-toggle="tab" data-target="#admission" role="tab" aria-controls="admission" aria-selected="false">Admission</a>
                                     </li>
+                                    <?php } ?>
                                     <li class="nav-item">
                                         <a class="nav-link" href="#referral" data-toggle="tab" data-target="#referral" role="tab" aria-controls="referral" aria-selected="false">Referral</a>
                                     </li>
@@ -292,7 +302,7 @@ $id = $_GET['id'];
                                                             create_bill($pdo,$patient_id,$admission_id,$id,'admission',$last_id,$price,$paymenttype);
                                                             $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully Added.Click Here to <a href="admitted">View</a> Admissions</div>';
                                                                 // redirect to doctorwaiting
-                                                                echo '<script>window.location.href = "doctorwaiting.php";</script>';
+                                                                echo '<script>window.location.href = "doctorcleared.php";</script>';
                                                         }                                                      
                                                     }
                                                     if ($reference == 'referral'){
@@ -308,9 +318,9 @@ $id = $_GET['id'];
                                                         // create_bill($pdo,$patient_id,$admission_id,$id,'referral',$last_id,$referralfee,$paymenttype);
                                                         $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully Referred.</div>';
                                                             // redirect to doctorwaiting
-                                                            echo '<script>window.location.href = "doctorwaiting.php";</script>';
+                                                            echo '<script>window.location.href = "doctorcleared.php";</script>';
                                                     }
-        
+                                                        
                                                     mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
                                                     //     mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
                                                     //     mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
@@ -342,7 +352,7 @@ $id = $_GET['id'];
                                                             }
                                                         }
                                                         if (!empty($cashfallbacks)) {
-                                                            mysqli_query($con, "INSERT INTO serviceorders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'cash',0,'reception',0,0)") or die(mysqli_error($con));
+                                                            mysqli_query($con, "INSERT INTO serviceorders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'cash',0,'doctor',0,0)") or die(mysqli_error($con));
                                                             $last_id = mysqli_insert_id($con);
                                                             $total_amount = array_sum($cashfallbacks);
                                                             create_bill($pdo, $patient_id, $admission_id, $new_patientsque_id, 'medical_service', $last_id, $total_amount, 'cash');
@@ -350,7 +360,7 @@ $id = $_GET['id'];
                                                                 mysqli_query($con, "INSERT INTO patientservices(serviceorder_id,medicalservice_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
                                                         }
                                                         if (!empty($mservices)) {
-                                                            mysqli_query($con, "INSERT INTO serviceorders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymenttype',0,'reception',0,0)") or die(mysqli_error($con));
+                                                            mysqli_query($con, "INSERT INTO serviceorders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymenttype',0,'doctor',0,0)") or die(mysqli_error($con));
                                                             $last_id = mysqli_insert_id($con);
                                                             $total_amount = array_sum($mservices);
                                                             create_bill($pdo, $patient_id, $admission_id, $new_patientsque_id, 'medical_service', $last_id, $total_amount, $paymenttype);
@@ -486,7 +496,7 @@ $id = $_GET['id'];
                                                 // set alert message to session message 
                                                 $_SESSION['success'] = '<div class="alert alert-success">Patient Report Successfully Updated</div>';
                                                 // redirect to doctorwaiting
-                                                echo '<script>window.location.href = "doctorwaiting.php";</script>';
+                                                echo '<script>window.location.href = "doctorcleared.php";</script>';
                                                 
                                                 exit();
                                     }

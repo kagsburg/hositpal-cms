@@ -4,7 +4,8 @@ if (($_SESSION['elcthospitallevel'] != 'anesthesiologist')) {
     header('Location:login.php');
 }
 $patient_id=$_GET['id'];
-$patque=$_GET['patientsque_id'];
+$admin = $_GET['admin'];
+$operation_id = $_GET['operation'];
 // get admission details 
 $admission_details = mysqli_query($con, "SELECT * FROM `admissions`  WHERE patient_id='$patient_id' and status='1'");
 $rowadmit = mysqli_fetch_array($admission_details);
@@ -13,11 +14,11 @@ $admission_id = $rowadmit['admission_id'];
 $inpatient = mysqli_query($con, "SELECT * FROM `admitted`  WHERE admission_id='$admission_id' and status='1'");
 $rowinpatient = mysqli_fetch_array($inpatient);
 $inpatient_id = $rowinpatient['admitted_id'];
-// get patient que
-$patient_que = mysqli_query($con, "SELECT * FROM `patientsque`  WHERE admission_id='$admission_id' and payment='1' AND room='anesthesiology' and status=0 order by patientsque_id DESC");
-$rowpatient_que = mysqli_fetch_array($patient_que);
-$patient_que_id = $rowpatient_que['patientsque_id'];
-$prev_admin_id = $rowpatient_que['admin_id'];
+// // get patient que
+// $patient_que = mysqli_query($con, "SELECT * FROM `patientsque`  WHERE admission_id='$admission_id' and payment='1' AND room='anesthesiology' and status=0 order by patientsque_id DESC");
+// $rowpatient_que = mysqli_fetch_array($patient_que);
+// $patient_que_id = $rowpatient_que['patientsque_id'];
+// $prev_admin_id = $rowpatient_que['admin_id'];
 
 ?>
 <!DOCTYPE html>
@@ -68,15 +69,15 @@ $prev_admin_id = $rowpatient_que['admin_id'];
                 <div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Add Pre-operative Assessment </h4>
+                            <h4>ADD INTRAOPERATIVE MONITORING </h4>
 
                         </div>
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item"><a href="anaethwaiting">Waiting</a></li>
-                            <li class="breadcrumb-item active"><a href="#">Add Pre-operative</a></li>
+                            <li class="breadcrumb-item"><a href="anaeoperated">Waiting</a></li>
+                            <li class="breadcrumb-item active"><a href="#">Add Intra-operative</a></li>
                         </ol>
                     </div>
                 </div>
@@ -84,7 +85,7 @@ $prev_admin_id = $rowpatient_que['admin_id'];
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Add Pre-operative </h4>
+                                <h4 class="card-title">Add Intra-operative </h4>
                             </div>
                             <div class="card-body">
                                 <div class="basic-form">
@@ -92,82 +93,47 @@ $prev_admin_id = $rowpatient_que['admin_id'];
                                     <?php
                                     if (isset($_POST['submit'])) {
                                         
-                                        $procedure = mysqli_real_escape_string($con, trim($_POST['procedure']));
-                                        $surgeon = mysqli_real_escape_string($con, trim($_POST['surgeon']));
-                                        $weight = mysqli_real_escape_string($con, trim($_POST['weight']));
-                                        $npo = mysqli_real_escape_string($con, trim($_POST['npo']));
-                                        $allergy = mysqli_real_escape_string($con, trim($_POST['allergy']));
-                                        $mallampati = mysqli_real_escape_string($con, trim($_POST['mallampati']));
-                                        $prevhx = mysqli_real_escape_string($con, trim($_POST['prevhx']));
-                                        $name = $_POST['name'];
+                                       
+                                        $name = $_POST['monitor'];
+                                        
                                         $vitals = $_POST['namevita'];
                                         $cns = $_POST['namecns'];
                                         $pe = $_POST['namepe'];
                                         $renal = $_POST['namerena'];
-                                        $hem = $_POST['namehem'];
-                                        $onc = $_POST['nameonc'];
-                                        $pul = $_POST['namepul'];
-                                        $pla = $_POST['namepla'];
-                                        $oth = $_POST['nameoth'];
                                         $anaesthesiologist = mysqli_real_escape_string($con, trim( $_SESSION['elcthospitaladmin']));
                                         $comment = mysqli_real_escape_string($con, trim($_POST['comment']));
                                         $date = date('Y-m-d');  
                                         $time = date('H:i:s');
-                                        $insert = mysqli_query($con, "INSERT INTO anaesthesiareport(patient_id,proce_dure,surgeon,weight,npo,allergy,mallampati,prevhx,admin_id,comment,date,time,status) VALUES('$patient_id','$procedure','$surgeon','$weight','$npo','$allergy','$mallampati','$prevhx','$anaesthesiologist','$comment','$date','$time','1')");
+                                        $insert = mysqli_query($con, "INSERT INTO anaesthesiareport2(admission_id,surgeon,admin_id,comment,date,time,status) VALUES('$admission_id','$admin','$anaesthesiologist','$comment','$date','$time','1')");
                                         if ($insert) {
                                             $last_id = mysqli_insert_id($con);
                                             foreach ($name['type'] as $key => $value) {
                                                 $type = $value;
                                                 $result = $name['result'][$key];
-                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportlabs(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportmont(anaesthesiareport2_id,type,value) VALUES('$last_id','$type','$result')");
                                             }
                                             foreach ($vitals['type'] as $key => $value) {
                                                 $type = $value;
                                                 $result = $vitals['result'][$key];
-                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportvitals(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportgen(anaesthesiareport2_id,type,value) VALUES('$last_id','$type','$result')");
                                             }
                                             foreach ($cns['type'] as $key => $value) {
                                                 $type = $value;
                                                 $result = $cns['result'][$key];
-                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportcns(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportven(anaesthesiareport2_id,type,value) VALUES('$last_id','$type','$result')");
                                             }
                                             foreach ($pe['type'] as $key => $value) {
                                                 $type = $value;
                                                 $result = $pe['result'][$key];
-                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportpe(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportreg(anaesthesiareport2_id,type,value) VALUES('$last_id','$type','$result')");
                                             }
                                             foreach ($renal['type'] as $key => $value) {
                                                 $type = $value;
                                                 $result = $renal['result'][$key];
-                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportrenal(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportreext(anaesthesiareport2_id,type,value) VALUES('$last_id','$type','$result')");
                                             }
-                                            foreach ($hem['type'] as $key => $value) {
-                                                $type = $value;
-                                                $result = $hem['result'][$key];
-                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareporthem(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
-                                            }
-                                            foreach ($onc['type'] as $key => $value) {
-                                                $type = $value;
-                                                $result = $onc['result'][$key];
-                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportonc(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
-                                            }
-                                            foreach ($pul['type'] as $key => $value) {
-                                                $type = $value;
-                                                $result = $pul['result'][$key];
-                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportpul(anaesthesiareport_id,type,value) VALUES('$last_id','$type','$result')");
-                                            }
-                                            foreach ($pla['type'] as $key => $value) {
-                                                $type = $value;
-                                                $result = $pla['result'][$key];
-                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportpla(anaesthesiareport_id,type,value) VALUES('$last_id','$type','$result')");
-                                            }
-                                            foreach ($oth['type'] as $key => $value) {
-                                                $type = $value;
-                                                $result = $oth['result'][$key];
-                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportoth(anaesthesiareport_id,type,value) VALUES('$last_id','$type','$result')");
-                                            }
-                                            // update patient que 
-                                            $update = mysqli_query($con, "UPDATE patientsque SET status=1 WHERE patientsque_id='$patient_que_id'");
+                                            //status 4 means second anaesthesia report added
+                                            $update = mysqli_query($con, "UPDATE operations SET anareport2_id='$last_id',status='4' WHERE operation_id='$operation_id'");
                                             echo '<div class="alert alert-success">Patient Anaesthesia Report Successfully Added.Click <a href="anaethwaiting">here</a> to proceed</div>';
 
                                         }
@@ -199,20 +165,20 @@ $prev_admin_id = $rowpatient_que['admin_id'];
                                             $pin = $patient_id;
                                         }
                                          // get doctor report 
-                                         $get_patientque = mysqli_query($con, "SELECT * FROM patientsque WHERE patientsque_id='$patque'");
-                                            $row_patientque = mysqli_fetch_array($get_patientque);
-                                            $admin_id = $row_patientque['admin_id'];
-                                            $previd = $row_patientque['prev_id'];
-                                        // get doctor report 
-                                        $get_doctorreport = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$previd' and status='1' order by doctorreport_id desc LIMIT 1");
-                                        $row_doctorreport = mysqli_fetch_array($get_doctorreport);
-                                        $doctorreport_id = $row_doctorreport['doctorreport_id'];
-                                        $details=$row_doctorreport['details'];
-                                        // remove html tags from string
-                                        $details = strip_tags($details);
+                                        //  $get_patientque = mysqli_query($con, "SELECT * FROM patientsque WHERE patientsque_id='$patque'");
+                                        //     $row_patientque = mysqli_fetch_array($get_patientque);
+                                        //     $admin_id = $row_patientque['admin_id'];
+                                        //     $previd = $row_patientque['prev_id'];
+                                        // // get doctor report 
+                                        // $get_doctorreport = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$previd' and status='1' order by doctorreport_id desc LIMIT 1");
+                                        // $row_doctorreport = mysqli_fetch_array($get_doctorreport);
+                                        // $doctorreport_id = $row_doctorreport['doctorreport_id'];
+                                        // $details=$row_doctorreport['details'];
+                                        // // remove html tags from string
+                                        // $details = strip_tags($details);
 
                                         ?>
-
+                                        <input type="hidden" name="patient_id" value="<?php echo $patient_id; ?>">
                                         <div class="row">
                                             <div class="form-group col-lg-4"><label class="control-label">* First Name</label>
                                                 <input type="text" name='firstname' class="form-control" value="<?php echo $firstname; ?>" disabled>
@@ -238,51 +204,17 @@ $prev_admin_id = $rowpatient_que['admin_id'];
                                             <input type="text" name='ward' class="form-control" value="<?php echo $gender; ?>" disabled/>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="form-group col-lg-4"><label class="control-label"> Procedure</label>
-                                            <input type="text" name='procedure' class="form-control" value="<?php echo $details ?>" />
-                                            </div>
-
-                                            <div class="form-group col-lg-4"><label class="control-label">Surgeon</label>
-
-                                                <input type="text" name="surgeon" class="form-control" value="" >
-                                            </div>
-                                            <div class="form-group col-lg-4"><label class="control-label">Weight</label>
-                                            <input type="text" name='weight' class="form-control" value="<?php echo $weight; ?>"/>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="form-group col-lg-6"><label class="control-label"> NPO duration(hours)</label>
-                                                <input type="text" name="npo" class="form-control " placeholder="Enter your Occupation">
-                                            </div>
-                                            <div class="form-group col-lg-6"><label class="control-label"> Allergy (If yes, specify)</label>
-                                                <input type="text" name="allergy" class="form-control " placeholder="Enter your Adress">
-                                            </div>
-                                            <div class="form-group col-lg-6"><label class="control-label"> Mallampati</label>
-                                                <input type="text" name="mallampati" class="form-control " placeholder="Enter your Phone Number">
-                                            </div>
-                                            <div class="form-group col-lg-6"><label class="control-label"> Medical hx of a patient</label>
-                                                <input type="text" name="medhx" class="form-control " placeholder="Enter your Phone Number">
-                                            </div>
-                                            <div class="form-group col-lg-6"><label class="control-label"> Previous hx of anaesthesia</label>
-                                                <select class="form-control" name="prevhx" >
-                                                    <option selected value="0">Select HX of anaesthesia</option>
-                                                    <option value="yes">YES</option>
-                                                    <option value="no">NO</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <label> <h3>LABS</h3></label>
+                                        <label> <h3>Monitoring</h3></label>
                                         <div class="row mb-3">
                                             <div id="formFieldsContainer" class="row">
                                             <!-- Initial form fields -->
                                             <div class="form-group col-lg-6">
                                                 <label for="field1">Type:</label>
-                                                <input type="text" name="name[type][]" class="form-control">
+                                                <input type="text" name="monitor[type][]" class="form-control">
                                             </div>
                                             <div class="form-group col-lg-6">
                                                 <label for="field1">Result:</label>
-                                                <input type="text" name="name[result][]" class="form-control">
+                                                <input type="text" name="monitor[result][]" class="form-control">
                                             </div>
                                             </div>
                                             <!-- Button to add new form fields -->
@@ -290,7 +222,7 @@ $prev_admin_id = $rowpatient_que['admin_id'];
                                                 <button type="button" id="addFieldBtn" class="btn btn-primary">Add Field</button>
                                             </div>
                                         </div>
-                                        <label> <h3>VITALS</h3></label>
+                                        <label> <h3>General anaesthesia</h3></label>
                                         <div class="row mb-3">
                                             <div id="formFieldsContainervital" class="row">
                                             <!-- Initial form fields -->
@@ -308,7 +240,7 @@ $prev_admin_id = $rowpatient_que['admin_id'];
                                                 <button type="button" id="addFieldBtnvital" class="btn btn-primary">Add Field</button>
                                             </div>
                                         </div>
-                                        <label> <h3>CNS</h3></label>
+                                        <label> <h3>Ventilation</h3></label>
                                         <div class="row mb-3">
                                             <div id="formFieldsContainercns" class="row">
                                             <!-- Initial form fields -->
@@ -326,7 +258,7 @@ $prev_admin_id = $rowpatient_que['admin_id'];
                                                 <button type="button" id="addFieldBtncns" class="btn btn-primary">Add Field</button>
                                             </div>
                                         </div>
-                                        <label> <h3>PE</h3></label>
+                                        <label> <h3> Regional anaesthesia</h3></label>
                                         <div class="row mb-3">
                                             <div id="formFieldsContainerpe" class="row">
                                             <!-- Initial form fields -->
@@ -344,7 +276,7 @@ $prev_admin_id = $rowpatient_que['admin_id'];
                                                 <button type="button" id="addFieldBtnpe" class="btn btn-primary">Add Field</button>
                                             </div>
                                         </div>
-                                        <label> <h3>RENAL</h3></label>
+                                        <label> <h3>Extubation</h3></label>
                                         <div class="row mb-3">
                                             <div id="formFieldsContainerrena" class="row">
                                             <!-- Initial form fields -->
@@ -362,96 +294,7 @@ $prev_admin_id = $rowpatient_que['admin_id'];
                                                 <button type="button" id="addFieldBtnrena" class="btn btn-primary">Add Field</button>
                                             </div>
                                         </div>
-                                        <label> <h3>HEM</h3></label>
-                                        <div class="row mb-3">
-                                            <div id="formFieldsContainerhem" class="row">
-                                            <!-- Initial form fields -->
-                                            <div class="form-group col-lg-6">
-                                                <label for="field1">Type:</label>
-                                                <input type="text" name="namehem[type][]" class="form-control">
-                                            </div>
-                                            <div class="form-group col-lg-6">
-                                                <label for="field1">Result:</label>
-                                                <input type="text" name="namehem[result][]" class="form-control">
-                                            </div>
-                                            </div>
-                                            <!-- Button to add new form fields -->
-                                            <div class="col-lg-4">
-                                                <button type="button" id="addFieldBtnhem" class="btn btn-primary">Add Field</button>
-                                            </div>
-                                        </div>
-                                        <label> <h3>ONC</h3></label>
-                                        <div class="row mb-3">
-                                            <div id="formFieldsContaineronc" class="row">
-                                            <!-- Initial form fields -->
-                                            <div class="form-group col-lg-6">
-                                                <label for="field1">Type:</label>
-                                                <input type="text" name="nameonc[type][]" class="form-control">
-                                            </div>
-                                            <div class="form-group col-lg-6">
-                                                <label for="field1">Result:</label>
-                                                <input type="text" name="nameonc[result][]" class="form-control">
-                                            </div>
-                                            </div>
-                                            <!-- Button to add new form fields -->
-                                            <div class="col-lg-4">
-                                                <button type="button" id="addFieldBtnonc" class="btn btn-primary">Add Field</button>
-                                            </div>
-                                        </div>
-                                        <label> <h3>PULM</h3></label>
-                                        <div class="row mb-3">
-                                            <div id="formFieldsContainerpul" class="row">
-                                            <!-- Initial form fields -->
-                                            <div class="form-group col-lg-6">
-                                                <label for="field1">Type:</label>
-                                                <input type="text" name="namepul[type][]" class="form-control">
-                                            </div>
-                                            <div class="form-group col-lg-6">
-                                                <label for="field1">Result:</label>
-                                                <input type="text" name="namepul[result][]" class="form-control">
-                                            </div>
-                                            </div>
-                                            <!-- Button to add new form fields -->
-                                            <div class="col-lg-4">
-                                                <button type="button" id="addFieldBtnpul" class="btn btn-primary">Add Field</button>
-                                            </div>
-                                        </div>
-                                        <label> <h3>Planned anaesthesia</h3></label>
-                                        <div class="row mb-3">
-                                            <div id="formFieldsContainerpla" class="row">
-                                            <!-- Initial form fields -->
-                                            <div class="form-group col-lg-6">
-                                                <label for="field1">Type:</label>
-                                                <input type="text" name="namepla[type][]" class="form-control">
-                                            </div>
-                                            <div class="form-group col-lg-6">
-                                                <label for="field1">Result:</label>
-                                                <input type="text" name="namepla[result][]" class="form-control">
-                                            </div>
-                                            </div>
-                                            <!-- Button to add new form fields -->
-                                            <div class="col-lg-4">
-                                                <button type="button" id="addFieldBtnpla" class="btn btn-primary">Add Field</button>
-                                            </div>
-                                        </div>
-                                        <label> <h3>Other</h3></label>
-                                        <div class="row mb-3">
-                                            <div id="formFieldsContaineroth" class="row">
-                                            <!-- Initial form fields -->
-                                            <div class="form-group col-lg-6">
-                                                <label for="field1">Type:</label>
-                                                <input type="text" name="nameoth[type][]" class="form-control">
-                                            </div>
-                                            <div class="form-group col-lg-6">
-                                                <label for="field1">Result:</label>
-                                                <input type="text" name="nameoth[result][]" class="form-control">
-                                            </div>
-                                            </div>
-                                            <!-- Button to add new form fields -->
-                                            <div class="col-lg-4">
-                                                <button type="button" id="addFieldBtnoth" class="btn btn-primary">Add Field</button>
-                                            </div>
-                                        </div>
+                                        
                                         <div class="row mb-3">
                                             <label> <h3>Anaesthesiologist review</h3></label>
                                             <textarea class="form-control" rows="5" name="comment" id="comment"></textarea>
@@ -542,11 +385,11 @@ $prev_admin_id = $rowpatient_que['admin_id'];
       <div class="row" style="margin-left:50px;">
                                             <div class="form-group col-lg-5">
                                                 <label for="field${fieldCounter}">Type:</label>
-                                                <input type="text" name="name[type][]" class="form-control">
+                                                <input type="text" name="monitor[type][]" class="form-control">
                                             </div>
                                             <div class="form-group col-lg-5">
                                                 <label for="field1">Result:</label>
-                                                <input type="text" name="name[result][]" class="form-control">
+                                                <input type="text" name="monitor[result][]" class="form-control">
                                             </div>
                                             <button class="removeFieldBtn  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
                                 <i class="fa fa-minus"></i>
@@ -642,111 +485,7 @@ $prev_admin_id = $rowpatient_que['admin_id'];
       `;
       $("#formFieldsContainerrena").append(newField);
     }
-    function addFormFieldhem(){
-        fieldCounter++;
-      var newField = `
-      <div class="row" style="margin-left:50px;">
-                                            <div class="form-group col-lg-5">
-                                                <label for="field2${fieldCounter}">Type:</label>
-                                                <input type="text" name="namehem[type][]" class="form-control">
-                                            </div>
-                                            <div class="form-group col-lg-5">
-                                                <label for="field1">Result:</label>
-                                                <input type="text" name="namehem[result][]" class="form-control">
-                                            </div>
-                                            <button class="removeFieldBtn6  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
-                                <i class="fa fa-minus"></i>
-                            </button>
-          
-        </div>
-        
-      `;
-      $("#formFieldsContainerhem").append(newField);
-    }
-    function addFormFieldonc(){
-        fieldCounter++;
-      var newField = `
-      <div class="row" style="margin-left:50px;">
-                                            <div class="form-group col-lg-5">
-                                                <label for="field2${fieldCounter}">Type:</label>
-                                                <input type="text" name="nameonc[type][]" class="form-control">
-                                            </div>
-                                            <div class="form-group col-lg-5">
-                                                <label for="field1">Result:</label>
-                                                <input type="text" name="nameonc[result][]" class="form-control">
-                                            </div>
-                                            <button class="removeFieldBtn7  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
-                                <i class="fa fa-minus"></i>
-                            </button>
-          
-        </div>
-        
-      `;
-      $("#formFieldsContaineronc").append(newField);
-    }
-    function addFormFieldpul(){
-        fieldCounter++;
-      var newField = `
-      <div class="row" style="margin-left:50px;">
-                                            <div class="form-group col-lg-5">
-                                                <label for="field2${fieldCounter}">Type:</label>
-                                                <input type="text" name="namepul[type][]" class="form-control">
-                                            </div>
-                                            <div class="form-group col-lg-5">
-                                                <label for="field1">Result:</label>
-                                                <input type="text" name="namepul[result][]" class="form-control">
-                                            </div>
-                                            <button class="removeFieldBtn8  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
-                                <i class="fa fa-minus"></i>
-                            </button>
-          
-        </div>
-        
-      `;
-      $("#formFieldsContainerpul").append(newField);
-    }
-    function addFormFieldpla(){
-        fieldCounter++;
-      var newField = `
-      <div class="row" style="margin-left:50px;">
-                                            <div class="form-group col-lg-5">
-                                                <label for="field2${fieldCounter}">Type:</label>
-                                                <input type="text" name="namepla[type][]" class="form-control">
-                                            </div>
-                                            <div class="form-group col-lg-5">
-                                                <label for="field1">Result:</label>
-                                                <input type="text" name="namepla[result][]" class="form-control">
-                                            </div>
-                                            <button class="removeFieldBtn9  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
-                                <i class="fa fa-minus"></i>
-                            </button>
-          
-        </div>
-        
-      `;
-      $("#formFieldsContainerpla").append(newField);
-    }
-    function addFormFieldoth(){
-        fieldCounter++;
-      var newField = `
-      <div class="row" style="margin-left:50px;">
-                                            <div class="form-group col-lg-5">
-                                                <label for="field2${fieldCounter}">Type:</label>
-                                                <input type="text" name="nameoth[type][]" class="form-control">
-                                            </div>
-                                            <div class="form-group col-lg-5">
-                                                <label for="field1">Result:</label>
-                                                <input type="text" name="nameoth[result][]" class="form-control">
-                                            </div>
-                                            <button class="removeFieldBtn10  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
-                                <i class="fa fa-minus"></i>
-                            </button>
-          
-        </div>
-        
-      `;
-      $("#formFieldsContaineroth").append(newField);
-    }
+
 
     // Function to remove form fields
     $(document).on("click", ".removeFieldBtn", function() {
@@ -764,21 +503,7 @@ $prev_admin_id = $rowpatient_que['admin_id'];
     $(document).on("click", '.removeFieldBtn5',function(){
         $(this).parent().remove();
     })
-    $(document).on("click", '.removeFieldBtn6',function(){
-        $(this).parent().remove();
-    })
-    $(document).on("click", '.removeFieldBtn7',function(){
-        $(this).parent().remove();
-    })
-    $(document).on("click", '.removeFieldBtn8',function(){
-        $(this).parent().remove();
-    })
-    $(document).on("click", '.removeFieldBtn9',function(){
-        $(this).parent().remove();
-    });
-    $(document).on("click", '.removeFieldBtn10',function(){
-        $(this).parent().remove();
-    });
+ 
     // Event listener for the "Add Field" button
     $("#addFieldBtn").on("click", function() {
       addFormField();
@@ -795,21 +520,7 @@ $prev_admin_id = $rowpatient_que['admin_id'];
     $('#addFieldBtnrena').on("click", function(){
         addFormFieldrena();
     })
-    $('#addFieldBtnhem').on("click", function(){
-        addFormFieldhem();
-    })
-    $('#addFieldBtnonc').on("click", function(){
-        addFormFieldonc();
-    })
-    $('#addFieldBtnpul').on("click", function(){
-        addFormFieldpul();
-    })
-    $('#addFieldBtnpla').on("click", function(){
-        addFormFieldpla();
-    })
-    $('#addFieldBtnoth').on("click", function(){
-        addFormFieldoth();
-    })
+
   });
 </script>
 

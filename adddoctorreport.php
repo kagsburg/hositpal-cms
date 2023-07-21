@@ -170,15 +170,25 @@ $id = $_GET['id'];
                                     <li class="nav-item">
                                         <a class="nav-link" href="#radiography" data-toggle="tab" data-target="#radiography" role="tab" aria-controls="radiography" aria-selected="false">Radiology </a>
                                     </li>
+                                    <?php 
+                                    // get admitted details
+                                    $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE admission_id='$admission_id' AND status=1");
+                                    if (mysqli_num_rows($getadmitted)>0){
+                                    ?>
                                     <li class="nav-item">
                                         <a class="nav-link" href="#anesthesiology" data-toggle="tab" data-target="#anesthesiology" role="tab" aria-controls="anesthesiology" aria-selected="false">Anesthesiology</a>
                                     </li>
+                                    <?php } ?>
                                     <li class="nav-item">
                                         <a class="nav-link" href="#patron" data-toggle="tab" data-target="#patron" role="tab" aria-controls="patron" aria-selected="false">Patron</a>
                                     </li>
+                                    <?php
+                                    if (mysqli_num_rows($getadmitted)==0){
+                                        ?>
                                     <li class="nav-item">
                                         <a class="nav-link" href="#admission" data-toggle="tab" data-target="#admission" role="tab" aria-controls="admission" aria-selected="false">Admission</a>
                                     </li>
+                                    <?php } ?>
                                     <li class="nav-item">
                                         <a class="nav-link" href="#referral" data-toggle="tab" data-target="#referral" role="tab" aria-controls="referral" aria-selected="false">Referral</a>
                                     </li>
@@ -256,6 +266,15 @@ $id = $_GET['id'];
                                                             echo '<script>window.location.href = "doctorwaiting.php";</script>';
                                                     }
                                                     
+                                                    if ($reference == 'anesthesiology'){
+                                                        mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','1','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
+                                                        $new_patientsque_id = mysqli_insert_id($con);
+                                                        mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                                        $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully sent to Anesthesiology.</div>';
+                                                            // redirect to doctorwaiting
+                                                        echo '<script>window.location.href = "doctorcleared.php";</script>';
+
+                                                    }
         
                                                     mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
                                                     //     mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
@@ -772,72 +791,7 @@ $id = $_GET['id'];
                                                     Send to anesthesiology
                                                 </label>
                                             </div>
-
-
-                                            <div class="form-group notmedic" style="display: none;">
-                                                <label class="control-label">Section</label>
-                                                <select name="ref[anesthesiology][section][]" class="sections form-control">
-                                                    <option value="">Select Section</option>
-                                                    <?php
-                                                    $getsections =  mysqli_query($con, "SELECT * FROM sections WHERE status=1");
-                                                    while ($row1 =  mysqli_fetch_array($getsections)) {
-                                                        $section_id = $row1['section_id'];
-                                                        $section = $row1['section'];
-                                                    ?>
-                                                        <option value="<?php echo $section_id; ?>"><?php echo $section; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group notmedic" style="display: none;">
-                                                <label class="control-label">Medical Services</label>
-                                                <select name="ref[anesthesiology][servicename]" class="form-control servicename msnr multi-select_1">
-                                                    <option value="">Select Medical Service</option>
-                                                </select>
-                                                <?php
-                                                $getsection =  mysqli_query($con, "SELECT * FROM sections WHERE status=1");
-                                                while ($row =  mysqli_fetch_array($getsection)) {
-                                                    $section_id = $row['section_id'];
-                                                ?>
-                                                    <div id="" style="display:none;width:100%;" class="row services service<?php echo $section_id; ?> form-group">
-
-                                                        <?php
-                                                        $getmedicalservices =  mysqli_query($con, "SELECT * FROM medicalservices WHERE status=1 AND section_id='$section_id' ORDER BY medicalservice");
-                                                        while ($row1 =  mysqli_fetch_array($getmedicalservices)) {
-                                                            $medicalservice_id = $row1['medicalservice_id'];
-                                                            $medicalservice = $row1['medicalservice'];
-                                                            $charge = $row1['charge'];
-                                                        ?>
-                                                            <div class="col-lg-6">
-                                                                <div class="form-check form-check-inline">
-                                                                    <label class="form-check-label" style="font-size:14px">
-                                                                        <input type="checkbox" class="form-check-input" value="<?php echo $medicalservice_id; ?>" name="ref[anesthesiology][medicalservices][]"><?php echo $medicalservice; ?>
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-
-                                                        <?php } ?>
-                                                    </div>
-                                                <?php } ?>
-                                            </div>
-                                            <!-- <div class="form-group foranesthesiology" style="display: none">
-                                                <label>Select Anesthesiologist</label>
-                                                <select class="form-control room" name="ref[anesthesiology][anesthesiologist]">
-                                                    <option selected="selected" value="">Select option..</option>
-                                                    <?php
-                                                    $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE status=1 AND role='anesthesiologist'");
-                                                    while ($row = mysqli_fetch_array($getstaff)) {
-                                                        $staff_id = $row['staff_id'];
-                                                        $fullname = $row['fullname'];
-                                                    ?>
-                                                        <option value="<?php echo $staff_id; ?>"><?php echo $fullname; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div> -->
-                                            <div class="form-group foranesthesiology" style="display: none">
-                                                <label class="control-label">* Details & Instructions</label>
-                                                <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[anesthesiology][details]"></textarea>
-                                            </div>
+                                            
                                         </div>
                                         <div class="tab-pane nref" id="admission" role="tabpanel" aria-labelledby="admission-tab">
                                             <div class="form-check mb-3">
