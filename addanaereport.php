@@ -32,7 +32,7 @@ if (isset($_SESSION['patientreg'])) {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Add Patient</title>
+    <title>Add Patient Report </title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <link href="vendor/jqvmap/css/jqvmap.min.css" rel="stylesheet">
@@ -89,40 +89,97 @@ if (isset($_SESSION['patientreg'])) {
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Add Pre-operative : PART ONE</h4>
+                                <h4 class="card-title">Add Pre-operative </h4>
                             </div>
                             <div class="card-body">
                                 <div class="basic-form">
 
                                     <?php
-                                    if (isset($_POST['firstname'], $_POST['secondname'], $_POST['thirdname'], $_POST['gender'], $_POST['dob'], $_POST['spousename'], $_POST['spouseaddress'], $_POST['spousephone'], $_POST['phone'], $_POST['occupation'], $_POST['address'])) {
-                                        $firstname = mysqli_real_escape_string($con, trim($_POST['firstname']));
-                                        $secondname = mysqli_real_escape_string($con, trim($_POST['secondname']));
-                                        $thirdname = mysqli_real_escape_string($con, trim($_POST['thirdname']));
-                                        $gender = mysqli_real_escape_string($con, trim($_POST['gender']));
-                                        $dob = mysqli_real_escape_string($con, strtotime($_POST['dob']));
-                                        $maritalstatus = '';//mysqli_real_escape_string($con, trim($_POST['maritalstatus']));
-                                        $spousename = mysqli_real_escape_string($con, trim($_POST['spousename']));
-                                        $spouseaddress = mysqli_real_escape_string($con, trim($_POST['spouseaddress']));
-                                        $spousephone = mysqli_real_escape_string($con, trim($_POST['spousephone']));
-                                        $phone = mysqli_real_escape_string($con, trim($_POST['phone']));
-                                        $address = mysqli_real_escape_string($con, trim($_POST['address']));
-                                        $occupation = mysqli_real_escape_string($con, trim($_POST['occupation']));
-                                        if ((empty($firstname)) || (empty($secondname)) || (empty($gender)) || (empty($occupation)) || (empty($phone)) || (empty($address))) {
-                                            echo '<div class="alert alert-danger">All Fields marked * Should be Filled</div>';
-                                        } else {
-                                            mysqli_query($con, "INSERT INTO patients(firstname,secondname,thirdname,gender,dob,maritalstatus,spousename,spousephone,spouseaddress,religion,occupation,phone,address,email,employmentstatus,employername,employeraddress,employernumber,emergencyname,emergencyrelationship,emergencyphone,emergencyaddress,paymenttype,creditclient,insurancecompany,subscribername,socialsecuritynumber,policyidnumber,insuranceemployer,insurancedob,insurancecardext,secondarysubscribername,patientrelation,workphone,bloodgroup,weight,height,allergies,diseases,pregnancies,smoke,drink,druguse,drugtypes,exercise,specialdiet,activities,ext,docext,admin_id,timestamp,level,status) VALUES('$firstname','$secondname','$thirdname','$gender','$dob','$maritalstatus','$spousename','$spousephone','$spouseaddress','','$occupation','$phone','$address','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),1,'2')") or die(mysqli_error($con));
-                                            // mysqli_query($con, "UPDATE patients SET firstname='$firstname',secondname='$secondname',thirdname='$thirdname',gender='$gender',dob='$dob',maritalstatus='$maritalstatus',spousename='$spousename',spousephone='$spousephone',spouseaddress='$spouseaddress',religion='$religion',occupation='$occupation',phone='$phone',address='$address',email='$email',level='2' WHERE patient_id='" . $_SESSION['patientreg'] . "'") or die(mysqli_error($con));
+                                    if (isset($_POST['submit'])) {
+                                        
+                                        $procedure = mysqli_real_escape_string($con, trim($_POST['procedure']));
+                                        $surgeon = mysqli_real_escape_string($con, trim($_POST['surgeon']));
+                                        $weight = mysqli_real_escape_string($con, trim($_POST['weight']));
+                                        $npo = mysqli_real_escape_string($con, trim($_POST['npo']));
+                                        $allergy = mysqli_real_escape_string($con, trim($_POST['allergy']));
+                                        $mallampati = mysqli_real_escape_string($con, trim($_POST['mallampati']));
+                                        $prevhx = mysqli_real_escape_string($con, trim($_POST['prevhx']));
+                                        $name = $_POST['name'];
+                                        $vitals = $_POST['namevita'];
+                                        $cns = $_POST['namecns'];
+                                        $pe = $_POST['namepe'];
+                                        $renal = $_POST['namerena'];
+                                        $hem = $_POST['namehem'];
+                                        $onc = $_POST['nameonc'];
+                                        $pul = $_POST['namepul'];
+                                        $pla = $_POST['namepla'];
+                                        $oth = $_POST['nameoth'];
+                                        $anaesthesiologist = mysqli_real_escape_string($con, trim($_POST['anaesthesiologist']));
+                                        $comment = mysqli_real_escape_string($con, trim($_POST['comment']));
+                                        $date = date('Y-m-d');  
+                                        $time = date('H:i:s');
+                                        $insert = mysqli_query($con, "INSERT INTO anaesthesiareport(patient_id,procedure,surgeon,weight,npo,allergy,mallampati,prevhx,admin_id,comment,date,time,status) VALUES('$patient_id','$procedure','$surgeon','$weight','$npo','$allergy','$mallampati','$prevhx','$anaesthesiologist','$comment','$date','$time','1')");
+                                        if ($insert) {
                                             $last_id = mysqli_insert_id($con);
-                                            $_SESSION['patientreg'] = $last_id;
-                                    ?>
-                                            <script type="text/javascript">
-                                                window.location = "addpatient1.php";
-                                            </script>
-                                    <?php
-                                            echo '<div class="alert alert-success">Patient Information Successfully Added.Click <a href="addpatient2.php">here</a> to proceed</div>';
+                                            foreach ($name['type'] as $key => $value) {
+                                                $type = $value;
+                                                $result = $name['result'][$key];
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportlabs(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                            }
+                                            foreach ($vitals['type'] as $key => $value) {
+                                                $type = $value;
+                                                $result = $vitals['result'][$key];
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportvitals(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                            }
+                                            foreach ($cns['type'] as $key => $value) {
+                                                $type = $value;
+                                                $result = $cns['result'][$key];
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportcns(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                            }
+                                            foreach ($pe['type'] as $key => $value) {
+                                                $type = $value;
+                                                $result = $pe['result'][$key];
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportpe(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                            }
+                                            foreach ($renal['type'] as $key => $value) {
+                                                $type = $value;
+                                                $result = $renal['result'][$key];
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportrenal(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                            }
+                                            foreach ($hem['type'] as $key => $value) {
+                                                $type = $value;
+                                                $result = $hem['result'][$key];
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareporthem(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                            }
+                                            foreach ($onc['type'] as $key => $value) {
+                                                $type = $value;
+                                                $result = $onc['result'][$key];
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportonc(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                            }
+                                            foreach ($pul['type'] as $key => $value) {
+                                                $type = $value;
+                                                $result = $onc['result'][$key];
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportpul(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                            }
+                                            foreach ($pla['type'] as $key => $value) {
+                                                $type = $value;
+                                                $result = $onc['result'][$key];
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportpla(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                            }
+                                            foreach ($oth['type'] as $key => $value) {
+                                                $type = $value;
+                                                $result = $onc['result'][$key];
+                                                $insert = mysqli_query($con, "INSERT INTO anaesthesiareportoth(anaesthesiareport_id,type,result) VALUES('$last_id','$type','$result')");
+                                            }
+
                                         }
-                                    }
+                                    ?>
+                                           
+                                    <?php
+                                    //         echo '<div class="alert alert-success">Patient Information Successfully Added.Click <a href="addpatient2.php">here</a> to proceed</div>';
+                                    //     }
+                                    // }
+                                        }
                                     ?>
                                     <form method="post" name='form' class="form" action="" enctype="multipart/form-data">
                                         <?php
@@ -132,6 +189,7 @@ if (isset($_SESSION['patientreg'])) {
                                         $secondname = $row['secondname'];
                                         $gender = $row['gender'];   
                                         $dob = $row['dob'];
+                                        $weight=$row['weight'];
                                         if (strlen($patient_id) == 1) {
                                             $pin = '000' . $patient_id;
                                         }
@@ -155,13 +213,13 @@ if (isset($_SESSION['patientreg'])) {
                                                 <input type="text" name='secondname' class="form-control" value="<?php echo $secondname; ?>" disabled >
                                             </div>
                                             <div class="form-group col-lg-4"><label class="control-label">* FileNumber </label>
-                                                <input type="text" name='secondname' class="form-control" value="<?php echo $pin; ?>" disabled >
+                                                <input type="text" name='filenumber' class="form-control" value="<?php echo $pin; ?>" disabled >
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="form-group col-lg-4"><label class="control-label">* Gender</label>
-                                            <input type="text" name='secondname' class="form-control" value="<?php echo $gender; ?>" disabled/>
+                                            <input type="text" name='gender' class="form-control" value="<?php echo $gender; ?>" disabled/>
                                             </div>
 
                                             <div class="form-group col-lg-4"><label class="control-label">Date of Birth</label>
@@ -169,40 +227,231 @@ if (isset($_SESSION['patientreg'])) {
                                                 <input type="date" name="dob" class="form-control" value="" disabled>
                                             </div>
                                             <div class="form-group col-lg-4"><label class="control-label">* Ward</label>
-                                            <input type="text" name='secondname' class="form-control" value="<?php echo $gender; ?>" disabled/>
-                                            </div>
-                                        </div>
-                                        <div class="row forspouse" style="display: none">
-                                            <div class="form-group col-lg-4"><label class="control-label">Spouse Name</label>
-                                                <input type="text" name="spousename" class="form-control " placeholder="Enter Spouse Name">
-                                            </div>
-                                            <div class="form-group col-lg-4"><label class="control-label">Spouse Address</label>
-                                                <input type="text" name="spouseaddress" class="form-control ">
-                                            </div>
-                                            <div class="form-group col-lg-4"><label class="control-label">Spouse Phone Number</label>
-                                                <input type="text" name="spousephone" class="form-control ">
+                                            <input type="text" name='ward' class="form-control" value="<?php echo $gender; ?>" disabled/>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="form-group col-lg-6"><label class="control-label">* Occupation</label>
-                                                <input type="text" name="occupation" class="form-control " placeholder="Enter your Occupation">
-                                            </div>
-                                            <div class="form-group col-lg-6"><label class="control-label">* Address</label>
-                                                <input type="text" name="address" class="form-control " placeholder="Enter your Adress">
-                                            </div>
-                                            <div class="form-group col-lg-6"><label class="control-label">* Phone Number</label>
-                                                <input type="text" name="phone" class="form-control " placeholder="Enter your Phone Number">
+                                            <div class="form-group col-lg-4"><label class="control-label"> Procedure</label>
+                                            <input type="text" name='procedure' class="form-control" value="" />
                                             </div>
 
+                                            <div class="form-group col-lg-4"><label class="control-label">Surgeon</label>
+
+                                                <input type="text" name="surgeon" class="form-control" value="" >
+                                            </div>
+                                            <div class="form-group col-lg-4"><label class="control-label">Weight</label>
+                                            <input type="text" name='weight' class="form-control" value="<?php echo $weight; ?>"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-lg-6"><label class="control-label"> NPO duration(hours)</label>
+                                                <input type="text" name="npo" class="form-control " placeholder="Enter your Occupation">
+                                            </div>
+                                            <div class="form-group col-lg-6"><label class="control-label"> Allergy (If yes, specify)</label>
+                                                <input type="text" name="allergy" class="form-control " placeholder="Enter your Adress">
+                                            </div>
+                                            <div class="form-group col-lg-6"><label class="control-label"> Mallampati</label>
+                                                <input type="text" name="mallampati" class="form-control " placeholder="Enter your Phone Number">
+                                            </div>
+                                            <div class="form-group col-lg-6"><label class="control-label"> Medical hx of a patient</label>
+                                                <input type="text" name="medhx" class="form-control " placeholder="Enter your Phone Number">
+                                            </div>
+                                            <div class="form-group col-lg-6"><label class="control-label"> Previous hx of anaesthesia</label>
+                                                <select class="form-control" name="prevhx" >
+                                                    <option selected value="0">Select HX of anaesthesia</option>
+                                                    <option value="yes">YES</option>
+                                                    <option value="no">NO</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <label> <h3>LABS</h3></label>
+                                        <div class="row mb-3">
+                                            <div id="formFieldsContainer" class="row">
+                                            <!-- Initial form fields -->
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Type:</label>
+                                                <input type="text" name="name[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="name[result][]" class="form-control">
+                                            </div>
+                                            </div>
+                                            <!-- Button to add new form fields -->
+                                            <div class="col-lg-4">
+                                                <button type="button" id="addFieldBtn" class="btn btn-primary">Add Field</button>
+                                            </div>
+                                        </div>
+                                        <label> <h3>VITALS</h3></label>
+                                        <div class="row mb-3">
+                                            <div id="formFieldsContainervital" class="row">
+                                            <!-- Initial form fields -->
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Type:</label>
+                                                <input type="text" name="namevita[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namevita[result][]" class="form-control">
+                                            </div>
+                                            </div>
+                                            <!-- Button to add new form fields -->
+                                            <div class="col-lg-4">
+                                                <button type="button" id="addFieldBtnvital" class="btn btn-primary">Add Field</button>
+                                            </div>
+                                        </div>
+                                        <label> <h3>CNS</h3></label>
+                                        <div class="row mb-3">
+                                            <div id="formFieldsContainercns" class="row">
+                                            <!-- Initial form fields -->
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Type:</label>
+                                                <input type="text" name="namecns[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namecns[result][]" class="form-control">
+                                            </div>
+                                            </div>
+                                            <!-- Button to add new form fields -->
+                                            <div class="col-lg-4">
+                                                <button type="button" id="addFieldBtncns" class="btn btn-primary">Add Field</button>
+                                            </div>
+                                        </div>
+                                        <label> <h3>PE</h3></label>
+                                        <div class="row mb-3">
+                                            <div id="formFieldsContainerpe" class="row">
+                                            <!-- Initial form fields -->
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Type:</label>
+                                                <input type="text" name="namepe[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namepe[result][]" class="form-control">
+                                            </div>
+                                            </div>
+                                            <!-- Button to add new form fields -->
+                                            <div class="col-lg-4">
+                                                <button type="button" id="addFieldBtnpe" class="btn btn-primary">Add Field</button>
+                                            </div>
+                                        </div>
+                                        <label> <h3>RENAL</h3></label>
+                                        <div class="row mb-3">
+                                            <div id="formFieldsContainerrena" class="row">
+                                            <!-- Initial form fields -->
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Type:</label>
+                                                <input type="text" name="namerena[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namerena[result][]" class="form-control">
+                                            </div>
+                                            </div>
+                                            <!-- Button to add new form fields -->
+                                            <div class="col-lg-4">
+                                                <button type="button" id="addFieldBtnrena" class="btn btn-primary">Add Field</button>
+                                            </div>
+                                        </div>
+                                        <label> <h3>HEM</h3></label>
+                                        <div class="row mb-3">
+                                            <div id="formFieldsContainerhem" class="row">
+                                            <!-- Initial form fields -->
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Type:</label>
+                                                <input type="text" name="namehem[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namehem[result][]" class="form-control">
+                                            </div>
+                                            </div>
+                                            <!-- Button to add new form fields -->
+                                            <div class="col-lg-4">
+                                                <button type="button" id="addFieldBtnhem" class="btn btn-primary">Add Field</button>
+                                            </div>
+                                        </div>
+                                        <label> <h3>ONC</h3></label>
+                                        <div class="row mb-3">
+                                            <div id="formFieldsContaineronc" class="row">
+                                            <!-- Initial form fields -->
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Type:</label>
+                                                <input type="text" name="nameonc[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="nameonc[result][]" class="form-control">
+                                            </div>
+                                            </div>
+                                            <!-- Button to add new form fields -->
+                                            <div class="col-lg-4">
+                                                <button type="button" id="addFieldBtnonc" class="btn btn-primary">Add Field</button>
+                                            </div>
+                                        </div>
+                                        <label> <h3>PULM</h3></label>
+                                        <div class="row mb-3">
+                                            <div id="formFieldsContainerpul" class="row">
+                                            <!-- Initial form fields -->
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Type:</label>
+                                                <input type="text" name="namepul[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namepul[result][]" class="form-control">
+                                            </div>
+                                            </div>
+                                            <!-- Button to add new form fields -->
+                                            <div class="col-lg-4">
+                                                <button type="button" id="addFieldBtnpul" class="btn btn-primary">Add Field</button>
+                                            </div>
+                                        </div>
+                                        <label> <h3>Planned anaesthesia</h3></label>
+                                        <div class="row mb-3">
+                                            <div id="formFieldsContainerpla" class="row">
+                                            <!-- Initial form fields -->
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Type:</label>
+                                                <input type="text" name="namepla[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namepla[result][]" class="form-control">
+                                            </div>
+                                            </div>
+                                            <!-- Button to add new form fields -->
+                                            <div class="col-lg-4">
+                                                <button type="button" id="addFieldBtnpla" class="btn btn-primary">Add Field</button>
+                                            </div>
+                                        </div>
+                                        <label> <h3>Other</h3></label>
+                                        <div class="row mb-3">
+                                            <div id="formFieldsContaineroth" class="row">
+                                            <!-- Initial form fields -->
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Type:</label>
+                                                <input type="text" name="nameoth[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="nameoth[result][]" class="form-control">
+                                            </div>
+                                            </div>
+                                            <!-- Button to add new form fields -->
+                                            <div class="col-lg-4">
+                                                <button type="button" id="addFieldBtnoth" class="btn btn-primary">Add Field</button>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label> <h3>Anaesthesiologist review</h3></label>
+                                            <textarea class="form-control" rows="5" id="comment"></textarea>
                                         </div>
                                         <div class="form-group pull-right">
-                                            <a href="canceladdpatient" class="btn btn-danger" onclick="return cancelpatient()">Cancel</a>
-                                            <button class="btn btn-primary" type="submit">Proceed</button>
-                                            <script type="text/javascript">
-                                                function cancelpatient() {
-                                                    return confirm('You are about To Cancel this process. Are you sure you want to proceed?');
-                                                }
-                                            </script>
+                                            <!-- <a href="canceladdpatient" class="btn btn-danger" onclick="return cancelpatient()">Cancel</a> -->
+                                            <button class="btn btn-primary" type="submit" name="submit">save</button>
+                                           
                                         </div>
                                     </form>
 
@@ -273,6 +522,289 @@ if (isset($_SESSION['patientreg'])) {
         frmvalidator.addValidation("gender", "req", "*Gender is required");
         frmvalidator.addValidation("maritalstatus", "req", "*Marital Status is required");
     </script>
+    <script>
+  $(document).ready(function() {
+    // Counter for unique field names
+    var fieldCounter = 1;
+
+    // Function to add form fields
+    function addFormField() {
+      fieldCounter++;
+      var newField = `
+      <div class="row" style="margin-left:50px;">
+                                            <div class="form-group col-lg-5">
+                                                <label for="field${fieldCounter}">Type:</label>
+                                                <input type="text" name="name[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-5">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="name[result][]" class="form-control">
+                                            </div>
+                                            <button class="removeFieldBtn  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+          
+        </div>
+        
+      `;
+      $("#formFieldsContainer").append(newField);
+    }
+    function addFormFieldvital() {
+      fieldCounter++;
+      var newField = `
+      <div class="row" style="margin-left:50px;">
+                                            <div class="form-group col-lg-5">
+                                                <label for="field2${fieldCounter}">Type:</label>
+                                                <input type="text" name="namevita[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-5">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namevita[result][]" class="form-control">
+                                            </div>
+                                            <button class="removeFieldBtn2  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+          
+        </div>
+        
+      `;
+      $("#formFieldsContainervital").append(newField);
+    }
+    function addFormFieldcns(){
+        fieldCounter++;
+      var newField = `
+      <div class="row" style="margin-left:50px;">
+                                            <div class="form-group col-lg-5">
+                                                <label for="field2${fieldCounter}">Type:</label>
+                                                <input type="text" name="namecns[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-5">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namecns[result][]" class="form-control">
+                                            </div>
+                                            <button class="removeFieldBtn3  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+          
+        </div>
+        
+      `;
+      $("#formFieldsContainercns").append(newField);
+
+    }
+    function addFormFieldpe(){
+        fieldCounter++;
+      var newField = `
+      <div class="row" style="margin-left:50px;">
+                                            <div class="form-group col-lg-5">
+                                                <label for="field2${fieldCounter}">Type:</label>
+                                                <input type="text" name="namepe[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-5">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namepe[result][]" class="form-control">
+                                            </div>
+                                            <button class="removeFieldBtn4  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+          
+        </div>
+        
+      `;
+      $("#formFieldsContainerpe").append(newField);
+    }
+    function addFormFieldrena(){
+        fieldCounter++;
+      var newField = `
+      <div class="row" style="margin-left:50px;">
+                                            <div class="form-group col-lg-5">
+                                                <label for="field2${fieldCounter}">Type:</label>
+                                                <input type="text" name="namerena[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-5">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namerena[result][]" class="form-control">
+                                            </div>
+                                            <button class="removeFieldBtn5  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+          
+        </div>
+        
+      `;
+      $("#formFieldsContainerrena").append(newField);
+    }
+    function addFormFieldhem(){
+        fieldCounter++;
+      var newField = `
+      <div class="row" style="margin-left:50px;">
+                                            <div class="form-group col-lg-5">
+                                                <label for="field2${fieldCounter}">Type:</label>
+                                                <input type="text" name="namehem[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-5">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namehem[result][]" class="form-control">
+                                            </div>
+                                            <button class="removeFieldBtn6  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+          
+        </div>
+        
+      `;
+      $("#formFieldsContainerhem").append(newField);
+    }
+    function addFormFieldonc(){
+        fieldCounter++;
+      var newField = `
+      <div class="row" style="margin-left:50px;">
+                                            <div class="form-group col-lg-5">
+                                                <label for="field2${fieldCounter}">Type:</label>
+                                                <input type="text" name="nameonc[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-5">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="nameonc[result][]" class="form-control">
+                                            </div>
+                                            <button class="removeFieldBtn7  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+          
+        </div>
+        
+      `;
+      $("#formFieldsContaineronc").append(newField);
+    }
+    function addFormFieldpul(){
+        fieldCounter++;
+      var newField = `
+      <div class="row" style="margin-left:50px;">
+                                            <div class="form-group col-lg-5">
+                                                <label for="field2${fieldCounter}">Type:</label>
+                                                <input type="text" name="namepul[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-5">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namepul[result][]" class="form-control">
+                                            </div>
+                                            <button class="removeFieldBtn8  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+          
+        </div>
+        
+      `;
+      $("#formFieldsContainerpul").append(newField);
+    }
+    function addFormFieldpla(){
+        fieldCounter++;
+      var newField = `
+      <div class="row" style="margin-left:50px;">
+                                            <div class="form-group col-lg-5">
+                                                <label for="field2${fieldCounter}">Type:</label>
+                                                <input type="text" name="namepla[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-5">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="namepla[result][]" class="form-control">
+                                            </div>
+                                            <button class="removeFieldBtn9  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+          
+        </div>
+        
+      `;
+      $("#formFieldsContainerpla").append(newField);
+    }
+    function addFormFieldoth(){
+        fieldCounter++;
+      var newField = `
+      <div class="row" style="margin-left:50px;">
+                                            <div class="form-group col-lg-5">
+                                                <label for="field2${fieldCounter}">Type:</label>
+                                                <input type="text" name="nameoth[type][]" class="form-control">
+                                            </div>
+                                            <div class="form-group col-lg-5">
+                                                <label for="field1">Result:</label>
+                                                <input type="text" name="nameoth[result][]" class="form-control">
+                                            </div>
+                                            <button class="removeFieldBtn10  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+          
+        </div>
+        
+      `;
+      $("#formFieldsContaineroth").append(newField);
+    }
+
+    // Function to remove form fields
+    $(document).on("click", ".removeFieldBtn", function() {
+      $(this).parent().remove();
+    });
+    $(document).on("click", ".removeFieldBtn2", function() {
+      $(this).parent().remove();
+    });
+    $(document).on("click", ".removeFieldBtn3", function() {
+      $(this).parent().remove();
+    });
+    $(document).on("click", '.removeFieldBtn4',function(){
+        $(this).parent().remove();
+    })
+    $(document).on("click", '.removeFieldBtn5',function(){
+        $(this).parent().remove();
+    })
+    $(document).on("click", '.removeFieldBtn6',function(){
+        $(this).parent().remove();
+    })
+    $(document).on("click", '.removeFieldBtn7',function(){
+        $(this).parent().remove();
+    })
+    $(document).on("click", '.removeFieldBtn8',function(){
+        $(this).parent().remove();
+    })
+    $(document).on("click", '.removeFieldBtn9',function(){
+        $(this).parent().remove();
+    });
+    $(document).on("click", '.removeFieldBtn10',function(){
+        $(this).parent().remove();
+    });
+    // Event listener for the "Add Field" button
+    $("#addFieldBtn").on("click", function() {
+      addFormField();
+    });
+    $("#addFieldBtnvital").on("click", function() {
+      addFormFieldvital();
+    });
+    $('#addFieldBtncns').on("click",function(){
+        addFormFieldcns();
+    });
+    $('#addFieldBtnpe').on("click", function(){
+        addFormFieldpe();
+    })
+    $('#addFieldBtnrena').on("click", function(){
+        addFormFieldrena();
+    })
+    $('#addFieldBtnhem').on("click", function(){
+        addFormFieldhem();
+    })
+    $('#addFieldBtnonc').on("click", function(){
+        addFormFieldonc();
+    })
+    $('#addFieldBtnpul').on("click", function(){
+        addFormFieldpul();
+    })
+    $('#addFieldBtnpla').on("click", function(){
+        addFormFieldpla();
+    })
+    $('#addFieldBtnoth').on("click", function(){
+        addFormFieldoth();
+    })
+  });
+</script>
+
 
 </body>
 
