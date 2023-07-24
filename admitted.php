@@ -92,7 +92,11 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                          <?php      
                                      if(($_SESSION['elcthospitallevel']=='doctor')){
                $getadmitted= mysqli_query($con,"SELECT * FROM admitted WHERE status=1 AND admin_id='".$_SESSION['elcthospitaladmin']."' ORDER BY admitted_id DESC");
-                                     }  if(($_SESSION['elcthospitallevel']=='admin')){
+                                     } if (($_SESSION['elcthospitallevel']=='nurse')) {
+                $getadmitted= mysqli_query($con,"SELECT * FROM admitted WHERE status=1 ORDER BY admitted_id DESC");
+                                         } 
+
+                                     if(($_SESSION['elcthospitallevel']=='admin')){
                $getadmitted= mysqli_query($con,"SELECT * FROM admitted WHERE status=1 ORDER BY admitted_id DESC");
                                      }
                   while ($row = mysqli_fetch_array($getadmitted)) {
@@ -156,10 +160,10 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                                        ?>
                                          <a href="hideadmitted?id=<?php echo $admitted_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_delete<?php echo $admitted_id;?>()">Remove</a>
                                              <script type="text/javascript">
-function confirm_delete<?php echo $admitted_id; ?>() {
-  return confirm('You are about To Remove this Admission. Are you sure you want to proceed?');
-}
-</script>                
+                                                    function confirm_delete<?php echo $admitted_id; ?>() {
+                                                    return confirm('You are about To Remove this Admission. Are you sure you want to proceed?');
+                                                    }
+                                                    </script>                
             
                                                            <?php }?>
                                                </td>

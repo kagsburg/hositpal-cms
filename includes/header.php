@@ -346,7 +346,7 @@
               <span class="nav-text">Pending Registrations</span>
             </a>
           </li> -->
-          <li>
+          <!-- <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-money"></i>
               <span class="nav-text">Clearance</span>
@@ -354,19 +354,19 @@
             <ul aria-expanded="false">
               <li><a href="clearance">Pending Bills</a></li>
             </ul>
-          </li>
+          </li> -->
           <li>
             <a class="ai-icon" href="fullypaid" aria-expanded="false">
               <i class="fa fa-money"></i>
               <span class="nav-text">Paid</span>
             </a>
           </li>
-          <li>
+          <!-- <li>
             <a class="ai-icon" href="paymentstatus" aria-expanded="false">
               <i class="fa fa-money"></i>
               <span class="nav-text">Payment Status</span>
             </a>
-          </li>
+          </li> -->
         <?php }
         if (($_SESSION['elcthospitallevel'] == 'accountant')) {
         ?>
@@ -409,6 +409,7 @@
               <!-- <li><a href="admitted">Admission</a></li> -->
               <li><a href="outpatients">Outpatient</a></li>
               <li><a href="inpatients">Inpatients</a></li>
+              <li><a href="admitted">Admitted Patients</a></li>
               <li><a href="registrationrequests">Pending Registrations</a></li>
             </ul>
           </li>

@@ -130,8 +130,8 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
   if(strlen($patient_id)>=5){
       $pin=$patient_id;
      }       
-    $checksection= mysqli_query($con,"SELECT * FROM staffdepts WHERE staff_id='".$_SESSION['elcthospitaladmin']."' AND servicecategory_id='$section_id' AND status=1");
- if(mysqli_num_rows($checksection)>0){
+//     $checksection= mysqli_query($con,"SELECT * FROM staffdepts WHERE staff_id='".$_SESSION['elcthospitaladmin']."' AND servicecategory_id='$section_id' AND status=1");
+//  if(mysqli_num_rows($checksection)>0){
     ?>
                                           <tr class="gradeA">
                                               <td><?php echo $pin; ?></td>
@@ -145,7 +145,7 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                        <a href="admission?id=<?php echo $admitted_id; ?>" class="btn btn-success btn-xs">View Details</a>  
                                      </td>
                                      </tr>
-                 <?php } }?>
+                 <?php } ?>
                                         </tbody>     
                                     </table>     
                             </div>

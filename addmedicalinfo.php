@@ -70,7 +70,6 @@ $patient_id = $patient['patient_id'];
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title">Add Patient : (Medication Information)</h4>
@@ -185,7 +184,6 @@ $patient_id = $patient['patient_id'];
                                 </div>
                             </div>
                         </div>
-                    </div>
 
                 </div>
             </div>

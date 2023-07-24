@@ -76,6 +76,7 @@ $id = $_GET['id'];
                         <div class="col-lg-12">
                             <!-- <a href="admissionprint?id=<?php echo $id; ?>" class="btn btn-success mb-2 btn-xs">Print</a> -->
                             <?php
+                            // status 2 is for discharged from ward
                             $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE status IN (1,2) AND admitted_id='$id'");
                             $row = mysqli_fetch_array($getadmitted);
                             $admission_id = $row['admission_id'];
@@ -88,13 +89,30 @@ $id = $_GET['id'];
                             $admin_id = $row['admin_id'];
                             if (($_SESSION['elcthospitallevel'] == 'nurse') && ($status == 1)) {
                             ?>
-                                <a href="addnursingsheet?id=<?php echo $id; ?>" class="btn btn-info mb-2 btn-xs">Add Nursing Sheet</a>
-                                <a href="addconsumeditems?id=<?php echo $id; ?>" class="btn btn-primary mb-2 btn-xs">Add Consumed items</a>
-                                <a href="requestmedication?id=<?php echo $id; ?>" class="btn btn-warning mb-2 btn-xs">Request Medication</a>
+                                <a href="addnursingsheet?id=<?php echo $id; ?>" class="btn btn-info mb-2 btn-xs">Add Medication</a>
+                                <button data-toggle="modal" data-target="#medical<?php echo $id; ?>" class="btn btn-primary mb-2 btn-xs">Add Medical Case </button>
+                                <!-- <button data-toggle="modal" data-target="#major<?php echo $id; ?>" class="btn btn-primary mb-2 btn-xs">Add Major Theater </button> -->
+                                <!-- <a href="requestmedication?id=<?php echo $id; ?>" class="btn btn-warning mb-2 btn-xs">Request Medication</a> -->
+                                <a href="addobservation?id=<?php echo $id; ?>" class="btn btn-warning mb-2 btn-xs">General Observation</a>
                             <?php } ?>
+                            <?php 
+                            if ($status != 2){
+                                ?>
+                            <button data-toggle="modal" data-target="#discharge<?php echo $id; ?>" class="btn btn-success mb-2 btn-xs">Discharge Patient</button>
+                            <?php }?>
                         </div>
                         <?php
-                        
+                            if (isset($_POST['submitprogress'])){
+                                $opdate = mysqli_real_escape_string($con,strtotime($_POST['opdate']));
+                                $progress = mysqli_real_escape_string($con,trim($_POST['progress']));
+                                $treatment =  mysqli_real_escape_string($con,trim($_POST['treatment']));
+                                $diet =  mysqli_real_escape_string($con,trim($_POST['diet']));
+                                $insert = mysqli_query($con, "INSERT INTO medicalcase (admitted_id, date, progress, treatment, diet,admin_id,status) VALUES ('$id', '$opdate', '$progress', '$treatment', '$diet','".$_SESSION['elcthospitaladmin']."',1)") or die(mysqli_error($con));
+                                if ($insert) {
+                                    echo '<script>alert("Patient Medical Case Report added successfully")</script>';
+                                    echo '<script>window.location.href = "admission?id=' . $id . '";</script>';
+                                }
+                            }
                             $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id'");
                             $row1 = mysqli_fetch_array($getadmission);
                             $patient_id = $row1['patient_id'];
@@ -241,7 +259,7 @@ $id = $_GET['id'];
                                         <li class="nav-item">
                                             <a class="nav-link" data-toggle="tab" href="#consumeditems">
                                                 <strong class="text-primary">
-                                                    Consumed Items
+                                                    Observation Sheets
                                                 </strong>
                                             </a>
                                         </li>
@@ -312,6 +330,10 @@ $id = $_GET['id'];
                                                                     if ($status == 3) {
                                                                         echo '<span class="badge badge-danger">Cancelled</span>';
                                                                     }
+                                                                    if ($status == 4) {
+                                                                        echo '<span class="badge badge-warning">Review</span>';
+                                                                    }
+                                                                    
                                                                     ?>
                                                                 </td>
                                                                 <td><?php echo $operationtime; ?></td>
@@ -363,74 +385,41 @@ $id = $_GET['id'];
 
                                             <div class="table-responsive pt-4">
                                                 <?php
-                                                $getprogress = mysqli_query($con, "SELECT * FROM progress WHERE admitted_id='$id'") or die(mysqli_error($con));
+                                                $getprogress = mysqli_query($con, "SELECT * FROM medicalcase WHERE admitted_id='$id'") or die(mysqli_error($con));
                                                 if (mysqli_num_rows($getprogress) == 0) {
                                                     echo '<div class="alert alert-danger">No Progress Report Found</div>';
                                                 }
                                                 while ($row = mysqli_fetch_array($getprogress)) {
                                                     $date = $row['date'];
-                                                    $progress_id = $row['progress_id'];
-                                                    $day = $row['day'];
-                                                    $ta = $row['ta'];
-                                                    $fr = $row['fr'];
-                                                    $type = $row['type'];
-                                                    $pulse = $row['pulse'];
-                                                    $tovalue = $row['tovalue'];
-                                                    $oxygensaturation = $row['oxygensaturation'];
-                                                    $clinicalsigns = $row['clinicalsigns'];
-                                                    $physicalsigns = $row['physicalsigns'];
-                                                    $diagnostichypothesis = $row['diagnostichypothesis'];
-                                                    $processinginprocess = $row['processinginprocess'];
-                                                    $recommendations = $row['recommendations'];
+                                                    $progress_id = $row['progress'];
+                                                    $treatment = $row['treatment'];
+                                                    $diet = $row['diet'];
+                                                    $admin_id = $row['admin_id'];
+                                                    $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$admin_id'") or die(mysqli_error($con));
+                                                    $row= mysqli_fetch_array($getstaff);
+                                                    $fullname = $row['fullname'];
                                                 ?>
-                                                    <h4><strong><?php echo strtoupper($type); ?> REPORT ON <?php echo date('d/M/Y', $date); ?></strong></h4>
+                                                    <h4><strong> REPORT ON <?php echo date('d/M/Y', $date); ?></strong></h4>
                                                     <table class="table  table-striped table-responsive-sm table-bordered">
                                                         <thead>
                                                             <tr>
                                                                 <th>DAY</th>
-                                                                <th>TO</th>
-                                                                <th>TA</th>
-                                                                <th>FR</th>
-                                                                <th>PULSE</th>
-                                                                <th>OXYGEN SATURATION</th>
+                                                                <th>PROGRESS</th>
+                                                                <th>TREATMENT</th>
+                                                                <th>DIET</th>
+                                                                <th>ATTENDANT</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             <tr>
-                                                                <td><?php echo $day; ?></td>
-                                                                <td><?php echo $tovalue; ?></td>
-                                                                <td><?php echo $ta; ?></td>
-                                                                <td><?php echo $fr; ?></td>
-                                                                <td><?php echo $pulse; ?></td>
-                                                                <td><?php echo $oxygensaturation; ?></td>
+                                                                <td><?php echo date('d/M/Y', $date); ?></td>
+                                                                <td><?php echo $progress_id; ?></td>
+                                                                <td><?php echo $treatment; ?></td>
+                                                                <td><?php echo $diet; ?></td>
+                                                                <td><?php echo $fullname; ?></td>
                                                             </tr>
-                                                            <tr>
-                                                                <th colspan="2">CLINICAL SIGNS</th>
-                                                                <th colspan="2">PHYSICAL SIGNS</th>
-                                                                <th colspan="2">DIAGNOSTIC HYPOTHESIS</th>
-                                                            </tr>
-                                                            <tr>
-                                                                <td colspan="2"><?php echo $clinicalsigns; ?></td>
-                                                                <td colspan="2"><?php echo $physicalsigns; ?></td>
-                                                                <td colspan="2"><?php echo $diagnostichypothesis; ?></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th colspan="3">IN PROCESS</th>
-                                                                <th colspan="3">OTHER RECOMMENDATIONS</th>
-                                                            </tr>
-                                                            <tr>
-                                                                <td colspan="3"><?php echo $processinginprocess; ?></td>
-                                                                <td colspan="3"><?php echo $recommendations; ?></td>
-                                                            </tr>
-
-                                                            <tr>
-                                                                <th colspan="6">MEDICATION</th>
-                                                            </tr>
-                                                            <tr>
-                                                                <th colspan="3">DRUG</th>
-                                                                <th colspan="3">PRESCRIPTION</th>
-                                                            </tr>
-                                                            <?php
+                                                            
+                                                            <!-- <?php
                                                             $getmedication = mysqli_query($con, "SELECT * FROM progressmedications WHERE progress_id='$progress_id'");
                                                             while ($row2 = mysqli_fetch_array($getmedication)) {
                                                                 $drug = $row2['drug'];
@@ -449,7 +438,7 @@ $id = $_GET['id'];
                                                                     <td colspan="3"><?php echo $commercialname . ' (' . $pharmaceuticalform . ')' ?></td>
                                                                     <td colspan="3"><?php echo $prescription; ?></td>
                                                                 </tr>
-                                                            <?php } ?>
+                                                            <?php } ?> -->
                                                         </tbody>
                                                     </table>
                                                 <?php } ?>
@@ -499,16 +488,18 @@ $id = $_GET['id'];
                                                                 $medication = $row2['medication'];
                                                                 $consumption = $row2['consumption'];
                                                                 $admissionroot = $row2['admissionroot'];
-                                                                $getitem = mysqli_query($con, "SELECT * FROM pharmacyitems WHERE status=1 AND pharmacyitem_id='$medication' ");
+                                                                $getitem = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$medication' ");
                                                                 $rowt = mysqli_fetch_array($getitem);
-                                                                $commercialname = $rowt['commercialname'];
-                                                                $pharmaceuticalform_id = $rowt['pharmaceuticalform_id'];
-                                                                $getcats =  mysqli_query($con, "SELECT * FROM pharmaceuticalforms WHERE status=1 AND pharmaceuticalform_id='$pharmaceuticalform_id'");
-                                                                $rowf =  mysqli_fetch_array($getcats);
-                                                                $pharmaceuticalform = $rowf['pharmaceuticalform'];
+                                                                $inventoryitem_id = $rowt['inventoryitem_id'];
+                                                                $itemname = $rowt['itemname'];
+                                                                $measurement_id = $rowt['measurement_id'];
+                                                                $type = $rowt['type'];
+                                                                $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
+                                                                $row2 =  mysqli_fetch_array($getunit);
+                                                                $measurement = $row2['measurement'];
                                                             ?>
                                                                 <tr>
-                                                                    <td><?php echo $commercialname . ' (' . $pharmaceuticalform . ')'; ?></td>
+                                                                    <td><?php echo $itemname . ' (' . $measurement . ')'; ?></td>
                                                                     <td><?php echo $consumption; ?></td>
                                                                     <td><?php echo $admissionroot; ?></td>
                                                                 </tr>
@@ -519,6 +510,88 @@ $id = $_GET['id'];
                                             </div>
                                         </div>
                                         <div class="tab-pane fade" id="consumeditems" role="tabpanel">
+                                            <div class="table-responsive pt-4">
+                                                <?php 
+                                                 $getobservationsheets = mysqli_query($con, "SELECT * FROM observationsheets WHERE admitted_id='$id' AND status=1 ORDER BY date") or die(mysqli_error($con));
+                                                if (mysqli_num_rows($getobservationsheets) == 0) {
+                                                    echo '<div class="alert alert-danger">No Observation Sheet Found</div>';
+                                                }
+                                                while ($row = mysqli_fetch_array($getobservationsheets)) {
+                                                    $date = $row['date'];
+                                                    $time = $row['time'];
+                                                    $observationsheet_id = $row['observation_id'];
+                                                    $bp = $row['bp'];
+                                                    $t = $row['t'];
+                                                    $p = $row['p'];
+                                                    $r = $row['r'];
+                                                    $nature = $row['fluid'];
+                                                    $oral= $row['oral'];
+                                                    $iv = $row['iv'];
+                                                    $total = $row['tot'];
+                                                    $urine = $row['urine'];
+                                                    $vomit = $row['vomit'];
+                                                    $aspirate =$row['aspirate'];
+                                                    $tot= $row['total2'];
+                                                    $bal= $row['balance'];
+                                                    $admin_id = $row['admin_id'];
+                                                    $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$admin_id'") or die(mysqli_error($con));
+                                                    $rows = mysqli_fetch_array($getstaff);
+                                                    $fullname = $rows['fullname'];
+                                                
+                                                ?>
+                                                    <table class="table  table-striped table-responsive-sm table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>DATE</th>
+                                                                <th>BP</th>
+                                                                <th>T</th>
+                                                                <th>P</th>
+                                                                <th>R</th>
+                                                                <th>NATURE</th>
+                                                                <th>NURSE</th>
+                                                                <th>TIME</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td><?php echo  $date; ?></td>
+                                                                <td><?php echo  $bp; ?></td>
+                                                                <td><?php echo  $t; ?></td>
+                                                                <td><?php echo  $p; ?></td>
+                                                                <td><?php echo  $r; ?></td>
+                                                                <td><?php echo  $nature; ?></td>
+                                                                <td><?php echo $fullname; ?></td>
+                                                                <td><?php echo $time; ?></td>
+                                                            <tr>
+                                                                <th colspan="3">IN Take & Body Loss</th>
+                                                            </tr>
+                                                            <tr >
+                                                                <th>Oral</th>
+                                                                <th>IV</th>
+                                                                <th>URINE</th>
+                                                                <th>VOMIT</th>
+                                                                <th>ASPIRATE</th>
+                                                                <th>TOTAL</th>
+                                                                <th>BALANCE</th>
+
+                                                            </tr>
+                                                            <tr>
+                                                                <td><?php echo $oral; ?></td>
+                                                                <td><?php echo $iv; ?></td>
+                                                                <td><?php echo $urine; ?></td>
+                                                                <td><?php echo $vomit; ?></td>
+                                                                <td><?php echo $aspirate; ?></td>
+                                                                <td><?php echo $tot; ?></td>
+                                                                <td><?php echo $bal; ?></td>
+                                                            </tr>
+
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                <?php } ?>
+
+                                            </div>
+                                            <hr>
                                             <div class="table-responsive pt-4">
                                                 <?php
                                                 $getconsumed = mysqli_query($con, "SELECT * FROM consumed WHERE admitted_id='$id' AND status=1") or die(mysqli_error($con));
@@ -584,6 +657,83 @@ $id = $_GET['id'];
                     </div>
                 </div>
             <?php } ?>
+            <?php 
+                if (isset($_POST['submitdischarge'])){
+                    $date =  mysqli_real_escape_string($con,strtotime($_POST['disdate']));  
+                    $remarks = mysqli_real_escape_string($con,trim($_POST['remarks']));
+
+                    $insert = mysqli_query($con, "INSERT INTO discharged (admitted_id, dischargedate, remarks,admin_id,timestamp,status) VALUES ('$id', '$date', '$remarks','".$_SESSION['elcthospitaladmin']."',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
+                    if ($insert){
+                        $update = mysqli_query($con, "UPDATE admitted SET status=2,dischargedate='$date' WHERE admission_id='$admission_id'") or die(mysqli_error($con));
+                        $update2= mysqli_query($con, "UPDATE admissions set status=2,dischargedate'$date' where admission_id='$admission'") or die(mysqli_error($con));
+                        echo '<script>alert("Patient Discharged from ward successfully")</script>';
+                                    echo '<script>window.location.href = "admission?id=' . $id . '";</script>';
+                    }
+
+                }
+            ?>
+            <div class="modal fade" id="medical<?php echo $id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="exampleModalLabel">Add Patient Medical Case  Report </h5>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <form method="post" name='form' class="form" action="" enctype="multipart/form-data" >
+                                                                        <div class="form-group nref" >
+                                                                            <label class="control-label"> Date</label>
+                                                                            <input type="date" name="opdate" class="form-control" value="<?php echo date('Y-m-d',$timenow); ?>" required>
+                                                                        </div>
+
+                                                                            <div class="form-group notmedic">
+                                                                                <label class="control-label">Progress </label>
+                                                                                <textarea name="progress" class="form-control" rows="5" required></textarea>
+                                                                            </div>
+                                                                            <div class="form-group notmedic">
+                                                                                <label class="control-label">Treatment </label>
+                                                                                <textarea name="treatment" class="form-control" rows="5" required></textarea>
+                                                                            </div>
+                                                                            <div class="form-group notmedic">
+                                                                                <label class="control-label">Diet </label>
+                                                                                <textarea name="diet" class="form-control" rows="5" required></textarea>
+                                                                            </div>
+
+                                                                            <div class="form-group pull-right"><button class="btn btn-primary" type="submit" name="submitprogress">Save</button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+            <div class="modal fade" id="discharge<?php echo $id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="exampleModalLabel">Discharge Patient  </h5>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <form method="post" name='form' class="form" action="" enctype="multipart/form-data" >
+                                                                        <div class="form-group nref" >
+                                                                            <label class="control-label"> Discharge Date</label>
+                                                                            <input type="date" name="disdate" class="form-control" required value="<?php echo date('Y-m-d',$timenow);?>">
+                                                                        </div>
+                                                                            <div class="form-group notmedic">
+                                                                                <label class="control-label">Remarks </label>
+                                                                                <textarea name="remarks" class="form-control" rows="5" required ></textarea>
+                                                                            </div>
+                                                                            <div class="form-group pull-right"><button class="btn btn-primary" type="submit" name="submitdischarge">Save</button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
             <!--**********************************
             Content body end
         ***********************************-->

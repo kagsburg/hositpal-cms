@@ -128,6 +128,7 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                                                 if (strlen($patient_id) >= 4) {
                                                     $pin = $patient_id;
                                                 }
+                                               
                                             ?>
                                                 <tr class="gradeA">
                                                     <td><?php echo $pin; ?></td>

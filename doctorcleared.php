@@ -270,11 +270,11 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                                 ?>
                                                                
                                                                 <?php if($roomp == 'lab') { ?>
-                                                                    <button data-toggle="modal" data-target="#labModal<?php echo $patientsque22_id; ?>" class="btn btn-xs btn-info">Lab Report</button>
+                                                                    <!-- <button data-toggle="modal" data-target="#labModal<?php echo $patientsque22_id; ?>" class="btn btn-xs btn-info">Lab Report</button> -->
                                                                     <?php } 
                                                                     if ($roomp == 'radiography') {
                                                                         ?>
-                                                                        <button data-toggle="modal" data-target="#radio<?php echo $patientsque22_id; ?>" class="btn btn-xs btn-primary">Radiology Report</button>
+                                                                        <!-- <button data-toggle="modal" data-target="#radio<?php echo $patientsque22_id; ?>" class="btn btn-xs btn-primary">Radiology Report</button> -->
                                                                         <?php
                                                                     }
                                                                     ?>

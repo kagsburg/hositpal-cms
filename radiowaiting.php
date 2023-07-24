@@ -162,7 +162,7 @@ if (($_SESSION['elcthospitallevel'] != 'radiographer')) {
                                                                 <div class="modal-body">
                                                                     <label class="text-primary"><strong>Measurements</strong></label>
                                                                     <?php
-                                                                        $doctorreports = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$patientsque_id2'") or die(mysqli_error($con));
+                                                                        $doctorreports = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$patientsque_id2' and radiomeasure !=''") or die(mysqli_error($con));
                                                                        
                                                                         while ($row = mysqli_fetch_array($doctorreports)) {                                                                               
                                                                             $drug = $row['radiomeasure'];
@@ -188,12 +188,14 @@ if (($_SESSION['elcthospitallevel'] != 'radiographer')) {
                                                                                             </div> -->
                                                                             </div>
                                                                             <?php } 
+                                                                           
                                                                         } 
                                                                         ?>
+                                                                        <label class="text-primary mt-3"><strong>Details</strong></label>
+                                                                            <?php echo $details; ?>
 
                                                                     
-                                                                    <label class="text-primary mt-3"><strong>Details</strong></label>
-                                                                    <?php echo $details; ?>
+                                                                    
                                                                 </div>
                                                             </div>
                                                         </div>
