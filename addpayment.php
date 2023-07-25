@@ -280,6 +280,32 @@ $id = $_GET['q'];
                                                     </tr>
                                                 <?php
                                                 }}
+                                                else if ($type == "pharmacy") {
+                                                    $getorder = mysqli_query($con, "SELECT * FROM pharmacyorders WHERE pharmacyorder_id='$bill_type_id'");
+                                                    if (mysqli_num_rows($getorder) > 0) {
+                                                        $rowo = mysqli_fetch_array($getorder);
+                                                        $timestamp = $rowo['timestamp'];
+                                                        // $paymethod = $rowo['paymentmethod'];
+                                                        $serviceorder_id = $rowo['pharmacyorder_id'];
+                                                        $getordered = mysqli_query($con, "SELECT * FROM pharmacyordereditems WHERE pharmacyorder_id='$serviceorder_id' AND status=1") or die(mysqli_error($con));
+                                                        while ($row = mysqli_fetch_array($getordered)) {
+                                                            $medicalservice_id = $row['item_id'];
+                                                            $quantity = $row['quantity'];
+                                                            $stotal =0; 
+                                                            $getservice = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id ='$medicalservice_id'");
+                                                            $row2 = mysqli_fetch_array($getservice);
+                                                            $medicalservice = $row2['itemname'];
+                                                            $unitcharge = $row2['unitprice'];
+                                                            $stotal =intval($unitcharge) * intval($quantity);
+                                                            $total += $stotal;
+
+                                                        ?>
+                                                            <tr>
+                                                                <td><?php echo $room; ?></td>
+                                                                <td><?php echo $medicalservice; ?></td>
+                                                                <td><?php echo $stotal; ?></td>
+                                                            </tr>
+                                                <?php }}}
                                             }
                                                 ?>
                                                 <tr>
@@ -391,6 +417,12 @@ $id = $_GET['q'];
                                             }
                                             else if ($type == "unselective" && $bill_type_id == REGISTRATION_SERVICE_ID)
                                                 update_patient_status($pdo, $patient_id, 1);
+                                                else if ($type == "pharmacy"){
+                                                    foreach($bill as $b) {
+                                                        $type_id = $b['type_id'];
+                                                        mysqli_query($con, "UPDATE pharmacyorders SET payment='1',insurer='" . $_SESSION['elcthospitaladmin'] . "',percentage='$paymentmethod',status=1 WHERE pharmacyorder_id='$type_id'") or die(mysqli_error($con));
+                                                    }
+                                                }
                                             // else if ($type == "admission")
 
                                             echo '<div class="alert alert-success">Payment Successfully Approved.Click <a href="paymentinvoice?id=' . $id . '" target="_blank"><strong>Here</strong></a> to Print Invoice</div>';

@@ -69,6 +69,13 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                 <h4 class="card-title">All Patients with Results </h4>
                             </div>
                             <div class="card-body">
+                                 <!-- check for session success -->
+                                 <?php
+                                if (isset($_SESSION['success'])) {
+                                    echo $_SESSION['success'];
+                                    unset($_SESSION['success']);   
+                                } 
+                                 ?>
                                 <div class="table-responsive">
                                     <table id="example5" class="display" style="min-width: 845px">
                                         <thead>

@@ -130,6 +130,10 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                                         $getorder = mysqli_query($con, "SELECT * FROM admitted WHERE admitted_id='$type_id'");
                                                         $key = "admission_id";
                                                     }
+                                                    elseif ($type == "pharmacy"){
+                                                        $getorder = mysqli_query($con, "SELECT * FROM pharmacyorders WHERE pharmacyorder_id='$type_id'");
+                                                        $key = "pharmacyorder_id";
+                                                    }
 
 
                                                     if (isset($getorder) && mysqli_num_rows($getorder) > 0) {

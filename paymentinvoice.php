@@ -155,11 +155,7 @@ $id = $_GET['id'];
                           if (strlen($id) >= 4) {
                             $pin2 = $id;
                           }
-                          if ($type == 'pharmacy') {
-                            $getorder = mysqli_query($con, "SELECT * FROM pharmacyorders WHERE status=0  AND pharmacyorder_id='$type_id'");
-                            $rowo = mysqli_fetch_array($getorder);
-                            $pharmacyorder_id = $rowo['pharmacyorder_id'];
-                          } else if ($type == 'medical_service') {
+                          if ($type == 'medical_service') {
                             $getorder = mysqli_query($con, "SELECT * FROM serviceorders WHERE serviceorder_id='$type_id'");
                             $rowo = mysqli_fetch_array($getorder);
                             $serviceorder_id = $rowo['serviceorder_id'];
@@ -239,30 +235,32 @@ $id = $_GET['id'];
                         // print_r($type); 
                         echo "<br>";
                       if ($type == 'pharmacy') {
+                        $getorder = mysqli_query($con, "SELECT * FROM pharmacyorders WHERE status=0  AND pharmacyorder_id='$bill_type_id'");
+                        if (mysqli_num_rows($getorder) > 0){
+                        $row1o = mysqli_fetch_array($getorder);
+                        $pharmacyorder_id = $row1o['pharmacyorder_id'];
                         $getordered = mysqli_query($con, "SELECT * FROM pharmacyordereditems WHERE pharmacyorder_id='$pharmacyorder_id' AND status=1") or die(mysqli_error($con));
                         while ($row = mysqli_fetch_array($getordered)) {
-                          $item = $row['item_id'];
+                          $item_id = $row['item_id'];
                           $prescription = $row['prescription'];
                           $quantity = $row['quantity'];
-                          $split = explode('_', $item);
-                          $item_id = current($split);
-                          $unitprice = end($split);
-                          $subtotal = $quantity * $unitprice;
-                          $total = $subtotal + $total;
-                          $getitem = mysqli_query($con, "SELECT * FROM pharmacyitems WHERE status=1 AND pharmacyitem_id='$item_id'");
+                          $getitem = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$item_id'");
                           $row2 = mysqli_fetch_array($getitem);
-                          $commercialname = $row2['commercialname'];
-                          $dosage = $row2['dosage'];
+                          $commercialname = $row2['itemname'];
+                          // $dosage = $row2['dosage'];
+                          $unitprice = $row2['unitprice'];
+                          $subtotal = intval($quantity) * intval($unitprice);
+                          $total +=  $subtotal;
                       ?>
                           <tr>
-                            <td><?php echo $commercialname . ' (' . $dosage . ')' ?></td>
+                            <td><?php echo $commercialname . ' (' . $prescription . ')' ?></td>
                             <td><?php echo $room; ?> </td>
                             <td><?php echo $quantity; ?></td>
                             <td><?php echo $unitprice; ?></td>
                             <td><?php echo $subtotal; ?></td>
                           </tr>
 
-                        <?php }
+                        <?php }}
                       } else if ($type == 'medical_service') {
 
                         $getorder = mysqli_query($con, "SELECT * FROM serviceorders WHERE serviceorder_id='$bill_type_id'");
@@ -385,6 +383,7 @@ $id = $_GET['id'];
                                 <td><?php echo $price; ?></td>
                             </tr>
                             <?php
+                            
                       }
                     }
                     }

@@ -199,9 +199,10 @@ echo '<div class="alert alert-success">Patient Report Successfully Added</div>';
         echo '<div class="alert alert-success">Patient Report Successfully Updated</div>';
     }
    ?>
-     <form method="post" name='form' class="form" action=""  enctype="multipart/form-data">      
+          
      <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-vitals" role="tabpanel" aria-labelledby="vitals-tab">
+        <form method="post" name='form' class="form" action=""  enctype="multipart/form-data">
             <div class="col-lg-12"><h4>Measurements taken</h4></div>
                             <div class="col-lg-12">
                                         <div class='subobj1'>
@@ -244,8 +245,10 @@ echo '<div class="alert alert-success">Patient Report Successfully Added</div>';
                                      <div class="form-group pull-right">
                                <button class="btn btn-primary" type="submit" name="submitvitals" >Save</button>
                                                                   </div>
+        </form>
         </div>
         <div class="tab-pane fade" id="nav-minor" role="tabpanel" aria-labelledby="minor-tab">
+        <form method="post" name='form' class="form" action=""  enctype="multipart/form-data">
         <div class="col-lg-12"><h4>Minor theater</h4></div>   
             <?php
              foreach ($services as $key => $value) {
@@ -264,6 +267,7 @@ echo '<div class="alert alert-success">Patient Report Successfully Added</div>';
                 <div class="form-group pull-right">
                                <button class="btn btn-primary" type="submit" name="minordetails">Save</button>
                 </div>
+                </form>
 
         </div>
         <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>

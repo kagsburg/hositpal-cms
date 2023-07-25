@@ -215,9 +215,9 @@ $id = $_GET['id'];
                                     <li class="nav-item">
                                         <a class="nav-link" href="#referral" data-toggle="tab" data-target="#referral" role="tab" aria-controls="referral" aria-selected="false">Referral</a>
                                     </li>
-                                    <li class="nav-item">
+                                    <!-- <li class="nav-item">
                                         <a class="nav-link" href="#acts" data-toggle="tab" data-target="#acts" role="tab" aria-controls="acts" aria-selected="false">Acts</a>
-                                    </li>
+                                    </li> -->
 
 
 
@@ -302,7 +302,7 @@ $id = $_GET['id'];
                                                             create_bill($pdo,$patient_id,$admission_id,$id,'admission',$last_id,$price,$paymenttype);
                                                             $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully Added.Click Here to <a href="admitted">View</a> Admissions</div>';
                                                                 // redirect to doctorwaiting
-                                                                echo '<script>window.location.href = "doctorcleared.php";</script>';
+                                                                echo '<script>window.location.href = "doctorcleared";</script>';
                                                         }                                                      
                                                     }
                                                     if ($reference == 'acts'){
@@ -429,6 +429,7 @@ $id = $_GET['id'];
                                                     }
                                                     if (!empty($reference_obj['labmeasure'])) {
                                                         $labmeasures = $reference_obj['labmeasure'];
+                                                        // print_r($labmeasures);
                                                         // format: [{id: charge}]
                                                         $cashfallbacks = [];
                                                         $lbmeasures = [];
@@ -521,12 +522,22 @@ $id = $_GET['id'];
                                                     }
                                                     if(!empty($reference_obj['drug'])){
                                                         $drug = $reference_obj['drug'];
+                                                        $totalbill=0;
                                                         $prescription = $reference_obj['prescription'];
                                                         $dosage= $reference_obj['dosage'];
                                                         $allprescriptions = sizeof($prescription);
+                                                        mysqli_query($con, "INSERT INTO pharmacyorders(patientsque_id,admin_id,timestamp,payment,insurer,percentage,source,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymenttype',0,'doctor',0)") or die(mysqli_error($con));
+                                                        $last_id = mysqli_insert_id($con);
                                                         for ($i = 0; $i < $allprescriptions; $i++) {
-                                                            // mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('$drug[$i]','$dosage[$i]','$prescription[$i]','','','$new_patientsque_id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
+                                                            // create pharmacy order
+                                                            $getmedicalcharge = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$drug[$i]'");
+                                                            $row1 = mysqli_fetch_array($getmedicalcharge);
+                                                            $charge = $row1['unitprice'];
+                                                            $totalbill += intval($charge)* intval($dosage[$i]);  
+                                                            mysqli_query($con, "INSERT INTO pharmacyordereditems(item_id,pharmacyorder_id,prescription,quantity,status) VALUES('$drug[$i]','$last_id','$prescription[$i]','$dosage[$i]',1)") or die(mysqli_error($con));                                                          
+                                                            
                                                         }
+                                                        create_bill($pdo,$patient_id,$admission_id,$new_patientsque_id,'pharmacy',$last_id,$totalbill,$paymenttype);
                                                     }
         
                                                     mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
@@ -545,7 +556,7 @@ $id = $_GET['id'];
                                                             $measure = $labmeasures;
                                                             $allprescriptions = sizeof($measure);
                                                             for ($i = 0; $i < $allprescriptions; $i++) {
-                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','$measure[$i]','','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
+                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','$measure[$i]','','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
                                                             }
                                                         }
                                                     } elseif ($reference == 'radiography') {
@@ -553,11 +564,11 @@ $id = $_GET['id'];
                                                             $measure = $radiomeasures;
                                                             $allprescriptions = sizeof($measure);
                                                             for ($i = 0; $i < $allprescriptions; $i++) {
-                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','$measure[$i]','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
+                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','','$measure[$i]','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
                                                             }
                                                         }
                                                     } else {
-                                                        mysqli_query($con, "INSERT INTO doctorreports(drug,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
+                                                        mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','','','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
                                                     }
                                                 }
                                             }
@@ -565,9 +576,8 @@ $id = $_GET['id'];
                                                 // set alert message to session message 
                                                 $_SESSION['success'] = '<div class="alert alert-success">Patient Report Successfully Updated</div>';
                                                 // redirect to doctorwaiting
-                                                echo '<script>window.location.href = "doctorcleared.php";</script>';
+                                                echo '<script>window.location.href = "doctorcleared";</script>';
                                                 
-                                                exit();
                                     }
                                 ?>
                                                                 <?php
@@ -1336,347 +1346,11 @@ $id = $_GET['id'];
                                                 <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[radiography][details]"></textarea>
                                             </div> -->
                                         </div>
-                                        <div class="tab-pane nref" id="acts" role="tabpanel" aria-labelledby="acts-tab">
-                                            <div class="form-check mb-3">
-                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="acts" data-ref="acts" id="send-acts">
-                                                <label class="form-check-label" for="send-acts">
-                                                Acts
-                                                </label>
-                                            </div>
-                                            <div class="form-group foracts" style="display: none;">
-                                                <h2>Presonal Details</h2>
-                                                <div class="row">
-                                                    <div class="col-sm-6 form-group">
-                                                        <label class="control-label">Death Date </label>
-                                                        <input type="date" class="form-control" name="ref[acts][ddate]" value="" required/>
-                                                    </div>
-                                                    <div class="col-sm-6 form-group">
-                                                        <label class="control-label">Locations of Death </label>
-                                                        <input type="text" class="form-control" name="ref[acts][locatedead]" value="" required/>
-                                                    </div>
-                                                </div>
-                                                <h2>Medical Informations</h2>
-                                                <div class="row">
-                                                    <div class="col-sm-12 form-group">
-                                                        <!-- radio button group -->
-                                                        <div class="form-check-inline">
-                                                            <label class="form-check-label ">
-                                                                <input type="radio" class="form-check-input cause" name="ref[acts][type]" value="immediate">Immediate cause of death
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input cause" name="ref[acts][type]" value="other">Other causes of death
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label ">
-                                                                <input type="radio" class="form-check-input cause" name="ref[acts][type]" value="underlying">Underlying cause of death
-                                                            </label>
-                                                            </div> 
-                                                        
-                                                    </div>
-                                                    <div class="fortype1 row" style="display: none;">
-                                                    <div class="col-sm-6 form-group">
-                                                        <label class="control-label">ICD 10 code</label>
-                                                        <input type="text" class="form-control" name="ref[acts][immediate]" value=""/>
-                                                    </div>
-                                                    <div class="col-sm-6 form-group">
-                                                        <label class="control-label">Time of the cause</label>
-                                                        <input type="time" class="form-control" name="ref[acts][immediatetime]" value=""/>
-                                                    </div>
-                                                    </div>
-                                                    <div class="fortype2 row" style="display: none;">
-                                                        <div class="col-sm-6 form-group">
-                                                            <label class="control-label">ICD 10 code</label>
-                                                            <input type="text" class="form-control" name="ref[acts][other]" value=""/>
-                                                        </div>
-                                                        <div class="col-sm-6 form-group">
-                                                            <label class="control-label">Time of the cause</label>
-                                                            <input type="time" class="form-control" name="ref[acts][othertime]" value=""/>
-                                                        </div>
-                                                        <div class="col-sm-6 form-group">
-                                                            <label class="control-label">Time of the cause</label>
-                                                            <input type="text" class="form-control" name="ref[acts][otherduration]" value=""/>
-                                                        </div>
-                                                    </div>
-                                                    <div class="fortype3 row" style="display:none;">
-                                                        <div class="col-sm-6 form-group">
-                                                                <label class="control-label">ICD 10 code</label>
-                                                                <input type="text" class="form-control" name="ref[acts][underlying]" value=""/>
-                                                        </div>
-                                                        <div class="col-sm-6 form-group">
-                                                            <label class="control-label">Time of the cause</label>
-                                                            <input type="time" class="form-control" name="ref[acts][underlyingtime]" value=""/>
-                                                        </div>
-                                                        <div class="col-sm-6 form-group">
-                                                            <label class="control-label">Time of the cause</label>
-                                                            <input type="text" class="form-control" name="ref[acts][underlyingduration]" value=""/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <h2>Other Informations</h2>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <label class="control-label"> Did the victim had any medical operation within the past 4 weeks?</label> <br/>
-                                                        <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input medicalop" name="ref[acts][medop]" value="yes">Yes
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input medicalop" name="ref[acts][medop]" value="no">No
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input medicalop" name="ref[acts][medop]" value="Unknown">Unknown
-                                                            </label>
-                                                            </div>
-                                                       
-                                                    </div>
-                                                    <div class="col-sm-6 formedicalop" style="display: none;">
-                                                        <label class="control-label">If yes, when was the operation?</label>
-                                                        <input type="date" class="form-control" name="ref[acts][medopdate]" value=""/>
-                                                    </div>
-                                                    <div class="col-sm-6 formedicalop" style="display: none;">
-                                                        <label class="control-label"> Reason for operation</label>
-                                                        <input type="text" class="form-control" name="ref[acts][medopreason]" value=""/>
-                                                    </div>
-                                                    <div class="col-sm-12">
-                                                        <label class="control-label"> Was the cause of death investigated? </label> <br/>
-                                                        <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input deadinves" name="ref[acts][deadinves]" value="yes">Yes
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input deadinves" name="ref[acts][deadinves]" value="no">No
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input deadinves" name="ref[acts][deadinves]" value="Unknown">Unknown
-                                                            </label>
-                                                            </div>
-                                                    </div>
-                                                    <div class="fordeadinves" style="display: none;">
-                                                        <label class="control-label"> Was the results of the investigation used to verify death?</label>
-                                                        <br/>
-                                                        <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input" name="ref[acts][deadinvesresuverify]" value="yes">Yes
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input" name="ref[acts][deadinvesresuverify]" value="no">No
-                                                            </label>
-                                                            </div>
-                                                        
-                                                    </div>
-                                                    <div class="col-sm-12">
-                                                        <label class="control-label"> How the death occurred ?</label> <br/>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input" name="ref[acts][deadoccur][]" value="Illness">Illness
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input" name="ref[acts][deadoccur][]"value="attacked">Victim was attacked
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"name="ref[acts][deadoccur][]" value="poison" >Poison
-                                                            </label>
-                                                            </div> 
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input" name="ref[acts][deadoccur][]" value="death_sentence" > Death sentence
-                                                            </label>
-                                                            </div> 
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input" name="ref[acts][deadoccur][]" value="" >Investigation is still continuing
-                                                            </label>
-                                                            </div> 
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input" name="ref[acts][deadoccur][]" value=" hanging" >Hanging (suicide)
-                                                            </label>
-                                                            </div> 
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input" name="ref[acts][deadoccur][]" value="war" >War
-                                                            </label>
-                                                            </div> 
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input" name="ref[acts][deadoccur][]" value="unknown" >Unknown
-                                                            </label>
-                                                            </div> 
-                                                            <div>
-                                                                <label class="control-label">Explaination</label>
-                                                                <textarea type="text" class="form-control" name="ref[acts][deadoccurexpl]" value=""></textarea>
-                                                            </div>
-
-                                                    </div>
-                                                    <div class="col-sm-12">
-                                                        <label class="control-label">  Place where the death occurred ?</label> <br/>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"  name="ref[acts][deadplace][]" value="home">Home
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input" name="ref[acts][deadplace][]" value="in a street">In a street
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"name="ref[acts][deadplace][]" value="at working place" >At working place
-                                                            </label>
-                                                            </div> 
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"name="ref[acts][deadplace][]" value="On a way to a health centre" > On a way to a health centre
-                                                            </label>
-                                                            </div> 
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"name="ref[acts][deadplace][]" value="At school or any other community place" >At school or any other community place
-                                                            </label>
-                                                            </div> 
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"name="ref[acts][deadplace][]" value="" >At a manufacturing place or any other construction place
-                                                            </label>
-                                                            </div> 
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"name="ref[acts][deadplace][]" value="" >At a sport/entertainment place
-                                                            </label>
-                                                            </div> 
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"name="ref[acts][deadplace][]" value="" >At the farm
-                                                            </label>
-                                                            </div> 
-                                                            <div>
-                                                                <label class="control-label">Other place</label>
-                                                                <textarea type="text" class="form-control" name="ref[acts][deadplace][]" value=""></textarea>
-                                                            </div>
-
-                                                    </div>
-                                                    <div class="col-sm-12">
-                                                        <label class="control-label"> The death of unborn child or infant ? </label> <br/>
-                                                        <div class="" >
-                                                            <label class="control-label">Were twins ?</label>
-                                                            <br/>
-                                                             <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input" name="ref[acts][deadunborn]" value="yes">Yes
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input" name="ref[acts][deadunborn]" value="no">No
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input" name="ref[acts][deadunborn]" value="unknown">Unknown
-                                                            </label>
-                                                            </div>
-                                                        
-                                                        </div>
-                                                        <div class="" >
-                                                            <label class="control-label"> Was the child/children born already dead ?</label>
-                                                            <br/>
-                                                             <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input deadborndead" name="ref[acts][deadborndead]" value="yes">Yes
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input deadborndead" name="ref[acts][deadborndead]" value="no">No
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input deadborndead" name="ref[acts][deadborndead]" value="Unknown">Unknown
-                                                            </label>
-                                                            </div>
-                                                        
-                                                        </div>
-                                                        <div>
-                                                            
-                                                            <label class="control-label">  Was the child/children's death occurred within 24 hours after birth ?</label>
-                                                            <br/>
-                                                             <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input deadborndead24" name="ref[acts][deadborndead24]" value="yes">Yes
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input deadborndead24" name="ref[acts][deadborndead24]" value="no">No
-                                                            </label>
-                                                            </div>
-                                                            <div class="form-check-inline">
-                                                            <label class="form-check-label">
-                                                                <input type="radio" class="form-check-input deadborndead24" name="ref[acts][deadborndead24]" value="Unknown">Unknown
-                                                            </label>
-                                                            </div>
-                                                            
-                                                            <div class="fordeadborndead24" style="display: none;">
-                                                                <div class="form-group">
-                                                                    <label class="control-label"> If yes, what was the child/children living duration ?</label>
-                                                                    <textarea type="text" class="form-control" name="ref[acts][deadborndead24living]" value=""></textarea>
-                                                                </div>
-                                                            </div>
-                                                        
-                                                        </div>
-                                                        <div class="row">
-                                                        <div class="col-sm-6">
-                                                            <label class="control-label">  weight of the child/children during birth (kg/gm) ?</label>
-                                                            <input type="text" class="form-control" name="ref[acts][deadbornweight]" value=""/>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <label class="control-label"> How old was the child/children's pregnancy period? (Duration in weeks)</label>
-                                                            <input type="text" class="form-control" name="ref[acts][deadbornpregper]" value=""/>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <label class="control-label">  Mother’s age ?</label>
-                                                            <input type="text" class="form-control" name="ref[acts][deadbornmother]" value=""/>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <label class="control-label">  Mother’s Condition ?</label>
-                                                            <textarea type="text" class="form-control" name="ref[acts][deadbornmothercondition]" value=""></textarea>
-                                                        </div>
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-                                                
-
-                                            </div>
-                                            
-                                        </div>
                                         
-                                         
-
                                     </div>
-
+                                    
                                     <div class="form-group pull-left">
-                                        <!--<a class="btn btn-success" a href="addpatient3.php">Back</a>-->
+                                        <!-- <a class="btn btn-success" a href="addpatient3.php">Back</a> -->
                                     </div>
                                     <div class="form-group pull-right">
                                         <button class="btn btn-primary" name="submit" type="submit">Proceed</button>
@@ -2041,7 +1715,7 @@ $id = $_GET['id'];
                                 <div class="row">  
                                     <div class="form-group col-lg-5">
                                         <label>Drug Name</label>     
-                                        <select class="form-control room select2 msnr multi-select_1" name="drug[]">  
+                                        <select class="form-control room select2 msnr multi-select_1" name="ref[pharmacy][drug][]">  
                                             <option selected="selected" value="">Select option..</option>        
                                             <?php
                                             $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ");
@@ -2063,11 +1737,11 @@ $id = $_GET['id'];
                                     </div>  
                                     <div class="form-group col-lg-3"> 
                                         <label>Prescription</label>   
-                                        <input type="text"  name="prescription[]" class="form-control " placeholder="Enter Prescription">
+                                        <input type="text"  name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter Prescription">
                                     </div>
                                     <div class="form-group col-lg-3"> 
                                         <label>Dosage</label>   
-                                        <input type="text"  name="dosage[]" class="form-control " placeholder="Enter Dosage">
+                                        <input type="text"  name="ref[pharmacy][dosage][]" class="form-control " placeholder="Enter Dosage">
                                     </div>
                                 </div> 
                             </div> 

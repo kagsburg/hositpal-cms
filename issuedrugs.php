@@ -59,7 +59,7 @@ include 'includes/header.php';
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item"><a href="waitingpatients">Waiting patients</a></li>
+                            <li class="breadcrumb-item"><a href="pharmacywaiting">Waiting patients</a></li>
                             <li class="breadcrumb-item active"><a href="#">Issue Drugs</a></li>
                         </ol>
                     </div>
@@ -70,6 +70,7 @@ include 'includes/header.php';
                                     $row = mysqli_fetch_array($getque);
                                           $patientsque_id=$row['patientsque_id'];
                                           $admission_id=$row['admission_id'];
+                                          $prev_id=$row['prev_id'];
                                           $room=$row['room'];
                                                $getadmission= mysqli_query($con,"SELECT * FROM admissions WHERE admission_id='$admission_id'");
                                 $row1= mysqli_fetch_array($getadmission);
@@ -85,6 +86,7 @@ include 'includes/header.php';
               $rowp= mysqli_fetch_array($getprevque);
              $attendant=$rowp['attendant'];
              $patientsque_id2=$rowp['patientsque_id'];
+             
                   $getstaff= mysqli_query($con,"SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));                        
                  $rows= mysqli_fetch_array($getstaff);
                       $fullname=$rows['fullname'];    
@@ -124,35 +126,71 @@ include 'includes/header.php';
                             <div class="card-body">
                                 <div class="basic-form">      
                                     <?php                                
-                       if(isset($_POST['drug'],$_POST['quantity'])){
+                                if(isset($_POST['drug'],$_POST['quantity'])){
                                       $drug=$_POST['drug'];
                                       $quantity=$_POST['quantity'];
-                                $alldrugs=sizeof($drug);    
-                                  mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
-for($i=0;$i<$alldrugs;$i++){      
-    mysqli_query($con,"INSERT INTO issueddrugs(drug,quantity,patientsque_id,admin_id,status) VALUES('$drug[$i]','$quantity[$i]','$id','".$_SESSION['elcthospitaladmin']."','1')") or die(mysqli_error($con));
-  }  
-  echo '<div class="alert alert-success">Drugs Successfully Issued</div>';
-   }
- ?>  
+                                    $serviceorder_id=$_POST['serviceorder_id'];
+                                        $alldrugs=sizeof($drug);    
+                                        mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                        for($i=0;$i<$alldrugs;$i++){   
+                                            mysqli_query($con,"INSERT INTO issueddrugs(drug,quantity,patientsque_id,admin_id,status) VALUES('$drug[$i]','$quantity[$i]','$id','".$_SESSION['elcthospitaladmin']."','1')") or die(mysqli_error($con));
+                                            // update the status of the ordered items
+                                            mysqli_query($con,"UPDATE pharmacyordereditems SET status='2' WHERE pharmacyorder_id='$serviceorder_id' AND item_id='$drug[$i]'") or die(mysqli_error($con));
+                                            // update the inventory items quantity
+                                            mysqli_query($con,"UPDATE inventoryitems SET minimum=minimum-'$quantity[$i]' WHERE inventoryitem_id ='$drug[$i]'") or die(mysqli_error($con));
+                                        } 
+                                        $_SESSION['success'] =  '<div class="alert alert-success">Drugs Successfully Issued</div>';
+                                        // redirect to doctorwaiting
+                                        echo '<script>window.location.href = "pharmacywaiting";</script>'; 
+                                       
+                                }
+                                ?>  
        
        <form method="post" name='form' class="form" action=""  enctype="multipart/form-data">      
            
            <?php
-               $doctorreports= mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$patientsque_id2'") or die(mysqli_error($con));
-               while($row= mysqli_fetch_array($doctorreports)){
-                   $drug=$row['drug'];
-                   $prescription=$row['prescription'];
-                   $details=$row['details'];
-                    $getitem=mysqli_query($con,"SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$drug'");  
-                   $row1= mysqli_fetch_array($getitem);
-                   $itemname=$row1['itemname'];          
-              
-               ?>     
-           <p><strong><?php echo $itemname.' : '.$prescription; ?></strong></p>
+               $getorder= mysqli_query($con, "SELECT * FROM pharmacyorders WHERE patientsque_id='$id'") or die(mysqli_error($con));
+               $rowo = mysqli_fetch_array($getorder);
+               $timestamp = $rowo['timestamp'];
+               $serviceorder_id = $rowo['pharmacyorder_id'];
+               $getordered = mysqli_query($con, "SELECT * FROM pharmacyordereditems WHERE pharmacyorder_id='$serviceorder_id' AND status=1") or die(mysqli_error($con));
+               while ($row = mysqli_fetch_array($getordered)) {
+                $medicalservice_id = $row['item_id'];
+                $quantity = $row['quantity'];
+                $prescription = $row['prescription'];
+                $stotal =0; 
+                $getdoctornotes= mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$prev_id' and drug!=''") or die(mysqli_error($con));
+                $row12 = mysqli_fetch_array($getdoctornotes);
+                $details = $row12['details'];
+
+                $getservice = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id ='$medicalservice_id'");
+                $row2 = mysqli_fetch_array($getservice);
+                $medicalservice = $row2['itemname'];
+                $measurement_id = $row2['measurement_id'];
+                $unitcharge = $row2['unitprice'];
+                $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
+                $row2 =  mysqli_fetch_array($getunit);
+                $measurement = $row2['measurement'];   
+               ?>   
+               
+               <div class="row">
+                <div class="col-sm-4">
+                   <p><strong><?php echo $medicalservice.' : '.$prescription; ?></strong></p>
+                </div>
+                <div class="col-sm-4">
+                      <p><strong>Dosage : <?php echo $quantity .' ('.$measurement.')' ?> </strong></p>
+                </div>
+                <div class="col-sm-3">
+                        <p><strong>Doctor's Notes : <?php echo $details; ?></strong></p>
+                </div>
+                </div>
+               </div>
+
                  
-             <div class="row">                 
-                 <input type="number" name='drug[]' class="form-control" placeholder="Enter Drug Quantity" required="required" value="<?php echo $drug; ?>" style="display: none"> 
+             <div class="row"> 
+                <input type="hidden" name='drug[]' class="form-control"  value="<?php echo $medicalservice_id; ?>">                
+                <input type="hidden" name='serviceorder_id' class="form-control"  value="<?php echo $serviceorder_id; ?>">                
+                 <input type="text" class="form-control" placeholder="Enter Drug Quantity" required="required" readonly value="<?php echo $medicalservice; ?>"> 
                 <div class="form-group col-lg-6">                 
                <label>Quantity</label>
                 <input type="number" name='quantity[]' class="form-control" placeholder="Enter Drug Quantity" required="required">                                                                          

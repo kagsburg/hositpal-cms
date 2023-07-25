@@ -69,12 +69,19 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                 <h4 class="card-title">All waiting Patients</h4>
                             </div>
                             <div class="card-body">
+                                 <!-- check for session success -->
+                                 <?php
+                                if (isset($_SESSION['success'])) {
+                                    echo $_SESSION['success'];
+                                    unset($_SESSION['success']);   
+                                } 
+                                 ?>
                                 <div class="table-responsive">
                                     <table id="example5" class="display" style="min-width: 845px">
                                         <thead>
                                             <tr>
                                                 <th>PIN</th>
-                                                <th>Image</th>
+                                                <!-- <th>Image</th> -->
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
                                                 <th>Previous Room</th>
@@ -85,7 +92,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room='pharmacy' AND status=0");
+                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room='pharmacy' AND status=0 group by admission_id ORDER BY patientsque_id DESC");
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];
                                                 $admission_id = $row['admission_id'];
@@ -123,11 +130,11 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                             ?>
                                                 <tr class="gradeA">
                                                     <td><?php echo $pin; ?></td>
-                                                    <td>
+                                                    <!-- <td>
                                                         <a href="images/patients/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>" target="_blank">
                                                             <img src="images/patients/thumbs/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>" width="60">
                                                         </a>
-                                                    </td>
+                                                    </td> -->
                                                     <td><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?></td>
                                                     <td><?php echo $gender; ?></td>
                                                     <td><?php echo $room; ?></td>
@@ -140,45 +147,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                                         ?>
                                                             <a href="issuedrugs?id=<?php echo $patientsque_id; ?>" class="btn btn-xs btn-info">Issue Drugs</a>
 
-                                                            <button data-toggle="modal" data-target="#doctor<?php echo $patientsque_id; ?>" class="btn btn-xs btn-primary">Doctor Report</button>
-                                                            <div class="modal fade" id="doctor<?php echo $patientsque_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog" role="document">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title" id="exampleModalLabel">
-                                                                                Doctor Report</h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                <span aria-hidden="true">&times;</span>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            <?php
-                                                                            $doctorreports = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$patientsque_id2'") or die(mysqli_error($con));
-                                                                            while ($row = mysqli_fetch_array($doctorreports)) {
-                                                                                $drug = $row['drug'];
-                                                                                $prescription = $row['prescription'];
-                                                                                $details = $row['details'];
-                                                                                $getitem = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$drug'");
-                                                                                $row1 = mysqli_fetch_array($getitem);
-                                                                                $itemname = $row1['itemname'];
-                                                                            ?>
-                                                                                <div class="row mb-2">
-                                                                                    <div class="col-sm-5 col-5">
-                                                                                        <h5 class="f-w-500">
-                                                                                            <?php echo $itemname; ?><span class="pull-right">:</span>
-                                                                                        </h5>
-                                                                                    </div>
-                                                                                    <div class="col-sm-7 col-7">
-                                                                                        <span><?php echo $prescription; ?></span>
-                                                                                    </div>
-                                                                                </div>
-                                                                            <?php } ?>
-                                                                            <label class="text-primary"><strong>Details</strong></label>
-                                                                            <?php echo $details; ?>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                            
                                                         <?php }
                                                         ?>
                                                     </td>
