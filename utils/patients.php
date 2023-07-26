@@ -5,6 +5,7 @@ function get_patient(PDO $conn, $patient_id, $status=1)
     $stmt = $conn->prepare("SELECT * FROM patients WHERE patient_id=? AND status=?");
     $stmt->execute([$patient_id, $status]);
     $getpatient = $stmt->fetch();
+    if (empty($getpatient)) return null;
     $getpatient["insurance"] = $getpatient["insurancecompany"];
     $getpatient["id"] = $getpatient["patient_id"];
     $getpatient["fullname"] = $getpatient["firstname"] . " " . $getpatient["secondname"] . " " . $getpatient["thirdname"];
@@ -109,9 +110,11 @@ function get_all_patients(PDO $conn, $status=1, $order="desc")
     $stmt = $conn->prepare("SELECT * FROM patients WHERE status=? ORDER BY patient_id $order");
     $stmt->execute([$status]);
     while ($getpatient = $stmt->fetch()) {
+        // if (!empty($getpatient)){
         $getpatient["fullname"] = $getpatient["firstname"] . " " . $getpatient["secondname"] . " " . $getpatient["thirdname"];
         $getpatient["pin"] = str_pad($getpatient["patient_id"], 4, '0', STR_PAD_LEFT);
         $getpatient["image"] = !empty($getpatient["ext"]) ? md5($getpatient["id"]) : "noimage.png";
+        // }
         yield $getpatient;
     }
 }

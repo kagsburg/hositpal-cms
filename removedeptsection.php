@@ -5,6 +5,6 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
     header('Location:login.php');
 } else {
     $id = $_GET['id'];
-    deactivate_section($conn, $id);
+    deactivate_section($pdo, $id);
     header('Location:' . $_SERVER['HTTP_REFERER']);
 }

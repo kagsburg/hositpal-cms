@@ -85,11 +85,7 @@ include 'includes/header.php';
                                $getprevque=mysqli_query($con,"SELECT * FROM patientsque WHERE admission_id='$admission_id'   AND status=1  ORDER BY patientsque_id DESC");  
               $rowp= mysqli_fetch_array($getprevque);
              $attendant=$rowp['attendant'];
-             $patientsque_id2=$rowp['patientsque_id'];
-             
-                  $getstaff= mysqli_query($con,"SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));                        
-                 $rows= mysqli_fetch_array($getstaff);
-                      $fullname=$rows['fullname'];    
+             $patientsque_id2=$rowp['patientsque_id'];    
                                 if(strlen($patient_id)==1){
       $pin='000'.$patient_id;
      }
@@ -180,17 +176,19 @@ include 'includes/header.php';
                 <div class="col-sm-4">
                       <p><strong>Dosage : <?php echo $quantity .' ('.$measurement.')' ?> </strong></p>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-4">
                         <p><strong>Doctor's Notes : <?php echo $details; ?></strong></p>
                 </div>
                 </div>
-               </div>
 
                  
              <div class="row"> 
                 <input type="hidden" name='drug[]' class="form-control"  value="<?php echo $medicalservice_id; ?>">                
-                <input type="hidden" name='serviceorder_id' class="form-control"  value="<?php echo $serviceorder_id; ?>">                
+                <input type="hidden" name='serviceorder_id' class="form-control"  value="<?php echo $serviceorder_id; ?>">  
+                <div class="col-sm-6">   
+                <label>Drug</label>           
                  <input type="text" class="form-control" placeholder="Enter Drug Quantity" required="required" readonly value="<?php echo $medicalservice; ?>"> 
+                </div>
                 <div class="form-group col-lg-6">                 
                <label>Quantity</label>
                 <input type="number" name='quantity[]' class="form-control" placeholder="Enter Drug Quantity" required="required">                                                                          

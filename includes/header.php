@@ -88,6 +88,7 @@
               <span class="nav-text">Employees</span>
             </a>
             <ul aria-expanded="false">
+              <li><a href="qualifications">Qualifications</a></li>
               <li><a href="designations">Designations</a></li>
               <li><a href="addemployee">Add Employee</a></li>
               <li><a href="employees">Employees</a></li>
@@ -180,7 +181,7 @@
             <ul aria-expanded="false">
               <li><a href="addmedicalservice?id=NULL">Add Medical Service</a></li>
               <li><a href="medicalservices">Medical Services</a></li>
-              <li><a href="unselectiveservices">Unselective Services</a></li>
+              <li><a href="unselectiveservices">Mandatory Services</a></li>
               <li><a href="medical_sections">Medical Sections</a></li>
             </ul>
           </li>
@@ -202,7 +203,7 @@
             </a>
             <ul aria-expanded="false">
 
-              <li><a href="radiographyunits">SI unit / Result</a></li>
+              <!-- <li><a href="radiographyunits">SI unit / Result</a></li> -->
               <li><a href="radiographyinvestigationtypes">Investigation Types</a></li>
             </ul>
           </li>

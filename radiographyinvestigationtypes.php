@@ -73,7 +73,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                     <?php
                                     if (isset($_POST['typename'], $_POST['unit'])) {
                                         $typename = mysqli_real_escape_string($con, trim($_POST['typename']));                                       
-                                        $unit = $_POST['unit'];
+                                        // $unit = $_POST['unit'];
                                         $unitprice = $_POST['unitprice'];
                                         $creditprice = $_POST['creditprice'];
                                        //  $subtype = $_POST['subtype'];
@@ -111,7 +111,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 <label>Investigation Type</label>
                                                 <input type="text" class="form-control" name="typename" required="required">
                                             </div>
-                                            <div class="form-group col-lg-4 measurementunit">
+                                            <!-- <div class="form-group col-lg-4 measurementunit">
                                                 <label class="control-label">SI Unit / Result</label>
                                                 <div class="controls">
                                                     <select name="unit" class="form-control" id="category">
@@ -127,7 +127,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                     </select>
 
                                                 </div>
-                                            </div>
+                                            </div> -->
 
                                             <div class="form-group col-lg-4 unitprice">
                                                 <label>Unit Price</label>
@@ -221,7 +221,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                     <thead>
                                         <tr>
                                             <th>Type Name</th>
-                                            <th>SI Unit/Result</th>
+                                            <!-- <th>SI Unit/Result</th> -->
                                             <th>Unit price</th>
                                             <th>Credit Price</th>
                                             <th>Action</th>
@@ -245,7 +245,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                         ?>
                                             <tr>
                                                 <td><?php echo $investigationtype; ?></td>                                                
-                                                <td><?php echo $measurement; ?></td>
+                                                <!-- <td><?php echo $measurement; ?></td> -->
                                                 <td><?php echo $unitprice; ?></td>
                                                 <td><?php echo $creditprice; ?></td>
 

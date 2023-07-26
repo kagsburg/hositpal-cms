@@ -11,7 +11,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Unselective Services </title>
+    <title>Mandatory Services </title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -50,14 +50,14 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                 <div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Unselective Services</h4>
+                            <h4>Mandatory Services</h4>
 
                         </div>
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="#">Unselective services</a></li>
+                            <li class="breadcrumb-item active"><a href="#">Mandatory services</a></li>
                         </ol>
                     </div>
                 </div>
@@ -65,7 +65,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Unselective Services</h4>
+                                <h4 class="card-title">Mandatory Services</h4>
                             </div>
                             <div class="card-body">
                                 <table id="example5" class="display" class="table table-striped" style="width:100%;">
@@ -88,8 +88,13 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             $creditprice = $row1['creditprice'];
                                             $section_id = $row1['section_id'];
                                             $getsection =  mysqli_query($con, "SELECT * FROM sections WHERE status=1 AND section_id='$section_id'");
-                                            $row1 =  mysqli_fetch_array($getsection);
-                                            $section = $row1['section'];
+                                            if (mysqli_num_rows($getsection) == 0) {
+                                                $section = "Not Set";
+                                            }else{
+
+                                                $row1 =  mysqli_fetch_array($getsection);
+                                                $section = $row1['section'];
+                                            }
                                         ?>
                                             <tr>
                                                 <td><?php echo $medicalservice; ?></td>
@@ -108,7 +113,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Edit Unselective Service</h5>
+                                                            <h5 class="modal-title" id="exampleModalLabel">Edit Mandatory Service</h5>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>

@@ -15,7 +15,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                 echo '<div class="alert alert-danger">' . $error . '</div>';
             }
         } else {
-            update_section($conn, $id, $section);
+            update_section($pdo, $id, $section);
             header('Location:' . $_SERVER['HTTP_REFERER']);
         }
     }

@@ -76,6 +76,7 @@ $payments = get_all_payments($pdo, $paymethod);
                             <option value="">Filter by payment method</option>
                             <option value="insurance" <?php if ($paymethod == "insurance") echo "selected"; ?>>Insurance</option>
                             <option value="cash" <?php if ($paymethod == "cash") echo "selected"; ?>>Cash</option>
+                            <option value="credit" <?php if ($paymethod == "Credit") echo "selected"; ?>>Credit</option>
                         </select>
                         
                     </div>
@@ -111,9 +112,12 @@ $payments = get_all_payments($pdo, $paymethod);
                                                 $type = $bill['type'];
                                                 $type_id = $bill['type_id'];
                                                 $patient = get_patient($pdo, $bill['patient_id']);
-                                                $fullname = $patient['fullname'];
-                                                $gender = $patient["gender"];
-                                                $image = $patient["image"]; 
+                                                if ($patient != null) {
+                                                    $fullname = $patient['fullname'];
+                                                    $gender = $patient["gender"];
+                                                    $image = $patient["image"]; 
+                                                }
+
                                                 
                                                 if ($type != "unselective") {
                                                     $room = ucfirst($type);

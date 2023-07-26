@@ -85,7 +85,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
                                                 <th>Previous Room</th>
-                                                <th>Attendant</th>
+                                                <!-- <th>Attendant</th> -->
                                                 <th>Action</th>
 
                                             </tr>
@@ -114,7 +114,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                                 $room = $rowp['room'];
                                                 $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
                                                 $rows = mysqli_fetch_array($getstaff);
-                                                $fullname = $rows['fullname'];
+                                                // $fullname = $rows['fullname'];
                                                 if (strlen($patient_id) == 1) {
                                                     $pin = '000' . $patient_id;
                                                 }
@@ -138,7 +138,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                                     <td><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?></td>
                                                     <td><?php echo $gender; ?></td>
                                                     <td><?php echo $room; ?></td>
-                                                    <td><?php echo $fullname; ?></td>
+                                                    <!-- <td><?php echo $fullname; ?></td> -->
 
 
                                                     <td>

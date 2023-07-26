@@ -419,8 +419,8 @@ $id = $_GET['id'];
                                                         $drug = $reference_obj['drug'];
                                                         $totalbill=0;
                                                         $prescription = $reference_obj['prescription'];
-                                                        $dosage= $reference_obj['dosage'];
-                                                        $allprescriptions = sizeof($prescription);
+                                                        $dosage= $reference_obj['dosage']; 
+                                                        $allprescriptions = sizeof($drug);
                                                         mysqli_query($con, "INSERT INTO pharmacyorders(patientsque_id,admin_id,timestamp,payment,insurer,percentage,source,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymenttype',0,'doctor',0)") or die(mysqli_error($con));
                                                         $last_id = mysqli_insert_id($con);
                                                         for ($i = 0; $i < $allprescriptions; $i++) {
@@ -1297,7 +1297,7 @@ $id = $_GET['id'];
                                 <div class="row">  
                                     <div class="form-group col-lg-6">
                                         <label>Drug Name</label>     
-                                        <select class="form-control room" name="drug[]">  
+                                        <select class="form-control room" name="ref[pharmacy][drug][]">  
                                             <option selected="selected" value="">Select option..</option>        
                                             <?php
                                             $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ");
@@ -1319,11 +1319,11 @@ $id = $_GET['id'];
                                     </div>  
                                     <div class="form-group col-lg-3"> 
                                         <label>Prescription</label>   
-                                        <input type="text"  name="prescription[]" class="form-control " placeholder="Enter Prescription">
+                                        <input type="text"  name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter Prescription">
                                     </div>
                                     <div class="form-group col-lg-3"> 
                                         <label>Dosage</label>   
-                                        <input type="text"  name="dosage[]" class="form-control " placeholder="Enter Dosage">
+                                        <input type="text"  name="ref[pharmacy][dosage][]" class="form-control " placeholder="Enter Dosage">
                                     </div>
                                 </div> 
                             </div> 
