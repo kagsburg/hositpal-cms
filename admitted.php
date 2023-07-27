@@ -92,6 +92,7 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                          <?php      
                                      if(($_SESSION['elcthospitallevel']=='doctor')){
                $getadmitted= mysqli_query($con,"SELECT * FROM admitted WHERE status=1 AND admin_id='".$_SESSION['elcthospitaladmin']."' ORDER BY admitted_id DESC");
+
                                      } if (($_SESSION['elcthospitallevel']=='nurse')) {
                 $getadmitted= mysqli_query($con,"SELECT * FROM admitted WHERE status=1 ORDER BY admitted_id DESC");
                                          } 
@@ -104,8 +105,15 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                   $admitted_id=$row['admitted_id'];    
                   $bed_id=$row['bed_id'];    
                   $price=$row['price'];    
-                  $admissiondate=$row['admissiondate'];    
-                  $admin_id=$row['admin_id'];    
+                  $admissiondate=$row['admissiondate'];   
+                //   check if admitted patient has paid for the bed
+                 $checkbill = mysqli_query($con,"SELECT * FROM bills WHERE status=1 AND admission_id='$admission_id' AND type='admission'") or die(mysqli_error($con));
+                 if (mysqli_num_rows($checkbill) == 1) {
+                    
+
+                 }else{
+                 
+                 $admin_id=$row['admin_id'];    
                       $getadmission= mysqli_query($con,"SELECT * FROM admissions WHERE admission_id='$admission_id'");
                                 $row1= mysqli_fetch_array($getadmission);
                                $patient_id=$row1['patient_id'];
@@ -117,7 +125,11 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                             $getstaff= mysqli_query($con,"SELECT * FROM staff WHERE staff_id='$admin_id'") or die(mysqli_error($con));                        
                             $rows= mysqli_fetch_array($getstaff);
                             $fullname=$rows['fullname'];
-                 $getbed= mysqli_query($con,"SELECT * FROM beds WHERE bed_id='$bed_id' AND status=1") or die(mysqli_error($con));
+                            // get patient que 
+                            $getque= mysqli_query($con,"SELECT * FROM patientsque WHERE status=5 AND admission_id='$admission_id' and room ='admission'") or die(mysqli_error($con));
+                            $rowq= mysqli_fetch_array($getque);
+                            $que_id=$rowq['prev_id'];
+     $getbed= mysqli_query($con,"SELECT * FROM beds WHERE bed_id='$bed_id' AND status=1") or die(mysqli_error($con));
      $rowb= mysqli_fetch_array($getbed);
      $ward_id=$rowb['ward_id'];
      $bednumber=$rowb['bedname'];
@@ -149,7 +161,14 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                         <td><?php echo date('d/M/Y',$admissiondate); ?></td>                                
                                         <td><?php echo $fullname; ?></td>                                
                                       <td>     
-                                       <a href="admission?id=<?php echo $admitted_id; ?>" class="btn btn-success btn-xs">View Details</a>  
+                                       <a href="admission?id=<?php echo $admitted_id; ?>&que=<?php echo $que_id; ?>" class="btn btn-success btn-xs">View Details</a> 
+                                       <?php 
+                                            if ($_SESSION['elcthospitallevel'] == 'doctor'){
+                                                ?>
+                                        <a href="updatepatientreport?id=<?php echo $que_id; ?>" class="btn btn-primary btn-xs">Patient Report</a>
+                                        <?php
+                                            }
+                                       ?>
                                                        <?php
                                                        if($_SESSION['elcthospitaladmin']==$admin_id){
                                                        ?>
@@ -171,7 +190,7 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                          
                                         </tr>
                
-                                        <?php }?>
+                                        <?php }}?>
                                         </tbody>     
                                     </table>     
                             </div>

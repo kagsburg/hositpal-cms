@@ -84,7 +84,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                 <th>Image</th>
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
-                                                <th>Next Room</th>
+                                                <th>Previous Room</th>
                                                 <th>Action</th>
 
                                             </tr>
@@ -95,6 +95,11 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];
                                                 $admission_id = $row['admission_id'];
+                                                // check if patient is admitted 
+                                                $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE status=1 and admission_id='$admission_id'");
+                                                // if (mysqli_num_rows($getadmitted) > 0){
+                                                // }else{
+                                                    // continue;                                               
                                                 $prev_id= $row['prev_id'];
                                                 $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id' and status='1'");
                                                 if (mysqli_num_rows($getadmission) > 0){

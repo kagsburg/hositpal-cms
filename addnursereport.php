@@ -166,7 +166,7 @@ include 'includes/header.php';
                                         // $doctor=$_POST['doctor'];
                                         $details=$_POST['details']; 
                             
-                       mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$admin_id','0','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),1,'$id')") or die(mysqli_error($con));
+                       mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$admin_id','1','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),1,'$id')") or die(mysqli_error($con));
                        mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
                        if(isset($_POST['type'],$_POST['measurement'])){
                                       $type=$_POST['type'];

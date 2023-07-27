@@ -253,16 +253,16 @@ $prev_admin_id = $rowpatient_que['admin_id'];
                                         </div>
                                         <div class="row">
                                             <div class="form-group col-lg-6"><label class="control-label"> NPO duration(hours)</label>
-                                                <input type="text" name="npo" class="form-control " placeholder="Enter your Occupation">
+                                                <input type="text" name="npo" class="form-control " placeholder="Enter your NPO duration">
                                             </div>
                                             <div class="form-group col-lg-6"><label class="control-label"> Allergy (If yes, specify)</label>
-                                                <input type="text" name="allergy" class="form-control " placeholder="Enter your Adress">
+                                                <input type="text" name="allergy" class="form-control " placeholder="Enter  Allergy">
                                             </div>
                                             <div class="form-group col-lg-6"><label class="control-label"> Mallampati</label>
-                                                <input type="text" name="mallampati" class="form-control " placeholder="Enter your Phone Number">
+                                                <input type="text" name="mallampati" class="form-control " placeholder="Enter Mallampati">
                                             </div>
                                             <div class="form-group col-lg-6"><label class="control-label"> Medical hx of a patient</label>
-                                                <input type="text" name="medhx" class="form-control " placeholder="Enter your Phone Number">
+                                                <input type="text" name="medhx" class="form-control " placeholder="Enter Medical hx">
                                             </div>
                                             <div class="form-group col-lg-6"><label class="control-label"> Previous hx of anaesthesia</label>
                                                 <select class="form-control" name="prevhx" >

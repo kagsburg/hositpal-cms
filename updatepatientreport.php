@@ -249,6 +249,7 @@ $id = $_GET['id'];
                                                 $details = !empty($reference_obj['details']) ? $reference_obj['details'] : "";
         
                                                 if (!empty($reference)) {
+
                                                     if ($reference == 'lab') {
                                                         $attendant = $technician;
                                                     }
@@ -273,38 +274,7 @@ $id = $_GET['id'];
                                                     if ($reference == 'referral'){
                                                         $attendant=$nurse;
                                                     }
-                                                    if ($reference == 'admission'){                                                       
-                                                        $ward= $reference_obj['ward'];
-                                                        $days= $reference_obj['days'];
-                                                        $bed_id = explode("_", $ward)[1];
-                                                        $ward_id = explode("_", $ward)[0]; 
-                                                        $check = mysqli_query($con, "SELECT * FROM admitted WHERE admission_id='$admission_id' AND status=1");
-                                                        if (mysqli_num_rows($check) > 0) {
-                                                            $errors[] = 'Patient Already Admitted';
-                                                        }
-                                                        if (!empty($errors)) {
-                                                            foreach ($errors as $error) {
-                                                                echo '<div class="alert alert-danger">' . $error . '</div>';
-                                                            }
-                                                            
-                                                        } else {
-                                                            $getward =  mysqli_query($con, "SELECT * FROM wards WHERE status=1 AND ward_id='$ward_id'");
-                                                            $row12 = mysqli_fetch_array($getward);
-                                                            $bedfee = $row12['bedfee'];
-                                                            if ($days != ""){
-                                                                $price = $bedfee * $days;
-                                                            }else{
-                                                                $price = $bedfee;
-                                                            }
-                                                            mysqli_query($con, "INSERT INTO admitted(admission_id,bed_id,price,admissiondate,dischargedate,admin_id,status) VALUES('$admission_id','$bed_id','$price','$timenow',0,'" . $_SESSION['elcthospitaladmin'] . "','1')") or die(mysqli_error($con));
-                                                            $last_id = mysqli_insert_id($con);
-                                                            mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
-                                                            create_bill($pdo,$patient_id,$admission_id,$id,'admission',$last_id,$price,$paymenttype);
-                                                            $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully Added.Click Here to <a href="admitted">View</a> Admissions</div>';
-                                                                // redirect to doctorwaiting
-                                                                echo '<script>window.location.href = "doctorcleared";</script>';
-                                                        }                                                      
-                                                    }
+                                                    
                                                     if ($reference == 'acts'){
                                                         // $acts = $reference_obj['acts'];
                                                         $ddate = $reference_obj['ddate'];
@@ -379,10 +349,12 @@ $id = $_GET['id'];
                                                             // redirect to doctorwaiting
                                                             echo '<script>window.location.href = "doctorcleared.php";</script>';
                                                     }
-                                                        
-                                                    mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
-                                                    //     mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
-                                                    //     mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
+                                                    if ($reference == 'admission'){
+                                                        mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),5,'$id')") or die(mysqli_error($con));
+                                                    }else{
+                                                        mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
+                                                    }    
+                                                   
                                                     $new_patientsque_id = mysqli_insert_id($con);
                                                     if (isset($reference_obj['medicalservices'])) {
                                                         // format: [{id: charge}]
@@ -541,6 +513,39 @@ $id = $_GET['id'];
                                                     }
         
                                                     mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                                    if ($reference == 'admission'){                                                       
+                                                        $ward= $reference_obj['ward'];
+                                                        $days= $reference_obj['days'];
+                                                        $bed_id = explode("_", $ward)[1];
+                                                        $ward_id = explode("_", $ward)[0]; 
+                                                        $check = mysqli_query($con, "SELECT * FROM admitted WHERE admission_id='$admission_id' AND status=1");
+                                                        if (mysqli_num_rows($check) > 0) {
+                                                            $errors[] = 'Patient Already Admitted';
+                                                        }
+                                                        if (!empty($errors)) {
+                                                            foreach ($errors as $error) {
+                                                                echo '<div class="alert alert-danger">' . $error . '</div>';
+                                                            }
+                                                            exit();
+                                                        } else {
+                                                            $getward =  mysqli_query($con, "SELECT * FROM wards WHERE status=1 AND ward_id='$ward_id'");
+                                                            $row12 = mysqli_fetch_array($getward);
+                                                            $bedfee = $row12['bedfee'];
+                                                            if ($days != ""){
+                                                                $price = $bedfee * $days;
+                                                            }else{
+                                                                $price = $bedfee;
+                                                            }
+                                                            mysqli_query($con, "INSERT INTO admitted(admission_id,bed_id,price,admissiondate,dischargedate,admin_id,status) VALUES('$admission_id','$bed_id','$price','$timenow',0,'" . $_SESSION['elcthospitaladmin'] . "','1')") or die(mysqli_error($con));
+                                                            $last_id = mysqli_insert_id($con);
+                                                            // remove from patient with results 
+                                                            mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                                            create_bill($pdo,$patient_id,$admission_id,$id,'admission',$last_id,$price,$paymenttype);
+                                                            $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully Admitted.Click Here to <a href="admitted">View</a> Admissions</div>';
+                                                                // redirect to doctorwaiting
+                                                                echo '<script>window.location.href = "doctorwaiting";</script>';
+                                                        }                                                      
+                                                    }
                                                     if ($reference == 'pharmacy') {
                                                         if (isset($reference_obj['drug'], $reference_obj['prescription'])) {
                                                             $drug = $reference_obj['drug'];
@@ -570,7 +575,11 @@ $id = $_GET['id'];
                                                     } else {
                                                         mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','','','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
                                                     }
+                                                }else{
+                                                    mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                                    mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','','','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
                                                 }
+
                                             }
                                             // redirect to doctorwaiting 
                                                 // set alert message to session message 
@@ -716,12 +725,12 @@ $id = $_GET['id'];
                                             <?php
                                             foreach($patient_ids as $npatientsque_id){
                                                                     $getreports = mysqli_query($con, "SELECT * FROM nursereports WHERE patientsque_id='$npatientsque_id'");
-                                                                
+                                                                if (mysqli_num_rows($getreports) > 0) {
                                                                     while ($row = mysqli_fetch_array($getreports)) {
                                                                         $medicalservice_id = $row['nursereport_id'];
                                                                                     $test = $row['type'];
                                                                                     $presult = $row['measurement'];
-                                                                                    $details = $row['details']; 
+                                                                                    $details =strip_tags($row['details']);
                                                                                                                                            
                                                                         
                                                                     ?>
@@ -739,7 +748,7 @@ $id = $_GET['id'];
                                                                     <label>Details</label>
                                                                     <textarea class="form-control" cols="70" id="editor1" rows="8"  disabled><?php echo $details ; ?></textarea>
                                                                 </div>
-                                                                <?php }?>
+                                                                <?php }}?>
                                                             </div>
                                                             <?php } ?>
 
@@ -810,6 +819,41 @@ $id = $_GET['id'];
                                         </div>
 
                                         <div class="tab-pane nref" id="pharmacy" role="tabpanel" aria-labelledby="pharmacy-tab">
+                                        <?php
+                                           if (in_array('pharmacy', $rooms)) {
+                                            ?>
+                                            <div class="row">
+                                            <?php 
+                                             foreach($patient_ids as $npatientsque_id){
+                                                // get issued drugs 
+                                                $getdrugs = mysqli_query($con, "SELECT * FROM issueddrugs WHERE patientsque_id='$npatientsque_id'") or die(mysqli_error($con));
+                                                if (mysqli_num_rows($getdrugs ) > 0){
+                                                    while ($rowdr = mysqli_fetch_row($getdrugs)){
+                                                        $drug_id = $rowdr['drug'];
+                                                        $dosage = $rowdr['dosage'];
+                                                        // get drug name
+                                                        $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 and inventoryitem_id='$drug_id' ");
+                                                        $row = mysqli_fetch_array($getitems);
+                                                        $itemname = $row['itemname'];
+                                                        $measurement_id = $row['measurement_id'];
+                                                        $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
+                                                        $row2 =  mysqli_fetch_array($getunit);
+                                                        $measurement = $row2['measurement'];
+                                                        ?>
+                                                        <div class="form-group col-lg-6">
+                                                            <label>Drug Name</label>
+                                                            <input type="text" class="form-control " placeholder="Enter drug name" value="<?php echo $itemname; ?>" disabled>
+                                                        </div>
+                                                        <div class="form-group col-lg-6">
+                                                            <label>Dosage</label>
+                                                            <input type="text" class="form-control " placeholder="Enter dosage" value="<?php echo $dosage; ?>" disabled>
+                                                        </div>
+                                                        <?php
+                                                    }
+                                                }
+                                            ?>
+                                            </div>
+                                            <?php }} ?>
                                             <div class="form-check mb-3">
                                                 <input class="form-check-input reference" name="reference[]" type="checkbox" value="pharmacy" data-ref="pharmacy" id="send-pharmacy">
                                                 <label class="form-check-label" for="send-pharmacy">

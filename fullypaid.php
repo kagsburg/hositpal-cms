@@ -116,6 +116,7 @@ $payments = get_all_payments($pdo, $paymethod);
                                                     $fullname = $patient['fullname'];
                                                     $gender = $patient["gender"];
                                                     $image = $patient["image"]; 
+                                                    $pin = $patient["pin"];
                                                 }
 
                                                 
@@ -125,6 +126,7 @@ $payments = get_all_payments($pdo, $paymethod);
                                                     $service = get_service($pdo, $type_id, 2);
                                                     $room = isset($service['name']) ? $service['name'] : "N/A";
                                                 }
+                                                
                                                 
                                             ?>
                                                 <tr class="gradeA">

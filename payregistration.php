@@ -8,6 +8,11 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 } else {
     $patient_id = $_GET['id'];
     $paymentmethod = $_POST['paymentmethod'];
+    if ($paymentmethod == ''){
+        // $errors[] = 'Please select a payment method';
+        $_SESSION['error'] = 'Please select a payment method';
+        header('Location:' . $_SERVER['HTTP_REFERER']);
+    }
     $patient = get_patient($pdo, $patient_id, 3);
     $insurance = $patient['insurancecompany'];
     $service = get_service_charge($pdo, REGISTRATION_SERVICE_ID, $paymentmethod, $insurance, '2');

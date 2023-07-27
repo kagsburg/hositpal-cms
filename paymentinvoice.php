@@ -164,7 +164,7 @@ $id = $_GET['id'];
                           // die($insurancecompany);
                           $insurer = !empty($rowo['insurer']) ? $rowo['insurer'] : (!empty($insurancecompany) ? $insurancecompany : 0);
                           if ($insurer > 0 && $paymethod == "insurance") {
-                            $percentage = $rowo['percentage'];
+                            // $percentage = $rowo['percentage'];
                             $getcompanies =  mysqli_query($con, "SELECT * FROM insurancecompanies WHERE status=1 AND insurancecompany_id='$insurer'");
                             $row1 =  mysqli_fetch_array($getcompanies);
                             $insurancecompany_id = $row1['insurancecompany_id'];
@@ -195,7 +195,7 @@ $id = $_GET['id'];
                           <?php if ($insurer > 0 && $paymethod == "insurance") { ?>
                             <tr>
                               <th>Company</th>
-                              <td><?php echo $company . '(' . $percentage . '%)'; ?></td>
+                              <td><?php echo $company ; ?></td>
                             </tr>
                           <?php } ?>
                         </tbody>

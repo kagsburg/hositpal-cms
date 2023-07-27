@@ -275,10 +275,11 @@ $id = $_GET['id'];
                                                         echo '<script>window.location.href = "doctorcleared.php";</script>';
 
                                                     }
-        
-                                                    mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
-                                                    //     mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
-                                                    //     mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
+                                                    if ($reference == 'admission'){
+                                                        mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),5,'$id')") or die(mysqli_error($con));
+                                                    }else{
+                                                        mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
+                                                    } 
                                                     $new_patientsque_id = mysqli_insert_id($con);
                                                     if (isset($reference_obj['medicalservices'])) {
                                                         // format: [{id: charge}]

@@ -67,6 +67,16 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                         </ol>
                     </div>
                 </div>
+                <?php if (isset($_SESSION['error'])) { ?>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <?php echo $_SESSION['error']; ?>
+                                <?php unset($_SESSION['error']); ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
                 <?php if (isset($_SESSION['flash_message'])) { ?>
                     <div class="row">
                         <div class="col-12">

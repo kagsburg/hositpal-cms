@@ -4,6 +4,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
     header('Location:login.php');
 }
 $id = $_GET['id'];
+$pque=$_GET['que'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -74,6 +75,13 @@ $id = $_GET['id'];
                     </div>
                     <div class="row">
                         <div class="col-lg-12">
+                            <?php 
+                              if (isset($_SESSION['success'])){
+                                echo '<div class="alert alert-success">'.$_SESSION['success'].'</div>';
+                                unset($_SESSION['success']);
+
+                              }
+                              ?>
                             <!-- <a href="admissionprint?id=<?php echo $id; ?>" class="btn btn-success mb-2 btn-xs">Print</a> -->
                             <?php
                             // status 2 is for discharged from ward
@@ -96,6 +104,11 @@ $id = $_GET['id'];
                                 <a href="addobservation?id=<?php echo $id; ?>" class="btn btn-warning mb-2 btn-xs">General Observation</a>
                             <?php } ?>
                             <?php 
+                            if (($_SESSION['elcthospitallevel'] == 'doctor') && ($status == 1)) {
+                            ?>
+                            <a href="updatepatientreport?id=<?php echo $pque; ?>" class="btn btn-xs btn-info"> Patient Report </a>
+                            <?php } ?>
+                            <?php 
                             if ($status != 2){
                                 ?>
                             <button data-toggle="modal" data-target="#discharge<?php echo $id; ?>" class="btn btn-success mb-2 btn-xs">Discharge Patient</button>
@@ -109,7 +122,7 @@ $id = $_GET['id'];
                                 $diet =  mysqli_real_escape_string($con,trim($_POST['diet']));
                                 $insert = mysqli_query($con, "INSERT INTO medicalcase (admitted_id, date, progress, treatment, diet,admin_id,status) VALUES ('$id', '$opdate', '$progress', '$treatment', '$diet','".$_SESSION['elcthospitaladmin']."',1)") or die(mysqli_error($con));
                                 if ($insert) {
-                                    echo '<script>alert("Patient Medical Case Report added successfully")</script>';
+                                    $_SESSION['success'] = 'Patient Medical Case Report added successfully';
                                     echo '<script>window.location.href = "admission?id=' . $id . '";</script>';
                                 }
                             }
@@ -274,7 +287,7 @@ $id = $_GET['id'];
                                                 $status = $_POST['status'];
                                                 $update = mysqli_query($con, "UPDATE operations SET status='$status' WHERE operation_id='$operation_id'") or die(mysqli_error($con));
                                                 if ($update) {
-                                                    echo '<script>alert("Operation status updated successfully")</script>';
+                                                    $_SESSION['success'] = 'Operation status updated successfully';
                                                     echo '<script>window.location.href = "admission?id=' . $id . '";</script>';
                                                 }
                                             }
@@ -666,7 +679,8 @@ $id = $_GET['id'];
                     if ($insert){
                         $update = mysqli_query($con, "UPDATE admitted SET status=2,dischargedate='$date' WHERE admission_id='$admission_id'") or die(mysqli_error($con));
                         $update2= mysqli_query($con, "UPDATE admissions set status=2,dischargedate'$date' where admission_id='$admission'") or die(mysqli_error($con));
-                        echo '<script>alert("Patient Discharged from ward successfully")</script>';
+                        // echo '<script>alert("Patient Discharged from ward successfully")</script>';
+                        $_SESSION['success'] = "Patient Discharged from ward successfully";
                                     echo '<script>window.location.href = "admission?id=' . $id . '";</script>';
                     }
 

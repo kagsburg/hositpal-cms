@@ -70,7 +70,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table id="example5" class="display" style="min-width: 845px">
+                                    <table id="example6" class="display" style="min-width: 845px">
                                         <thead>
                                             <tr>
                                                 <th>PIN</th>
@@ -87,7 +87,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $getpatients = mysqli_query($con, "SELECT * FROM patients WHERE status='1'");
+                                            $getpatients = mysqli_query($con, "SELECT * FROM patients WHERE status='1' order by patient_id desc");
                                             while ($row = mysqli_fetch_array($getpatients)) {
                                                 $patient_id = $row['patient_id'];
                                                 $firstname = $row['firstname'];
@@ -270,6 +270,15 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
     <!-- Datatable -->
     <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="js/plugins-init/datatables.init.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#example6').DataTable({
+                "order": [
+                    [0, "desc"]
+                ]
+            });
+        });
+    </script>
 
 </body>
 
