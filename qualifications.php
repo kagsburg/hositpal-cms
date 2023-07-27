@@ -72,30 +72,49 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                             <div class="card-body">
                                 <div class="basic-form">
                                     <?php
-                                    if (isset($_POST['designation'])) {
-                                        $designation = mysqli_real_escape_string($con, trim($_POST['designation']));
+                                    if (isset($_POST['qualification'])) {
+                                        $designation = mysqli_real_escape_string($con, trim($_POST['qualification']));
                                         if (empty($designation)) {
-                                            $errors[] = 'Designation Name Required';
+                                            $errors[] = 'Qualification Name Required';
                                         }
-                                        $check =  mysqli_query($con, "SELECT * FROM designations WHERE designation='$designation' AND status=1");
+                                        $check =  mysqli_query($con, "SELECT * FROM qualifications WHERE qualification='$designation' AND status=1");
                                         if (mysqli_num_rows($check) > 0) {
-                                            $errors[] = 'Designation Already Added';
+                                            $errors[] = 'Qualification Already Added';
                                         }
                                         if (!empty($errors)) {
                                             foreach ($errors as $error) {
                                                 echo '<div class="alert alert-danger">' . $error . '</div>';
                                             }
                                         } else {
-                                            mysqli_query($con, "INSERT INTO designations(designation,status) VALUES('$designation',1)") or die(mysqli_error($con));
-                                            echo '<div class="alert alert-success">Designation Successfully Added</div>';
+                                            mysqli_query($con, "INSERT INTO qualifications(qualification,admin_id,status) VALUES('$designation','".$_SESSION['elcthospitaladmin']."',1)") or die(mysqli_error($con));
+                                            echo '<div class="alert alert-success">Qualification Successfully Added</div>';
+                                        }
+                                    }
+                                    if (isset($_POST['submitqualification'])){
+                                        $qualification = mysqli_real_escape_string($con, trim($_POST['updatequalification'.$_POST['id']]));
+                                        $id = mysqli_real_escape_string($con, trim($_POST['id']));
+                                        if (empty($qualification)) {
+                                            $errors[] = 'Qualification Name Required';
+                                        }
+                                        $check =  mysqli_query($con, "SELECT * FROM qualifications WHERE qualification='$qualification' AND qualification_id!='$id' AND status=1");
+                                        if (mysqli_num_rows($check) > 0) {
+                                            $errors[] = 'Qualification Already Added';
+                                        }
+                                        if (!empty($errors)) {
+                                            foreach ($errors as $error) {
+                                                echo '<div class="alert alert-danger">' . $error . '</div>';
+                                            }
+                                        } else {
+                                            mysqli_query($con, "UPDATE  qualifications SET qualification='$qualification' WHERE qualification_id='$id'") or die(mysqli_error($con));
+                                            echo '<div class="alert alert-success">Qualification Successfully Updated</div>';
                                         }
                                     }
                                     ?>
                                     <form action="" method="POST">
 
                                         <div class="form-group">
-                                            <label>Designation name</label>
-                                            <input type="text" class="form-control" name="designation" required="required">
+                                            <label>Qualification name</label>
+                                            <input type="text" class="form-control" name="qualification" required="required">
                                         </div>
                                         <div class="form-group">
                                             <button class="btn btn-primary" type="submit">Submit</button>
@@ -110,29 +129,29 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                     <div class="col-lg-7">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Designations</h4>
+                                <h4 class="card-title">Qualification</h4>
                             </div>
                             <div class="card-body">
                                 <table class="table table-striped table-hover" id="save-stage" style="width:100%;">
                                     <thead>
                                         <tr>
-                                            <th>Designation Name</th>
+                                            <th>Qualification Name</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $getdesignations =  mysqli_query($con, "SELECT * FROM designations WHERE status=1");
+                                        $getdesignations =  mysqli_query($con, "SELECT * FROM qualifications WHERE status=1");
                                         while ($row1 =  mysqli_fetch_array($getdesignations)) {
-                                            $designation_id = $row1['designation_id'];
-                                            $designation = $row1['designation'];
+                                            $designation_id = $row1['qualification_id'];
+                                            $designation = $row1['qualification'];
                                         ?>
                                             <tr>
                                                 <td><?php echo $designation; ?></td>
 
                                                 <td>
                                                     <button data-toggle="modal" data-target="#basicModal<?php echo $designation_id; ?>" class="btn btn-sm btn-info">Edit</button>
-                                                    <a href="removedesignation?id=<?php echo $designation_id; ?>" class="btn btn-sm btn-danger" onclick="return confirm_delete<?php echo $designation_id; ?>()">Remove</a>
+                                                    <a href="removequalification?id=<?php echo $designation_id; ?>" class="btn btn-sm btn-danger" onclick="return confirm_delete<?php echo $designation_id; ?>()">Remove</a>
                                                     <script type="text/javascript">
                                                         function confirm_delete<?php echo $designation_id; ?>() {
                                                             return confirm('You are about To Remove this item. Are you sure you want to proceed?');
@@ -145,19 +164,20 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Edit Designation</h5>
+                                                            <h5 class="modal-title" id="exampleModalLabel">Edit Qualification</h5>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <form action="editdesignation?id=<?php echo $designation_id; ?>" method="POST">
+                                                            <form action="" method="POST">
+                                                                <input type="hidden" name="id" value="<?php echo $designation_id; ?>">
                                                                 <div class="form-group">
-                                                                    <label>Designation name</label>
-                                                                    <input type="text" class="form-control" name="designation" required="required" value="<?php echo $designation; ?>">
+                                                                    <label>Qualification name</label>
+                                                                    <input type="text" class="form-control" name="updatequalification<?php echo $designation_id; ?>" required="required" value="<?php echo $designation; ?>">
                                                                 </div>
                                                                 <div class="form-group">
-                                                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                                                    <button class="btn btn-primary" type="submit" name="submitqualification">Submit</button>
                                                                 </div>
                                                             </form>
                                                         </div>

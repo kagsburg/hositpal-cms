@@ -56,7 +56,44 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 					</div>
 
 				</div>
+				<?php 
+				if (($_SESSION['elcthospitallevel'] == 'admin')) {
+					// Get current date
+					$currentDate = strtotime(date("Y-m-d"));
 
+					// Calculate the date 3 months from now
+					$expiryDateThreshold =  strtotime("+3 months");
+					$getstaff = mysqli_query($con, "SELECT * FROM staff WHERE status=1 and contractend >= '$currentDate' and contractend <= '$expiryDateThreshold'");
+					if (mysqli_num_rows($getstaff) > 0) {
+						while ($row = mysqli_fetch_array($getstaff)){
+							$contractstart = $row['contractstart'];
+							$contractend = $row['contractend'];
+							$today = strtotime(date('Y-m-d'));
+								?>
+								<div class="alert alert-danger alert-dismissible fade show" role="alert">
+									<strong>Contract Expiring Soon!</strong> <?php echo $row['fullname'] ?> contract is expiring on <?php echo date('Y-m-d',$contractend) ?>.
+									<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+										<span aria-hidden="true">×</span>
+									</button>
+								</div>
+								<?php
+							
+							// check if contract has expired
+							if ($today > $contractend) {
+								?>
+								<div class="alert alert-danger alert-dismissible fade show" role="alert">
+									<strong>Contract Expired!</strong> <?php echo $row['fullname'] ?> contract has expired.
+									<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+										<span aria-hidden="true">×</span>
+									</button>
+								</div>
+								<?php
+							}
+						}
+					}
+				}
+				
+				?>
 				<div class="col-xl-6 col-xxl-12">
 					<div class="row">
 						<div class="col-xl-6 col-lg-6 col-sm-6">

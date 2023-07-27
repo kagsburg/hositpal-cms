@@ -87,7 +87,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                         $gender = $_POST['gender'];
                                         $phone = mysqli_real_escape_string($con, trim($_POST['phone']));
                                         $email = mysqli_real_escape_string($con, trim($_POST['email']));
-                                        $designation = mysqli_real_escape_string($con, trim($_POST['email'])); $_POST['designation'];
+                                        $designation = $_POST['designation'];
                                         $department = $_POST['department'];
                                         
                                         $education = $_POST['education'];
@@ -261,7 +261,17 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
 
                                             <div class="form-group col-lg-6">
                                                 <label class="control-label">Qualification</label>
-                                                <input type="text" name="qualification" class="form-control" placeholder="Enter qualification">
+                                                <select name="qualification" class="form-control">
+                                                    <option value="">select qualification...</option>
+                                                    <?php 
+                                                        $getqualifications =  mysqli_query($con, "SELECT * FROM qualifications WHERE status=1");
+                                                        while ($row1 =  mysqli_fetch_array($getqualifications)) {
+                                                            $qualification_id = $row1['qualification_id'];
+                                                            $qualification = $row1['qualification'];
+                                                    ?>
+                                                        <option value="<?php echo $qualification_id; ?>"><?php echo $qualification; ?></option>
+                                                    <?php } ?>
+                                                </select>
                                             </div>
                                             <div class="form-group col-lg-6">
                                                 <label class=" control-label">Salary Level</label>
@@ -326,6 +336,8 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                     <option value="head physician">Head physician</option>
                                                     <option value="radiographer">Radiology</option>
                                                     <option value="anesthesiologist">Anesthesiologist</option>
+                                                    <option value="lab technologist">Lab Technologist</option>
+                                                    <option value="head physician">Attending Doctor</option>
                                                 </select>
 
                                             </div>

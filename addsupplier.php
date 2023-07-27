@@ -97,8 +97,12 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             mysqli_query($con, "INSERT INTO suppliers(suppliername,address,phone,email,admin_id,timestamp,status) VALUES('$suppliername','$address','$phone','$email','" . $_SESSION['elcthospitaladmin'] . "','$timenow',1)") or die(mysqli_error($con));
                                             $last_id = mysqli_insert_id($con);
                                             $allproducts = sizeof($products);
-                                            for ($i = 0; $i < $allproducts; $i++) {
-                                                mysqli_query($con, "INSERT INTO supplierproducts(product_id,price,supplier_id,status) VALUES('$products[$i]','$price[$i]','$last_id',1)");
+                                            if ($allproducts != 0){
+                                                for ($i = 0; $i < $allproducts; $i++) {
+                                                    if ($products[$i] != ''){
+                                                    mysqli_query($con, "INSERT INTO supplierproducts(product_id,price,supplier_id,status) VALUES('$products[$i]','$price[$i]','$last_id',1)");
+                                                }
+                                            }
                                             }
                                             echo '<div class="alert alert-success">Supplier Successfully Added</div>';
                                         }
@@ -146,7 +150,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 </div>
                                                 <div class="form-group col-lg-5">
                                                     <label>Cost Price</label>
-                                                    <input type="text" class="form-control" name="price[]" required="required">
+                                                    <input type="text" class="form-control" name="price[]" >
                                                 </div>
                                                 <div class="form-group col-lg-1">
                                                     <a href='#' class="subobj1_button btn btn-success" style="margin-top:30px">+</a>
@@ -175,7 +179,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 </div>
                                                 <div class="form-group col-lg-5">
                                                     <label>Cost Price</label>
-                                                    <input type="text" class="form-control" name="price[]" required="required">
+                                                    <input type="text" class="form-control" name="price[]" >
                                                 </div>
                                                 <div class="form-group col-lg-1">
                                                     <a href='#' class="subobj2_button btn btn-success" style="margin-top:30px">+</a>

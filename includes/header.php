@@ -390,6 +390,16 @@
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-archive"></i>
+              <span class="nav-text">Pending Payments</span>
+            </a>
+            <ul aria-expanded="false">
+              <li><a href="stock">Insurance Payments</a></li>
+              <li><a href="pharmacystock">Credit Payments</a></li>
+            </ul>
+          </li>
+          <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="fa fa-archive"></i>
               <span class="nav-text">Reports</span>
             </a>
             <ul aria-expanded="false">
