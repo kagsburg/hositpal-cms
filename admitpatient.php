@@ -133,6 +133,7 @@ $id = $_GET['id'];
                                         if ($room == 'doctor') {
                                             $attendant = $doctor;
                                         }
+                                        
                                         $getadmissions = mysqli_query($con, "SELECT * FROM admissions WHERE patient_id='$id' AND status='1'");
                                         if (mysqli_num_rows($getadmissions) > 0) {
                                             $errors[] = 'Patient Already Admitted';
@@ -196,6 +197,7 @@ $id = $_GET['id'];
                                             }else{
                                                 $last_id = mysqli_insert_id($con);
                                                 $admission_id = $last_id;
+                                                $attendant='';
                                                 mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$last_id','doctor','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','receptionist',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
                                                 $patientsque_id = mysqli_insert_id($con);
                                                 if (isset($_POST['medicalservices'])) {
@@ -240,7 +242,7 @@ $id = $_GET['id'];
                                                             mysqli_query($con, "INSERT INTO patientservices(serviceorder_id,medicalservice_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
                                                     }
                                                 }
-
+                                                echo '<div class="alert alert-success">Patient Successfully Attended.</div>';
                                             }
                                         }
                                     }

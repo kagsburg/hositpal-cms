@@ -110,6 +110,7 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                                     $pin = $patient['pin'];
                                                     $fullname = $patient['fullname'];
                                                     $insurance_id = $patient['insurancecompany'];
+                                                    
 
 
                                                     $total = 0;

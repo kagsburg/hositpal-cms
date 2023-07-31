@@ -14,6 +14,25 @@ function get_all_bills_group_patient(PDO $conn, $status=1)
     $getallbills = $stmt->fetchAll();
     return $getallbills;
 }
+function get_all_bills_group_patient_only_cash(PDO $conn, $status=1){
+    $stmt = $conn->prepare("SELECT * FROM bills WHERE status=? AND (payment_method='cash' OR payment_method='insurance') GROUP BY patient_id");
+    $stmt->execute([$status]);
+    $getallbills = $stmt->fetchAll();
+    // get patient's insurance id 
+    foreach ($getallbills as $key => $value) {
+        $stmt = $conn->prepare("SELECT * FROM patients WHERE patient_id=?");
+        $stmt->execute([$value['patient_id']]);
+        $getpatient = $stmt->fetch();
+        if ($getpatient['insurancecompany'] != null){
+            $stmt = $conn->prepare("SELECT * FROM insurance_companies WHERE insurance_id=?");
+            $stmt->execute([$getpatient['insurancecompany']]);
+            $getinsurance = $stmt->fetch();
+            $getallbills[$key]['plan'] = $getinsurance['plan'];
+        }
+        $getallbills[$key]['insurance_id'] = $getpatient['insurancecompany'];
+    }
+    return $getallbills;
+}
 
 function get_all_payments(PDO $conn, $payment_method=null)
 {
