@@ -70,7 +70,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitalleve
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table id="example5" class="display">
+                                    <table id="example6" class="display">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -183,7 +183,13 @@ if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitalleve
     <!-- Datatable -->
     <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="js/plugins-init/datatables.init.js"></script>
-
+    <script>
+        $('#example6').DataTable({
+                "order": [
+                    [0, "desc"]
+                ]
+            });
+    </script>
 
     <!--<script src="js/styleSwitcher.js"></script>-->
 </body>

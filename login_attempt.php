@@ -18,7 +18,19 @@ header("Location:index.php");
 
 }
 else{
+    // check for username and password
+    $cust = mysqli_query($con,"SELECT * FROM staff where username='$email' AND password='".md5($pass)."' AND status='1'");
+    $rows=mysqli_num_rows($cust);
+if($rows>0){
+$row=mysqli_fetch_array($cust);
+$cust_id=$row['staff_id'];
+$role=$row['role'];
+$_SESSION['elcthospitaladmin']=$cust_id;
+$_SESSION['elcthospitallevel']=$role;
+header("Location:index.php");
+}else{
     header("Location:login_attempt");  
+}
 }
 }
     ?>

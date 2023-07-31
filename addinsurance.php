@@ -73,6 +73,7 @@ include 'includes/header.php';
                        <?php
                       if(isset($_POST['company'])){
                        $company=  mysqli_real_escape_string($con,trim($_POST['company']));
+                       $plan = mysqli_real_escape_string($con,trim($_POST['plan']));
                        if(empty($company)){
                            $errors[]='Company Name Required';
                        }
@@ -85,16 +86,24 @@ include 'includes/header.php';
                        echo '<div class="alert alert-danger">'.$error.'</div>';
                        }
                        }else{              
-                           mysqli_query($con,"INSERT INTO insurancecompanies(company,status) VALUES('$company',1)") or die(mysqli_error($con));
+                           mysqli_query($con,"INSERT INTO insurancecompanies(company,plan,status) VALUES('$company','$plan',1)") or die(mysqli_error($con));
                            echo '<div class="alert alert-success">Company Successfully Added</div>';
                       }
                       } 
                           ?>
                                     <form action="" method="POST">
-                                            <div class="form-group">
-	                      <label>Company</label>
+                                    <div class="form-group">
+	                            <label>Company</label>
                               <input type="text" class="form-control" name="company" required="required">
-	                    </div>
+	                            </div>
+                                <div class="form-group">
+	                            <label>Payment Plan</label>
+                                <select class="form-control" name="plan" required="required">
+                                    <option value="">Select Plan</option>
+                                    <option value="1">Postpaid</option>
+                                    <option value="2">Prepaid</option>
+                                </select>
+	                            </div>
                       <div class="form-group">
                           <button class="btn btn-primary" type="submit">Submit</button>
                       </div>
@@ -113,7 +122,7 @@ include 'includes/header.php';
                         <thead>
                           <tr>
                             <th>Company</th>                       
-                                                 
+                            <th>Plan </th>                    
                             <th>Action</th>                        
                           </tr>
                         </thead>
@@ -123,9 +132,17 @@ include 'includes/header.php';
                             while( $row1=  mysqli_fetch_array($getcompanies)){
                                               $insurancecompany_id=$row1['insurancecompany_id'];
                                               $company=$row1['company'];
+                                              $plan=$row1['plan'];
                                                          ?>
                           <tr>
                             <td><?php echo $company; ?></td>
+                            <td><?php 
+                            if($plan==1){
+                                echo 'Postpaid';
+                            }else if ($plan==2){
+                                echo 'Prepaid';
+                            }
+                            ?> </td>
                         
                           
                             <td>
@@ -153,9 +170,17 @@ function confirm_delete<?php echo $insurancecompany_id; ?>() {
                            <div class="modal-body">
                                <form action="editinsurancecompany?id=<?php echo $insurancecompany_id; ?>" method="POST">
                                     <div class="form-group">
-	                      <label>Company</label>
-                              <input type="text" class="form-control" name="company" required="required" value="<?php echo $company; ?>">
-	                    </div>
+	                                    <label>Company</label>
+                                        <input type="text" class="form-control" name="company" required="required" value="<?php echo $company; ?>">
+	                                </div>
+                                    <div class="form-group">
+	                                    <label>Plan</label>
+                                        <select class="form-control" name="plan" required="required">
+                                            <option value="">Select Plan</option>
+                                            <option value="1" <?php if($plan==1){echo 'selected';} ?>>Postpaid</option>
+                                            <option value="2" <?php if($plan==2){echo 'selected';} ?>>Prepaid</option>
+                                        </select>
+	                                </div>
                       <div class="form-group">
                           <button class="btn btn-primary" type="submit">Submit</button>
                       </div>                 

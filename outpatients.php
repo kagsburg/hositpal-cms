@@ -168,6 +168,11 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                         <?php }
 
                                                         ?>
+                                                        <?php
+                                                        if ($_SESSION['elcthospitallevel'] == 'nurse') {
+                                                            ?>
+                                                            <a href="patient?id=<?php echo $patient_id; ?>" class="btn btn-xs btn-primary">View</a>
+                                                        <?php } ?>
 
                                                     </td>
 

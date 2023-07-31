@@ -98,7 +98,7 @@ $id = $_GET['id'];
                                     <div class="card-header">
                                         <h4 class="card-title">All Ordered Items</h4>
                                     </div>
-                                    <div class="card-body"
+                                    <div class="card-body">
                                          <div class="table-responsive">
                                         <table id="example5" class="display">
                                             <thead>

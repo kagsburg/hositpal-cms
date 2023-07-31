@@ -51,7 +51,7 @@ if (isset($_POST["load_cart"]) && $_POST["load_cart"] == 1) {
 
 ?>
 
-		<div class="table">
+		<div class="table" style="overflow:hidden; overflow-x:auto">
 
 			<table class="table table-striped" style="width:100%">
 				<thead>
@@ -59,7 +59,7 @@ if (isset($_POST["load_cart"]) && $_POST["load_cart"] == 1) {
 						<th>Item Name</th>
 						<th>Measurement Unit</th>
 						<th>Quantity</th>
-						<th>Expiry</th>
+						<!-- <th>Expiry</th> -->
 						<th></th>
 					</tr>
 				</thead>
@@ -72,17 +72,20 @@ if (isset($_POST["load_cart"]) && $_POST["load_cart"] == 1) {
 						$menuitem = $product["menuitem"];
 						$item_id = $product["item_id"];
 						$product_qty = $product["product_qty"];
-						$expiry = $product["expiry"];
 						$measurement_id = $product["measurement_id"];
 						$getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
 						$row2 =  mysqli_fetch_array($getunit);
 						$measurement = $row2['measurement'];
+						// get exipry date
+						$getexpiry = mysqli_query($con, "SELECT expiry FROM stockitems WHERE product_id='$item_id' AND status=1 ORDER BY stockitem_id DESC LIMIT 1");
+						$row3 = mysqli_fetch_array($getexpiry);
+						$expiry = $row3['expiry'];
 					?>
 						<tr>
 							<td><?php echo $menuitem; ?></td>
 							<td><?php echo $measurement; ?></td>
 							<td><?php echo $product_qty; ?></td>
-							<td><?php echo $expiry; ?></td>
+							<!-- <td><?php echo $expiry; ?></td> -->
 							<!-- <td><strong> ITEM :</strong> <?php echo $menuitem; ?><br>
 								<strong> QTY :</strong> <?php echo $product_qty; ?><br>
 								<strong>UNIT :</strong> <?php echo $measurement; ?><br>

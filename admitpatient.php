@@ -128,15 +128,9 @@ $id = $_GET['id'];
                                             $errors[] = 'Mode Type Required';
                                         }
                                         if ($room == 'nurse') {
-                                            // if (empty($nurse)) {
-                                            //     $errors[] = 'Select Nurse to Proceed';
-                                            // }
                                             $attendant = $nurse;
                                         }
                                         if ($room == 'doctor') {
-                                            // if (empty($doctor)) {
-                                            //     $errors[] = 'Select doctor to Proceed';
-                                            // }
                                             $attendant = $doctor;
                                         }
                                         $getadmissions = mysqli_query($con, "SELECT * FROM admissions WHERE patient_id='$id' AND status='1'");
@@ -199,6 +193,54 @@ $id = $_GET['id'];
                                                     }
                                                 }
                                                 echo '<div class="alert alert-success">Patient Successfully Attended.</div>';
+                                            }else{
+                                                $last_id = mysqli_insert_id($con);
+                                                $admission_id = $last_id;
+                                                mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$last_id','doctor','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','receptionist',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
+                                                $patientsque_id = mysqli_insert_id($con);
+                                                if (isset($_POST['medicalservices'])) {
+                                                    $cashfallbacks = [];
+                                                    $mservices = [];
+                                                    $medicalservices = $_POST['medicalservices'];
+                                                    foreach ($medicalservices as $service) {
+                                                        $getmedicalservice =  mysqli_query($con, "SELECT * FROM medicalservices WHERE status=1 AND medicalservice_id='$service'");
+                                                        $row1 =  mysqli_fetch_array($getmedicalservice);
+                                                        if ($paymentmethod == 'cash') {
+                                                            $charge = $row1['charge'];
+                                                        } else if ($paymentmethod == 'credit') {
+                                                            $charge = $row1['creditprice'];
+                                                        } else if ($paymentmethod == 'insurance') {
+                                                            $getinsured =  mysqli_query($con, "SELECT * FROM insuredservices WHERE status=1 AND medicalservice_id='$service' AND insurancecompany_id='$insurancecompany'");
+                                                            if (mysqli_num_rows($getinsured) > 0) {
+                                                                $insurance =  mysqli_fetch_array($getinsured);
+                                                                $insuredservice_id = $insurance['insuredservice_id'];
+                                                                $charge = $insurance['charge'];
+                                                            }
+                                                        }
+                                                        if (empty($charge)) {
+                                                            $cashfallbacks[$service] = $row1['charge'];
+                                                        } else {
+                                                            $mservices[$service] = $charge;
+                                                        }
+                                                    }
+                                                    if (!empty($cashfallbacks)) {
+                                                        mysqli_query($con, "INSERT INTO serviceorders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'cash',0,'reception',0,0)") or die(mysqli_error($con));
+                                                        $last_id = mysqli_insert_id($con);
+                                                        $total_amount = array_sum($cashfallbacks);
+                                                        create_bill($pdo, $patient_id, $admission_id, $patientsque_id, 'medical_service', $last_id, $total_amount, 'cash');
+                                                        foreach ($cashfallbacks as $service => $charge)
+                                                            mysqli_query($con, "INSERT INTO patientservices(serviceorder_id,medicalservice_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
+                                                    }
+                                                    if (!empty($mservices)) {
+                                                        mysqli_query($con, "INSERT INTO serviceorders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymentmethod',0,'reception',0,0)") or die(mysqli_error($con));
+                                                        $last_id = mysqli_insert_id($con);
+                                                        $total_amount = array_sum($mservices);
+                                                        create_bill($pdo, $patient_id, $admission_id, $patientsque_id, 'medical_service', $last_id, $total_amount, $paymentmethod);
+                                                        foreach ($mservices as $service => $charge)
+                                                            mysqli_query($con, "INSERT INTO patientservices(serviceorder_id,medicalservice_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
+                                                    }
+                                                }
+
                                             }
                                         }
                                     }

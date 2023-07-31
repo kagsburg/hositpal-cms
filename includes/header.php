@@ -371,12 +371,12 @@
         <?php }
         if (($_SESSION['elcthospitallevel'] == 'accountant')) {
         ?>
-          <li>
+          <!-- <li>
             <a class="ai-icon" href="fullypaid" aria-expanded="false">
               <i class="fa fa-money"></i>
               <span class="nav-text">Payments</span>
             </a>
-          </li>
+          </li> -->
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-archive"></i>
@@ -390,11 +390,11 @@
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-archive"></i>
-              <span class="nav-text">Pending Payments</span>
+              <span class="nav-text">Bills</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="stock">Insurance Payments</a></li>
-              <li><a href="pharmacystock">Credit Payments</a></li>
+              <li><a href="fullypaid">Paid Bills</a></li>
+              <li><a href="outstanding">Outstanding Bills </a></li>
             </ul>
           </li>
           <li>
@@ -419,9 +419,9 @@
               <li><a href="waitingpatients">Waiting List </a></li>
               <!-- <li><a href="admitted">Admission</a></li> -->
               <li><a href="outpatients">Outpatient</a></li>
-              <li><a href="inpatients">Inpatients</a></li>
-              <li><a href="admitted">Admitted Patients</a></li>
-              <li><a href="registrationrequests">Pending Registrations</a></li>
+              <li><a href="admitted">Inpatients</a></li>
+              <!-- <li><a href="admitted">Admitted Patients</a></li> -->
+              <li><a href="registrationrequests">Triage</a></li>
             </ul>
           </li>
 

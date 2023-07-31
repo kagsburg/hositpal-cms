@@ -152,7 +152,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                         ?>
                                                             <?php if ($level == 4) { ?>
                                                                 <a href="sendforregistration?id=<?php echo $patient_id; ?>" class="btn btn-warning btn-xs" >
-                                                                    Medical Information
+                                                                    Triage
                                                                 </a>
                                                             <?php } else if ($level == 2) { ?>
 

@@ -143,9 +143,10 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                             $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                             $row2 =  mysqli_fetch_array($getunit);
                                             $measurement = $row2['measurement'];
-                                            $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock FROM stockitems WHERE product_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                            $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id'") or die(mysqli_error($con));
                                             $row3 = mysqli_fetch_array($getstock);
                                             $totalstock = $row3['totalstock'];
+                                            $exipry = $row3['expiry'];
                                             $totalordered = 0;
                                             $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
                                             while ($row4 = mysqli_fetch_array($getordered)) {
@@ -168,6 +169,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                                         <form id="pform<?php echo $inventoryitem_id ?>" class="form-item">
                                                         <input type="hidden" name="item_id" value="<?php echo $inventoryitem_id; ?>">
                                                         <input type="hidden" name="measurement_id" value="<?php echo $measurement_id; ?>">
+                                                        <input type="hidden" name="expiry" value="<?php echo $exipry; ?>">
                                                         <button class="btn btn-xs btn-info listbtn" type="submit">Add to List</button>
                                                         </form>
                                                     </td>

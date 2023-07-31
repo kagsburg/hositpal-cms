@@ -87,6 +87,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                         $gender = $_POST['gender'];
                                         $phone = mysqli_real_escape_string($con, trim($_POST['phone']));
                                         $email = mysqli_real_escape_string($con, trim($_POST['email']));
+                                        $username = mysqli_real_escape_string($con, trim($_POST['username']));
                                         $designation = $_POST['designation'];
                                         $department = $_POST['department'];
                                         
@@ -141,7 +142,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             } else {
                                                 $pass = md5($password);
                                             }
-                                            $addemployee =  mysqli_query($con, "INSERT INTO staff(fullname,phone,gender,email,ext,designation_id,department_id,contractstart,contractend,salary,role,password,education,qualification,emergency_contact,emergency_contact_relationship,emergency_contact_phone,emergency_contact_address,salarylevel,timestamp,status) VALUES('$fullname','$phone','$gender','$email','$image_ext','$designation','$department','$contractstart','$contractend','$salary','$role','$pass','$education','$qualification','$emergency_contact','$emergency_contact_relationship','$emergency_contact_phone','$emergency_contact_address','$salarylevel','$timenow','1')");
+                                            $addemployee =  mysqli_query($con, "INSERT INTO staff(fullname,phone,gender,email,username,ext,designation_id,department_id,contractstart,contractend,salary,role,password,education,qualification,emergency_contact,emergency_contact_relationship,emergency_contact_phone,emergency_contact_address,salarylevel,timestamp,status) VALUES('$fullname','$phone','$gender','$email','$username','$image_ext','$designation','$department','$contractstart','$contractend','$salary','$role','$pass','$education','$qualification','$emergency_contact','$emergency_contact_relationship','$emergency_contact_phone','$emergency_contact_address','$salarylevel','$timenow','1')");
                                             $last_id =  mysqli_insert_id($con);
                                             if (!empty($image_name)) {
                                                 $image_file =  md5($last_id) . '.' . $image_ext;
@@ -160,7 +161,6 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 <label class="control-label">* Full Name</label>
                                                 <input type="text" name='fullname' class="form-control" placeholder="Enter fullname" required="required">
                                             </div>
-
                                             <div class="form-group col-lg-6">
                                                 <label class="control-label">* Gender</label>
                                                 <select name="gender" class="form-control">
@@ -169,6 +169,10 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                     <option value="Female">Female</option>
                                                 </select>
                                                 <div id='form_gender_errorloc' class='text-danger'></div>
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label class="control-label">Username</label>
+                                                <input type="text" name='username' class="form-control" placeholder="Enter username" required>
                                             </div>
 
                                             <div class="form-group col-lg-6">

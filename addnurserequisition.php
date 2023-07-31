@@ -122,6 +122,7 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                                     <thead>
                                         <tr>
                                             <th>Product Name</th>
+                                            <th>In Stock</th>
                                             <th>Quantity</th>
                                             <th>&nbsp;</th>
                                         </tr>
@@ -142,9 +143,28 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                                             $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                             $row2 =  mysqli_fetch_array($getunit);
                                             $measurement = $row2['measurement'];
+                                            $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
+                                            $row2 =  mysqli_fetch_array($getunit);
+                                            $measurement = $row2['measurement'];
+                                            $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                            $row3 = mysqli_fetch_array($getstock);
+                                            $totalstock = $row3['totalstock'];
+                                            $exipry = $row3['expiry'];
+                                            $totalordered = 0;
+                                            $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                            while ($row4 = mysqli_fetch_array($getordered)) {
+                                                $stockorder_id = $row4['stockorder_id'];
+                                                $quantity = $row4['quantity'];
+                                                $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND section='pharmacy'");
+                                                if (mysqli_num_rows($getorder) > 0) {
+                                                    $totalordered = $totalordered + $quantity;
+                                                }
+                                            }
+                                            $instock = $totalstock - $totalordered;
                                         ?>
                                                 <tr>
                                                     <td><?php echo $itemname . '(' . $measurement . ')'; ?></td>
+                                                    <td><?php echo $instock; ?></td>
                                                     
                                                     <td> <input name="product_qty" form="pform<?php echo $inventoryitem_id ?>" class="form-control" type="text" style="width:50px">
                                                 </td>

@@ -90,6 +90,7 @@ if (($_SESSION['elcthospitallevel'] != 'insurance officer')) {
                                  $gender = mysqli_real_escape_string($con, trim($_POST['gender']));
                                  $dob = mysqli_real_escape_string($con, strtotime($_POST['dob']));
                                  $phone = mysqli_real_escape_string($con, trim($_POST['phone']));
+                                 $vote = mysqli_real_escape_string($con, trim($_POST['vote']));
                                  $contact = "";
                                  $employmentstatus = "";
                                  $employername = mysqli_real_escape_string($con, trim($_POST['employername']));
@@ -104,7 +105,7 @@ if (($_SESSION['elcthospitallevel'] != 'insurance officer')) {
                                        echo '<div class="alert alert-danger">' . $error . '</div>';
                                     }
                                  } else {
-                                    mysqli_query($con, "UPDATE patients SET insurancecompany='$insurancecompany',policyidnumber='$membernumber',maximum_coverage='$maximum_coverage',subscriptiontype='$subscriptiontype',primary_name='$primary_name',primary_org='$primary_org',primary_contact='$primary_contact',primary_relationship='$primary_relationship',firstname='$firstname',secondname='$secondname',thirdname='$thirdname',gender='$gender',dob='$dob',phone='$phone',contact='$contact',employmentstatus='$employmentstatus',employername='$employername',employernumber='$employernumber' WHERE patient_id='" . $patient_id . "'") or die(mysqli_error($con));
+                                    mysqli_query($con, "UPDATE patients SET vote='$vote', insurancecompany='$insurancecompany',policyidnumber='$membernumber',maximum_coverage='$maximum_coverage',subscriptiontype='$subscriptiontype',primary_name='$primary_name',primary_org='$primary_org',primary_contact='$primary_contact',primary_relationship='$primary_relationship',firstname='$firstname',secondname='$secondname',thirdname='$thirdname',gender='$gender',dob='$dob',phone='$phone',contact='$contact',employmentstatus='$employmentstatus',employername='$employername',employernumber='$employernumber' WHERE patient_id='" . $patient_id . "'") or die(mysqli_error($con));
                                     mysqli_query($con, "UPDATE paymethod SET status='1' WHERE paymethod_id='" . $id . "'") or die(mysqli_error($con));
                                     // $paymenttype = 'insurance';
                                     
@@ -245,9 +246,9 @@ if (($_SESSION['elcthospitallevel'] != 'insurance officer')) {
                                        <input type="text" name="phone" class="form-control " placeholder="Enter your Phone Number" value="<?php echo $phone; ?>">
                                     </div>
 
-                                    <!-- <div class="form-group col-lg-6"><label class="control-label">Personal Contact Details</label>
-                                       <input type="text" name="contact" class="form-control " placeholder="Enter personal contact details">
-                                    </div> -->
+                                    <div class="form-group col-lg-6"><label class="control-label">Vote Number</label>
+                                       <input type="text" name="vote" class="form-control " placeholder="Enter Vote Number">
+                                    </div>
 
                                     <!-- <div class="forprimary" style="display: none; width: 100%">
                                        <div class="form-group col-lg-6"><label class="control-label">* Employment Status</label>

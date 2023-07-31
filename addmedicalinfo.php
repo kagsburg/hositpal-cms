@@ -72,7 +72,7 @@ $patient_id = $patient['patient_id'];
                 <div class="row">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Add Patient : (Medication Information)</h4>
+                                <h4 class="card-title">Add Patient : (Triage)</h4>
                             </div>
                             <div class="card-body">
                                 <div class="basic-form">
@@ -84,7 +84,9 @@ $patient_id = $patient['patient_id'];
                                         $allergies = mysqli_real_escape_string($con, trim($_POST['allergies']));
                                         $diseases = mysqli_real_escape_string($con, trim($_POST['diseases']));
                                         $pregnancies = mysqli_real_escape_string($con, trim($_POST['pregnancies']));
-                                        mysqli_query($con, "UPDATE patients SET bloodgroup='$bloodgroup',weight='$weight',height='$height',allergies='$allergies',diseases='$diseases',pregnancies='$pregnancies',level=2 WHERE patient_id='" . $patient_id . "'") or die(mysqli_error($con));
+                                        $temp = mysqli_real_escape_string($con, trim($_POST['temp']));
+                                        $bp= mysqli_real_escape_string($con, trim($_POST['bp']));
+                                        mysqli_query($con, "UPDATE patients SET bloodgroup='$bloodgroup',weight='$weight',temp='$temp',bp='$bp',height='$height',allergies='$allergies',diseases='$diseases',pregnancies='$pregnancies',level=2, WHERE patient_id='" . $patient_id . "'") or die(mysqli_error($con));
                                         if (isset($_POST['month'], $_POST['year'])) {
                                             $month = $_POST['month'];
                                             $year = $_POST['year'];
@@ -120,6 +122,13 @@ $patient_id = $patient['patient_id'];
                                             </div>
                                             <div class="form-group col-lg-6"><label class="control-label">Number of Pregnancies (if Female)</label>
                                                 <input type="number" name="pregnancies" class="form-control " placeholder="Enter Number of Pregnancies">
+                                            </div>
+                                            <div class="form-group col-lg-6"><label class="control-label">Temperature</label>
+                                                <input type="number" name="temp" class="form-control " placeholder="Enter Temperature">
+                                            </div>
+                                            <div class="form-group col-lg-6">
+                                                <label class="control-label">Blood Pressure</label>
+                                                <input type="text" name="bp" class="form-control " placeholder="Enter Blood Pressure">
                                             </div>
                                         </div>
                                         <div class="col-lg-12">

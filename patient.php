@@ -70,6 +70,22 @@ $id = $_GET['id'];
                             <li class="breadcrumb-item active"><a href="#">View Patient</a></li>
                         </ol>
                     </div>
+                    <?php 
+                        if (isset($_POST['submittriage'])){
+                            $blood2 = mysqli_real_escape_string($con, trim($_POST['blood']));
+                            $weight2 = mysqli_real_escape_string($con, trim($_POST['weight']));
+                            $height2 = mysqli_real_escape_string($con, trim($_POST['height']));
+                            $allergies2 = mysqli_real_escape_string($con, trim($_POST['alleg']));
+                            $diseases2 = mysqli_real_escape_string($con, trim($_POST['disease']));
+                            $pregnancies2 = mysqli_real_escape_string($con, trim($_POST['pregan']));
+                            $temp = mysqli_real_escape_string($con,trim($_POST['temp']));
+                            $bp = mysqli_real_escape_string($con,trim($_POST['bp']));
+                            $id = mysqli_real_escape_string($con, trim($_POST['id']));
+                            mysqli_query($con, "UPDATE patients SET bloodgroup='$blood2',weight='$weight2',temp='$temp',bp='$bp',height='$height2',allergies='$allergies2',diseases='$diseases2',pregnancies='$pregnancies2'WHERE patient_id='" . $id . "'") or die(mysqli_error($con));
+                            echo '<div class="alert alert-success"> Patient Triage Deatails Updated Successfully</div>';
+
+                        }
+                    ?>
                 </div>
                 <div class="row">
                     <?php
@@ -112,6 +128,8 @@ $id = $_GET['id'];
                     $allergies = $row['allergies'];
                     $diseases = $row['diseases'];
                     $pregnancies = $row['pregnancies'];
+                    $temp = $row['temp'];
+                    $bp = $row['bp'];
                     $smoke = $row['smoke'];
                     $drink = $row['drink'];
                     $exercise = $row['exercise'];
@@ -170,7 +188,7 @@ $id = $_GET['id'];
                                     <?php if ($status == '1') { ?>
                                         <?php if ($level == 4 && $_SESSION['elcthospitallevel'] == 'receptionist') { ?>
                                             <button type="button" class="btn btn-warning btn-block" data-toggle="modal" data-target="#completeRegistrationModal">
-                                                Send to Nurse for Medical Information
+                                                Send to Nurse for Triage
                                             </button>
                                         <?php } else if ($level == 2) { ?>
                                             <?php if (is_admitted($pdo, $patient_id)) { ?>
@@ -372,6 +390,22 @@ $id = $_GET['id'];
                                                         </div>
                                                         <div class="row mb-2">
                                                             <div class="col-sm-3 col-5">
+                                                                <h5 class="f-w-500">Temperature <span class="pull-right">:</span>
+                                                                </h5>
+                                                            </div>
+                                                            <div class="col-sm-9 col-7"><span><?php echo $temp; ?></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-sm-3 col-5">
+                                                                <h5 class="f-w-500">Blood Pressure <span class="pull-right">:</span>
+                                                                </h5>
+                                                            </div>
+                                                            <div class="col-sm-9 col-7"><span><?php echo $bp; ?></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-sm-3 col-5">
                                                                 <h5 class="f-w-500">Allergies <span class="pull-right">:</span>
                                                                 </h5>
                                                             </div>
@@ -414,6 +448,9 @@ $id = $_GET['id'];
                                                                 </div>
                                                         <?php }
                                                         } ?>
+                                                        <div class="">
+                                                            <button  class="btn btn-xs btn-info" data-toggle="modal" data-target="#addEditModal"><i class="fa fa-plus"></i> Edit Triage</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -501,7 +538,60 @@ $id = $_GET['id'];
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="addEditModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="exampleModalLabel"> Edit Patient Triage  </h5>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <form method="post" name='form' class="form" action="" enctype="multipart/form-data" >
+                                                                        <input type="hidden" name="id" value="<?php echo $patient_id; ?>">
+                                                                        <div class="form-group nref" >
+                                                                            <label class="control-label"> Blood Group</label>
+                                                                            <input type="text" name="blood" class="form-control" value="<?php echo $bloodgroup; ?>" required>
+                                                                        </div>
 
+                                                                            <div class="form-group notmedic">
+                                                                                <label class="control-label">Weight (kgs) </label>
+                                                                                <input name="weight" class="form-control" value="<?php echo $weight; ?>" required/>
+                                                                            </div>
+                                                                            <div class="form-group notmedic">
+                                                                                <label class="control-label">Height </label>
+                                                                                <input name="height" class="form-control" value="<?php echo $height; ?>" required/>
+                                                                            </div>
+                                                                            <div class="form-group notmedic">
+                                                                                <label class="control-label">Temperature </label>
+                                                                                <input name="temp" class="form-control" value="<?php echo $temp; ?>" required/>
+                                                                            </div>
+                                                                            <div class="form-group notmedic">
+                                                                                <label class="control-label">Blood Pressure (BP) </label>
+                                                                                <input name="bp" class="form-control" value="<?php echo $bp ?>" required/>
+                                                                            </div>
+                                                                            <div class="form-group notmedic">
+                                                                                <label class="control-label">Allergies </label>
+                                                                                <input name="alleg" class="form-control" value="<?php echo $allergies; ?>" required/>
+                                                                            </div>
+                                                                            <div class="form-group notmedic">
+                                                                                <label class="control-label">Diseases </label>
+                                                                                <input name="disease" class="form-control" value="<?php echo $diseases; ?>" required/>
+                                                                            </div>
+                                                                            <div class="form-group notmedic">
+                                                                                <label class="control-label">Pregnancies </label>
+                                                                                <input name="pregan" class="form-control" value="<?php echo $pregnancies; ?>" required/>
+                                                                            </div>
+                                                                            
+
+                                                                            <div class="form-group pull-right"><button class="btn btn-primary" type="submit" name="submittriage">Save</button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
         <!-- completeRegistrationModal - bootstrap modal -->
         <div class="modal fade" id="completeRegistrationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">

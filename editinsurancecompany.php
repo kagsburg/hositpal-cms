@@ -6,6 +6,7 @@ header('Location:login.php');
        $id=$_GET['id'];
                          if(isset($_POST['company'])){
                        $company=  mysqli_real_escape_string($con,trim($_POST['company']));
+                       $plan=  mysqli_real_escape_string($con,trim($_POST['plan']));
                        if(empty($company)){
                            $errors[]='Company Name Required';
                        }
@@ -18,7 +19,7 @@ header('Location:login.php');
                        echo '<div class="alert alert-danger">'.$error.'</div>';
                        }
                        }else{              
-                         mysqli_query($con,"UPDATE insurancecompanies SET company='$company' WHERE insurancecompany_id='$id'") or die(mysqli_error($con));
+                         mysqli_query($con,"UPDATE insurancecompanies SET company='$company',plan='$plan' WHERE insurancecompany_id='$id'") or die(mysqli_error($con));
  header('Location:'.$_SERVER['HTTP_REFERER']);
                       }
                       } 
