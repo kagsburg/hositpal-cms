@@ -88,7 +88,7 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                         <tbody>
                                             <?php
 
-                                            $bills = get_all_bills_group_patient($pdo);
+                                            $bills = get_all_bill_group_patient_accountant($pdo);
                                             // print_r($bills);
                                             foreach ($bills as $bill) {
                                                 $bill_id = $bill['bill_id'];
@@ -105,7 +105,18 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                                     $mode = "emergency";
                                                     // $paymenttype = get_payment_method($pdo, $patient_id);
                                                 }
-                                                if ($mode == 'emergency') {
+                                                // get insurance plan if patient is insured
+                                                if ($paymenttype == "insurance"){
+                                                    $plan= get_patient_insurance_plan($pdo, $patient_id);
+                                                } else{
+                                                    $plan['plan'] = null;
+                                                }
+                                                if($paymenttype == "credit"){
+                                                    $credit= get_patient_credit_plan($pdo, $patient_id);
+                                                }
+
+                                                // $plan = get_patient_insurance_plan($pdo, $patient_id);
+                                                if (($mode == 'emergency') || ($plan['plan']==1) || ($paymenttype == "credit")) {
                                                     $patient = get_active_patient($pdo, $patient_id);
                                                     $pin = $patient['pin'];
                                                     $fullname = $patient['fullname'];
@@ -200,9 +211,9 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                                                 </td> -->
                                                                 <td>
                                                                     <?php
-                                                                    if ($_SESSION['elcthospitallevel'] == 'cashier') {
+                                                                    if ($_SESSION['elcthospitallevel'] == 'accountant') {
                                                                     ?>
-                                                                        <a href="addpayment?q=<?php echo $patient_id; ?>" class="btn btn-sm btn-primary">Add Payment</a>
+                                                                        <a href="addoutstandingpayment?q=<?php echo $patient_id; ?>" class="btn btn-sm btn-primary">Add Payment</a>
                                                                         <a href="deletebill?q=<?php echo $patient_id; ?>" onclick="return confirm_delete<?php echo $patient_id; ?>()" class="btn btn-sm btn-danger">Clear</a>
                                                                         <script type="text/javascript">
                                                                             function confirm_delete<?php echo $patient_id; ?>() {

@@ -413,18 +413,26 @@
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-users"></i>
-              <span class="nav-text">Patient Management</span>
+              <span class="nav-text">Outpatients</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="waitingpatients">Waiting List </a></li>
-              <!-- <li><a href="admitted">Admission</a></li> -->
-              <li><a href="outpatients">Outpatient</a></li>
-              <li><a href="admitted">Inpatients</a></li>
-              <!-- <li><a href="admitted">Admitted Patients</a></li> -->
-              <li><a href="registrationrequests">Triage</a></li>
+                   <li><a href="waitingpatients">Waiting List </a></li>
+                  <li><a href="outpatients">Outpatients</a></li>
+              <!-- <li><a href="registrationrequests">Triage</a></li> -->
             </ul>
           </li>
-
+          <li><a class=" ai-icon" href="registrationrequests">
+          <i class="fa fa-building"></i>Triage</a></li>
+          <li>
+                <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+                  <i class="fa fa-users"></i>
+                  <span class="nav-text">Inpatients</span>
+                </a>
+                <ul aria-expanded="false">
+                  <li><a href="admitted">Admitted</a></li>
+                  <li><a href="operationscleared">Operated</a></li>
+                </ul>
+              </li>
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-building"></i>
@@ -435,18 +443,18 @@
               <li><a href="clinicclients">Clients</a></li>
             </ul>
           </li>
-          <li>
+          <!-- <li>
             <a class="ai-icon" href="doctorwaiting" aria-expanded="false">
               <i class="fa fa-snowflake-o"></i>
               <span class="nav-text">Refrigerator</span>
             </a>
-          </li>
-          <li>
+          </li> -->
+          <!-- <li>
             <a class="ai-icon" href="nursecommunication" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Communication</span>
             </a>
-          </li>
+          </li> -->
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-reply"></i>
@@ -529,25 +537,35 @@
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-users"></i>
-              <span class="nav-text">Patient Management</span>
+              <span class="nav-text">Outpatients</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="doctorwaiting">Awaiting Patients</a></li>
+              <li><a href="doctorwaiting">Waiting List</a></li>
               <li><a href="doctorcleared">Patient With Results</a></li>
+            </ul>
+          </li>
+          <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="fa fa-share"></i>
+              <span class="nav-text">In Patients</span>
+            </a>
+            <ul aria-expanded="false">
+              <!-- <li><a href="inpatients">Operated Patients</a></li> -->
               <li><a href="admitted">Admitted Patients</a></li>
+              <li>
+                <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+                  <i class="fa fa-wrench"></i>
+                  <span class="nav-text">Operations</span>
+                </a>
+                <ul aria-expanded="false">
+                  <li><a href="operationswaiting">Awaiting Patients</a></li>
+                  <li><a href="operationscleared">Operated Patients</a></li>
+                </ul>
+              </li>
             </ul>
           </li>
 
-          <li>
-            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
-              <i class="fa fa-wrench"></i>
-              <span class="nav-text">Operations</span>
-            </a>
-            <ul aria-expanded="false">
-              <li><a href="operationswaiting">Awaiting Patients</a></li>
-              <li><a href="operationscleared">Operated Patients</a></li>
-            </ul>
-          </li>
+          
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-reply"></i>
@@ -575,10 +593,11 @@
             </a>
 
           </li>
+          
           <li>
             <a class="ai-icon" href="labcleared" aria-expanded="false">
               <i class="fa fa-users"></i>
-              <span class="nav-text">Cleared Patients</span>
+              <span class="nav-text">Lab Results</span>
             </a>
           </li>
           <li>
@@ -592,6 +611,39 @@
             </ul>
           </li>
         <?php }
+        if (($_SESSION['elcthospitallevel'] == 'lab technologist')) {
+          ?>
+          <li>
+            <a class="ai-icon" href="labwaiting" aria-expanded="false">
+              <i class="fa fa-user-plus"></i>
+              <span class="nav-text">Waiting Patients</span>
+            </a>
+
+          </li>
+          <li>
+            <a class="ai-icon" href="labcleared" aria-expanded="false">
+              <i class="fa fa-users"></i>
+              <span class="nav-text">Lab Results</span>
+            </a>
+          </li>
+          <!-- <li>
+            <a class="ai-icon" href="labresults" aria-expanded="false">
+              <i class="fa fa-users"></i>
+              <span class="nav-text">Lab Results</span>
+            </a>
+          </li> -->
+          <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="fa fa-reply"></i>
+              <span class="nav-text">Requisitions</span>
+            </a>
+            <ul aria-expanded="false">
+              <li><a href="addlabstock">Add Requisition</a></li>
+              <li><a href="labstockorders">View Requisitions</a></li>
+            </ul>
+          </li>
+
+          <?php }
         if (($_SESSION['elcthospitallevel'] == 'radiographer')) {
         ?>
           <li>
@@ -623,11 +675,28 @@
         if (($_SESSION['elcthospitallevel'] == 'pharmacist')) {
         ?>
           <li>
-            <a class="ai-icon" href="pharmacywaiting" aria-expanded="false">
+            <a class="ai-icon" href="" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
-              <span class="nav-text">Waiting Patients</span>
+              <span class="nav-text">OutPatients</span>
+              <ul aria-expanded="false">
+              <li><a href="pharmacywaiting">Waiting List</a></li>
+              <li><a href="outpatients">Outpatients</a></li>
+              <!-- <li><a href="labstockorders">Lab Stock Orders</a></li>
+              <li><a href="nursestockorders">Nurse Stock Orders</a></li> -->
+            </ul>
             </a>
-
+          </li>
+          <li>
+            <a class="ai-icon" href="" aria-expanded="false">
+              <i class="fa fa-user-plus"></i>
+              <span class="nav-text">Inpatients</span>
+              <ul aria-expanded="false">
+              <!-- <li><a href="pharmacywaiting">Waiting List</a></li> -->
+              <li><a href="admitted">Outpatients</a></li>
+              <!-- <li><a href="labstockorders">Lab Stock Orders</a></li>
+              <li><a href="nursestockorders">Nurse Stock Orders</a></li> -->
+            </ul>
+            </a>
           </li>
           <li>
             <a class="ai-icon" href="pharmacycleared" aria-expanded="false">

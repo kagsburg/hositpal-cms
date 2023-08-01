@@ -104,7 +104,26 @@ function is_admitted(PDO $conn, $patient_id)
     else
         return false;
 }
-
+function get_patient_insurance_plan(PDO $conn, $patient_id){
+    $stmt = $conn->prepare("SELECT * FROM patients WHERE patient_id=?");
+    $stmt->execute([$patient_id]);
+    $getplan1 = $stmt->fetch();
+    // get insurance 
+    $stmt2= $conn->prepare("SELECT * FROM insurancecompanies where insurancecompany_id =?");
+    $stmt2->execute([$getplan1['insurancecompany']]);
+    $getplan=$stmt2->fetch();
+    return $getplan;
+}
+function get_patient_credit_plan(PDO $conn, $patient_id){
+    $stmt = $conn->prepare("SELECT * FROM patients WHERE patient_id=?");
+    $stmt->execute([$patient_id]);
+    $getplan1 = $stmt->fetch();
+    // get insurance 
+    $stmt2= $conn->prepare("SELECT * FROM creditclients where creditcompany_id =?");
+    $stmt2->execute([$getplan1['creditclient']]);
+    $getplan=$stmt2->fetch();
+    return $getplan;
+}
 function get_all_patients(PDO $conn, $status=1, $order="desc")
 {
     $stmt = $conn->prepare("SELECT * FROM patients WHERE status=? ORDER BY patient_id $order");
