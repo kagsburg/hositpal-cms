@@ -324,9 +324,25 @@ $id = $_GET['q'];
                                 <div class="card-header">
                                     <?php 
                                         // get already parlty paid bills
-                                        $getpartly = mysqli_query($con, "")
+                                        $getpartly = mysqli_query($con, "select * from bills where patient_id='$patient_id' and admission_id='$admission_id' and status=8") or die(mysqli_error($con));
+                                        if (mysqli_num_rows($getpartly) > 0){
+                                            $row = mysqli_fetch_array($getpartly);
+                                            $partly_paid = $row['bill_id'];
+                                            $getpartly = mysqli_query($con, "select sum(amount) as amount from bill_payments where bill_id='$partly_paid'") or die(mysqli_error($con));
+                                            $row = mysqli_fetch_array($getpartly);
+                                            $partly_paid = $row['amount'];
+                                        }else{
+                                            $partly_paid = 0;
+                                        }
                                     ?>
-                                    <h4 class="card-title">Services</h4>
+                                    <h4 class="card-title">Services
+                                    </h4> <?php 
+                                            if ($partly_paid > 0){
+                                                echo "<small class='float-left'>Partly Paid: ".number_format($partly_paid)."</small>
+                                                 <small class='float-right'>Balance: ".number_format($total - $partly_paid)."</small>
+                                                ";
+                                            }
+                                            ?>
                                 </div>
                                 <div class="card-body">
                                     <?php

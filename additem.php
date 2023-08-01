@@ -129,7 +129,12 @@ if (isset($_GET['sub'])) {
                                             <select name="category" class="form-control" id="category">
                                                 <option value="">select category...</option>
                                                 <?php
-                                                $type = $ty . ' items';
+                                                if ($ty == "Medicine"){
+                                                    $type = $ty;
+                                                }else{
+                                                    $type = $ty . ' items';
+                                                }
+                                                print_r($type);
                                                 $getcats =  mysqli_query($con, "SELECT * FROM itemcategories WHERE status=1 AND type='$type'");
                                                 while ($row1 =  mysqli_fetch_array($getcats)) {
                                                     $itemcategory_id = $row1['itemcategory_id'];
@@ -153,7 +158,7 @@ if (isset($_GET['sub'])) {
                                             </div>
                                         </div>
 
-                                        <div class="form-group" <?php if ($ty != 'Medical') { ?>style="display:none" <?php } ?>>
+                                        <div class="form-group" <?php if ($ty != 'Medicine') { ?>style="display:none" <?php } ?>>
                                             <label class="control-label">Strength</label>
                                             <input type="text" name="strength" class="form-control" placeholder="Enter Strength">
                                         </div>
@@ -287,9 +292,9 @@ if (isset($_GET['sub'])) {
 
         $('.subobj_button').click(function(e) { //on add input button click
             e.preventDefault();
-            $('.subobj').append('<div class="row"><div class="col-lg-12"><hr style="border-top: dashed 1px #b7b9cc;"></div><div class="col-lg-11"><div class="row">  <div class="form-group col-lg-6">                                 <label>Insurance company</label>   <select name="company[]" class="form-control"> <option value="">Select company...</option>  <?php $getcompanies =  mysqli_query($con, "SELECT * FROM insurancecompanies WHERE status=1");
+            $('.subobj').append(`<div class="row"><div class="col-lg-12"><hr style="border-top: dashed 1px #b7b9cc;"></div><div class="col-lg-11"><div class="row">  <div class="form-group col-lg-6">                                 <label>Insurance company</label>   <select name="company[]" class="form-control"> <option value="">Select company...</option>  <?php $getcompanies =  mysqli_query($con, "SELECT * FROM insurancecompanies WHERE status=1");
                                                                                                                                                                                                                                                                                                                                                                         while ($row1 =  mysqli_fetch_array($getcompanies)) {                                                                                                                                                                                                                                                                                                                                               $insurancecompany_id = $row1['insurancecompany_id'];
-                                                                                                                                                                                                                                                                                                                                                                            $company = $row1['company'];           ?>    <option value="<?php echo $insurancecompany_id; ?>"><?php echo $company; ?></option>                       <?php } ?>                       </select>   </div><div class="form-group col-lg-6"><label class="control-label">Charge</label>                   <input type="number" name="insurancecharge[]" class="form-control" placeholder="Enter Service Price"></div></div></div> <button class="remove_subobj  btn btn-danger" style="height:30px;margin-top:22px"><i class="fa fa-minus"></i></button></div>'); //add input box
+                                                                                                                                                                                                                                                                                                                                                                            $company = $row1['company'];           ?>    <option value="<?php echo $insurancecompany_id; ?>"><?php echo $company; ?></option>                       <?php } ?>                       </select>   </div><div class="form-group col-lg-6"><label class="control-label">Charge</label>                   <input type="number" name="insurancecharge[]" class="form-control" placeholder="Enter Service Price"></div></div></div> <button class="remove_subobj  btn btn-danger" style="height:30px;margin-top:22px"><i class="fa fa-minus"></i></button></div>`); //add input box
         });
         $('.subobj').on("click", ".remove_subobj", function(e) { //user click on remove text
             e.preventDefault();

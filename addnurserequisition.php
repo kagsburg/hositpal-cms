@@ -3,6 +3,8 @@ include 'includes/conn.php';
 if (($_SESSION['elcthospitallevel'] != 'nurse')) {
     header('Location:login.php');
 }
+$ty = $_GET['ty'];
+$type = mysqli_real_escape_string($con, $ty);
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -4,6 +4,12 @@ include 'includes/conn.php';
 //     header('Location:login.php');
 // }
 $paymethod = isset($_GET['paymethod']) ? $_GET['paymethod']: "";
+$mode = isset($_GET['mode']) ? $_GET['mode']: "";
+if ($mode == '2'){
+    $modestatus = 'emergency';
+}else{
+    $modestatus = 'normal';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,7 +70,7 @@ $paymethod = isset($_GET['paymethod']) ? $_GET['paymethod']: "";
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4 mb-3">
+                    <!-- <div class="col-lg-4 mb-3">
                         
                         <select name="paymethod" id="paymethod" class="form-control">
                             <option value="">Filter by payment method</option>
@@ -72,7 +78,7 @@ $paymethod = isset($_GET['paymethod']) ? $_GET['paymethod']: "";
                             <option value="cash" <?php if ($paymethod == "cash") echo "selected"; ?>>Cash</option>
                         </select>
                         
-                    </div>
+                    </div> -->
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
@@ -102,9 +108,10 @@ $paymethod = isset($_GET['paymethod']) ? $_GET['paymethod']: "";
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $pmstr = empty($paymethod) ? "" : "AND paymethod='$paymethod'";
+                                            // $pmstr = empty($paymethod) ? "" : "AND paymethod='$paymethod'";
+                                            $modestr = ($mode == 1) ? "payment='1' and": "";
 
-                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' $pmstr AND room ='doctor' AND status=0");
+                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE $modestr  room ='doctor' AND status=0");
                                             if (mysqli_num_rows($getque) >0){
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];
@@ -112,7 +119,7 @@ $paymethod = isset($_GET['paymethod']) ? $_GET['paymethod']: "";
                                                 $prev_id = $row['prev_id'];
                                                 $admintype = $row['admintype'];
 
-                                                $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id' and status='1'");
+                                                $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id'and mode ='$modestatus' and status='1'");
                                                 if (mysqli_num_rows($getadmission) > 0){
                                                 $row1 = mysqli_fetch_array($getadmission);
                                                 $patient_id = $row1['patient_id'];
@@ -347,7 +354,7 @@ $paymethod = isset($_GET['paymethod']) ? $_GET['paymethod']: "";
 
                                                 </tr>
 
-                                            <?php } } }?>
+                                            <?php }}  }?>
                                         </tbody>
                                     </table>
                                 </div>

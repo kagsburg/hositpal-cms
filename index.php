@@ -92,6 +92,28 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 						}
 					}
 				}
+				if ($_SESSION['elcthospitallevel']=='doctor'){
+					// check and get all patients on emergency mode 
+					$getemergency = mysqli_query($con, "SELECT * FROM admissions WHERE status=1 and mode='emergency' and attended is null");
+					if (mysqli_num_rows($getemergency) > 0){
+						while ($row = mysqli_fetch_array($getemergency)){
+							$patientid = $row['patient_id'];
+							$getpatient = mysqli_query($con, "SELECT * FROM patients WHERE status=1 and patient_id ='$patientid'");
+							$row = mysqli_fetch_array($getpatient);
+							$fullname = $row['firstname'].' '.$row['secondname'];
+							$patientid = $row['patient_id'];
+							?>
+							<div class="alert alert-danger alert-dismissible fade show" role="alert">
+								<strong>Emergency Patient!</strong> <?php echo $fullname ?> is on emergency mode.
+								<a href="attendemergency?patientid=<?php echo $patientid ?>" class="btn btn-primary btn-sm">Attend</a>
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">×</span>
+								</button>
+							</div>
+							<?php
+						}
+					}
+				}
 				
 				?>
 				<div class="col-xl-6 col-xxl-12">
