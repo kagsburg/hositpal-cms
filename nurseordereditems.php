@@ -118,7 +118,7 @@ if (strlen($id) >= 4) {
                                                 $measurement_id = $row['measurement_id'];
                                                 $minimum = $row['minimum'];
                                                 $unitprice = $row['unitprice'];
-                                                $category_id = $row['category_id'];
+                                                $category_id = $row['subcategory_id'];
 
                                                 $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                                 $row2 =  mysqli_fetch_array($getunit);

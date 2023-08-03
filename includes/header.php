@@ -270,7 +270,7 @@
           <li>
             <a class="ai-icon" href="addissurequisition?ty=Non Medical" aria-expanded="false">
             <i class="fa fa-reply"></i>
-              <span class="nav-text"> Add Non Medical Requisition</span>
+              <span class="nav-text"> Request Non Medical Items</span>
             </a>
           </li>
         <?php }
@@ -329,7 +329,7 @@
           <li>
             <a class="ai-icon" href="addresprequisition?ty=Non Medical" aria-expanded="false">
             <i class="fa fa-reply"></i>
-              <span class="nav-text"> Add Non Medical Requisition</span>
+              <span class="nav-text"> Request Non Medical Items</span>
             </a>
           </li>
 
@@ -379,7 +379,7 @@
           <li>
             <a class="ai-icon" href="addcashrequisition?ty=Non Medical" aria-expanded="false">
             <i class="fa fa-reply"></i>
-              <span class="nav-text"> Add Non Medical Requisition</span>
+              <span class="nav-text"> Request Non Medical Items</span>
             </a>
           </li>
         <?php }
@@ -399,7 +399,7 @@
             <ul aria-expanded="false">
               <li><a href="stock">View Items</a></li>
               <li><a href="pharmacystock">Pharmacy Stock</a></li>
-              <li><a href="addaccstock?ty=Non Medical">Add Non Medical Requisition</a></li>
+              <li><a href="addaccstock?ty=Non Medical">Request Non Medical Items</a></li>
             </ul>
           </li>
           <li>
@@ -476,9 +476,9 @@
               <span class="nav-text">Requisitions</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="addnurserequisition?ty=Medicine">Add Medicine Requisition</a></li>
-              <li><a href="addnurserequisition?ty=Medical">Add Medical Requisition</a></li>
-              <li><a href="addnurserequisition?ty=Non Medical">Add Non Medical Requisition</a></li>
+              <li><a href="addnurserequisition?ty=Medicine">Request Medicine </a></li>
+              <li><a href="addnurserequisition?ty=Medical">Request Medical Items</a></li>
+              <li><a href="addnurserequisition?ty=Non Medical">Request Non Medical Items</a></li>
               <li><a href="nursestockorders">View Requisitions</a></li>
             </ul>
           </li>
@@ -547,9 +547,9 @@
               <span class="nav-text">Requisitions</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="addnurserequisition?ty=Medicine">Add Medicine Requisition</a></li>
-              <li><a href="addnurserequisition?ty=Medical">Add Medical Requisition</a></li>
-              <li><a href="addnurserequisition?ty=Non Medical">Add Non Medical Requisition</a></li>
+              <li><a href="addnurserequisition?ty=Medicine">Request Medicine </a></li>
+              <li><a href="addnurserequisition?ty=Medical">Request Medical Items</a></li>
+              <li><a href="addnurserequisition?ty=Non Medical">Request Non Medical Items</a></li>
               <li><a href="nursestockorders">View Requisitions</a></li>
             </ul>
           </li>
@@ -600,9 +600,9 @@
               <span class="nav-text">Requisitions</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="adddoctorrequisition?ty=Medicine">Add Medicine Requisition</a></li>
-              <li><a href="adddoctorrequisition?ty=Medical">Add Medical Requisition</a></li>
-              <li><a href="adddoctorrequisition?ty=Non Medical">Add Non Medical Requisition</a></li>
+              <li><a href="adddoctorrequisition?ty=Medicine">Request Medicine </a></li>
+              <li><a href="adddoctorrequisition?ty=Medical">Request Medical Items</a></li>
+              <li><a href="adddoctorrequisition?ty=Non Medical">Request Non Medical Items</a></li>
               <li><a href="doctorstockorders">View Requisitions</a></li>
             </ul>
           </li>
@@ -636,9 +636,9 @@
               <span class="nav-text">Requisitions</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="addlabstock?ty=Medicine">Add Medicine Requisition</a></li>
-              <li><a href="addlabstock?ty=Medical">Add Medical Requisition</a></li>
-              <li><a href="addlabstock?ty=Non Medical">Add Non Medical Requisition</a></li>
+              <li><a href="addlabstock?ty=Medicine">Request Medicine </a></li>
+              <li><a href="addlabstock?ty=Medical">Request Medical Items</a></li>
+              <li><a href="addlabstock?ty=Non Medical">Request Non Medical Items</a></li>
               <li><a href="labstockorders">View Requisitions</a></li>
             </ul>
           </li>
@@ -670,9 +670,9 @@
               <span class="nav-text">Requisitions</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="addlabstock?ty=Medicine">Add Medicine Requisition</a></li>
-              <li><a href="addlabstock?ty=Medical">Add Medical Requisition</a></li>
-              <li><a href="addlabstock?ty=Non Medical">Add Non Medical Requisition</a></li>
+              <li><a href="addlabstock?ty=Medicine">Request Medicine Items</a></li>
+              <li><a href="addlabstock?ty=Medical">Request Medical Items</a></li>
+              <li><a href="addlabstock?ty=Non Medical">Request Non Medical Items</a></li>
               <li><a href="labstockorders">View Requisitions</a></li>
             </ul>
           </li>
@@ -699,9 +699,9 @@
               <span class="nav-text">Requisitions</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="addradiostock?ty=Medicine">Add Medicine Requisition</a></li>
-              <li><a href="addradiostock?ty=Medical">Add Medical Requisition</a></li>
-              <li><a href="addradiostock?ty=Non Medical">Add Non Medical Requisition</a></li>
+              <li><a href="addradiostock?ty=Medicine">Request Medicine </a></li>
+              <li><a href="addradiostock?ty=Medical">Request Medical Items</a></li>
+              <li><a href="addradiostock?ty=Non Medical">Request Non Medical Items</a></li>
               <li><a href="radiostockorders">View Requisitions</a></li>
             </ul>
           </li>
@@ -720,20 +720,19 @@
         <?php }
         if (($_SESSION['elcthospitallevel'] == 'pharmacist')) {
         ?>
-          <li>
-            <a class="ai-icon" href="" aria-expanded="false">
-              <i class="fa fa-user-plus"></i>
+        <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="fa fa-list-ul"></i>
               <span class="nav-text">OutPatients</span>
-              <ul aria-expanded="false">
+            </a>
+            <ul aria-expanded="false">
               <li><a href="pharmacywaiting">Waiting List</a></li>
               <li><a href="outpatients">Outpatients</a></li>
-              <!-- <li><a href="labstockorders">Lab Stock Orders</a></li>
-              <li><a href="nursestockorders">Nurse Stock Orders</a></li> -->
             </ul>
-            </a>
           </li>
+         
           <li>
-            <a class="ai-icon" href="" aria-expanded="false">
+            <a class="ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Inpatients</span>
               <ul aria-expanded="false">
@@ -752,15 +751,30 @@
           </li>
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+            <i class="fa fa-archive"></i>
+              <span class="nav-text">Requisition</span>
+            </a>
+            <ul aria-expanded="false">
+              <li> <a href="pharmacystockorder?ty=Medicine">Request Medicine</a></li>
+              <li> <a href="pharmacystockorder?ty=Medical">Request Medical Item</a></li>
+              <li><a href="pharmacystock">View Requisition</a></li>
+              <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">Orders</a>
+                <ul aria-expanded="false">
+                  <li><a href="pharmacyorders?typ=Medicine">Stock Medicine Requests</a></li>
+                  <li><a href="pharmacyorders?typ=Medical">Stock Medical Requests</a></li>
+                </ul>            
+            </li>
+            </ul>
+          </li>
+          <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-archive"></i>
               <span class="nav-text">Stock</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="pharmacystock">View Stock</a></li>
-              <li><a href="pharmacystockorder">Request Stock</a></li>
-              <li><a href="pharmacyorders">Pending Orders</a></li>
-              <li><a href="pharmacystockorders?typ=Medicine">Stock Medicine Requests</a></li>
-              <li><a href="pharmacystockorders?typ=Medical">Stock Medical Requests</a></li>
+              <li></li>
+              <!-- <li><a href="">Request Stock</a></li> -->
+              <!-- <li><a href="pharmacyorders">Pending Orders</a></li> -->
               <!-- <li><a href="labstockorders">Lab Stock Orders</a></li>
               <li><a href="nursestockorders">Nurse Stock Orders</a></li> -->
             </ul>
@@ -786,7 +800,13 @@
             </a>
             <ul aria-expanded="false">
               <li><a href="stock">View Items</a></li>
-              <li><a href="addstock">Add Stock</a></li>
+              <li > <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">Add Stock</a>
+                <ul aria-expanded="false">
+                  <li><a href="addstock?ty=Medicine">Add Medicine</a></li>
+                  <li><a href="addstock?ty=Medical">Add Medical Items</a></li>
+                  <li><a href="addstock?ty=Non Medical">Add Non Medical Items</a></li>
+                </ul>
+              </li>
             </ul>
           </li>
           <li>
@@ -794,6 +814,12 @@
               <i class="fa fa-reply"></i>
               <span class="nav-text">Requisitions</span>
             </a>
+            <ul>
+              <li><a href="addstock?ty=Medicine">Request Medicine </a></li>
+              <li><a href="addstock?ty=Medical">Request Medical Items</a></li>
+              <li><a href="addstock?ty=Non Medical">Request Non Medical Items</a></li>
+              <li><a href="pharmacyorders">View Requisitions</a></li>
+            </ul>
 
 
           </li>
@@ -817,9 +843,9 @@
               <span class="nav-text">Requisitions</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="addanaestock?ty=Medicine">Add Medicine Requisition</a></li>
-              <li><a href="addanaestock?ty=Medical">Add Medical Requisition</a></li>
-              <li><a href="addanaestock?ty=Non Medical">Add Non Medical Requisition</a></li>
+              <li><a href="addanaestock?ty=Medicine">Request Medicine </a></li>
+              <li><a href="addanaestock?ty=Medical">Request Medical Items</a></li>
+              <li><a href="addanaestock?ty=Non Medical">Request Non Medical Items</a></li>
               <li><a href="radiostockorders">View Requisitions</a></li>
             </ul>
           </li>

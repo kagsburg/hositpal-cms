@@ -8,6 +8,7 @@ if (!isset($_SESSION["bproducts"])) {
 }
 $reason = $_GET['reason'];
 $patient = $_GET['patient'];
+$type = $_GET['ty'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,10 +77,10 @@ $patient = $_GET['patient'];
                                 <?php
                                 if (isset($_SESSION["bproducts"]) && count($_SESSION["bproducts"]) > 0) {
                                     if ($reason == 'personal') {
-                                        mysqli_query($con, "INSERT INTO stockorders(section,reason,admin_id,timestamp,status) VALUES('nurse',0,'" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
+                                        mysqli_query($con, "INSERT INTO stockorders(section,reason,type,admin_id,timestamp,status) VALUES('nurse',0,'$type','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
                                     }
                                     if ($reason == 'patient') {
-                                        mysqli_query($con, "INSERT INTO stockorders(section,reason,admin_id,timestamp,status) VALUES('nurse','$patient','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
+                                        mysqli_query($con, "INSERT INTO stockorders(section,reason,type,admin_id,timestamp,status) VALUES('nurse','$patient','$type','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
                                     }
                                     $last_id = mysqli_insert_id($con);
                                     foreach ($_SESSION["bproducts"] as $product) { //loop though items and prepare html content

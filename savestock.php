@@ -79,8 +79,15 @@ if (!isset($_SESSION["bproducts"])) {
                                         $menuitem = $product["menuitem"];
                                         $item_id = $product["item_id"];
                                         $product_qty = $product["product_qty"];
-                                        $expiry = $product["expiry"];
-                                        mysqli_query($con, "INSERT INTO stockitems(product_id,quantity,expiry,admin_id,timestamp,status) VALUES('$item_id','$product_qty','$expiry','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
+                                        $type = $product["type"];
+                                        $store = $product["store"];
+                                        if ($type == 'Medicine'){
+                                            $expiry=$product["expiry"];
+                                        }else{
+                                            $expiry=0;
+                                        }
+                                        //insert into database
+                                        mysqli_query($con, "INSERT INTO stockitems(product_id,store,type,quantity,expiry,admin_id,timestamp,status) VALUES('$item_id','$store','$type','$product_qty','$expiry','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
                                     }
                                     unset($_SESSION["bproducts"]);
                                 }

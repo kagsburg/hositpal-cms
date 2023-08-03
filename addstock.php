@@ -3,6 +3,8 @@ include 'includes/conn.php';
 if (($_SESSION['elcthospitallevel'] != 'store manager')) {
     header('Location:login.php');
 }
+$ty=$_GET['ty'];
+$type = mysqli_real_escape_string($con, $ty);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,9 +30,6 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
             $(".form-item").submit(function(e) {
                 var f = $(this);
                 var form_data = $(this).serialize();
-                //			var button_content = $(this).find('button[type="submit"]');
-                //			button_content.html('Adding...'); //Loading button text 
-
                 $.ajax({ //make ajax request to cart_process.php
                     url: "stockprocess.php",
                     type: "POST",
@@ -131,14 +130,15 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
                         <div class="card">
                             <div class="card-body">
                                 <form class="row form-item" method="post">
-                                    <div class="col-md-5 form-group">
+                                    <div class="col-md-4 form-group">
                                         <label class="mb-2" for="">Item</label>
                                         <input type="hidden" id="measurement_id" name="measurement_id" value="">
-                                        <input type="hidden" id="item_id" name="item_id" value="">
+                                        <input type="hidden" id="type" name="type" value="<?php echo $type;?>">
+                                        <input type="hidden" id="item_id" name="item_id" value="<?php echo $type;?>">
                                         <select name="item" id="selectprod" class="form-control multi-select">
                                             <option value="">Select a product</option>
                                             <?php
-                                            $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ORDER BY itemname");
+                                            $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 and type='$type' ORDER BY itemname");
                                             while ($row = mysqli_fetch_array($getitems)) {
                                                 $inventoryitem_id = $row['inventoryitem_id'];
                                                 $itemname = $row['itemname'];
@@ -159,13 +159,31 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
                                         </select>
                                     </div>
                                     <div class="col-md-2 form-group">
+                                        <label class="mb-2" for="">Store</label>
+                                        <select name="store" id="" class="form-control">
+                                            <option value="">Select a store</option>
+                                            <?php
+                                            $getstores = mysqli_query($con, "SELECT * FROM stores WHERE status=1");
+                                            while ($row = mysqli_fetch_array($getstores)) {
+                                                $store_id = $row['store_id'];
+                                                $storename = $row['store'];
+                                            ?>
+                                                <option value="<?php echo $store_id; ?>"><?php echo $storename; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 form-group">
                                         <label class="mb-2" for="">Quantity</label>
                                         <input type="number" name="product_qty" class="form-control" placeholder="Quantity">
                                     </div>
+                                    <?php  
+                                       if($type == "Medicine"){
+                                    ?>
                                     <div class="col-md-3 form-group">
                                         <label class="mb-2" for="expiry">Expiry Date</label>
                                         <input type="date" name="expiry" id="expiry" class="form-control" placeholder="Expiry date">
                                     </div>
+                                    <?php } ?>
                                     <div class="col-md-2 form-group">
                                         <label for="" class="mb-2">&nbsp;</label>
                                         <button class="btn btn-block btn-info listbtn" type="submit">Add to List</button>

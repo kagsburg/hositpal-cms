@@ -3,7 +3,12 @@ include 'includes/conn.php';
 if (isset($_POST['item_id'])) {
 	$pquantity = $_POST['product_qty'];
 	$measurement_id = $_POST['measurement_id'];
-	$expiry = $_POST['expiry'];
+	$type = $_POST['type'];
+	$store = $_POST['store'];
+	if ($type == 'Medicine'){
+		$expiry = $_POST['expiry'];
+	}
+
 	
 	if (empty($pquantity)) {
 		$error = 'Enter Quantity to proceed';
@@ -59,6 +64,7 @@ if (isset($_POST["load_cart"]) && $_POST["load_cart"] == 1) {
 						<th>Item Name</th>
 						<th>Measurement Unit</th>
 						<th>Quantity</th>
+						<th>Store</th>
 						<!-- <th>Expiry</th> -->
 						<th></th>
 					</tr>
@@ -73,18 +79,25 @@ if (isset($_POST["load_cart"]) && $_POST["load_cart"] == 1) {
 						$item_id = $product["item_id"];
 						$product_qty = $product["product_qty"];
 						$measurement_id = $product["measurement_id"];
+						$store = $product["store"];
+						// $expiry = $product["expiry"];
 						$getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
 						$row2 =  mysqli_fetch_array($getunit);
 						$measurement = $row2['measurement'];
-						// get exipry date
-						$getexpiry = mysqli_query($con, "SELECT expiry FROM stockitems WHERE product_id='$item_id' AND status=1 ORDER BY stockitem_id DESC LIMIT 1");
-						$row3 = mysqli_fetch_array($getexpiry);
-						$expiry = $row3['expiry'];
+						
+						if ($store == 0) {
+							$storename = 'Main Store';
+						} else {
+							$getstore = mysqli_query($con, "SELECT * FROM stores WHERE status=1 AND store_id='$store'");
+							$row4 = mysqli_fetch_array($getstore);
+							$storename = $row4['store'];
+						}
 					?>
 						<tr>
 							<td><?php echo $menuitem; ?></td>
 							<td><?php echo $measurement; ?></td>
 							<td><?php echo $product_qty; ?></td>
+							<td><?php echo $storename; ?></td>
 							<!-- <td><?php echo $expiry; ?></td> -->
 							<!-- <td><strong> ITEM :</strong> <?php echo $menuitem; ?><br>
 								<strong> QTY :</strong> <?php echo $product_qty; ?><br>

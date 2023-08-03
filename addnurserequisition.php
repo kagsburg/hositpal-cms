@@ -26,8 +26,10 @@ $type = mysqli_real_escape_string($con, $ty);
             $(".showit").load("stockprocess.php", {
                 "load_cart": "1"
             });
-            $(".form-item").submit(function(e) {
+            $(document).on('submit',".form-item",function(e) {
+                e.preventDefault();
                 var form_data = $(this).serialize();
+                console.log(form_data);
                 //			var button_content = $(this).find('button[type="submit"]');
                 //			button_content.html('Adding...'); //Loading button text 
 
@@ -45,7 +47,7 @@ $type = mysqli_real_escape_string($con, $ty);
                     }); //Make ajax request using jQuery Load() & update results
 
                 })
-                e.preventDefault();
+                
             });
 
             //Show Items in Cart
@@ -109,7 +111,7 @@ $type = mysqli_real_escape_string($con, $ty);
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
                             <li class="breadcrumb-item"><a href="stock">View Stock</a></li>
-                            <li class="breadcrumb-item active"><a href="addstock">Add stock</a></li>
+                            <li class="breadcrumb-item active"><a href="javascript.void()">Add stock</a></li>
                         </ol>
                     </div>
                 </div>
@@ -131,7 +133,7 @@ $type = mysqli_real_escape_string($con, $ty);
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ORDER BY itemname");
+                                        $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 and type='$type' ORDER BY itemname");
                                         while ($row = mysqli_fetch_array($getitems)) {
                                             $inventoryitem_id = $row['inventoryitem_id'];
                                             $itemname = $row['itemname'];
@@ -171,9 +173,10 @@ $type = mysqli_real_escape_string($con, $ty);
                                                     <td> <input name="product_qty" form="pform<?php echo $inventoryitem_id ?>" class="form-control" type="text" style="width:50px">
                                                 </td>
                                                 <td>
-                                                        <form class="form-item" id="pform<?php echo $inventoryitem_id ?>">
+                                                        <form class="form-item" id="pform<?php echo $inventoryitem_id ?>" >
                                                         <input type="hidden" name="item_id" value="<?php echo $inventoryitem_id; ?>">
                                                         <input type="hidden" name="measurement_id" value="<?php echo $measurement_id; ?>">
+                                                        <input type="hidden" name="expiry" value="<?php echo $exipry; ?>">
                                                         <button class="btn btn-xs btn-info listbtn" type="submit">Add to List</button>
                                                         </form>
                                                     </td>
@@ -202,7 +205,7 @@ $type = mysqli_real_escape_string($con, $ty);
                                 <div class="showit"></div>
                             </div>
                         </div>
-                        <a href="addnursestockrequest" class="btn btn-primary pull-right">PROCEED <i class="fas fa-hand-point-right"></i></a>
+                        <a href="addnursestockrequest?ty=<?php echo $ty ?>" class="btn btn-primary pull-right">PROCEED <i class="fas fa-hand-point-right"></i></a>
                     </div>
 
                 </div>

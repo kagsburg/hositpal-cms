@@ -3,6 +3,8 @@ include 'includes/conn.php';
 if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitallevel'] != 'store manager')) && (($_SESSION['elcthospitallevel'] != 'pharmacist'))) {
     header('Location:login.php');
 }
+$ty= $_GET['typ'];
+$type = mysqli_escape_string($con,$ty);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -85,13 +87,14 @@ if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitalleve
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $getordered = mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0)") or die(mysqli_error($con));
+                                            $getordered = mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0) AND type='$type'") or die(mysqli_error($con));
                                             while ($row = mysqli_fetch_array($getordered)) {
                                                 $stockorder_id = $row['stockorder_id'];
                                                 $timestamp = $row['timestamp'];
                                                 $admin_id = $row['admin_id'];
                                                 $status = $row['status'];
                                                 $section = $row['section'];
+                                                $type = $row['type'];
                                                 $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE status=1  AND staff_id='$admin_id'");
                                                 $row1 = mysqli_fetch_array($getstaff);
                                                 $fullname = $row1['fullname'];
@@ -124,7 +127,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitalleve
 
                                                     <td>
 
-                                                        <a href="ordereditems?id=<?php echo $stockorder_id; ?>&&st=<?php echo $status; ?>" class="btn btn-primary btn-xs">Details</a>
+                                                        <a href="ordereditems?id=<?php echo $stockorder_id; ?>&&st=<?php echo $status; ?>&ty=<?php echo $type ?>" class="btn btn-primary btn-xs">Details</a>
                                                     </td>
                                                 </tr>
 

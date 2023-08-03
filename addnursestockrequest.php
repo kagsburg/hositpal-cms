@@ -6,6 +6,8 @@ if (($_SESSION['elcthospitallevel'] != 'nurse') && ($_SESSION['elcthospitallevel
 if (!isset($_SESSION["bproducts"])) {
     header('Location:addstock');
 }
+$ty = $_GET['ty'];
+$type = mysqli_real_escape_string($con, $ty);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -112,6 +114,7 @@ if (!isset($_SESSION["bproducts"])) {
                             </div>
                         </div>
                         <form method="GET" name='form' class="form" action="requestnursestock" enctype="multipart/form-data">
+                            <input type="hidden" name="ty" value="<?php echo $type; ?>">
                             <div class="form-group"><label class="control-label">*Reason</label>
                                 <select name="reason" class="form-control reason">
                                     <option value="">select reason...</option>
@@ -123,15 +126,10 @@ if (!isset($_SESSION["bproducts"])) {
                                 <select name="patient" class="form-control">
                                     <option value="">select Patient...</option>
                                     <?php
-                                    $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND attendant='" . $_SESSION['elcthospitaladmin'] . "' AND status=1");
+                                    $getque = mysqli_query($con, "SELECT * FROM admissions WHERE status='1'");
                                     while ($row = mysqli_fetch_array($getque)) {
-                                        $patientsque_id = $row['patientsque_id'];
+                                        $patient_id = $row['patient_id'];
                                         $admission_id = $row['admission_id'];
-                                        $room = $row['room'];
-                                        $attendant = $row['attendant'];
-                                        $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id'");
-                                        $row1 = mysqli_fetch_array($getadmission);
-                                        $patient_id = $row1['patient_id'];
                                         $getpatient = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
                                         $row2 = mysqli_fetch_array($getpatient);
                                         $firstname = $row2['firstname'];

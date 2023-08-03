@@ -66,7 +66,7 @@ header("Location:index.php");
                                     <form action="" method="POST">
                                         <div class="form-group">
                                             <label class="mb-1"><strong>Email</strong></label>
-                                            <input type="email" class="form-control" name="email">
+                                            <input type="text" class="form-control" name="email">
                                         </div>
                                         <div class="form-group">
                                             <label class="mb-1"><strong>Password</strong></label>

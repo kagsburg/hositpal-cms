@@ -5,6 +5,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 }
 $id = $_GET['id'];
 $st = $_GET['st'];
+$ty = $_GET['ty'];
 if (strlen($id) == 1) {
     $pin = '000' . $id;
 }
@@ -79,7 +80,7 @@ if (strlen($id) >= 4) {
                 <div class="row">
                     <div class="col-lg-12">
                         <?php
-                        if (($_SESSION['elcthospitallevel'] == 'store manager') && ($st == 0)) {
+                        if (($_SESSION['elcthospitallevel'] == 'store manager') && ($st == 0) && ($ty == "Non Medical")) {
                         ?>
                             <a href="approverequest?id=<?php echo $id; ?>" class="btn btn-success" onclick="return approve()"> <i class="fa fa-thumbs-up"></i> Approve Request</a>
                             <script type="text/javascript">
@@ -88,6 +89,24 @@ if (strlen($id) >= 4) {
                                 }
                             </script>
                         <?php } ?>
+                        <?php
+                        if (($_SESSION['elcthospitallevel'] == 'pharmacist') && ($st == 0) && ( ($ty == "Medical") || ($ty == "Medicine"))) {
+                            ?>
+                            <a href="approverequest?id=<?php echo $id; ?>" class="btn btn-success" onclick= "return approve()"><i class="fa fa-thumbs-up"></i> Approve Request
+                        </a>
+                        <script type="text/javascript">
+                                function approve() {
+                                    return confirm('You are about To Approve request. Are you sure you want to proceed?');
+                                }
+                            </script>
+                            <?php } ?>
+
+                            <?php 
+                             if (isset($_SESSION['success'])){
+                                echo $_SESSION['success'];
+                                unset($_SESSION['success']); 
+                             }
+                            ?>
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title"> #<?php echo $pin; ?> Order Items</h4>

@@ -134,7 +134,6 @@ if (isset($_GET['sub'])) {
                                                 }else{
                                                     $type = $ty . ' items';
                                                 }
-                                                print_r($type);
                                                 $getcats =  mysqli_query($con, "SELECT * FROM itemcategories WHERE status=1 AND type='$type'");
                                                 while ($row1 =  mysqli_fetch_array($getcats)) {
                                                     $itemcategory_id = $row1['itemcategory_id'];
@@ -162,7 +161,7 @@ if (isset($_GET['sub'])) {
                                             <label class="control-label">Strength</label>
                                             <input type="text" name="strength" class="form-control" placeholder="Enter Strength">
                                         </div>
-                                        <div class="form-group"><label class="control-label">*Measurement unit</label>
+                                        <div class="form-group" ><label class="control-label">*Measurement unit</label>
                                             <select name="unitmeasurement" class="form-control">
                                                 <option value="">select Measurement...</option>
                                                 <?php
