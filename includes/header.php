@@ -799,7 +799,13 @@
               <span class="nav-text">Stock</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="stock">View Items</a></li>
+              <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">View Stock</a>
+              <ul>
+                <li><a href="stock?ty=Medicine">Medicine</a></li>
+                <li><a href="stock?ty=Medical">Medical Items</a></li>
+                <li><a href="stock?ty=Non Medical">Non Medical Items</a></li>
+              </ul>
+            </li>
               <li > <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">Add Stock</a>
                 <ul aria-expanded="false">
                   <li><a href="addstock?ty=Medicine">Add Medicine</a></li>
@@ -810,15 +816,28 @@
             </ul>
           </li>
           <li>
+            <a class="ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="fa fa-user-plus"></i>
+              <span class="nav-text">Stock Orders</span>
+            </a>
+            <ul aria-expanded="false">
+              <li><a href="adduser">Add User</a></li>
+              <li><a href="users">View Users</a></li>
+            </ul>
+          </li>
+          <li>
             <a class="ai-icon" href="pharmacyorders" aria-expanded="false">
               <i class="fa fa-reply"></i>
               <span class="nav-text">Requisitions</span>
             </a>
             <ul>
-              <li><a href="addstock?ty=Medicine">Request Medicine </a></li>
+                <!-- <li><a href="pharmacyorders?typ=Medicine">Stock Medicine Requests</a></li>
+                <li><a href="pharmacyorders?typ=Medical">Stock Medical Requests</a></li>
+                <li><a href="pharmacyorders?typ=Non Medical">Stock Medical Requests</a></li> -->
+              <!-- <li><a href="addstock?ty=Medicine">Request Medicine </a></li>
               <li><a href="addstock?ty=Medical">Request Medical Items</a></li>
-              <li><a href="addstock?ty=Non Medical">Request Non Medical Items</a></li>
-              <li><a href="pharmacyorders">View Requisitions</a></li>
+              <li><a href="addstock?ty=Non Medical">Request Non Medical Items</a></li> -->
+              <li><a href="pharmacyorders?typ=Non Medical">View Requisitions</a></li>
             </ul>
 
 
