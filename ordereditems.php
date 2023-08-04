@@ -94,9 +94,16 @@ if (strlen($id) >= 4) {
                             ?>
                             <a href="approverequest?id=<?php echo $id; ?>" class="btn btn-success" onclick= "return approve()"><i class="fa fa-thumbs-up"></i> Approve Request
                         </a>
+                        <a href="cancelrequest?id=<?php echo $id; ?>" class="btn btn-success" onclick="return cancel()">
+                            <i class="fa fa-thumbs-down"></i> Cancel Request
+                            </a>
+
                         <script type="text/javascript">
                                 function approve() {
                                     return confirm('You are about To Approve request. Are you sure you want to proceed?');
+                                }
+                                function cancel() {
+                                    return confirm('You are about To Cancel request. Are you sure you want to proceed?');
                                 }
                             </script>
                             <?php } ?>

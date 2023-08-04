@@ -785,7 +785,7 @@
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-list-ul"></i>
-              <span class="nav-text">Orders</span>
+              <span class="nav-text">Purchases</span>
             </a>
             <ul aria-expanded="false">
               <li><a href="addorder">Add Order</a></li>
@@ -821,8 +821,10 @@
               <span class="nav-text">Stock Orders</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="adduser">Add User</a></li>
-              <li><a href="users">View Users</a></li>
+              <li><a href="stockneworders?ty=Medicine">Medicine Orders</a></li>
+              <li><a href="stockneworders?ty=Medical">Medical Item Orders</a></li>
+              <li><a href="stockneworders?ty=Non Medical">Non Medical Items Orders</a></li>
+              <!-- <li><a href="users">View Users</a></li> -->
             </ul>
           </li>
           <li>

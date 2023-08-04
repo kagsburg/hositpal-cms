@@ -4,6 +4,8 @@ if (($_SESSION['elcthospitallevel'] != 'admin') && ($_SESSION['elcthospitallevel
     header('Location:login.php');
 }
 $id = $_GET['id'];
+$ty= $_GET['ty'];
+$type = mysqli_escape_string($con,$ty);
 $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$id' ");
 $row = mysqli_fetch_array($getitems);
 $itemname = $row['itemname'];
@@ -66,7 +68,7 @@ $measurement = $row2['measurement'];
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item"><a href="stock">stock</a></li>
+                            <li class="breadcrumb-item"><a href="stock?ty=<?php echo $type ?>">stock</a></li>
                             <li class="breadcrumb-item active"><a href="#"><?php echo $itemname; ?></a></li>
                         </ol>
                     </div>
@@ -117,7 +119,9 @@ $measurement = $row2['measurement'];
                                             <tr>
                                                 <th scope="col">Date Added</th>
                                                 <th scope="col">Quantity Added</th>
+                                                <?php if ($type == 'Medicine'){ ?>
                                                 <th scope="col">Expiry Date</th>
+                                                <?php }?>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -132,7 +136,9 @@ $measurement = $row2['measurement'];
                                                 <tr>
                                                     <td><?php echo date('d/M/Y', $timestamp); ?></td>
                                                     <td><?php echo $quantity . ' (' . $measurement . ')'; ?></td>
+                                                    <?php if ($type == 'Medicine'){?>
                                                     <td><?php if(isset($expiry)) echo date('d/M/Y', strtotime($expiry));  ?></td>
+                                                    <?php } ?>
 
                                                 <?php } ?>
                                         </tbody>

@@ -4,6 +4,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitalleve
     header('Location:login.php');
 }
 $ty = isset($_GET['ty']) ? $_GET['ty']: "";
+$type = mysqli_real_escape_string($con, $ty);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,7 +77,7 @@ $ty = isset($_GET['ty']) ? $_GET['ty']: "";
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Medicaltems in Stock</h4>
+                                <h4 class="card-title"> Items in Stock</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -96,7 +97,7 @@ $ty = isset($_GET['ty']) ? $_GET['ty']: "";
                                         <tbody>
                                             <?php
                                             //$pmstr = empty($ty) ? "" : "AND `type`='$paymethod'";
-                                            $query = "SELECT * FROM inventoryitems WHERE status=1";
+                                            $query = "SELECT * FROM inventoryitems WHERE status=1 and type='$type'";
                                             $getitems = mysqli_query($con, $query) or die(mysqli_error($con));
 
                                             while ($row = mysqli_fetch_array($getitems)) {
@@ -113,7 +114,7 @@ $ty = isset($_GET['ty']) ? $_GET['ty']: "";
                                                 $getcat = mysqli_query($con, "SELECT * FROM itemcategories WHERE status=1 AND itemcategory_id='$category_id'");
                                                 $row13 =  mysqli_fetch_array($getcat);
                                                 $category = isset($row13['category']) ? $row13['category'] : "";
-                                                $type = isset($row13['type']) ? $row13['type'] : "";
+                                                $type2 = isset($row13['type']) ? $row13['type'] : "";
 
                                                 $getcat = mysqli_query($con, "SELECT * FROM itemcategories WHERE status=1 AND itemcategory_id='$category_id'");
                                                 $row1 =  mysqli_fetch_array($getcat);
@@ -135,9 +136,9 @@ $ty = isset($_GET['ty']) ? $_GET['ty']: "";
                                                     }
                                                 }
                                                 $instock = $totalstock - $totalordered;
-
-                                                if (!empty($ty) && $type != $ty." items")
-                                                    continue;
+                                                //     print_r($instock);
+                                                // if (!empty($ty) && $type != $ty." items")
+                                                //     continue;
                                             ?>
                                                 <tr class="gradeA">
                                                     <td><?php echo 'ELVD-' . $inventoryitem_id; ?></td>
@@ -154,7 +155,7 @@ $ty = isset($_GET['ty']) ? $_GET['ty']: "";
                                                         ?></th>
 
                                                     <td>
-                                                        <a href="itemstock?id=<?php echo $inventoryitem_id; ?>" class="btn btn-primary btn-xs">Details</a>
+                                                        <a href="itemstock?id=<?php echo $inventoryitem_id; ?>&ty=<?php echo $type; ?>" class="btn btn-primary btn-xs">Details</a>
                                                     </td>
                                                 </tr>
 

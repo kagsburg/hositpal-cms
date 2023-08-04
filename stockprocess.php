@@ -80,6 +80,7 @@ if (isset($_POST["load_cart"]) && $_POST["load_cart"] == 1) {
 						$product_qty = $product["product_qty"];
 						$measurement_id = $product["measurement_id"];
 						$store = $product["store"];
+						$type = $product['type'];
 						// $expiry = $product["expiry"];
 						$getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
 						$row2 =  mysqli_fetch_array($getunit);
@@ -98,6 +99,9 @@ if (isset($_POST["load_cart"]) && $_POST["load_cart"] == 1) {
 							<td><?php echo $measurement; ?></td>
 							<td><?php echo $product_qty; ?></td>
 							<td><?php echo $storename; ?></td>
+							<?php if ($type =='Medicine'){?>
+							<td><?php echo $product['expiry']; ?></td>
+							<?php } ?>
 							<!-- <td><?php echo $expiry; ?></td> -->
 							<!-- <td><strong> ITEM :</strong> <?php echo $menuitem; ?><br>
 								<strong> QTY :</strong> <?php echo $product_qty; ?><br>
