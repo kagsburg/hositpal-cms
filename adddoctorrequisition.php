@@ -3,6 +3,8 @@ include 'includes/conn.php';
 if (($_SESSION['elcthospitallevel'] != 'doctor')) {
    header('Location:login.php');
 }
+$ty = $_GET['ty'];
+$type = mysqli_escape_string($con, $ty);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -129,7 +131,7 @@ if (($_SESSION['elcthospitallevel'] != 'doctor')) {
                            </thead>
                            <tbody>
                               <?php
-                              $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ORDER BY itemname");
+                              $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 and type='$type' ORDER BY itemname");
                               while ($row = mysqli_fetch_array($getitems)) {
                                  $inventoryitem_id = $row['inventoryitem_id'];
                                  $itemname = $row['itemname'];
@@ -153,6 +155,9 @@ if (($_SESSION['elcthospitallevel'] != 'doctor')) {
                                        <form id="pform<?php echo $inventoryitem_id ?>" class="form-item">
                                           <input type="hidden" name="item_id" value="<?php echo $inventoryitem_id; ?>">
                                           <input type="hidden" name="measurement_id" value="<?php echo $measurement_id; ?>">
+                                          <input type="hidden" name="store" value="2"/>
+                                          <input type="hidden" name="type" value="<?php echo $type; ?>">
+                                          <input type="hidden" name="expiry" value="">
                                           <button class="btn btn-xs btn-info listbtn" type="submit">Add to List</button>
                                        </form>
                                     </td>

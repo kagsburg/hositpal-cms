@@ -173,7 +173,7 @@ $type = mysqli_escape_string($con,$ty);
                                                         <input type="hidden" name="measurement_id" value="<?php echo $measurement_id; ?>">
                                                         <input type="hidden" name="expiry" value="<?php echo $exipry; ?>">
                                                         <input type="hidden" name="type" value="<?php echo $type; ?>">
-                                                        <input type="hidden" name="store" value="3">
+                                                        <input type="hidden" name="store" value="2">
                                                         <button class="btn btn-xs btn-info listbtn" type="submit">Add to List</button>
                                                         </form>
                                                     </td>

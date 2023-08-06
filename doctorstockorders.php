@@ -92,6 +92,8 @@ if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitalleve
                                                 $admin_id = $row['admin_id'];
                                                 $status = $row['status'];
                                                 $reason = $row['reason'];
+                                                $type = $row['type'];
+                                                $section = $row['section'];
                                                 $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE status=1  AND staff_id='$admin_id'");
                                                 $row1 = mysqli_fetch_array($getstaff);
                                                 $fullname = $row1['fullname'];
@@ -108,6 +110,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitalleve
                                                     $pin = $stockorder_id;
                                                 }
                                                 $getitems = mysqli_query($con, "SELECT * FROM ordereditems WHERE stockorder_id='$stockorder_id'");
+
                                             ?>
                                                 <tr class="gradeA">
                                                     <td><?php echo $pin; ?></td>
@@ -140,7 +143,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitalleve
 
                                                     <td>
 
-                                                        <a href="ordereditems?id=<?php echo $stockorder_id; ?>&&st=<?php echo $status; ?>" class="btn btn-primary btn-xs">Details</a>
+                                                        <a href="ordereditems?id=<?php echo $stockorder_id; ?>&st=<?php echo $status; ?>&ty=<?php echo $type; ?>&section=<?php echo $section ?>" class="btn btn-primary btn-xs">Details</a>
                                                     </td>
                                                 </tr>
 

@@ -6,6 +6,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 $id = $_GET['id'];
 $st = $_GET['st'];
 $ty = $_GET['ty'];
+$section=$_GET['section'];
 if (strlen($id) == 1) {
     $pin = '000' . $id;
 }
@@ -80,21 +81,27 @@ if (strlen($id) >= 4) {
                 <div class="row">
                     <div class="col-lg-12">
                         <?php
-                        if (($_SESSION['elcthospitallevel'] == 'store manager') && ($st == 0) && ($ty == "Non Medical")) {
+                        if (($_SESSION['elcthospitallevel'] == 'store manager') && ($st == 0)) {
                         ?>
                             <a href="approverequest?id=<?php echo $id; ?>" class="btn btn-success" onclick="return approve()"> <i class="fa fa-thumbs-up"></i> Approve Request</a>
+                            <a href="cancelrequest?id=<?php echo $id; ?>" class="btn btn-danger" onclick="return cancel()">
+                            <i class="fa fa-thumbs-down"></i> Cancel Request
+                            </a>
                             <script type="text/javascript">
                                 function approve() {
                                     return confirm('You are about To Approve request. Are you sure you want to proceed?');
                                 }
+                                function cancel() {
+                                    return confirm('You are about To Cancel request. Are you sure you want to proceed?');
+                                }
                             </script>
                         <?php } ?>
                         <?php
-                        if (($_SESSION['elcthospitallevel'] == 'pharmacist') && ($st == 0) && ( ($ty == "Medical") || ($ty == "Medicine"))) {
+                        if (($_SESSION['elcthospitallevel'] == 'pharmacist') && ($st == 0) && ($section !='pharmacy') && ( ($ty == "Medical") || ($ty == "Medicine"))) {
                             ?>
                             <a href="approverequest?id=<?php echo $id; ?>" class="btn btn-success" onclick= "return approve()"><i class="fa fa-thumbs-up"></i> Approve Request
                         </a>
-                        <a href="cancelrequest?id=<?php echo $id; ?>" class="btn btn-success" onclick="return cancel()">
+                        <a href="cancelrequest?id=<?php echo $id; ?>" class="btn btn-danger" onclick="return cancel()">
                             <i class="fa fa-thumbs-down"></i> Cancel Request
                             </a>
 
@@ -124,6 +131,8 @@ if (strlen($id) >= 4) {
                                         <thead>
                                             <tr>
                                                 <th>Item Name</th>
+                                                <!-- <th>Total Quantity</th> -->
+                                                <th>Avaliable Quantity</th>
                                                 <th>Quantity</th>
                                                 <th>Measurement Unit</th>
                                             </tr>
@@ -145,10 +154,33 @@ if (strlen($id) >= 4) {
                                                 $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                                 $row2 =  mysqli_fetch_array($getunit);
                                                 $measurement = $row2['measurement'];
+                                                if ($section != 'pharmacy'){
+                                                    $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id'and store=2 ") or die(mysqli_error($con));
+
+                                                }else {
+                                                    $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store=3 ") or die(mysqli_error($con));
+                                                }
+                                            
+                                                $row3 = mysqli_fetch_array($getstock);
+                                                $totalstock = $row3['totalstock'];
+                                                $exipry = $row3['expiry'];
+                                                $totalordered = 0;
+                                                $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                while ($row4 = mysqli_fetch_array($getordered)) {
+                                                    $stockorder_id = $row4['stockorder_id'];
+                                                    $quantity = $row4['quantity'];
+                                                    $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND section='$section'");
+                                                    if (mysqli_num_rows($getorder) > 0) {
+                                                        $totalordered = $totalordered + $quantity;
+                                                    }
+                                                }
+                                                $instock = $totalstock - $totalordered;
 
                                             ?>
                                                 <tr class="gradeA">
                                                     <td><?php echo $itemname; ?></td>
+                                                    <!-- <td><?php echo $totalstock; ?></td> -->
+                                                    <td><?php echo $instock; ?></td>
                                                     <td><?php echo $quantity; ?></td>
                                                     <td><?php echo $measurement; ?></td>
 

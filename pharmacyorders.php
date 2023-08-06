@@ -5,6 +5,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitalleve
 }
 $ty= $_GET['typ'];
 $type = mysqli_escape_string($con,$ty);
+$pharmacy = isset($_GET['phar']) ? $_GET['phar'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -87,7 +88,12 @@ $type = mysqli_escape_string($con,$ty);
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $getordered = mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0) AND type='$type'") or die(mysqli_error($con));
+                                            if ($pharmacy== '1'){
+                                                $getordered = mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0)  AND section='pharmacy'") or die(mysqli_error($con));
+
+                                            }else{
+                                                $getordered = mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0) AND type='$type' and section != 'pharmacy'") or die(mysqli_error($con));
+                                            }
                                             while ($row = mysqli_fetch_array($getordered)) {
                                                 $stockorder_id = $row['stockorder_id'];
                                                 $timestamp = $row['timestamp'];
@@ -127,7 +133,7 @@ $type = mysqli_escape_string($con,$ty);
 
                                                     <td>
 
-                                                        <a href="ordereditems?id=<?php echo $stockorder_id; ?>&&st=<?php echo $status; ?>&ty=<?php echo $type ?>" class="btn btn-primary btn-xs">Details</a>
+                                                        <a href="ordereditems?id=<?php echo $stockorder_id; ?>&&st=<?php echo $status; ?>&ty=<?php echo $type ?>&section=<?php echo $section;?>" class="btn btn-primary btn-xs">Details</a>
                                                     </td>
                                                 </tr>
 

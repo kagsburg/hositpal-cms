@@ -5,6 +5,8 @@ if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitalleve
 }
 $ty = isset($_GET['ty']) ? $_GET['ty']: "";
 $type = mysqli_real_escape_string($con, $ty);
+$store = isset($_GET['store']) ? $_GET['store'] : "";
+$store = mysqli_real_escape_string($con, $store);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,10 +69,18 @@ $type = mysqli_real_escape_string($con, $ty);
                 <div class="row">
                 <div class="col-lg-4 mb-3">
                         
-                        <select name="ty" id="ty" class="form-control">
-                            <option value="">Filter by type</option>
-                            <option value="Medical" <?php if ($ty == "Medical") echo "selected"; ?>>Medical</option>
-                            <option value="Non Medical" <?php if ($ty == "Non Medical") echo "selected"; ?>>Non Medical</option>
+                        <select name="store" id="ty" class="form-control">
+                            <option value="">Filter by Store</option>
+                            <?php 
+                            $getstores = mysqli_query($con, "SELECT * FROM stores WHERE status=1");
+                            while ($row = mysqli_fetch_array($getstores)) {
+                                $store_id = $row['store_id'];
+                                $storename = $row['store'];
+                                ?>
+                                <option value="<?php echo $store_id; ?>" <?php if ($store == $store_id) echo "selected"; ?>><?php echo $storename; ?></option>
+                            <?php } ?>
+                            <!-- <option value="Medical" <?php if ($ty == "Medical") echo "selected"; ?>>Medical</option>
+                            <option value="Non Medical" <?php if ($ty == "Non Medical") echo "selected"; ?>>Non Medical</option> -->
                         </select>
                         
                     </div>
@@ -122,7 +132,8 @@ $type = mysqli_real_escape_string($con, $ty);
                                                 $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                                 $row2 =  mysqli_fetch_array($getunit);
                                                 $measurement = $row2['measurement'];
-                                                $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock FROM stockitems WHERE product_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                $storeval = empty($store) ? "" : "AND store='$store'";
+                                                $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock FROM stockitems WHERE product_id='$inventoryitem_id' $storeval") or die(mysqli_error($con));
                                                 $row3 = mysqli_fetch_array($getstock);
                                                 $totalstock = $row3['totalstock'];
                                                 $totalordered = 0;
@@ -130,7 +141,7 @@ $type = mysqli_real_escape_string($con, $ty);
                                                 while ($row4 = mysqli_fetch_array($getordered)) {
                                                     $stockorder_id = $row4['stockorder_id'];
                                                     $quantity = $row4['quantity'];
-                                                    $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND section='pharmacy' AND status=1");
+                                                    $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
                                                     if (mysqli_num_rows($getorder) > 0) {
                                                         $totalordered = $totalordered + $quantity;
                                                     }
@@ -222,7 +233,7 @@ $type = mysqli_real_escape_string($con, $ty);
             $('#ty').change(function() {
                 var chosenPaymethod = $(this).val();
                 var url = new URL(window.location.href);
-                url.searchParams.set('ty', chosenPaymethod);
+                url.searchParams.set('store', chosenPaymethod);
                 window.location.href = url.href;
             });
         })

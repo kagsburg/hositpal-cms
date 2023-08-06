@@ -87,11 +87,11 @@ $type = mysqli_escape_string($con,$ty);
                                         </thead>
                                         <tbody>
                                             <?php
-                                            // if ($type == 'Medical' || $type == 'Medicine'){
-                                            //     $section = 'and section= "pharmacy"';
-                                            // }else{
-                                            //     $section ='';
-                                            // }
+                                            if ($type == 'Medical' || $type == 'Medicine'){
+                                                $section = 'and section= "pharmacy"';
+                                            }else{
+                                                $section ='';
+                                            }
 
                                             $getordered = mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0) AND type='$type' $section ") or die(mysqli_error($con));
                                             while ($row = mysqli_fetch_array($getordered)) {
@@ -133,7 +133,7 @@ $type = mysqli_escape_string($con,$ty);
 
                                                     <td>
 
-                                                        <a href="ordereditems?id=<?php echo $stockorder_id; ?>&&st=<?php echo $status; ?>&ty=<?php echo $type ?>" class="btn btn-primary btn-xs">Details</a>
+                                                        <a href="ordereditems?id=<?php echo $stockorder_id; ?>&st=<?php echo $status; ?>&ty=<?php echo $type ?>&section=<?php echo $section ;?>" class="btn btn-primary btn-xs">Details</a>
                                                     </td>
                                                 </tr>
 

@@ -110,8 +110,8 @@ if (!isset($_SESSION["bproducts"])) {
                                 </div>
                             </div>
                         </div>
-                        <a href="cancelstocklist" class="btn btn-danger" onclick="return confirm_cancel()">CANCEL</a>
-                        <a href="requeststock" class="btn btn-info">SAVE</a>
+                        <a href="cancelstocklist" class="btn btn-danger" onclick="return confirm_cancel()">REJECT</a>
+                        <a href="requeststock" class="btn btn-info">SUBMIT</a>
                         <script type="text/javascript">
                             function confirm_cancel() {
                                 return confirm('You are about To Cancel this List. Are you sure you want to proceed?');

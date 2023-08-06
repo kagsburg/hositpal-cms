@@ -6,8 +6,7 @@ header('Location:login.php');
     if(!isset($_SESSION["bproducts"])){ 
  header('Location:addorder');   
 }else{
-  $store=$_GET['store'];
-$supplier=$_GET['supplier'];  
+
 
 ?>
 <!DOCTYPE html>
@@ -76,22 +75,32 @@ include 'includes/header.php';
                             </div>
                             <div class="card-body">
                         <?php
-                        mysqli_query($con,"INSERT INTO restockorders(store_id,supplier_id,timestamp,admin_id,status) VALUES('$store','$supplier','$timenow','".$_SESSION['elcthospitaladmin']."',0)");          
-                    $last_id= mysqli_insert_id($con);
+                     
                         if(isset($_SESSION["bproducts"]) && count($_SESSION["bproducts"])>0){
-      foreach($_SESSION["bproducts"] as $product){ //loop though items and prepare html content
-	//set variables to use them in HTML content below
-			$menuitem = $product["menuitem"]; 
-			$item_id = $product["item_id"];
-			$product_qty = $product["product_qty"];
+                            $store = $_SESSION["bproducts"]['store'];
+                            $supplier=$_SESSION["bproducts"]['supplier'];
+                            $date=$_SESSION["bproducts"]['delivery'];
+                            mysqli_query($con,"INSERT INTO restockorders(store_id,supplier_id,deliver_date,timestamp,admin_id,status) VALUES('$store','$supplier','$date','$timenow','".$_SESSION['elcthospitaladmin']."',0)");          
+                            $last_id= mysqli_insert_id($con);
+                foreach($_SESSION["bproducts"] as $product){ //loop though items and prepare html content
+                //set variables to use them in HTML content below
+              
+                    $menuitem = $product["menuitem"]; 
+                    $item_id = $product["item"];
+                    $product_qty = $product["quantity"];
+                    $type = $product['type'];
+                    if ($supplier==0){
+                        $price=$product['unitprice'];
+                    }else{
                        $supplieritems=  mysqli_query($con, "SELECT * FROM supplierproducts WHERE status=1 AND supplier_id='$supplier' AND product_id='$item_id'") or die(mysqli_error($con));
-                   $rows=  mysqli_fetch_array($supplieritems);                       
-                     $price=$rows['price'];
-                                            mysqli_query($con,"INSERT INTO restockitems(restockorder_id,product_id,quantity,unitcharge,status) VALUES('$last_id','$item_id','$product_qty','$price',1)") or die(mysqli_error($con));                    
-    unset($_SESSION["bproducts"]);   
+                         $rows=  mysqli_fetch_array($supplieritems);                       
+                        $price=$rows['price'];
+                    }
+                        mysqli_query($con,"INSERT INTO restockitems(restockorder_id,product_id,type,quantity,unitcharge,status) VALUES('$last_id','$item_id','$type','$product_qty','$price',1)") or die(mysqli_error($con));                    
+                        unset($_SESSION["bproducts"]);   
 }}
                         ?>
-                                <div class="alert alert-success">Stock Order Successfully Added.Click <strong><a href="stockorders">Here</a></strong> to view orders</div>
+                                <div class="alert alert-success">Purchase Order Successfully Added.Click <strong><a href="stockorders">Here</a></strong> to view orders</div>
                   </div>
                 </div>    
                

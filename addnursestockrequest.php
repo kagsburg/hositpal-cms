@@ -155,7 +155,7 @@ $type = mysqli_real_escape_string($con, $ty);
                                 </select>
                             </div>
                             <a href="cancelstocklist" class="btn btn-danger" onclick="return confirm_cancel()">CANCEL</a>
-                            <button class="btn btn-info" type="submit">SAVE</button>
+                            <button class="btn btn-info" type="submit">SUBMIT</button>
                         </form>
                         <script type="text/javascript">
                             function confirm_cancel() {

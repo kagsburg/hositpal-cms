@@ -66,7 +66,6 @@ $type = mysqli_real_escape_string($con, $ty);
                     });
                 });
             });
-
             $('#selectprod').on('change', function(e) {
                 var val = $(this).val()
                 if (!!val) {
@@ -77,7 +76,7 @@ $type = mysqli_real_escape_string($con, $ty);
                     $('#item_id').val("")
                     $('#measure_id').val("")
                 }
-            })
+            });
 
         });
     </script>

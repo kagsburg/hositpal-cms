@@ -85,7 +85,7 @@ if (!isset($_SESSION["bproducts"])) {
                                     }
                                 }
                                 ?>
-                                <div class="alert alert-success">Stock Request Successfully Sent</div>
+                                <div class="alert alert-success"> Request Successfully Submitted</div>
                             </div>
                         </div>
 

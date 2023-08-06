@@ -757,22 +757,23 @@
             <ul aria-expanded="false">
               <li> <a href="pharmacystockorder?ty=Medicine">Request Medicine</a></li>
               <li> <a href="pharmacystockorder?ty=Medical">Request Medical Item</a></li>
-              <li><a href="pharmacystock">View Requisition</a></li>
-              <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">Orders</a>
+              <li> <a href="pharmacyorders?ty=phar&&phar=1">View Requisition</a> </li>
+              <!-- <li><a href="pharmacystock">View Requisition</a></li> -->
+              <!-- <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">Orders</a>
                 <ul aria-expanded="false">
-                  <li><a href="pharmacyorders?typ=Medicine">Stock Medicine Requests</a></li>
-                  <li><a href="pharmacyorders?typ=Medical">Stock Medical Requests</a></li>
+                  
                 </ul>            
-            </li>
+            </li> -->
             </ul>
           </li>
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-archive"></i>
-              <span class="nav-text">Stock</span>
+              <span class="nav-text">Stock Orders</span>
             </a>
             <ul aria-expanded="false">
-              <li></li>
+              <li><a href="pharmacyorders?typ=Medicine">Stock Medicine Requests</a></li>
+                  <li><a href="pharmacyorders?typ=Medical">Stock Medical Requests</a></li>
               <!-- <li><a href="">Request Stock</a></li> -->
               <!-- <li><a href="pharmacyorders">Pending Orders</a></li> -->
               <!-- <li><a href="labstockorders">Lab Stock Orders</a></li>
@@ -788,8 +789,8 @@
               <span class="nav-text">Purchases</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="addorder">Add Order</a></li>
-              <li><a href="stockorders">View Orders</a></li>
+              <li><a href="addorder">Add Purchase Order</a></li>
+              <li><a href="stockorders">View Purchase Orders</a></li>
 
             </ul>
           </li>
@@ -816,7 +817,7 @@
             </ul>
           </li>
           <li>
-            <a class="ai-icon" href="javascript:void()" aria-expanded="false">
+            <a class=" has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Stock Orders</span>
             </a>
@@ -827,23 +828,21 @@
               <!-- <li><a href="users">View Users</a></li> -->
             </ul>
           </li>
-          <li>
+          <!-- <li>
             <a class="ai-icon" href="pharmacyorders" aria-expanded="false">
               <i class="fa fa-reply"></i>
               <span class="nav-text">Requisitions</span>
             </a>
             <ul>
-                <!-- <li><a href="pharmacyorders?typ=Medicine">Stock Medicine Requests</a></li>
+                <li><a href="pharmacyorders?typ=Medicine">Stock Medicine Requests</a></li>
                 <li><a href="pharmacyorders?typ=Medical">Stock Medical Requests</a></li>
                 <li><a href="pharmacyorders?typ=Non Medical">Stock Medical Requests</a></li> -->
               <!-- <li><a href="addstock?ty=Medicine">Request Medicine </a></li>
               <li><a href="addstock?ty=Medical">Request Medical Items</a></li>
-              <li><a href="addstock?ty=Non Medical">Request Non Medical Items</a></li> -->
+              <li><a href="addstock?ty=Non Medical">Request Non Medical Items</a></li>
               <li><a href="pharmacyorders?typ=Non Medical">View Requisitions</a></li>
             </ul>
-
-
-          </li>
+          </li> -->
         <?php }
         if (($_SESSION['elcthospitallevel'] == 'anesthesiologist')) {
         ?>

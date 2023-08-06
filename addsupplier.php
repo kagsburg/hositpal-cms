@@ -129,6 +129,34 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
 
                                         <h4>Products Supplied</h4>
                                         <hr>
+                                        <h5> Medicine </h5>
+                                        <div class='subobj3'>
+
+                                            <div class='row'>
+                                                <div class="form-group col-lg-6">
+                                                    <label>Item</label>
+                                                    <select data-placeholder="Choose item..." name="products[]" class="chosen-select" style="width:100%;">
+                                                        <option value="" selected="">Select item...</option>
+                                                        <?php
+                                                        $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND type='Medicine' ");
+                                                        while ($row = mysqli_fetch_array($getitems)) {
+                                                            $inventoryitem_id = $row['inventoryitem_id'];
+                                                            $itemname = $row['itemname'];
+                                                            $genericname = $row['genericname'];
+                                                        ?>
+                                                            <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-lg-5">
+                                                    <label>Cost Price</label>
+                                                    <input type="text" class="form-control" name="price[]" >
+                                                </div>
+                                                <div class="form-group col-lg-1">
+                                                    <a href='#' class="subobj3_button btn btn-success" style="margin-top:30px">+</a>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <h5>Medical Items</h5>
                                         <div class='subobj1'>
 
@@ -186,6 +214,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 </div>
                                             </div>
                                         </div>
+                                        
 
 
                                         <div class="form-group">
@@ -287,6 +316,51 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                 width: "100%"
             });
 
+        });
+        $('.subobj3_button').click(function(e) { //on add input button click
+            e.preventDefault();
+            $('.subobj3').append(`
+            <div class="row outer">
+                <div class="col-lg-12">
+                    <hr style="border-top: dashed 1px #b7b9cc;">
+                </div>
+                <div class="col-lg-11">
+                    <div class="row">
+                        <div class="form-group col-lg-6">
+                            <label>Item</label>  
+                            <select data-placeholder="Choose item..." name="products[]" class="chosen-select" style="width:100%;"> 
+                                <option value="" selected="">Select item...</option>       
+                                <?php $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND type='Medicine' ");
+                                while ($row = mysqli_fetch_array($getitems)) {
+                                    $inventoryitem_id = $row['inventoryitem_id'];
+                                    $itemname = $row['itemname'];        
+                                ?>     
+                                <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>  
+                        <div class="form-group col-lg-6"> 
+                            <label>Cost Price</label>   
+                            <input type="text" class="form-control" name="price[]" required="required">
+                        </div>
+                    </div> 
+                </div>
+                <div class="col-lg-1">
+                    <button class="remove_subobj3 btn btn-danger" type="button" style="height:40px;margin-top:22px;padding-top:5px;">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            `); //add input box
+            $('.chosen-select').chosen({
+                width: "100%"
+            });
+
+        });
+        $('.subobj3').on("click", ".remove_subobj3", function(e) { //user click on remove text
+            e.preventDefault();
+            $(this).closest('.outer').remove();
+            x--;
         });
 
         $('.subobj1').on("click", ".remove_subobj1", function(e) { //user click on remove text

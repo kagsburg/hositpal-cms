@@ -176,7 +176,9 @@ function confirm_approve<?php echo $restockorder_id; ?>() {
     <!-- Datatable -->
     <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="js/plugins-init/datatables.init.js"></script>
-
+    <script>
+        
+        </script>
 	
     <!--<script src="js/styleSwitcher.js"></script>-->
 </body>
