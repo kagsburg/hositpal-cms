@@ -1,69 +1,61 @@
 <?php
 include 'includes/conn.php';
- if(($_SESSION['elcthospitallevel']!='admin')&&(($_SESSION['elcthospitallevel']!='store manager'))&&(($_SESSION['elcthospitallevel']!='accountant'))){
-    header('Location:login.php');
-}
-$id = $_GET['id'];
+ if(!isset($_SESSION['elcthospitaladmin'])){
+header('Location:login.php');
+   }
+   $id = $_GET['id'];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>Ordered Items</title>
-        <!-- Favicon icon -->
-        <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
-        <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
-        <!-- Custom Stylesheet -->
-        <link href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-        <link href="css/style.css?<?php echo time(); ?>" rel="stylesheet">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title> Print Stock Orders</title>
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+     <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+    <!-- Custom Stylesheet -->
+    	<link href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+    <link href="css/style.css?<?php echo time(); ?>" rel="stylesheet">
+	
+</head>
+<body>
 
-    </head>
-    <body>
-
-        <!--*******************
-            Preloader start
-        ********************-->
-        <div id="preloader">
-            <div class="sk-three-bounce">
-                <div class="sk-child sk-bounce1"></div>
-                <div class="sk-child sk-bounce2"></div>
-                <div class="sk-child sk-bounce3"></div>
-            </div>
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
         </div>
-        <!--*******************
-            Preloader end
-        ********************-->
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
 
-        <!--**********************************
-            Main wrapper start
-        ***********************************-->
-        <div id="main-wrapper">
-            <?php
-            include 'includes/header.php';
-            ?>
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
 
-            <div class="content-body">
-                <!-- row -->
-                <div class="container-fluid">
-                    <div class="row page-titles mx-0">
-                        <div class="col-sm-6 p-md-0">
-                            <div class="welcome-text">
-                                <h4>Selected Items</h4>
-
-                            </div>
-                        </div>
-                        <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="index">Home</a></li>
-                                <li class="breadcrumb-item"><a href="stockorders">Stock Orders</a></li>
-                                <li class="breadcrumb-item active"><a href="stockorder">Order Details</a></li>
-                            </ol>
-                        </div>
-                    </div>
-                    <div class="row">
+     
+        <div class="content-body" style="margin-left: 0px">
+            <!-- row -->
+			<div class="container-fluid">
+	
+            <div class="row">
+                <div class="col-sm-12">
+                <img alt="image" src="<?php echo BASE_URL; ?>/images/ELVD.png" width="100" />
+                <h1>Nyakato Health Center </h1>
+                </div>
+                <div class="col-sm-6">
+                   
+                </div>
                         <div class="col-lg-6">
                             <?php
                            $getorder= mysqli_query($con,"SELECT * FROM restockorders WHERE  restockorder_id='$id'") or die(mysqli_error($con));
@@ -101,6 +93,7 @@ $id = $_GET['id'];
                                 $pin = $restockorder_id;
                             }
                             ?>
+                            <h4 class="card-title">Purchasing Order</h4>
                             <table class="table table-bordered">
                                 <tr><th>Order Id</th><td><?php echo $pin ;?></td></tr>
                                 <tr><th>Date Added</th><td><?php echo date('d/M/Y',$timestamp); ?></td></tr>
@@ -115,11 +108,11 @@ $id = $_GET['id'];
                         
                                 <div class="card">
                                     <div class="card-header">
-                                        <h4 class="card-title">All Ordered Items</h4>
+                                        
                                     </div>
                                     <div class="card-body">
                                          <div class="table-responsive">
-                                        <table id="example5" class="display">
+                                        <table id="example6" class="table ">
                                             <thead>
                                                 <tr>
                                                     <th>Item Name</th>
@@ -180,6 +173,7 @@ $id = $_GET['id'];
                 </div>
             </div>
         </div>
+                                       
         <!--**********************************
             Content body end
         ***********************************-->
@@ -187,16 +181,16 @@ $id = $_GET['id'];
         <!--**********************************
             Footer start
         ***********************************-->
-        <?php
-        include 'includes/footer.php';
-        ?>
+     <?php 
+//  include 'includes/footer.php';
+     ?>
         <!--**********************************
             Footer end
         ***********************************-->
 
-        <!--**********************************
-   Support ticket button start
-***********************************-->
+		<!--**********************************
+           Support ticket button start
+        ***********************************-->
 
         <!--**********************************
            Support ticket button end
@@ -211,20 +205,21 @@ $id = $_GET['id'];
     <!--**********************************
         Scripts
     ***********************************-->
-    <script src="vendor/global/global.min.js"></script>
-    <script src="vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+  <script src="vendor/global/global.min.js"></script>
+	<script src="vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
     <script src="vendor/chart.js/Chart.bundle.min.js"></script>
     <script src="js/custom.min.js"></script>
-    <script src="js/deznav-init.js"></script>
-    <!-- Apex Chart -->
-    <script src="vendor/apexchart/apexchart.js"></script>
-
-
-
-    <!-- Datatable -->
+	<script src="js/deznav-init.js"></script>
+	<!-- Apex Chart -->
+	<script src="vendor/apexchart/apexchart.js"></script>
+    
     <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="js/plugins-init/datatables.init.js"></script>
-
+<script type="text/javascript">
+        $('document').ready(function(){
+                     window.print(); 
+        });     
+    </script>
 </body>
 
 </html>

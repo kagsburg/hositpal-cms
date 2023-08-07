@@ -3,6 +3,7 @@ include 'includes/conn.php';
 if (($_SESSION['elcthospitallevel'] != 'store manager')) {
     header('Location:login.php');
 }
+$restock_id = $_GET['id'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +12,7 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Add New Order</title>
+    <title>Update New Order</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -23,9 +24,9 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
     <script>
         $(document).ready(function() {
             $(".showit").load("purchaseprocess.php", {
-                "load_cart": "1"
+                "load_cart": "2"
             });
-            $(document).on('click', '#add_item',function(){
+            $(document).on('click', '#add_item2',function(){
                 var type = $('#type').val();
                 var item = $('#item').val();
                 var unit1 = $('#unit1').val();
@@ -33,13 +34,15 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
                 var store = $('#store').val();
                 var supplier = $('#supplier').val();
                 var delivery = $('#deliverydate').val();
-
+                if (unit1 === undefined){
+                    unit1="";
+                }
                 $.ajax({
                     url: "purchaseprocess.php",
                     type: "POST",
                     dataType: "json", //expect json value from server
                     data:{
-                        addnew:1,
+                        new:1,
                         type:type,
                         item:item,
                         unitprice:unit1,
@@ -56,31 +59,10 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
                     $("#label-info").html(data.items);
                     $(".showit").html('<img src="images/loading2.gif" alt="loading.." style="position: relative;left: 10px;">'); //show loading image
                     $(".showit").load("purchaseprocess.php", {
-                        "load_cart": "1"
+                        "load_cart": "3"
                     }); //Make ajax request using jQuery Load() & update results
                 })
             })
-            $(".form-item").submit(function(e) {
-                var f = $(this);
-                var form_data = $(this).serialize();
-                $.ajax({ //make ajax request to cart_process.php
-                    url: "purchaseprocess.php",
-                    type: "POST",
-                    dataType: "json", //expect json value from server
-                    data: form_data
-                }).done(function(data) { //on Ajax success
-                    f.trigger("reset");
-                    $('#selectprod').val("").trigger("change")
-                    $("#label-info").html(data.items); //total items in cart-info element
-                    //				button_content.html('Add to Order'); //reset button text to original text
-                    $(".showit").html('<img src="images/loading2.gif" alt="loading.." style="position: relative;left: 10px;">'); //show loading image
-                    $(".showit").load("purchaseprocess.php", {
-                        "load_cart": "1"
-                    }); //Make ajax request using jQuery Load() & update results
-
-                })
-                e.preventDefault();
-            });
 
             //Show Items in Cart
 
@@ -88,17 +70,33 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
             $(".showit").on('click', 'a.remove-item', function(e) {
                 e.preventDefault();
                 var pcode = $(this).attr("data-code"); //get product code
+                var key = $(this).attr("data-key");
                 $(this).parent().fadeOut(); //remove item element from box
                 $.getJSON("purchaseprocess.php", {
-                    "remove_code": pcode
+                    "remove_items": pcode,
+                    'item_id':key,
                 }, function(data) { //get Item count from Server
                     $("#label-info").html(data.items); //update Item count in cart-info
                     $(".showit").html('<img src="images/loading2.gif" alt="loading.." style="position: relative;left: 150px;">');
                     $(".showit").load("purchaseprocess.php", {
-                        "load_cart": "1"
+                        "load_cart": "2"
                     });
                 });
             });
+            $(".showit").on('click', 'a.remove-item2', function(e) {
+                e.preventDefault();
+                var pcode = $(this).attr("data-code"); //get product code
+                $(this).parent().fadeOut(); //remove item element from box
+                $.getJSON("purchaseprocess.php", {
+                    "remove_item_code": pcode,
+                }, function(data) { //get Item count from Server
+                    $("#label-info").html(data.items); //update Item count in cart-info
+                    $(".showit").html('<img src="images/loading2.gif" alt="loading.." style="position: relative;left: 150px;">');
+                    $(".showit").load("purchaseprocess.php", {
+                        "load_cart": "2"
+                    });
+                });
+            })
             $('#selectprod').on('change', function(e) {
                 var val = $(this).val()
                 if (!!val) {
@@ -146,7 +144,7 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
                 <div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Add Purchase Order</h4>
+                            <h4>Update Purchase Order</h4>
 
                         </div>
                     </div>
@@ -154,15 +152,50 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
                             <li class="breadcrumb-item"><a href="stockorders">Orders</a></li>
-                            <li class="breadcrumb-item active"><a href="addorder">Add Purchase Order</a></li>
+                            <li class="breadcrumb-item active"><a href="editstockorder?id=<?php echo $restock_id ?>">Update Purchase Order</a></li>
                         </ol>
                     </div>
                 </div>
                 <div class="row">
+                    <form action="updatepurorder" method="post">
+                        <input type="hidden" name="restockorder" value="<?php echo $restock_id; ?>"/>
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <form name="form" method="POST" action="saveorder">
+                                <!-- <form name="form" class="form form-item" method="GET"> -->
+                                    <?php
+                                        $getrestockorder = mysqli_query($con, "SELECT * FROM restockorders WHERE restockorder_id='$restock_id'");
+                                        $row = mysqli_fetch_array($getrestockorder);
+                                        $supplier_id1 = $row['supplier_id'];
+                                        $store_id1 = $row['store_id'];
+                                        $date = $row['deliver_date'];
+                                        $restockorder_id = $row['restockorder_id'];
+                                        // get restock items
+                                        $getrestockitems = mysqli_query($con, "SELECT * FROM `restockitems` where restockorder_id='$restockorder_id' and status=1");
+                                        $items = array();
+                                        while ($row1 = mysqli_fetch_array($getrestockitems)) {
+                                            $stockitem_id = $row1['restockitem_id'];
+                                            $item_id = $row1['product_id'];
+                                            $quantity = $row1['quantity'];
+                                            $unitcharge = $row1['unitcharge'];
+                                            // get menuitem 
+                                            $getmenuitem = mysqli_query($con, "SELECT * FROM `inventoryitems` where inventoryitem_id='$item_id' ");
+                                            $row33= mysqli_fetch_array($getmenuitem);
+                                            $menuitem = $row33['itemname'];
+                                            $type = $row1['type'];
+                                            $items[] = array(
+                                                "stockitem_id"=>$stockitem_id,
+                                                "menuitem"=>$menuitem,
+                                                "item" => $item_id,
+                                                "supplier"=>$supplier_id1,
+                                                "store"=>$store_id1,
+                                                "quantity" => $quantity,
+                                                "unitcharge" => $unitcharge,
+                                                "type"=>$type
+                                            );
+                                        }
+                                        $_SESSION["bproducts"]=$items;
+                                    ?>
                                     <div class="row">
                                         <div class="form-group col-md-4">
                                             <label class="control-label">* Select Store</label>
@@ -175,12 +208,12 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
                                                     $store = $row1['store'];
 
                                                 ?>
-                                                    <option value="<?php echo $store_id; ?>"><?php echo $store;  ?></option>
+                                                    <option value="<?php echo $store_id; ?>" <?php if ($store_id ==$store_id1) {?>selected<?php }?>><?php echo $store;  ?></option>
                                                 <?php } ?>
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label class="control-label"> Select Supplier</label>
+                                            <label class="control-label">* Select Supplier</label>
                                             <select name="supplier" id="supplier" class="form-control">
                                                 <option value="0" selected="selected">Select Supplier</option>
                                                 <?php
@@ -189,13 +222,13 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
                                                     $supplier_id = $row['supplier_id'];
                                                     $suppliername = $row['suppliername'];
                                                 ?>
-                                                    <option value="<?php echo $supplier_id; ?>"><?php echo $suppliername;  ?></option>
+                                                    <option value="<?php echo $supplier_id; ?>"<?php if ($supplier_id ==$supplier_id1) {?>selected<?php }?>><?php echo $suppliername;  ?></option>
                                                 <?php } ?>
                                             </select>
                                         </div>
-                                        <div class="form-group col-md-4" id="date" style="display: none;">
+                                        <div class="form-group col-md-4" id="date" <?php if ($supplier_id1 =='0'){?> style="display: none;" <?php } ?>>
                                             <label class="control-label"> Delivery Date</label>
-                                            <input type="date" name="deliverydate" id="deliverydate" class="form-control">
+                                            <input type="date" name="deliverydate" id="deliverydate" class="form-control" value="<?php echo $date;?>">
                                         </div>
                                         <div class="col-md-12 subobj3">
                                             <div id="oproducts" class="row">
@@ -208,38 +241,20 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
                                                         <option value="Non Medical">Non Medical Items </option>
                                                     </select>
                                                 </div>
-                                                <!-- <div class="form-group col-md-6">
-                                                    <label class="control-label">Item Category</label>
-                                                    <select name="category" class="form-control" id="emptytype">
-                                                        <option value="" selected="selected">Select Item Category</option>
-                                                    </select>
-                                                    <select name="category" id="category" class="form-control" style="display: none;">
-                                                        <option value="" selected="selected">Select Item Category</option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="form-group col-md-6">
-                                                    <label class="control-label">Item Sub Category</label>
-                                                    <select name="subcategory" class="form-control" id="emptycat">
-                                                        <option value="" selected="selected">Select Item Category</option>
-                                                    </select>
-                                                    <select name="subcategory" id="subcategory" class="form-control" style="display: none;">
-                                                        <option value="" selected="selected">Select Item Category</option>
-                                                    </select>
-                                                </div> -->
-
 
                                                 <div class="form-group col-md-4">
                                                     <label class="control-label">Item</label>                                                   
-                                                    <select data-placeholder="Choose item..." name="item" class="form-control" id="item" style="display:none;">
+                                                    <select data-placeholder="Choose item..." name="item" class="form-control" id="item" >
                                                         <option value="" selected="selected">Select Item</option>
                                                     </select>
                                                 </div>
+                                                <?php 
+                                                  if ($supplier_id1 == '0'){                                                ?>
                                                 <div class="form-group col-sm-4" id="unitprice">
                                                     <label class="control-label">Unit Price</label>
                                                     <input type="number" class="form-control" id="unit1" name="unitprice" />
-
                                                 </div>
+                                                <?php } ?>
                                                 <div class="form-group col-md-4">
                                                     <label class="control-label">Quantity</label>
                                                     <input type="number" class="form-control" id="quantity" name="quantity" min="1">
@@ -248,10 +263,10 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <button class="btn btn-primary" id="add_item" type="button" >+</button>
+                                        <button class="btn btn-primary" id="add_item2" type="button" >+</button>
                                     </div>
                             </div>
-                            
+                            <!-- </form> -->
                         </div>
                     </div>
                     <div class="col-lg-12">
@@ -265,7 +280,6 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
                                     } else {
                                         echo 0;
                                     }
-                                    
                                     ?>
                                 </label>
                             </div>
@@ -309,9 +323,9 @@ if (($_SESSION['elcthospitallevel'] != 'store manager')) {
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" href="saveorder" class="btn btn-primary pull-right">SUBMIT <i class="fas fa-hand-point-right"></i></button>
-                        </form>
+                        <button  class="btn btn-primary pull-right">SUBMIT <i class="fas fa-hand-point-right"></i></button>
                     </div>
+                                        </form>
                 </div>
             </div>
         </div>

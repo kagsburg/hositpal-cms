@@ -4,7 +4,8 @@ include 'includes/conn.php';
 header('Location:login.php');
       }else{
 $id=$_GET['id'];
-$change=  mysqli_query($con,"UPDATE restockorders SET status='1' WHERE restockorder_id='$id'") or die(mysqli_error($con));
+$change=  mysqli_query($con,"UPDATE restockorders SET status='4' WHERE restockorder_id ='$id'") or die(mysqli_error($con));
+$_SESSION['success']='<div class="alert alert-success">ReStock Order Cancelled  </div>';
 header('Location:'.$_SERVER['HTTP_REFERER']);
    }
 ?>

@@ -7,7 +7,6 @@ header('Location:login.php');
  header('Location:addorder');   
 }else{
 
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +15,7 @@ header('Location:login.php');
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Save Stock</title>
+    <title>Update  Purchase Order</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
   <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -55,7 +54,7 @@ include 'includes/header.php';
 				<div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Save Stock</h4>
+                            <h4>Update Purchase</h4>
                            
                         </div>
                     </div>
@@ -71,24 +70,26 @@ include 'includes/header.php';
        		<div class="col-lg-8">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Save New Order</h4>
+                                <h4 class="card-title">Update Purchase Order</h4>
                             </div>
                             <div class="card-body">
                         <?php
                      
                         if(isset($_SESSION["bproducts"]) && count($_SESSION["bproducts"])>0){
+                            // update the restock order
                             $store = $_POST['store'];
                             $supplier=$_POST['supplier'];
                             $date=$_POST['deliverydate'];
-                            mysqli_query($con,"INSERT INTO restockorders(store_id,supplier_id,deliver_date,timestamp,admin_id,status) VALUES('$store','$supplier','$date','$timenow','".$_SESSION['elcthospitaladmin']."',0)");          
-                            $last_id= mysqli_insert_id($con);
+                            $restock_id=$_POST['restockorder'];
+                            $change = mysqli_query($con,"UPDATE restockorders SET store_id='$store',supplier_id='$supplier',deliver_date='$date' WHERE restockorder_id='$restock_id'") or die(mysqli_error($con));
+                           
                 foreach($_SESSION["bproducts"] as $product){ //loop though items and prepare html content
-                //set variables to use them in HTML content below
-              
+                //set variables to use them in HTML content below              
                     $menuitem = $product["menuitem"]; 
                     $item_id = $product["item"];
                     $product_qty = $product["quantity"];
                     $type = $product['type'];
+                    $stockitem = isset ($product['stockitem_id']) ? $product['stockitem_id']: '';
                     if ($supplier==0){
                         $price=$product['unitprice'];
                     }else{
@@ -96,11 +97,16 @@ include 'includes/header.php';
                          $rows=  mysqli_fetch_array($supplieritems);                       
                         $price=$rows['price'];
                     }
-                        mysqli_query($con,"INSERT INTO restockitems(restockorder_id,product_id,type,quantity,unitcharge,status) VALUES('$last_id','$item_id','$type','$product_qty','$price',1)") or die(mysqli_error($con));                    
-                        unset($_SESSION["bproducts"]);   
-}}
+                    // check if restockitems id exists 
+                    // $check = mysqli_query($con,"SELECT * FROM restockitems WHERE restockorder_id='$restock_id' AND product_id='$item_id'") or die(mysqli_error($con));
+                    if ($stockitem == ''){
+                        mysqli_query($con,"INSERT INTO restockitems(restockorder_id,product_id,type,quantity,unitcharge,status) VALUES('$restock_id','$item_id','$type','$product_qty','$price',1)") or die(mysqli_error($con));                    
+                    }
+                }
+                unset($_SESSION["bproducts"]);   
+}
                         ?>
-                                <div class="alert alert-success">Purchase Order Successfully Added.Click <strong><a href="stockorders">Here</a></strong> to view orders</div>
+                                <div class="alert alert-success">Purchase Order Successfully Updated.Click <strong><a href="stockorders">Here</a></strong> to view orders</div>
                   </div>
                 </div>    
                

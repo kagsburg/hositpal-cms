@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
- if(($_SESSION['elcthospitallevel']!='admin')&&(($_SESSION['elcthospitallevel']!='store manager'))&&(($_SESSION['elcthospitallevel']!='accountant'))){
+ if(($_SESSION['elcthospitallevel']!='admin')&&(($_SESSION['elcthospitallevel']!='store manager'))&&(($_SESSION['elcthospitallevel']!='pharmacist'))){
 header('Location:login.php');
    }
    $ty = isset ($_GET['ty']) ? $_GET['ty'] : '';
@@ -13,7 +13,7 @@ header('Location:login.php');
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Stock Orders</title>
+    <title>Pharmacy Stock Orders</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
      <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -52,7 +52,7 @@ include 'includes/header.php';
 				<div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Restock Orders</h4>
+                            <h4>Pharmacy Stock Orders</h4>
                            
                         </div>
                     </div>
@@ -82,7 +82,6 @@ include 'includes/header.php';
                                         <tr>
                                             <th>Order Date</th>
                                                 <th>Store</th>
-                                                    <th>Supplier</th>
                                                  <th>Items</th>
                                                  <th>Status</th>
                                                   <th>Action</th>
@@ -98,36 +97,28 @@ include 'includes/header.php';
                                             $getorders= mysqli_query($con,"SELECT * FROM restockorders WHERE  status IN (0,1) and supplier_id !=0");
                                          }
                                          else{
-                                            $getorders= mysqli_query($con,"SELECT * FROM restockorders WHERE  status IN (0,1)");
+                                            $getorders= mysqli_query($con,"SELECT * FROM pharstockorders WHERE  status IN (0,1)");
                                          }
                     while($row= mysqli_fetch_array($getorders)){
-                      $restockorder_id=$row['restockorder_id'];
-                      $store_id=$row['store_id'];
-                      $supplier_id=$row['supplier_id'];
+                      $restockorder_id=$row['pharstockorder_id'];
+                      $store_id=$row['store'];
                       $timestamp=$row['timestamp'];
                       $status=$row['status'];
-                      if ($supplier_id == 0){
-                        $suppliername = 'N/A';
-                        }else{
-                            $getsupplier=  mysqli_query($con, "SELECT * FROM suppliers WHERE status=1 AND supplier_id='$supplier_id'") or die(mysqli_error($con));
-                           $row2=mysqli_fetch_array($getsupplier);
-                           $suppliername=$row2['suppliername'];
-                        }
                          $getstore=mysqli_query($con,"SELECT * FROM stores WHERE status=1 AND store_id='$store_id'");
                         $row1=  mysqli_fetch_array($getstore);
                           $store=$row1['store'];
-                          $getitems= mysqli_query($con,"SELECT * FROM restockitems WHERE restockorder_id='$restockorder_id' AND status=1");
+                          $getitems= mysqli_query($con,"SELECT * FROM stockitems WHERE pharstockorder_id='$restockorder_id' AND status=3");
                        ?>
                                           <tr class="gradeA">                                                           
                                             <td><?php echo date('d/M/Y',$timestamp); ?></td>
                                             <td><?php echo $store; ?></td>
-                                               <td><?php echo $suppliername; ?></td>
+                                               <!-- <td><?php echo $suppliername; ?></td> -->
                                                <td><?php echo mysqli_num_rows($getitems); ?></td>
                                             <td><?php if($status==0){echo '<span class="text-danger">PENDING</span>'; }else if($status == 1) {echo '<span class="text-success">APPROVED</span>'; }else{echo '<span class="text-danger">CANCELLED</span>';}?></td>                                                                                                          
                                                 <td>     
-                   <a href="stockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-primary btn-xs">Details</a>
+                   <!-- <a href="stockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-primary btn-xs">Details</a> -->
                    <?php
-                   if(($status==0)&&($_SESSION['elcthospitallevel']=='admin' || $_SESSION['elcthospitallevel']=='accountant')){
+                   if(($status==0)&&($_SESSION['elcthospitallevel']=='admin' || $_SESSION['elcthospitallevel']=='head physician')){
                    ?>
                      <a href="cancelstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $restockorder_id; ?>()">Cancel</a>
                      <a href="editstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-info btn-xs">Edit</a>

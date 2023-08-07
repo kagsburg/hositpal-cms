@@ -140,7 +140,17 @@
               <li><a href="additem?ty=Non Medical&sub=NULL">Add Non Medical item</a></li>
               <li><a href="measurements">Units of Measure</a></li>
               <li><a href="stores">Stores</a></li>
-              <li><a href="stockorders">Stock Orders</a></li>
+            </ul>
+          </li>
+          <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="flaticon-381-settings-2"></i>
+              <span class="nav-text">Purchases</span>
+            </a>
+            <ul aria-expanded="false">
+              <li><a href="stockorders?ty=1">Supplier Orders</a></li>
+              <li><a href="stockorders?ty=0">Non Supplier Orders</a></li>
+
             </ul>
           </li>
           <li>
@@ -400,6 +410,17 @@
               <li><a href="stock">View Items</a></li>
               <li><a href="pharmacystock">Pharmacy Stock</a></li>
               <li><a href="addaccstock?ty=Non Medical">Request Non Medical Items</a></li>
+            </ul>
+          </li>
+          <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="flaticon-381-settings-2"></i>
+              <span class="nav-text">Purchases</span>
+            </a>
+            <ul aria-expanded="false">
+              <li><a href="stockorders?ty=1">Supplier Orders</a></li>
+              <li><a href="stockorders?ty=0">Non Supplier Orders</a></li>
+
             </ul>
           </li>
           <li>
@@ -751,12 +772,33 @@
           </li>
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+            <i class="fa fa-stack-overflow"></i>
+              <span class="nav-text">Stock</span>
+            </a>
+            <ul aria-expanded="false">
+              <li><a href="viewpharstock">View Stock</a></li>
+                  <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false"> Add Stock</a>
+                  <ul aria-expanded="false">
+                  <li><a href="addpharstock?ty=Medicine">Add Medicine</a></li>
+                  <li><a href="addpharstock?ty=Medical">Add Medical Items</a></li>
+                  </ul>
+                </li>
+                  
+              <!-- <li><a href="">Request Stock</a></li> -->
+              <!-- <li><a href="pharmacyorders">Pending Orders</a></li> -->
+              <!-- <li><a href="labstockorders">Lab Stock Orders</a></li>
+              <li><a href="nursestockorders">Nurse Stock Orders</a></li> -->
+            </ul>
+          </li>
+          <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
             <i class="fa fa-archive"></i>
               <span class="nav-text">Requisition</span>
             </a>
             <ul aria-expanded="false">
               <li> <a href="pharmacystockorder?ty=Medicine">Request Medicine</a></li>
-              <li> <a href="pharmacystockorder?ty=Medical">Request Medical Item</a></li>
+              <li> <a href="pharmacystockorder?ty=Medical">Request Medical Items</a></li>
+              <li> <a href="pharmacystockorder?ty=Non Medical">Request Non Medical Items</a></li>
               <li> <a href="pharmacyorders?ty=phar&&phar=1">View Requisition</a> </li>
               <!-- <li><a href="pharmacystock">View Requisition</a></li> -->
               <!-- <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">Orders</a>
@@ -768,12 +810,12 @@
           </li>
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
-              <i class="fa fa-archive"></i>
-              <span class="nav-text">Stock Orders</span>
+              <i class="fa fa-book"></i>
+              <span class="nav-text">Orders</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="pharmacyorders?typ=Medicine">Stock Medicine Requests</a></li>
-                  <li><a href="pharmacyorders?typ=Medical">Stock Medical Requests</a></li>
+              <li><a href="pharmacyorders?typ=Medicine"> Medicine Order</a></li>
+                  <li><a href="pharmacyorders?typ=Medical"> Medical Items Orders</a></li>
               <!-- <li><a href="">Request Stock</a></li> -->
               <!-- <li><a href="pharmacyorders">Pending Orders</a></li> -->
               <!-- <li><a href="labstockorders">Lab Stock Orders</a></li>
