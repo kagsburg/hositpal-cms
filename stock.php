@@ -82,6 +82,9 @@ $store = mysqli_real_escape_string($con, $store);
                             <!-- <option value="Medical" <?php if ($ty == "Medical") echo "selected"; ?>>Medical</option>
                             <option value="Non Medical" <?php if ($ty == "Non Medical") echo "selected"; ?>>Non Medical</option> -->
                         </select>
+                        <!-- add print button -->
+                        <!-- <a href="" class="btn btn-primary" >Print</a> -->
+                        
                         
                     </div>
                     <div class="col-lg-12">
@@ -98,6 +101,7 @@ $store = mysqli_real_escape_string($con, $store);
                                                 <th>Item Name</th>
                                                 <th>Category</th>
                                                 <th>In Stock</th>
+                                                <th>Expiry</th>
                                                 <th>Measurement Unit</th>
                                                 <th>Stock Status</th>
                                                 <th>Action</th>
@@ -133,7 +137,7 @@ $store = mysqli_real_escape_string($con, $store);
                                                 $row2 =  mysqli_fetch_array($getunit);
                                                 $measurement = $row2['measurement'];
                                                 $storeval = empty($store) ? "" : "AND store='$store'";
-                                                $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock FROM stockitems WHERE product_id='$inventoryitem_id' $storeval") or die(mysqli_error($con));
+                                                $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' $storeval") or die(mysqli_error($con));
                                                 $row3 = mysqli_fetch_array($getstock);
                                                 $totalstock = $row3['totalstock'];
                                                 $totalordered = 0;
@@ -150,12 +154,14 @@ $store = mysqli_real_escape_string($con, $store);
                                                 //     print_r($instock);
                                                 // if (!empty($ty) && $type != $ty." items")
                                                 //     continue;
+                                                if ($instock <= 0){}else{
                                             ?>
                                                 <tr class="gradeA">
                                                     <td><?php echo 'ELVD-' . $inventoryitem_id; ?></td>
                                                     <td><?php echo $itemname; ?></td>
                                                     <td><?php echo $category; ?></td>
                                                     <td><?php echo $instock; ?></td>
+                                                    <td><?php echo $row3['expiry']; ?></td>
                                                     <td><?php echo $measurement; ?></td>
                                                     <th><?php
                                                         if ($totalstock <= $minimum) {
@@ -167,10 +173,11 @@ $store = mysqli_real_escape_string($con, $store);
 
                                                     <td>
                                                         <a href="itemstock?id=<?php echo $inventoryitem_id; ?>&ty=<?php echo $type; ?>" class="btn btn-primary btn-xs">Details</a>
+
                                                     </td>
                                                 </tr>
 
-                                            <?php } ?>
+                                            <?php }} ?>
                                         </tbody>
                                     </table>
                                 </div>

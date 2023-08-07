@@ -777,10 +777,10 @@
             </a>
             <ul aria-expanded="false">
               <li><a href="viewpharstock">View Stock</a></li>
-                  <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false"> Add Stock</a>
+                  <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false"> Request Stock</a>
                   <ul aria-expanded="false">
-                  <li><a href="addpharstock?ty=Medicine">Add Medicine</a></li>
-                  <li><a href="addpharstock?ty=Medical">Add Medical Items</a></li>
+                  <li><a href="addpharstock?ty=Medicine">Request Medicine</a></li>
+                  <li><a href="addpharstock?ty=Medical">Request Medical Items</a></li>
                   </ul>
                 </li>
                   

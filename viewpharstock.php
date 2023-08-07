@@ -116,12 +116,12 @@ include 'includes/header.php';
                                                <td><?php echo mysqli_num_rows($getitems); ?></td>
                                             <td><?php if($status==0){echo '<span class="text-danger">PENDING</span>'; }else if($status == 1) {echo '<span class="text-success">APPROVED</span>'; }else{echo '<span class="text-danger">CANCELLED</span>';}?></td>                                                                                                          
                                                 <td>     
-                   <!-- <a href="stockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-primary btn-xs">Details</a> -->
+                   <a href="pharstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-primary btn-xs">Details</a>
                    <?php
                    if(($status==0)&&($_SESSION['elcthospitallevel']=='admin' || $_SESSION['elcthospitallevel']=='head physician')){
                    ?>
-                     <a href="cancelstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $restockorder_id; ?>()">Cancel</a>
-                     <a href="editstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-info btn-xs">Edit</a>
+                     <a href="cancelpharstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $restockorder_id; ?>()">Cancel</a>
+                     <a href="editpharstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-info btn-xs">Edit</a>
                  
                    <script type="text/javascript">
                     function confirm_cancel<?php echo $restockorder_id; ?>() {

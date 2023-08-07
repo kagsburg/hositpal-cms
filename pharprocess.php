@@ -54,6 +54,10 @@ if (isset($_POST["load_cart"]) && $_POST["load_cart"] == 1) {
 	if (isset($_SESSION["bproducts"]) && count($_SESSION["bproducts"]) > 0) { //if we have session variable
 		//		$cart_box = '<ul class="cart-products-loaded">';
 		//$total = 0;
+		$type2 = '';
+		foreach ($_SESSION["bproducts"] as $key => $product) {
+			$type2 = $product['type'];
+		}
 
 ?>
 
@@ -66,7 +70,9 @@ if (isset($_POST["load_cart"]) && $_POST["load_cart"] == 1) {
 						<th>Measurement Unit</th>
 						<th>Quantity</th>
 						<th>Store</th>
-						<!-- <th>Expiry</th> -->
+						<?php if ($type2 == 'Medicine') { ?>
+							<th>Expiry Date</th>
+						 <?php } ?>
 						<th></th>
 					</tr>
 				</thead>

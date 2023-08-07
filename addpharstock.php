@@ -200,6 +200,7 @@ $type = mysqli_real_escape_string($con, $ty);
                                         <button class="btn btn-block btn-info listbtn" type="submit">Add to List</button>
                                     </div>
                                 </form>
+                                <label class="badge badge-flat-primary badge-shadow pull-right label-success" id="label-quantity"></label>
                             </div>
                         </div>
 
@@ -311,56 +312,33 @@ $type = mysqli_real_escape_string($con, $ty);
 
     <script src="vendor/select2/js/select2.min.js"></script>
     <script src="js/plugins-init/select2-init.js"></script>
+    <script>
+        $(document).on('change','#selectprod',function(){
+            var prod = $(this).val();
+            var prodarr = prod.split('_');
+            var prodid = prodarr[0];
+            var measurement_id = prodarr[1];
+            $.ajax({
+                url:"getprod.php",
+                method:"POST",
+                dataType:"json",
+                data:{prodid:prodid,measurement_id:measurement_id},
+                success:function(data){
+                    console.log(data);
+                    if (data.status == 'success'){
+                        if (data.items[0].total == null){
+                            available = 0;
+                        }else{
+                        available = parseInt(data.items[0].total) - parseInt(data.totalissued); 
+                        }
+                        
+                        $('#expiry').val(data.items[0].expiry);                        
+                        $('#label-quantity').html('Available stock : '+available);
+                    }
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>
-<?php /*
-<div class="card" style="max-height: 500px;overflow-y: scroll; display: none;">
-                            <div class="card-header">
-                                <h4 class="card-title">Stock Items</h4>
-                            </div>
-                            <div class="card-body">                                
-                                <table class="table " style="width:100%; display: none;">
-                                    <thead>
-                                        <tr>
-                                            <th>Product Name</th>
-                                            <th>Quantity</th>
-                                            <th>&nbsp;</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ORDER BY itemname");
-                                        while ($row = mysqli_fetch_array($getitems)) {
-                                            $inventoryitem_id = $row['inventoryitem_id'];
-                                            $itemname = $row['itemname'];
-                                            $measurement_id = $row['measurement_id'];
-                                            $minimum = $row['minimum'];
-                                            $unitprice = $row['unitprice'];
-                                            // $category_id = $row['category_id'];
-                                            // $getcat = mysqli_query($con, "SELECT * FROM itemcategories WHERE status=1 AND itemcategory_id='$category_id'");
-                                            // $row1 =  mysqli_fetch_array($getcat);
-                                            // $category = $row1['category'];
-                                            $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
-                                            $row2 =  mysqli_fetch_array($getunit);
-                                            $measurement = $row2['measurement'];
-                                        ?>
-                                            <form class="form-item">
-                                                <tr>
-                                                    <td><?php echo $itemname . '(' . $measurement . ')'; ?></td>
-
-                                                    <td> <input name="product_qty" class="form-control" type="text" style="width:50px">
-                                                    </td>
-                                                    <td>
-                                                        <input type="hidden" name="item_id" value="<?php echo $inventoryitem_id; ?>">
-                                                        <input type="hidden" name="measurement_id" value="<?php echo $measurement_id; ?>">
-                                                        <button class="btn btn-xs btn-info listbtn" type="submit">Add to List</button>
-                                                    </td>
-                                                </tr>
-                                            </form>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        */ ?>
