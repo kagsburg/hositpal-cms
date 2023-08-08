@@ -108,6 +108,8 @@ include 'includes/header.php';
                         $row1=  mysqli_fetch_array($getstore);
                           $store=$row1['store'];
                           $getitems= mysqli_query($con,"SELECT * FROM stockitems WHERE pharstockorder_id='$restockorder_id' AND status=3");
+                          $row2=  mysqli_fetch_array($getitems);
+                          $type = $row2['type'];
                        ?>
                                           <tr class="gradeA">                                                           
                                             <td><?php echo date('d/M/Y',$timestamp); ?></td>
@@ -121,7 +123,7 @@ include 'includes/header.php';
                    if(($status==0)&&($_SESSION['elcthospitallevel']=='admin' || $_SESSION['elcthospitallevel']=='head physician')){
                    ?>
                      <a href="cancelpharstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $restockorder_id; ?>()">Cancel</a>
-                     <a href="editpharstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-info btn-xs">Edit</a>
+                     <a href="editpharstockorder?id=<?php echo $restockorder_id; ?>&ty=<?php echo $type; ?>" class="btn btn-info btn-xs">Edit</a>
                  
                    <script type="text/javascript">
                     function confirm_cancel<?php echo $restockorder_id; ?>() {
@@ -133,10 +135,10 @@ include 'includes/header.php';
                     </script>
                    
                    <?php }
-                   if ($status == 0 &&($_SESSION['elcthospitallevel']=='store manager')){
+                   if (($status == 0) &&($_SESSION['elcthospitallevel']=='pharmacist')){
                    ?>
-                    <a href="editstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-info btn-xs">Edit</a>
-                    <a href="cancelstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $restockorder_id; ?>()">Delete</a>
+                    <a href="editpharstockorder?id=<?php echo $restockorder_id; ?>&ty=<?php echo $type; ?>" class="btn btn-info btn-xs">Edit</a>
+                    <a href="cancelpharstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $restockorder_id; ?>()">Delete</a>
                     <script type="text/javascript">
                     function confirm_cancel<?php echo $restockorder_id; ?>() {
                             return confirm('You are about To Cancel this List. Are you sure you want to proceed?');

@@ -81,7 +81,7 @@ if (strlen($id) >= 4) {
                 <div class="row">
                     <div class="col-lg-12">
                         <?php
-                        if (($_SESSION['elcthospitallevel'] == 'store manager') && ($st == 0)) {
+                        if (($_SESSION['elcthospitallevel'] == 'store manager' || $_SESSION['elcthospitallevel']=='head physician') && ($st == 0)) {
                         ?>
                             <a href="approverequest?id=<?php echo $id; ?>" class="btn btn-success" onclick="return approve()"> <i class="fa fa-thumbs-up"></i> Approve Request</a>
                             <a href="cancelrequest?id=<?php echo $id; ?>" class="btn btn-danger" onclick="return cancel()">

@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'doctor')) {
+if (($_SESSION['elcthospitallevel'] != 'anesthesiologist')) {
    header('Location:login.php');
 }
 $ty = $_GET['ty'];
@@ -197,7 +197,7 @@ $type = mysqli_escape_string($con, $ty);
                         <div class="showit"></div>
                      </div>
                   </div>
-                  <a href="adddoctorstockrequest" class="btn btn-primary pull-right">PROCEED <i class="fas fa-hand-point-right"></i></a>
+                  <a href="addanastockrequest" class="btn btn-primary pull-right">PROCEED <i class="fas fa-hand-point-right"></i></a>
                </div>
 
             </div>

@@ -150,17 +150,28 @@ $type = mysqli_real_escape_string($con, $ty);
                                                 $measurement_id = $row['measurement_id'];
                                                 $minimum = $row['minimum'];
                                                 $unitprice = $row['unitprice'];
-                                                // $category_id = $row['category_id'];
-                                                // $getcat = mysqli_query($con, "SELECT * FROM itemcategories WHERE status=1 AND itemcategory_id='$category_id'");
-                                                // $row1 =  mysqli_fetch_array($getcat);
-                                                // $category = $row1['category'];
                                                 $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                                 $row2 =  mysqli_fetch_array($getunit);
                                                 $measurement = $row2['measurement'];
+                                                $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =3") or die(mysqli_error($con));
+                                                $row3 = mysqli_fetch_array($getstock);
+                                                $totalstock = $row3['totalstock'];
+                                                $totalordered = 0;
+                                                $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                while ($row4 = mysqli_fetch_array($getordered)) {
+                                                    $stockorder_id = $row4['stockorder_id'];
+                                                    $quantity = $row4['quantity'];
+                                                    $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
+                                                    if (mysqli_num_rows($getorder) > 0) {
+                                                        $totalordered = $totalordered + $quantity;
+                                                    }
+                                                }
+                                                $instock = $totalstock - $totalordered;
+                                                if ($instock <= 0){}else{
 
                                             ?>
                                                 <option value="<?php echo $inventoryitem_id . '_' . $measurement_id; ?>"><?php echo $itemname . '(' . $measurement . ')'; ?></option>
-                                            <?php } ?>
+                                            <?php } }?>
                                         </select>
                                     </div>
                                     <?php 

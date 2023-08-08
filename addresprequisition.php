@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'doctor')) {
+if (($_SESSION['elcthospitallevel'] != 'receptionist')) {
    header('Location:login.php');
 }
 $ty = $_GET['ty'];
@@ -102,15 +102,15 @@ $type = mysqli_escape_string($con, $ty);
             <div class="row page-titles mx-0">
                <div class="col-sm-6 p-md-0">
                   <div class="welcome-text">
-                     <h4>Add Stock</h4>
+                     <h4>Request Non Medical stock</h4>
 
                   </div>
                </div>
                <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                   <ol class="breadcrumb">
                      <li class="breadcrumb-item"><a href="index">Home</a></li>
-                     <li class="breadcrumb-item"><a href="stock">View Stock</a></li>
-                     <li class="breadcrumb-item active"><a href="addstock">Add stock</a></li>
+                     <!-- <li class="breadcrumb-item"><a href="stock">View Stock</a></li> -->
+                     <li class="breadcrumb-item active"><a href="javascript:void()">Request Non Medical stock</a></li>
                   </ol>
                </div>
             </div>
@@ -141,21 +141,21 @@ $type = mysqli_escape_string($con, $ty);
                                  $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                  $row2 =  mysqli_fetch_array($getunit);
                                  $measurement = $row2['measurement'];
-                                                $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2") or die(mysqli_error($con));
-                                                $row3 = mysqli_fetch_array($getstock);
-                                                $totalstock = $row3['totalstock'];
-                                                $totalordered = 0;
-                                                $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
-                                                while ($row4 = mysqli_fetch_array($getordered)) {
-                                                    $stockorder_id = $row4['stockorder_id'];
-                                                    $quantity = $row4['quantity'];
-                                                    $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
-                                                    if (mysqli_num_rows($getorder) > 0) {
-                                                        $totalordered = $totalordered + $quantity;
-                                                    }
-                                                }
-                                                $instock = $totalstock - $totalordered;
-                                                if ($instock > 0){
+                                 $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store=3 and status=1") or die(mysqli_error($con));
+                                 $row3 = mysqli_fetch_array($getstock);
+                                 $totalstock = $row3['totalstock'];
+                                 $totalordered = 0;
+                                 $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                 while ($row4 = mysqli_fetch_array($getordered)) {
+                                     $stockorder_id = $row4['stockorder_id'];
+                                     $quantity = $row4['quantity'];
+                                     $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
+                                     if (mysqli_num_rows($getorder) > 0) {
+                                         $totalordered = $totalordered + $quantity;
+                                     }
+                                 }
+                                 $instock = $totalstock - $totalordered;
+                                 if ($instock > 0 ){
                               ?>
                                  <tr>
                                     <td><?php echo $itemname . '(' . $measurement . ')'; ?></td>
@@ -197,7 +197,7 @@ $type = mysqli_escape_string($con, $ty);
                         <div class="showit"></div>
                      </div>
                   </div>
-                  <a href="adddoctorstockrequest" class="btn btn-primary pull-right">PROCEED <i class="fas fa-hand-point-right"></i></a>
+                  <a href="addreqstockrequest" class="btn btn-primary pull-right">PROCEED <i class="fas fa-hand-point-right"></i></a>
                </div>
 
             </div>

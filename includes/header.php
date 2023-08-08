@@ -154,6 +154,11 @@
             </ul>
           </li>
           <li>
+            <a href="viewpharstock">
+              <i class="fa fa-book"></i> <span class="nav-text">Stock Orders</span>
+            </a>
+          </li>
+          <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="flaticon-381-settings-2"></i>
               <span class="nav-text">Categories</span>
@@ -291,6 +296,23 @@
               <i class="flaticon-381-user"></i>
               <span class="nav-text">Pending Registrations</span>
             </a>
+          </li>
+          <li>
+            <a href="viewpharstock">
+              <i class="fa fa-book"></i> <span class="nav-text">Stock Orders</span>
+            </a>
+          </li>
+          <li>
+            <a class=" has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+            <i class="fa fa-book"></i>
+              <span class="nav-text">Orders</span>
+            </a>
+            <ul aria-expanded="false">
+              <li><a href="stockneworders?ty=Medicine">Medicine Orders</a></li>
+              <li><a href="stockneworders?ty=Medical">Medical Item Orders</a></li>
+              <li><a href="stockneworders?ty=Non Medical">Non Medical Items Orders</a></li>
+              <!-- <li><a href="users">View Users</a></li> -->
+            </ul>
           </li>
 
         <?php }
@@ -776,7 +798,8 @@
               <span class="nav-text">Stock</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="viewpharstock">View Stock</a></li>
+              <li><a href="pharstock">View Stock</a></li>
+              <li><a href="viewpharstock">View Stock Requests</a></li>
                   <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false"> Request Stock</a>
                   <ul aria-expanded="false">
                   <li><a href="addpharstock?ty=Medicine">Request Medicine</a></li>
@@ -860,31 +883,32 @@
           </li>
           <li>
             <a class=" has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
-              <i class="fa fa-user-plus"></i>
-              <span class="nav-text">Stock Orders</span>
+            <i class="fa fa-book"></i>
+              <span class="nav-text">Orders</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="stockneworders?ty=Medicine">Medicine Orders</a></li>
-              <li><a href="stockneworders?ty=Medical">Medical Item Orders</a></li>
-              <li><a href="stockneworders?ty=Non Medical">Non Medical Items Orders</a></li>
-              <!-- <li><a href="users">View Users</a></li> -->
-            </ul>
+              <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">Dispensing Orders</a>
+                  <ul aria-expanded="false">
+                    <li><a href="stockneworders?ty=Medicine">Medicine Orders</a></li>
+                    <li><a href="stockneworders?ty=Medical">Medical Item Orders</a></li>
+                  </ul>
+              </li>
+              <li><a href="stockneworders?ty=Non Medical">Requisition Orders</a></li>
+          </ul>
           </li>
-          <!-- <li>
+          <li>
             <a class="ai-icon" href="pharmacyorders" aria-expanded="false">
               <i class="fa fa-reply"></i>
               <span class="nav-text">Requisitions</span>
             </a>
             <ul>
-                <li><a href="pharmacyorders?typ=Medicine">Stock Medicine Requests</a></li>
-                <li><a href="pharmacyorders?typ=Medical">Stock Medical Requests</a></li>
-                <li><a href="pharmacyorders?typ=Non Medical">Stock Medical Requests</a></li> -->
+                <li><a href="stockrequisition?ty=Non Medical">Non Medical Items Requisitions</a></li>
               <!-- <li><a href="addstock?ty=Medicine">Request Medicine </a></li>
               <li><a href="addstock?ty=Medical">Request Medical Items</a></li>
               <li><a href="addstock?ty=Non Medical">Request Non Medical Items</a></li>
-              <li><a href="pharmacyorders?typ=Non Medical">View Requisitions</a></li>
+              <li><a href="pharmacyorders?typ=Non Medical">View Requisitions</a></li>-->
             </ul>
-          </li> -->
+          </li>
         <?php }
         if (($_SESSION['elcthospitallevel'] == 'anesthesiologist')) {
         ?>
@@ -908,7 +932,7 @@
               <li><a href="addanaestock?ty=Medicine">Request Medicine </a></li>
               <li><a href="addanaestock?ty=Medical">Request Medical Items</a></li>
               <li><a href="addanaestock?ty=Non Medical">Request Non Medical Items</a></li>
-              <li><a href="radiostockorders">View Requisitions</a></li>
+              <li><a href="anaestockorders">View Requisitions</a></li>
             </ul>
           </li>
         <?php } ?>

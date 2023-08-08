@@ -68,20 +68,13 @@ $id = $_GET['id'];
                             <?php
                            $getorder= mysqli_query($con,"SELECT * FROM stockitems WHERE pharstockorder_id='$id' AND status=3") or die(mysqli_error($con));
                      $row= mysqli_fetch_array($getorder);
-                      $restockorder_id=$row['restockorder_id'];
-                      $store_id=$row['store_id'];
-                      $supplier_id=$row['supplier_id'];
+                      $restockorder_id=$row['pharstockorder_id'];
+                      $store_id=$row['store'];
+                      $item = $row['product_id'];
                       $admin_id=$row['admin_id'];
                       $timestamp=$row['timestamp'];
                       $status=$row['status'];
-                      $date = $row['deliver_date'];
-                      if ($supplier_id == '0') {
-                          $suppliername = 'N/A';
-                      } else {
-                       $getsupplier=  mysqli_query($con, "SELECT * FROM suppliers WHERE status=1 AND supplier_id='$supplier_id'") or die(mysqli_error($con));
-                      $row2=mysqli_fetch_array($getsupplier);
-                      $suppliername=$row2['suppliername'];
-                      }
+                      
                          $getstore=mysqli_query($con,"SELECT * FROM stores WHERE status=1 AND store_id='$store_id'");
                         $row1=  mysqli_fetch_array($getstore);
                           $storename=$row1['store'];
@@ -104,11 +97,9 @@ $id = $_GET['id'];
                             <table class="table table-bordered">
                                 <tr><th>Order Id</th><td><?php echo $pin ;?></td></tr>
                                 <tr><th>Date Added</th><td><?php echo date('d/M/Y',$timestamp); ?></td></tr>
-                                <tr><th>Supplier</th><td><?php echo $suppliername; ?></td></tr>
-                                <tr><th>Store</th><td><?php echo $storename; ?></td></tr>
-                                <tr><th>Status</th><td><?php if($status==0){echo '<span class="text-danger">PENDING</span>'; }else if ($status == 4){echo '<span class="text-danger">CANCELLED</span>';} else{echo '<span class="text-success">APPROVED</span>'; }?></td></tr>
+                                <!-- <tr><th>Store</th><td><?php echo $storename; ?></td></tr> -->
+                                <tr><th>Status</th><td><?php if($status==3){echo '<span class="text-danger">PENDING</span>'; }else if ($status == 4){echo '<span class="text-danger">CANCELLED</span>';} else{echo '<span class="text-success">APPROVED</span>'; }?></td></tr>
                               <tr><th>Added by</th><td><?php echo $fullname; ?></td></tr>
-                              <tr><th>Delivery Date</th><td><?php echo $date;?></td></tr>
                            </table>
                         </div>
                      <div class="col-lg-10">
@@ -123,21 +114,22 @@ $id = $_GET['id'];
                                             <thead>
                                                 <tr>
                                                     <th>Item Name</th>
-                                                    <th>Unit Price</th>
+                                                    
                                                     <th>Quantity</th>
-                                                    <th>Sub Total</th>
+                                                    <th>Expiry</th>
 
                                                 </tr>
                                             </thead>
                                             <tbody>   
                                                 <?php
                                                 $totalcharge = 0;
-                                               $getitems= mysqli_query($con,"SELECT * FROM restockitems WHERE restockorder_id='$restockorder_id' AND status=1");
+                                               $getitems= mysqli_query($con,"SELECT * FROM stockitems WHERE pharstockorder_id='$id' AND status=3");
                                 while($row= mysqli_fetch_array($getitems)){
-                                                       $restockitem_id =$row["restockitem_id"];
+                                                       $stockitem_id =$row["stockitem_id"];
                                                         $product_id= $row["product_id"];
                                                         $quantity=$row["quantity"];
-                                                        $unitcharge=$row["unitcharge"];                                                   
+                                                        $expiry=$row["expiry"];
+                                                        $pharstockorder_id=$row["pharstockorder_id"];                                                   
                                          $getitem=mysqli_query($con,"SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$product_id'");  
                                           $row1 = mysqli_fetch_array($getitem);
                                                   $itemname=$row1['itemname'];
@@ -145,29 +137,26 @@ $id = $_GET['id'];
                                                         $getunit = mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                                         $row2 = mysqli_fetch_array($getunit);
                                                         $measurement = $row2['measurement'];
-                                                        $subtotal = $quantity * $unitcharge;
-                                                        $totalcharge = $totalcharge + $subtotal;
+                                                        
                                                         ?>
                                                         <tr class="gradeA">                                                           
                                                             <td><?php echo $itemname. ' (' . $measurement . ')'; ?></td>
-                                                            <td><?php echo $unitcharge; ?></td>
                                                             <td><?php echo $quantity; ?></td>
-                                                            <td><?php echo $subtotal; ?></td>
+                                                            <td><?php echo $expiry; ?></td>
                                                    </tr>
                                              <?php }      ?>
-                                            </tbody>     
-                                            <tfoot><tr><th>TOTAL</th><td>&nbsp;</td><td>&nbsp;</td><th><?php echo number_format($totalcharge); ?></th></tr></tfoot>                 
+                                            </tbody>           
                                         </table>   
                                         <?php
-                                            if(($status==0)&&($_SESSION['elcthospitallevel']=='admin' || $_SESSION['elcthospitallevel']=='accountant')){
+                                            if(($status==3)&&($_SESSION['elcthospitallevel']=='admin' || $_SESSION['elcthospitallevel']=='head physician')){
                                             ?>  
-                                        <a href="approvestockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-info btn-xs" onclick="return confirm_approve<?php echo $restockorder_id; ?>()">Approve</a>
-                                         <a href="cancelstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $restockorder_id; ?>()">Cancel</a>
+                                        <a href="approvepharstock?id=<?php echo $pharstockorder_id; ?>" class="btn btn-info btn-xs" onclick="return confirm_approve<?php echo $pharstockorder_id; ?>()">Approve</a>
+                                         <a href="cancelpharstockorder?id=<?php echo $pharstockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $pharstockorder_id; ?>()">Cancel</a>
                                          <script type="text/javascript">
-                                            function confirm_cancel<?php echo $restockorder_id; ?>() {
+                                            function confirm_cancel<?php echo $pharstockorder_id; ?>() {
                                                     return confirm('You are about To Cancel this List. Are you sure you want to proceed?');
                                                 }
-                                            function confirm_approve<?php echo $restockorder_id; ?>() {
+                                            function confirm_approve<?php echo $pharstockorder_id; ?>() {
                                             return confirm('You are about To Approve this List. Are you sure you want to proceed?');
                                             }
                                         </script>

@@ -1,10 +1,11 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitallevel'] != 'store manager')) && (($_SESSION['elcthospitallevel'] != 'pharmacist'))&& (($_SESSION['elcthospitallevel'] != 'head physician'))) {
+if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitallevel'] != 'store manager')) && (($_SESSION['elcthospitallevel'] != 'anesthesiologist'))) {
     header('Location:login.php');
 }
-$ty= $_GET['ty'];
+$ty= $_GET['typ'];
 $type = mysqli_escape_string($con,$ty);
+$pharmacy = isset($_GET['phar']) ? $_GET['phar'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -60,7 +61,7 @@ $type = mysqli_escape_string($con,$ty);
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="pharmacyorders">Requisitions</a></li>
+                            <li class="breadcrumb-item active"><a href="anaestockorders">Requisitions</a></li>
                         </ol>
                     </div>
                 </div>
@@ -87,13 +88,12 @@ $type = mysqli_escape_string($con,$ty);
                                         </thead>
                                         <tbody>
                                             <?php
-                                            if ($type == 'Medical' || $type == 'Medicine'){
-                                                $section = 'and section= "pharmacy"';
-                                            }else{
-                                                $section ='';
-                                            }
+                                            if ($pharmacy== '1'){
+                                                $getordered = mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0)  AND section='pharmacy'") or die(mysqli_error($con));
 
-                                            $getordered = mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0) AND type='$type' $section ") or die(mysqli_error($con));
+                                            }else{
+                                                $getordered = mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0) AND type='$type' and section == 'pharmacy'") or die(mysqli_error($con));
+                                            }
                                             while ($row = mysqli_fetch_array($getordered)) {
                                                 $stockorder_id = $row['stockorder_id'];
                                                 $timestamp = $row['timestamp'];
@@ -133,7 +133,7 @@ $type = mysqli_escape_string($con,$ty);
 
                                                     <td>
 
-                                                        <a href="ordereditems?id=<?php echo $stockorder_id; ?>&st=<?php echo $status; ?>&ty=<?php echo $type ?>&section=<?php echo $section ;?>" class="btn btn-primary btn-xs">Details</a>
+                                                        <a href="ordereditems?id=<?php echo $stockorder_id; ?>&&st=<?php echo $status; ?>&ty=<?php echo $type ?>&section=<?php echo $section;?>" class="btn btn-primary btn-xs">Details</a>
                                                     </td>
                                                 </tr>
 

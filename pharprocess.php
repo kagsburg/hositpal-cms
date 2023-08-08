@@ -130,10 +130,102 @@ if (isset($_POST["load_cart"]) && $_POST["load_cart"] == 1) {
 		die("No items added yet"); //we have empty cart
 	}
 }
+if (isset($_POST["load_cart"]) && $_POST["load_cart"] == 2) {
+
+	if (isset($_SESSION["bproducts"]) && count($_SESSION["bproducts"]) > 0) { //if we have session variable
+		//		$cart_box = '<ul class="cart-products-loaded">';
+		//$total = 0;
+		$type2 = '';
+		foreach ($_SESSION["bproducts"] as $key => $product) {
+			$type2 = $product['type'];
+		}
+
+?>
+
+		<div class="table" style="overflow:hidden; overflow-x:auto">
+
+			<table class="table table-striped" style="width:100%">
+				<thead>
+					<tr>
+						<th>Item Name</th>
+						<th>Measurement Unit</th>
+						<th>Quantity</th>
+						<th>Store</th>
+						<?php if ($type2 == 'Medicine') { ?>
+							<th>Expiry Date</th>
+						 <?php } ?>
+						<th></th>
+					</tr>
+				</thead>
+			<tbody>
+				<tbody>
+					<?php
+					foreach ($_SESSION["bproducts"] as $key => $product) { //loop though items and prepare html content
+
+						//set variables to use them in HTML content below
+						$menuitem = $product["menuitem"];
+						$stockitem = $product["stockitem_id"];
+						$item_id = $product["item_id"];
+						$product_qty = $product["product_qty"];
+						$measurement_id = $product["measurement_id"];
+						$store = $product["store"];
+						$type = $product['type'];
+						// $expiry = $product["expiry"];
+						$getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
+						$row2 =  mysqli_fetch_array($getunit);
+						$measurement = $row2['measurement'];
+						
+							$getstore = mysqli_query($con, "SELECT * FROM stores WHERE status=1 AND store_id='$store'");
+							$row4 = mysqli_fetch_array($getstore);
+							$storename = $row4['store'];
+						
+					?>
+						<tr>
+							<td><?php echo $menuitem; ?></td>
+							<td><?php echo $measurement; ?></td>
+							<td><?php echo $product_qty; ?></td>
+							<td><?php echo $storename; ?></td>
+							<?php if ($type =='Medicine'){?>
+							<td><?php echo $product['expiry']; ?></td>
+							<?php } ?>
+							<!-- <td><?php echo $expiry; ?></td> -->
+							<!-- <td><strong> ITEM :</strong> <?php echo $menuitem; ?><br>
+								<strong> QTY :</strong> <?php echo $product_qty; ?><br>
+								<strong>UNIT :</strong> <?php echo $measurement; ?><br>
+							</td> -->
+
+							<td><a href="#" class="remove-item2 text-danger" data-code="<?php echo $key; ?>" data-stock="<?php echo $stockitem; ?>"><i class="fa fa-trash"></i></a></td>
+						</tr>
+					<?php } ?>
+
+				</tbody>
+			</table>
+		</div><!-- /table-responsive -->
+
+
+<?php
+
+	} else {
+		die("No items added yet"); //we have empty cart
+	}
+}
 
 ################# remove item from shopping cart ################
 if (isset($_GET["remove_code"]) && isset($_SESSION["bproducts"])) {
 	$item_id   = filter_var($_GET["remove_code"], FILTER_SANITIZE_STRING); //get the product code to remove
+
+	if (isset($_SESSION["bproducts"][$item_id])) {
+		unset($_SESSION["bproducts"][$item_id]);
+	}
+
+	$total_items = count($_SESSION["bproducts"]);
+	die(json_encode(array('items' => $total_items)));
+}
+if (isset($_GET["remove_code_stock"]) && isset($_SESSION["bproducts"])) {
+	$item_id   = filter_var($_GET["remove_code_stock"], FILTER_SANITIZE_STRING); //get the product code to remove
+	$stock = filter_var($_GET["stock"], FILTER_SANITIZE_STRING); //get the product code to remove
+
+	$change = mysqli_query($con, "UPDATE stockitems SET status=4 WHERE stockitem_id='$stock'");
 
 	if (isset($_SESSION["bproducts"][$item_id])) {
 		unset($_SESSION["bproducts"][$item_id]);

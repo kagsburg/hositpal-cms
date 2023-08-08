@@ -1,9 +1,9 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitallevel'] != 'store manager')) && ($_SESSION['elcthospitallevel'] != 'accountant')) {
+if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitallevel'] != 'store manager')) && ($_SESSION['elcthospitallevel'] != 'pharmacist')) {
     header('Location:login.php');
 }
-$ty = isset($_GET['ty']) ? $_GET['ty']: "";
+$ty = isset($_GET['ty']) ? $_GET['ty'] : "";
 $type = mysqli_real_escape_string($con, $ty);
 $store = isset($_GET['store']) ? $_GET['store'] : "";
 $store = mysqli_real_escape_string($con, $store);
@@ -67,25 +67,13 @@ $store = mysqli_real_escape_string($con, $store);
                     </div>
                 </div>
                 <div class="row">
-                <div class="col-lg-4 mb-3">
+                    <div class="col-lg-4 mb-3">
+
                         
-                        <select name="store" id="ty" class="form-control">
-                            <option value="">Filter by Store</option>
-                            <?php 
-                            $getstores = mysqli_query($con, "SELECT * FROM stores WHERE status=1");
-                            while ($row = mysqli_fetch_array($getstores)) {
-                                $store_id = $row['store_id'];
-                                $storename = $row['store'];
-                                ?>
-                                <option value="<?php echo $store_id; ?>" <?php if ($store == $store_id) echo "selected"; ?>><?php echo $storename; ?></option>
-                            <?php } ?>
-                            <!-- <option value="Medical" <?php if ($ty == "Medical") echo "selected"; ?>>Medical</option>
-                            <option value="Non Medical" <?php if ($ty == "Non Medical") echo "selected"; ?>>Non Medical</option> -->
-                        </select>
                         <!-- add print button -->
                         <!-- <a href="" class="btn btn-primary" >Print</a> -->
-                        
-                        
+
+
                     </div>
                     <div class="col-lg-12">
                         <div class="card">
@@ -136,8 +124,7 @@ $store = mysqli_real_escape_string($con, $store);
                                                 $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                                 $row2 =  mysqli_fetch_array($getunit);
                                                 $measurement = $row2['measurement'];
-                                                $storeval = empty($store) ? "" : "AND store='$store'";
-                                                $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' $storeval") or die(mysqli_error($con));
+                                                $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store=2 and status=1") or die(mysqli_error($con));
                                                 $row3 = mysqli_fetch_array($getstock);
                                                 $totalstock = $row3['totalstock'];
                                                 $totalordered = 0;
@@ -154,33 +141,35 @@ $store = mysqli_real_escape_string($con, $store);
                                                 //     print_r($instock);
                                                 // if (!empty($ty) && $type != $ty." items")
                                                 //     continue;
-                                                if ($instock <= 0){}else{
+                                                if ($instock <= 0) {
+                                                } else {
                                             ?>
-                                                <tr class="gradeA">
-                                                    <td><?php echo 'ELVD-' . $inventoryitem_id; ?></td>
-                                                    <td><?php echo $itemname; ?></td>
-                                                    <td><?php echo $category; ?></td>
-                                                    <td><?php echo $instock; ?></td>
-                                                    <td><?php echo $row3['expiry']; ?></td>
-                                                    <td><?php echo $measurement; ?></td>
-                                                    <th><?php
-                                                        if ($totalstock <= 100) {
-                                                            echo '<div class="text-danger">LOW</div>';
-                                                        } else if ($totalstock>=101 && $totalstock<=500) {
-                                                            echo '<div class="text-warning">MED</div>';
-                                                        } 
-                                                        else {
-                                                            echo 'HIGH';
-                                                        }
-                                                        ?></th>
+                                                    <tr class="gradeA">
+                                                        <td><?php echo 'ELVD-' . $inventoryitem_id; ?></td>
+                                                        <td><?php echo $itemname; ?></td>
+                                                        <td><?php echo $category; ?></td>
+                                                        <td><?php echo $instock; ?></td>
+                                                        <td><?php echo $row3['expiry']; ?></td>
+                                                        <td><?php echo $measurement; ?></td>
+                                                        <th><?php
+                                                            if ($totalstock <= 100) {
+                                                                echo '<div class="text-danger">LOW</div>';
+                                                            } else if ($totalstock>=101 && $totalstock<=500) {
+                                                                echo '<div class="text-warning">MED</div>';
+                                                            } 
+                                                            else {
+                                                                echo 'HIGH';
+                                                            }
+                                                            ?></th>
 
-                                                    <td>
-                                                        <a href="itemstock?id=<?php echo $inventoryitem_id; ?>&ty=<?php echo $type; ?>" class="btn btn-primary btn-xs">Details</a>
+                                                        <td>
+                                                            <a href="itemstock?id=<?php echo $inventoryitem_id; ?>&ty=<?php echo $type; ?>" class="btn btn-primary btn-xs">Details</a>
 
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                    </tr>
 
-                                            <?php }} ?>
+                                            <?php }
+                                            } ?>
                                         </tbody>
                                     </table>
                                 </div>
