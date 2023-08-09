@@ -132,6 +132,18 @@
               <span class="nav-text">Inventory</span>
             </a>
             <ul aria-expanded="false">
+            <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <!-- <i class="flaticon-381-settings-2"></i> -->
+              <span class="nav-text">Categories</span>
+            </a>
+            <ul aria-expanded="false">
+              <li><a href="itemscategories?cat=Medicine">Medicine Categories</a></li>
+              <li><a href="itemscategories?cat=Medical items"> Medical Items Categories</a></li>
+              <li><a href="itemscategories?cat=Non Medical items">Non Medical Items Categories</a></li>
+
+            </ul>
+          </li>
               <li><a href="items?ty=Medicine">Medicine</a></li>
               <li><a href="additem?ty=Medicine&sub=NULL">Add Medicine</a></li>
               <li><a href="items?ty=Medical">Medical Items</a></li>
@@ -162,18 +174,7 @@
               <li><a href="stockneworders">Requisition Order</a></li>
             </ul>
           </li>
-          <li>
-            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
-              <i class="flaticon-381-settings-2"></i>
-              <span class="nav-text">Categories</span>
-            </a>
-            <ul aria-expanded="false">
-              <li><a href="itemscategories?cat=Medicine">Medicine Categories</a></li>
-              <li><a href="itemscategories?cat=Non Medical items">Non Medical Items Categories</a></li>
-              <li><a href="itemscategories?cat=Medical items"> Medical Items Categories</a></li>
-
-            </ul>
-          </li>
+         
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-user-circle"></i>
@@ -493,8 +494,14 @@
             <ul aria-expanded="false">
               <li><a href="stock">View Items</a></li>
               <!-- <li><a href="pharmacystock">Pharmacy Stock</a></li> -->
-              <li><a href="addaccstock?ty=Non Medical">Request Non Medical Items</a></li>
+              <!-- <li><a href="addaccstock?ty=Non Medical">Request Non Medical Items</a></li> -->
             </ul>
+          </li>
+          <li>
+            <a href="addaccstock?ty=Non Medical">
+            <i class="fa fa-reply"></i>
+            Requisition
+            </a>
           </li>
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">

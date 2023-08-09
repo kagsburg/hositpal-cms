@@ -111,7 +111,7 @@ $type = mysqli_escape_string($con,$ty);
                                             if ($type == 'Medical' || $type == 'Medicine'){
                                                 $section = 'and section= "pharmacy"';
                                             }else{
-                                                $section ='';
+                                                $section ="";
                                             }
                                             if ($type == ""){
                                                 $mtype = "";
@@ -183,10 +183,10 @@ $type = mysqli_escape_string($con,$ty);
                                                         <?php }
                                                         if (($status == 0) &&($_SESSION['elcthospitallevel']=='pharmacist')){
                                                         ?>
-                                                            <button data-toggle="modal" data-target="#completeRegistrationModal<?php echo $stockorder_id; ?>" class="btn btn-info btn-xs" type="button" >Edit</button>
+                                                            <!-- <button data-toggle="modal" data-target="#completeRegistrationModal<?php echo $stockorder_id; ?>" class="btn btn-info btn-xs" type="button" >Edit</button> -->
 
                                                             <!-- <a href="editpharorder?id=<?php echo $stockorder_id; ?>&ty=<?php echo $type; ?>" class="btn btn-info btn-xs">Edit</a> -->
-                                                            <a href="cancelrequest?id=<?php echo $stockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $stockorder_id; ?>()">Delete</a>
+                                                            <!-- <a href="cancelrequest?id=<?php echo $stockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $stockorder_id; ?>()">Delete</a> -->
                                                             <script type="text/javascript">
                                                             function confirm_cancel<?php echo $stockorder_id; ?>() {
                                                                     return confirm('You are about To Cancel this List. Are you sure you want to proceed?');

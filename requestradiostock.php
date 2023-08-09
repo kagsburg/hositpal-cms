@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
- if(($_SESSION['elcthospitallevel']!='lab technician')&& ($_SESSION['elcthospitallevel'] !='lab technologist')){
+ if(($_SESSION['elcthospitallevel']!='radiographer')&& ($_SESSION['elcthospitallevel'] !='lab technologist')){
 header('Location:login.php');
    }
     if(!isset($_SESSION["bproducts"])){ 
@@ -73,14 +73,14 @@ include 'includes/header.php';
                             <div class="card-body">
                         <?php
 if(isset($_SESSION["bproducts"]) && count($_SESSION["bproducts"])>0){
-    mysqli_query($con,"INSERT INTO stockorders(section,reason,type,admin_id,timestamp,status) VALUES('lab',0,'".$_SESSION["bproducts"]['type']."','".$_SESSION['elcthospitaladmin']."',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
+    mysqli_query($con,"INSERT INTO stockorders(section,reason,type,admin_id,timestamp,status) VALUES('radiology',0,'".$_SESSION["bproducts"]['type']."','".$_SESSION['elcthospitaladmin']."',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
     $last_id= mysqli_insert_id($con);
       foreach($_SESSION["bproducts"] as $product){ //loop though items and prepare html content
 		//set variables to use them in HTML content below
 			$menuitem = $product["menuitem"]; 
 			$item_id = $product["item_id"];
 			$product_qty = $product["product_qty"];
-                                                   mysqli_query($con,"INSERT INTO ordereditems(stockorder_id,item_id,quantity,section) VALUES('$last_id','$item_id','$product_qty','lab')") or die(mysqli_error($con));                    
+                                                   mysqli_query($con,"INSERT INTO ordereditems(stockorder_id,item_id,quantity,section) VALUES('$last_id','$item_id','$product_qty','radiology')") or die(mysqli_error($con));                    
     unset($_SESSION["bproducts"]);   
 }}
                         ?>

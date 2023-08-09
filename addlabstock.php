@@ -3,6 +3,8 @@ include 'includes/conn.php';
 if (($_SESSION['elcthospitallevel'] != 'lab technician')&& ($_SESSION['elcthospitallevel'] !='lab technologist')) {
     header('Location:login.php');
 }
+$ty=$_GET['ty'];
+$type = mysqli_escape_string($con,$ty);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -129,40 +131,35 @@ if (($_SESSION['elcthospitallevel'] != 'lab technician')&& ($_SESSION['elcthospi
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1");
+                                        $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 and type='$type' ORDER BY itemname");
                                         while ($row = mysqli_fetch_array($getitems)) {
                                             $inventoryitem_id = $row['inventoryitem_id'];
-                                            $itemname = $row['itemname'];
-                                            $measurement_id = $row['measurement_id'];
-                                            $minimum = $row['minimum'];
-                                            $unitprice = $row['unitprice'];
-                                            // $category_id = $row['category_id'];
-                                            $checkitem = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id' AND section='pharmacy'") or die(mysqli_error($con));
-                                            if (mysqli_num_rows($checkitem) > 0) {
+                                                $itemname = $row['itemname'];
+                                                $measurement_id = $row['measurement_id'];
+                                                $minimum = $row['minimum'];
+                                                $unitprice = $row['unitprice'];
                                                 $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                                 $row2 =  mysqli_fetch_array($getunit);
                                                 $measurement = $row2['measurement'];
-                                                $totalstock = 0;
-                                                $totalrequested = 0;
-                                                $getstock = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id' AND section='pharmacy'") or die(mysqli_error($con));
-                                                while ($row3 = mysqli_fetch_array($getstock)) {
-                                                    $stockorder_id = $row3['stockorder_id'];
-                                                    $quantity = $row3['quantity'];
-                                                    $checkorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
-                                                    if (mysqli_num_rows($checkorder) > 0) {
-                                                        $totalstock = $totalstock + $quantity;
+                                                if ($type == "Non Medical"){
+                                                    $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =3 and status=1") or die(mysqli_error($con));
+                                                }else{
+                                                    $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2 and status=1") or die(mysqli_error($con));
+                                                }
+                                                // $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2") or die(mysqli_error($con));
+                                                $row3 = mysqli_fetch_array($getstock);
+                                                $totalstock = $row3['totalstock'];
+                                                $totalordered = 0;
+                                                $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                while ($row4 = mysqli_fetch_array($getordered)) {
+                                                    $stockorder_id = $row4['stockorder_id'];
+                                                    $quantity = $row4['quantity'];
+                                                    $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
+                                                    if (mysqli_num_rows($getorder) > 0) {
+                                                        $totalordered = $totalordered + $quantity;
                                                     }
                                                 }
-                                                $getotherstock = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id' AND section!='pharmacy'") or die(mysqli_error($con));
-                                                while ($row4 = mysqli_fetch_array($getotherstock)) {
-                                                    $stockorder_id1 = $row4['stockorder_id'];
-                                                    $quantity1 = $row4['quantity'];
-                                                    $checkrequests = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id1' AND status=1");
-                                                    if (mysqli_num_rows($checkrequests) > 0) {
-                                                        $totalrequested = $totalrequested + $quantity1;
-                                                    }
-                                                }
-                                                $instock = $totalstock - $totalrequested;
+                                                $instock = $totalstock - $totalordered;
                                                 if ($instock > 0){
                                         ?>
                                                 <tr>
@@ -180,7 +177,7 @@ if (($_SESSION['elcthospitallevel'] != 'lab technician')&& ($_SESSION['elcthospi
                                                     </td>
                                                 </tr>
                                         <?php }}
-                                        } ?>
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>

@@ -111,9 +111,13 @@ $store = mysqli_real_escape_string($con, $store);
                                         <tbody>
                                             <?php
                                             //$pmstr = empty($ty) ? "" : "AND `type`='$paymethod'";
-                                            $query = "SELECT * FROM inventoryitems WHERE status=1 and type='$type'";
+                                            if ($ty == ""){
+                                                $typ="";
+                                            }else{
+                                                $typ ="AND type ='$type'";
+                                            }
+                                            $query = "SELECT * FROM inventoryitems WHERE status=1 $typ";
                                             $getitems = mysqli_query($con, $query) or die(mysqli_error($con));
-
                                             while ($row = mysqli_fetch_array($getitems)) {
                                                 $inventoryitem_id = $row['inventoryitem_id'];
                                                 $itemname = $row['itemname'];
@@ -151,9 +155,6 @@ $store = mysqli_real_escape_string($con, $store);
                                                     }
                                                 }
                                                 $instock = $totalstock - $totalordered;
-                                                //     print_r($instock);
-                                                // if (!empty($ty) && $type != $ty." items")
-                                                //     continue;
                                                 if ($instock > 0){
                                             ?>
                                                 <tr class="gradeA">

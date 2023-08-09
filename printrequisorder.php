@@ -102,7 +102,6 @@ header('Location:login.php');
                                             <thead>
                                                 <tr>
                                                 <th>Item Name</th>
-                                                <!-- <th>Total Quantity</th> -->
                                                 <th>Avaliable Quantity</th>
                                                 <th>Quantity</th>
                                                 <th>Measurement Unit</th>
@@ -116,8 +115,8 @@ header('Location:login.php');
                                             while($row1= mysqli_fetch_array($getitems)){
                                                 $quantity = $row1['quantity'];
                                                 $item_id = $row1['item_id'];
-                                                $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$item_id'");
-                                                $row = mysqli_fetch_array($getitems);
+                                                $get_items = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$item_id'");
+                                                $row = mysqli_fetch_array($get_items);
                                                 $inventoryitem_id = $row['inventoryitem_id'];
                                                 $itemname = $row['itemname'];
                                                 $measurement_id = $row['measurement_id'];
@@ -129,11 +128,9 @@ header('Location:login.php');
                                                 $measurement = $row2['measurement'];
                                                 if ($section != 'pharmacy'){
                                                     $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id'and store=2 ") or die(mysqli_error($con));
-
                                                 }else {
                                                     $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store=3 ") or die(mysqli_error($con));
                                                 }
-                                            
                                                 $row3 = mysqli_fetch_array($getstock);
                                                 $totalstock = $row3['totalstock'];
                                                 $exipry = $row3['expiry'];
@@ -142,7 +139,7 @@ header('Location:login.php');
                                                 while ($row4 = mysqli_fetch_array($getordered)) {
                                                     $stockorder_id = $row4['stockorder_id'];
                                                     $quantity = $row4['quantity'];
-                                                    $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND section='$section' and status=1 ");
+                                                    $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id'and status=1 ");
                                                     if (mysqli_num_rows($getorder) > 0) {
                                                         $totalordered = $totalordered + $quantity;
                                                     }
@@ -214,7 +211,7 @@ header('Location:login.php');
     <script src="js/plugins-init/datatables.init.js"></script>
 <script type="text/javascript">
         $('document').ready(function(){
-                     window.print(); 
+                    //  window.print(); 
         });     
     </script>
 </body>

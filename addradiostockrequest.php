@@ -1,8 +1,11 @@
 <?php
 include 'includes/conn.php';
- if(($_SESSION['elcthospitallevel']!='admin')&&(($_SESSION['elcthospitallevel']!='pharmacist'))&&(($_SESSION['elcthospitallevel']!='lab technician'))&& ($_SESSION['elcthospitallevel'] !='lab technologist')){
+ if(($_SESSION['elcthospitallevel']!='radiographer')&& ($_SESSION['elcthospitallevel'] !='lab technologist')){
 header('Location:login.php');
    }
+   if(!isset($_SESSION["bproducts"])){ 
+ header('Location:addlabstock');   
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +14,7 @@ header('Location:login.php');
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Lab Stock Orders</title>
+    <title>Selected Items</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
      <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -50,90 +53,68 @@ include 'includes/header.php';
 				<div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Lab Requisition Orders</h4>
+                            <h4>Selected Items</h4>
                            
                         </div>
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="javascript:void()">Requisition Orders</a></li>
+                            <li class="breadcrumb-item active"><a href="#">Request stock</a></li>
                         </ol>
                     </div>
                 </div>
        		<div class="row">
-       		<div class="col-lg-12">
+       		<div class="col-lg-8">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Lab Stock Orders</h4>
+                                <h4 class="card-title">All Selected Items</h4>
                             </div>
                             <div class="card-body">
                             <div class="table-responsive">
                                  <table id="example5" class="display">
                                       <thead>
                                         <tr>
-                                                 <th>#</th>
-                                                 <th>Order Date</th>
-                                                 <th>Ordered by</th>
-                                                 <th>Items</th>
-                                                 <th>Status</th>
-                                                 <th>Action</th>
-                                                 
+                                    <th>Item Name</th>
+                                                 <th>Measurement Unit</th>
+                                                 <th>Quantity</th>
+                                              
                                         </tr>
                                     </thead>
                                         <tbody>   
                                          <?php 
-                                      $getordered= mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0) AND section='lab'") or die(mysqli_error($con));
-                                   while ($row = mysqli_fetch_array($getordered)) {
-                                          $stockorder_id=$row['stockorder_id'];
-                                           $timestamp=$row['timestamp'];
-                                           $admin_id=$row['admin_id'];                                        	
-                                           $status=$row['status'];   
-                                           $type = $row['type'];     
-                                           
-                                           $section = $row['section'];                                	
-                                $getstaff=mysqli_query($con,"SELECT * FROM staff WHERE status=1  AND staff_id='$admin_id'");  
-                                        $row1=mysqli_fetch_array($getstaff);
-                                            $fullname=$row1['fullname'];
-                                  if(strlen($stockorder_id)==1){
-      $pin='000'.$stockorder_id;
-     }
-       if(strlen($stockorder_id)==2){
-      $pin='00'.$stockorder_id;
-     }
-        if(strlen($stockorder_id)==3){
-      $pin='0'.$stockorder_id;
-     }
-  if(strlen($stockorder_id)>=4){
-      $pin=$stockorder_id;
-     }       
-     $getitems= mysqli_query($con,"SELECT * FROM ordereditems WHERE stockorder_id='$stockorder_id'");
-                      ?>
+                              if(isset($_SESSION["bproducts"]) && count($_SESSION["bproducts"])>0){
+      foreach($_SESSION["bproducts"] as $product){ //loop though items and prepare html content
+			
+			//set variables to use them in HTML content below
+			$menuitem = $product["menuitem"]; 
+			$item_id = $product["item_id"];
+			$product_qty = $product["product_qty"];						
+			$measurement_id = $product["measurement_id"];						
+		   $getunit=  mysqli_query($con,"SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
+                            $row2=  mysqli_fetch_array($getunit);
+                                 $measurement=$row2['measurement'];
+                                                                         ?>
                                           <tr class="gradeA">                                                           
-                                            <td><?php echo $pin; ?></td>
-                                            <td><?php echo date('d/M/Y',$timestamp); ?></td>
-                                               <td><?php echo $fullname; ?></td>
-                                               <td><?php echo mysqli_num_rows($getitems); ?></td>
-                                       <td><?php if($status==1){
-     echo '<strong class="text-success">Approved</strong>';
-                                       } else{
-           echo '<strong class="text-warning">PENDING</strong>';                                 
-                                       }?></td>
-                                                                                          
-                                 
-                                                   <td>    
-                                                     
-                                                   <a href="ordereditems?id=<?php echo $stockorder_id; ?>&st=<?php echo $status; ?>&ty=<?php echo $type; ?>&section=<?php echo $section ?>" class="btn btn-primary btn-xs">Details</a>
-                                                                                       </td>
-                                  </tr>
-
-                                        <?php }?>
+                                            <td><?php echo $menuitem; ?></td>
+                                              <td><?php echo $measurement; ?></td>
+                                            <td><?php echo $product_qty; ?></td>
+                                          
+                                   
+                                        </tr>
+                              <?php } }?>
                                         </tbody>     
                                     </table>     
                             </div>
                         </div>
-					</div>
-                  
+	</div>
+                   <a href="cancelstocklist" class="btn btn-danger" onclick="return confirm_cancel()">CANCEL</a>
+         <a href="requestradiostock" class="btn btn-info">SAVE</a>
+                  <script type="text/javascript">
+function confirm_cancel() {
+  return confirm('You are about To Cancel this List. Are you sure you want to proceed?');
+}
+</script>
                             </div>
 			   </div>
             </div>

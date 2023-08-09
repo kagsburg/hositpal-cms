@@ -77,7 +77,6 @@ if (!isset($_SESSION["bproducts"])) {
                                      mysqli_query($con,"INSERT INTO pharstockorders(store,timestamp,admin_id,status)values('$store',UNIX_TIMESTAMP(),'" . $_SESSION['elcthospitaladmin'] . "',0)");
                                      $last_id= mysqli_insert_id($con);
                                     foreach ($_SESSION["bproducts"] as $product) { //loop though items and prepare html content
-
                                         //set variables to use them in HTML content below
                                         $menuitem = $product["menuitem"];
                                         $item_id = $product["item_id"];
@@ -95,7 +94,7 @@ if (!isset($_SESSION["bproducts"])) {
                                     unset($_SESSION["bproducts"]);
                                 }
                                 ?>
-                                <div class="alert alert-success">Stock Successfully Added</div>
+                                <div class="alert alert-success"> Stock Successfully Requested</div>
                             </div>
                         </div>
 
