@@ -1,13 +1,12 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'doctor')&&( $_SESSION['elcthospitallevel']!='head physician')) {
+if (($_SESSION['elcthospitallevel'] != 'accountant')) {
     header('Location:login.php');
 }
 if (!isset($_SESSION["bproducts"])) {
-    header('Location:addstock');
+    header('Location:addaccstock?ty=Non Medical');
 }
-$reason = isset($_GET['reason']) ? $_GET['reason']: 'personal';
-$patient = isset($_GET['patient']) ? $_GET['patient']: 0;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -74,20 +73,16 @@ $patient = isset($_GET['patient']) ? $_GET['patient']: 0;
                             </div>
                             <div class="card-body">
                                 <?php
-                                if (isset($_SESSION["bproducts"]) && count($_SESSION["bproducts"]) > 0) {
-                                    if ($reason == 'personal') {
-                                        mysqli_query($con, "INSERT INTO stockorders(section,reason,type,admin_id,timestamp,status) VALUES('doctor',0,'".$_SESSION["bproducts"]['type']."','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
-                                    }
-                                    if ($reason == 'patient') {
-                                        mysqli_query($con, "INSERT INTO stockorders(section,reason,type,admin_id,timestamp,status) VALUES('doctor','$patient','".$_SESSION["bproducts"]['type']."','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
-                                    }
+                                  if (isset($_SESSION["bproducts"]) && count($_SESSION["bproducts"]) > 0) {
+                                   
+                                    mysqli_query($con, "INSERT INTO stockorders(section,reason,type,admin_id,timestamp,status) VALUES('accountant,'0','".$_SESSION["bproducts"]['type']."','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
                                     $last_id = mysqli_insert_id($con);
                                     foreach ($_SESSION["bproducts"] as $product) { //loop though items and prepare html content
                                         //set variables to use them in HTML content below
                                         $menuitem = $product["menuitem"];
                                         $item_id = $product["item_id"];
                                         $product_qty = $product["product_qty"];
-                                        mysqli_query($con, "INSERT INTO ordereditems(stockorder_id,item_id,quantity,section) VALUES('$last_id','$item_id','$product_qty','doctor')") or die(mysqli_error($con));
+                                        mysqli_query($con, "INSERT INTO ordereditems(stockorder_id,item_id,quantity,section) VALUES('$last_id','$item_id','$product_qty','accountant')") or die(mysqli_error($con));
                                         unset($_SESSION["bproducts"]);
                                     }
                                 }

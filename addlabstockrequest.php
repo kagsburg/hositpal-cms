@@ -1,10 +1,10 @@
 <?php
 include 'includes/conn.php';
- if(($_SESSION['elcthospitallevel']!='lab technician')){
+ if(($_SESSION['elcthospitallevel']!='lab technician')&& ($_SESSION['elcthospitallevel'] !='lab technologist')){
 header('Location:login.php');
    }
    if(!isset($_SESSION["bproducts"])){ 
- header('Location:addstock');   
+ header('Location:addlabstock');   
 }
 ?>
 <!DOCTYPE html>

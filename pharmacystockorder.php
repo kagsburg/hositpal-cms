@@ -154,12 +154,13 @@ $type = mysqli_escape_string($con,$ty);
                                             while ($row4 = mysqli_fetch_array($getordered)) {
                                                 $stockorder_id = $row4['stockorder_id'];
                                                 $quantity = $row4['quantity'];
-                                                $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND section='pharmacy'");
+                                                $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND section='pharmacy' and status='1'");
                                                 if (mysqli_num_rows($getorder) > 0) {
                                                     $totalordered = $totalordered + $quantity;
                                                 }
                                             }
                                             $instock = $totalstock - $totalordered;
+                                            if ($instock > 0){
                                         ?>
                                                 <tr>
                                                     <td><?php echo $itemname . '(' . $measurement . ')'; ?></td>
@@ -178,7 +179,7 @@ $type = mysqli_escape_string($con,$ty);
                                                         </form>
                                                     </td>
                                                 </tr>
-                                        <?php } ?>
+                                        <?php }} ?>
                                     </tbody>
                                 </table>
                             </div>

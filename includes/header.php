@@ -154,9 +154,13 @@
             </ul>
           </li>
           <li>
-            <a href="viewpharstock">
-              <i class="fa fa-book"></i> <span class="nav-text">Stock Orders</span>
+            <a class="has-arrow ai-icon" href="javascript:void()">
+              <i class="fa fa-book"></i> <span class="nav-text"> Orders</span>
             </a>
+            <ul>
+              <li><a href="viewpharstock">Stock Order</a></li>
+              <li><a href="stockneworders">Requisition Order</a></li>
+            </ul>
           </li>
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
@@ -292,27 +296,85 @@
         if (($_SESSION['elcthospitallevel'] == 'head physician')) {
         ?>
           <li>
-            <a class="ai-icon" href="insurancepending" aria-expanded="false">
-              <i class="flaticon-381-user"></i>
-              <span class="nav-text">Pending Registrations</span>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="fa fa-users"></i>
+              <span class="nav-text">Outpatients</span>
             </a>
+            <ul aria-expanded="false">
+            <li><a href="doctorwaiting?mode=2">Emergency List</a></li>
+              <li><a href="doctorwaiting?mode=1">Waiting List</a></li>
+              <li><a href="doctorcleared">Patient With Results</a></li>
+            </ul>
           </li>
           <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="fa fa-share"></i>
+              <span class="nav-text">In Patients</span>
+            </a>
+            <ul aria-expanded="false">
+              <!-- <li><a href="inpatients">Operated Patients</a></li> -->
+              <li><a href="admitted">Admitted Patients</a></li>
+              <li>
+                <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+                  <i class="fa fa-wrench"></i>
+                  <span class="nav-text">Operations</span>
+                </a>
+                <ul aria-expanded="false">
+                  <li><a href="operationswaiting">Awaiting Patients</a></li>
+                  <li><a href="operationscleared">Operated Patients</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li> 
+          <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="fa fa-reply"></i>
+              <span class="nav-text">Requisitions</span>
+            </a>
+            <ul aria-expanded="false">
+              <li><a href="adddoctorrequisition?ty=Medicine">Request Medicine </a></li>
+              <li><a href="adddoctorrequisition?ty=Medical">Request Medical Items</a></li>
+              <li><a href="adddoctorrequisition?ty=Non Medical">Request Non Medical Items</a></li>
+              <li><a href="doctorstockorders">View Requisitions</a></li>
+            </ul>
+          </li>
+          <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+            <i class="fa fa-stack-overflow"></i>
+              <span class="nav-text">Stock</span>
+            </a>
+            <ul aria-expanded="false">
+              <li><a href="pharstock">View Stock</a></li>
+              <li><a href="viewpharstock">View Stock Requests</a></li>
+                  <!-- <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false"> Request Stock</a>
+                  <ul aria-expanded="false">
+                  <li><a href="addpharstock?ty=Medicine">Request Medicine</a></li>
+                  <li><a href="addpharstock?ty=Medical">Request Medical Items</a></li>
+                  </ul>
+                </li> -->
+            </ul>
+          </li>
+          <!-- <li>
             <a href="viewpharstock">
               <i class="fa fa-book"></i> <span class="nav-text">Stock Orders</span>
             </a>
-          </li>
+          </li> -->
           <li>
-            <a class=" has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
-            <i class="fa fa-book"></i>
-              <span class="nav-text">Orders</span>
+            <a  href="stockneworders" aria-expanded="false">
+              <i class="fa fa-book"></i>
+              <span class="nav-text">Requisition Orders</span>
             </a>
-            <ul aria-expanded="false">
+            <!-- <ul aria-expanded="false">
               <li><a href="stockneworders?ty=Medicine">Medicine Orders</a></li>
               <li><a href="stockneworders?ty=Medical">Medical Item Orders</a></li>
               <li><a href="stockneworders?ty=Non Medical">Non Medical Items Orders</a></li>
-              <!-- <li><a href="users">View Users</a></li> -->
-            </ul>
+            </ul> -->
+          </li>
+          <li>
+            <a class="ai-icon" href="reports" aria-expanded="false">
+              <i class="fa fa-pie-chart"></i>
+              <span class="nav-text">Reports</span>
+            </a>
           </li>
 
         <?php }
@@ -430,7 +492,7 @@
             </a>
             <ul aria-expanded="false">
               <li><a href="stock">View Items</a></li>
-              <li><a href="pharmacystock">Pharmacy Stock</a></li>
+              <!-- <li><a href="pharmacystock">Pharmacy Stock</a></li> -->
               <li><a href="addaccstock?ty=Non Medical">Request Non Medical Items</a></li>
             </ul>
           </li>
@@ -887,12 +949,13 @@
               <span class="nav-text">Orders</span>
             </a>
             <ul aria-expanded="false">
-              <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">Dispensing Orders</a>
+              <li><a href="viewpharstock">Dispensing Orders</a></li>
+              <!-- <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">Dispensing Orders</a>
                   <ul aria-expanded="false">
                     <li><a href="stockneworders?ty=Medicine">Medicine Orders</a></li>
                     <li><a href="stockneworders?ty=Medical">Medical Item Orders</a></li>
                   </ul>
-              </li>
+              </li> -->
               <li><a href="stockneworders?ty=Non Medical">Requisition Orders</a></li>
           </ul>
           </li>

@@ -66,7 +66,7 @@ $id = $_GET['id'];
                     <div class="row">
                         <div class="col-lg-6">
                             <?php
-                           $getorder= mysqli_query($con,"SELECT * FROM stockitems WHERE pharstockorder_id='$id' AND status=3") or die(mysqli_error($con));
+                           $getorder= mysqli_query($con,"SELECT * FROM stockitems WHERE pharstockorder_id='$id' AND status IN (3,1,4)") or die(mysqli_error($con));
                      $row= mysqli_fetch_array($getorder);
                       $restockorder_id=$row['pharstockorder_id'];
                       $store_id=$row['store'];
@@ -123,7 +123,7 @@ $id = $_GET['id'];
                                             <tbody>   
                                                 <?php
                                                 $totalcharge = 0;
-                                               $getitems= mysqli_query($con,"SELECT * FROM stockitems WHERE pharstockorder_id='$id' AND status=3");
+                                               $getitems= mysqli_query($con,"SELECT * FROM stockitems WHERE pharstockorder_id='$id' AND status IN (3,1,4)");
                                 while($row= mysqli_fetch_array($getitems)){
                                                        $stockitem_id =$row["stockitem_id"];
                                                         $product_id= $row["product_id"];

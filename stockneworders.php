@@ -3,7 +3,7 @@ include 'includes/conn.php';
 if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitallevel'] != 'store manager')) && (($_SESSION['elcthospitallevel'] != 'pharmacist'))&& (($_SESSION['elcthospitallevel'] != 'head physician'))) {
     header('Location:login.php');
 }
-$ty= $_GET['ty'];
+$ty= isset($_GET['ty']) ? $_GET['ty']: '';
 $type = mysqli_escape_string($con,$ty);
 ?>
 <!DOCTYPE html>
@@ -64,6 +64,27 @@ $type = mysqli_escape_string($con,$ty);
                         </ol>
                     </div>
                 </div>
+                <?php
+                if (isset($_POST['updaterequis'])){
+                    $ordereditem_id = $_POST['ordereditem_id'];
+                    $quantity = $_POST['quantity'];
+                    $item_id = $_POST['item_id'];
+                    $itemname = $_POST['itemname'];
+                    foreach($ordereditem_id as $key => $value){
+                        $ordereditem = mysqli_real_escape_string($con,$value);
+                        $quant = mysqli_real_escape_string($con,$quantity[$value]);
+                        $item_id2= mysqli_real_escape_string($con,$item_id[$value]);
+                        $itemname2 = mysqli_real_escape_string($con,$itemname[$value]);
+                        
+                        $update = mysqli_query($con,"UPDATE ordereditems SET quantity='$quant' WHERE ordereditem_id='$ordereditem'") or die(mysqli_error($con));
+                        if ($update){
+
+                        }
+                    }
+                   echo "<div class='alert alert-success'> Requisition Updated Successfully</div>";
+                }
+
+                ?>
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
@@ -92,8 +113,18 @@ $type = mysqli_escape_string($con,$ty);
                                             }else{
                                                 $section ='';
                                             }
+                                            if ($type == ""){
+                                                $mtype = "";
+                                            }else{
+                                                $mtype ="AND type='$type'";
+                                            }
+                                            if (($_SESSION['elcthospitallevel'] == 'admin') || ($_SESSION['elcthospitallevel'] != 'head physician')){
+                                                $getordered = mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0) $mtype ") or die(mysqli_error($con));
 
-                                            $getordered = mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0) AND type='$type' $section ") or die(mysqli_error($con));
+                                            }else{
+                                                $getordered = mysqli_query($con, "SELECT * FROM stockorders WHERE status IN(1,0) $mtype $section ") or die(mysqli_error($con));
+
+                                            }
                                             while ($row = mysqli_fetch_array($getordered)) {
                                                 $stockorder_id = $row['stockorder_id'];
                                                 $timestamp = $row['timestamp'];
@@ -132,8 +163,93 @@ $type = mysqli_escape_string($con,$ty);
 
 
                                                     <td>
-
                                                         <a href="ordereditems?id=<?php echo $stockorder_id; ?>&st=<?php echo $status; ?>&ty=<?php echo $type ?>&section=<?php echo $section ;?>" class="btn btn-primary btn-xs">Details</a>
+                                                        <?php
+                                                        if(($status==0)&&($_SESSION['elcthospitallevel']=='admin' || $_SESSION['elcthospitallevel']=='head physician')){
+                                                        ?>
+                                                            <a href="cancelrequest?id=<?php echo $stockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $stockorder_id; ?>()">Cancel</a>
+                                                            <button data-toggle="modal" data-target="#completeRegistrationModal<?php echo $stockorder_id; ?>" class="btn btn-info btn-xs" type="button" >Edit</button>
+                                                            
+                                                        
+                                                        <script type="text/javascript">
+                                                            function confirm_cancel<?php echo $stockorder_id; ?>() {
+                                                                    return confirm('You are about To Cancel this List. Are you sure you want to proceed?');
+                                                                }
+                                                            function confirm_approve<?php echo $stockorder_id; ?>() {
+                                                            return confirm('You are about To Approve this List. Are you sure you want to proceed?');
+                                                            }
+                                                            </script>
+                                                        
+                                                        <?php }
+                                                        if (($status == 0) &&($_SESSION['elcthospitallevel']=='pharmacist')){
+                                                        ?>
+                                                            <button data-toggle="modal" data-target="#completeRegistrationModal<?php echo $stockorder_id; ?>" class="btn btn-info btn-xs" type="button" >Edit</button>
+
+                                                            <!-- <a href="editpharorder?id=<?php echo $stockorder_id; ?>&ty=<?php echo $type; ?>" class="btn btn-info btn-xs">Edit</a> -->
+                                                            <a href="cancelrequest?id=<?php echo $stockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $stockorder_id; ?>()">Delete</a>
+                                                            <script type="text/javascript">
+                                                            function confirm_cancel<?php echo $stockorder_id; ?>() {
+                                                                    return confirm('You are about To Cancel this List. Are you sure you want to proceed?');
+                                                                }
+                                                            </script>
+                                                            <?php } 
+                                                            if ($status == 1 ){
+                                                                ?>
+                                                                <a href="printrequisorder?id=<?php echo $stockorder_id; ?>" class="btn btn-info btn-xs">Print</a>
+                                                                <?php }?>
+
+                                                                <div class="modal fade" id="completeRegistrationModal<?php echo $stockorder_id ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="exampleModalLabel">Edit Requisition</h5>
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                    <form action="" method="POST">
+                                                                            <div class="row">
+                                                                            <?php
+                                                                            $ordereditems = mysqli_query($con, "SELECT * FROM ordereditems WHERE stockorder_id='$stockorder_id'") or die(mysqli_error($con));
+                                                                            while ($row1 = mysqli_fetch_array($ordereditems)) {
+                                                                                $id = $row1['ordereditem_id'];
+                                                                                $quantity = $row1['quantity'];
+                                                                                $item_id = $row1['item_id'];
+                                                                                $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$item_id'");
+                                                                                $row = mysqli_fetch_array($getitems);
+                                                                                $inventoryitem_id = $row['inventoryitem_id'];
+                                                                                $itemname = $row['itemname'];
+                                                                                $measurement_id = $row['measurement_id'];
+                                                                                $minimum = $row['minimum'];
+                                                                                $unitprice = $row['unitprice'];
+                                                                                $subcategory_id = $row['subcategory_id'];                                                                              
+
+                                                                            ?>
+
+                                                                        <div class="form-group col-sm-6">
+                                                                            <input type="hidden" name="ordereditem_id[]" value="<?php echo $id; ?>" class="form-control" required>  
+                                                                            <label> Item Name</label>
+                                                                            <input type="hidden" name="item_id[<?php echo $id; ?>]" value="<?php echo $item_id; ?>" class="form-control" required>
+                                                                            <input type="text" name="itemname[<?php echo $id; ?>]" value="<?php echo $itemname; ?>" class="form-control" readonly>
+                                                                           
+                                                                        </div>
+                                                                        <div class="form-group col-sm-6">
+                                                                            <label>Quantity</label>
+                                                                            <input type="number" name="quantity[<?php echo $id; ?>]" value="<?php echo $quantity; ?>" class="form-control" required>
+                                                                        </div>
+                                                                        <?php } ?>
+                                                                        </div>
+
+                                                                        <div class="form-group">
+                                                                            <button class="btn btn-primary" type="submit" name="updaterequis">Submit</button>
+                                                                        </div>
+                                                                    </form>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                 </tr>
 

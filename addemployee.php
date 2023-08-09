@@ -121,14 +121,17 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             $errors[] = 'Some Fields Not Selected';
                                         }
                                         #validate contract start date should not be current date
+                                        if ($contractend < $contractstart){
+                                            $errors[]="Invalid End date.";
+                                        }
                                         $currentDate = strtotime('today');
-                                        if ($contractstart >= $currentDate) {
-                                            $errors[] = "Invalid start date. Start date cannot be today.";
-                                        }
+                                        // if ($contractstart >= $currentDate) {
+                                        //     $errors[] = "Invalid start date. Start date cannot be today.";
+                                        // }
                                         $yesterday = strtotime('-1 day');
-                                        if ($contractend <= $yesterday) {
-                                            $errors[] = "Invalid end date. End date cannot be yesterday or earlier.";
-                                        }
+                                        // if ($contractend <= $yesterday) {
+                                        //     $errors[] = "Invalid end date. End date cannot be yesterday or earlier.";
+                                        // }
                                         if (!empty($errors)) {
                                             foreach ($errors as $error) {
                                     ?>
@@ -180,7 +183,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 <select name="department" class="form-control">
                                                     <option value="">select department...</option>
                                                     <?php
-                                                    $getdepartment =  mysqli_query($con, "SELECT * FROM departments WHERE status=1");
+                                                    $getdepartment =  mysqli_query($con, "SELECT * FROM departments WHERE status=1 order by department asc ");
                                                     while ($row1 =  mysqli_fetch_array($getdepartment)) {
                                                         $department_id = $row1['department_id'];
                                                         $department = $row1['department'];
@@ -228,7 +231,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 <select name="salary" class="form-control">
                                                     <option value="">Select salary...</option>
                                                     <?php
-                                                    $getsalaries =  mysqli_query($con, "SELECT * FROM salaries WHERE status=1 ORDER BY salary");
+                                                    $getsalaries =  mysqli_query($con, "SELECT * FROM salaries WHERE status=1 ORDER BY salary asc");
                                                     while ($row1 =  mysqli_fetch_array($getsalaries)) {
                                                         $salary_id = $row1['salary_id'];
                                                         $salary = $row1['salary'];
@@ -251,14 +254,14 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 <label class="control-label">Education Level</label>
                                                 <select name="education" class="form-control">
                                                     <option value="">select education level...</option>
-                                                    <option value="Post Graduate">Post Graduate</option>
                                                     <option value="Bachelor Degree">Bachelor Degree</option>
-                                                    <option value="Diploma">Diploma</option>
                                                     <option value="Certificate">Certificate</option>
+                                                    <option value="Diploma">Diploma</option>
                                                     <option value="Form six level">Form six level</option>
                                                     <option value="Form four level">Form four level</option>
-                                                    <option value="Standard seven level">Standard seven level</option>
                                                     <option value="None">None</option>
+                                                    <option value="Post Graduate">Post Graduate</option>
+                                                    <option value="Standard seven level">Standard seven level</option>
                                                 </select>
                                                 <div id='form_education_errorloc' class='text-danger'></div>
                                             </div>
@@ -268,7 +271,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 <select name="qualification" class="form-control">
                                                     <option value="">select qualification...</option>
                                                     <?php 
-                                                        $getqualifications =  mysqli_query($con, "SELECT * FROM qualifications WHERE status=1");
+                                                        $getqualifications =  mysqli_query($con, "SELECT * FROM qualifications WHERE status=1 order by qualification asc");
                                                         while ($row1 =  mysqli_fetch_array($getqualifications)) {
                                                             $qualification_id = $row1['qualification_id'];
                                                             $qualification = $row1['qualification'];
@@ -282,7 +285,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 <select name="salarylevel" class="form-control">
                                                     <option value="">select salary level...</option>
                                                     <?php
-                                                    $getsalarylevels =  mysqli_query($con, "SELECT * FROM salaries WHERE status=1");
+                                                    $getsalarylevels =  mysqli_query($con, "SELECT * FROM salaries WHERE status=1 ORDER BY salary asc");
                                                     while ($row1 =  mysqli_fetch_array($getsalarylevels)) {
                                                         $salarylevel_id = $row1['salary_id'];
                                                         $salarylevel = $row1['salary'];
@@ -325,23 +328,23 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             <div class="form-group col-lg-4"><label class="control-label">* Select Role</label>
                                                 <select name="role" class="form-control" id="role">
                                                     <option value="" selected="selected">Assign Role... </option>
-                                                    <option value="admin">Admin</option>
-                                                    <option value="receptionist">Receptionist</option>
-                                                    <option value="patron">Patron</option>
-                                                    <option value="nurse">Nurse</option>
-                                                    <option value="doctor">Doctor</option>
-                                                    <option value="lab technician">Lab Technician</option>
-                                                    <option value="pharmacist">Pharmacist</option>
-                                                    <option value="store manager">Store Manager</option>
                                                     <option value="accountant">Accountant</option>
-                                                    <option value="director">Director</option>
-                                                    <option value="insurance officer">Insurance Officer</option>
-                                                    <option value="cashier">Cashier</option>
-                                                    <option value="head physician">Head physician</option>
-                                                    <option value="radiographer">Radiology</option>
+                                                    <option value="admin">Admin</option>
                                                     <option value="anesthesiologist">Anesthesiologist</option>
-                                                    <option value="lab technologist">Lab Technologist</option>
                                                     <option value="head physician">Attending Doctor</option>
+                                                    <option value="cashier">Cashier</option>
+                                                    <option value="doctor">Doctor</option>
+                                                    <option value="director">Director</option>
+                                                    <option value="head physician">Head physician</option>
+                                                    <option value="insurance officer">Insurance Officer</option>
+                                                    <option value="lab technologist">Lab Technologist</option>
+                                                    <option value="lab technician">Lab Technician</option>
+                                                    <option value="nurse">Nurse</option>
+                                                    <option value="patron">Patron</option>
+                                                    <option value="pharmacist">Pharmacist</option>
+                                                    <option value="receptionist">Receptionist</option>
+                                                    <option value="radiographer">Radiology</option>
+                                                    <option value="store manager">Store Manager</option>
                                                 </select>
 
                                             </div>

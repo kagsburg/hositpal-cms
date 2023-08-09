@@ -122,7 +122,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $getdesignations =  mysqli_query($con, "SELECT * FROM designations WHERE status=1");
+                                        $getdesignations =  mysqli_query($con, "SELECT * FROM designations WHERE status=1 order by designation asc");
                                         while ($row1 =  mysqli_fetch_array($getdesignations)) {
                                             $designation_id = $row1['designation_id'];
                                             $designation = $row1['designation'];

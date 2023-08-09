@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitallevel'] != 'pharmacist')) && (($_SESSION['elcthospitallevel'] != 'doctor'))) {
+if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitallevel'] != 'pharmacist')) && (($_SESSION['elcthospitallevel'] != 'doctor'))&&(($_SESSION['elcthospitallevel'] != 'head physician'))) {
     header('Location:login.php');
 }
 ?>

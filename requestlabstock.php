@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
- if(($_SESSION['elcthospitallevel']!='lab technician')){
+ if(($_SESSION['elcthospitallevel']!='lab technician')&& ($_SESSION['elcthospitallevel'] !='lab technologist')){
 header('Location:login.php');
    }
     if(!isset($_SESSION["bproducts"])){ 
@@ -84,7 +84,7 @@ if(isset($_SESSION["bproducts"]) && count($_SESSION["bproducts"])>0){
     unset($_SESSION["bproducts"]);   
 }}
                         ?>
-                      <div class="alert alert-success">Stock Request Successfully Sent</div>
+                      <div class="alert alert-success">Request Successfully Submitted</div>
                   </div>
                 </div>    
                

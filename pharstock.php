@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitallevel'] != 'store manager')) && ($_SESSION['elcthospitallevel'] != 'pharmacist')) {
+if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitallevel'] != 'store manager'))&&($_SESSION['elcthospitallevel'] != 'head physician') && ($_SESSION['elcthospitallevel'] != 'pharmacist')) {
     header('Location:login.php');
 }
 $ty = isset($_GET['ty']) ? $_GET['ty'] : "";
@@ -99,9 +99,13 @@ $store = mysqli_real_escape_string($con, $store);
                                         <tbody>
                                             <?php
                                             //$pmstr = empty($ty) ? "" : "AND `type`='$paymethod'";
-                                            $query = "SELECT * FROM inventoryitems WHERE status=1 and type='$type'";
+                                            if ($type== ""){
+                                                $pmstr = '';
+                                            }else{
+                                                $pmstr = "AND `type`='$type'";
+                                            }
+                                            $query = "SELECT * FROM inventoryitems WHERE status=1 $pmstr";
                                             $getitems = mysqli_query($con, $query) or die(mysqli_error($con));
-
                                             while ($row = mysqli_fetch_array($getitems)) {
                                                 $inventoryitem_id = $row['inventoryitem_id'];
                                                 $itemname = $row['itemname'];

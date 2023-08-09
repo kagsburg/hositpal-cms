@@ -1,10 +1,10 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'doctor')&&( $_SESSION['elcthospitallevel']!='head physician')) {
+if (($_SESSION['elcthospitallevel'] != 'cashier')) {
     header('Location:login.php');
 }
 if (!isset($_SESSION["bproducts"])) {
-    header('Location:addstock');
+    header('Location:addcashrequisition?ty=Non Medical');
 }
 ?>
 <!DOCTYPE html>
@@ -111,46 +111,8 @@ if (!isset($_SESSION["bproducts"])) {
 
                             </div>
                         </div>
-                        <form method="GET" name='form' class="form" action="requestdoctorstock" enctype="multipart/form-data">
-                            <div class="form-group"><label class="control-label">*Reason</label>
-                                <select name="reason" class="form-control reason">
-                                    <option value="">select reason...</option>
-                                    <option value="personal">For Use</option>
-                                    <option value="patient">For Patient</option>
-                                </select>
-                            </div>
-                            <div class="form-group admitted" style="display: none"><label class="control-label">Patient</label>
-                                <select name="patient" class="form-control">
-                                    <option value="">select Patient...</option>
-                                    <?php
-                                    $getque = mysqli_query($con, "SELECT * FROM admissions WHERE status='1'");
-                                    while ($row = mysqli_fetch_array($getque)) {
-                                        $patient_id = $row['patient_id'];
-                                        $admission_id = $row['admission_id'];
-                                        $getpatient = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
-                                        $row2 = mysqli_fetch_array($getpatient);
-                                        $firstname = $row2['firstname'];
-                                        $secondname = $row2['secondname'];
-                                        $thirdname = $row2['thirdname'];
-                                        $gender = $row2['gender'];
-                                        $ext = $row2['ext'];
-                                        if (strlen($patient_id) == 1) {
-                                            $pin = '000' . $patient_id;
-                                        }
-                                        if (strlen($patient_id) == 2) {
-                                            $pin = '00' . $patient_id;
-                                        }
-                                        if (strlen($patient_id) == 3) {
-                                            $pin = '0' . $patient_id;
-                                        }
-                                        if (strlen($patient_id) >= 4) {
-                                            $pin = $patient_id;
-                                        }
-                                    ?>
-                                        <option value="<?php echo $admission_id; ?>"><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname . ' (#' . $pin . ')'; ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
+                        <form method="GET" name='form' class="form" action="requestcashstock" enctype="multipart/form-data">
+                           
                             <a href="cancelstocklist" class="btn btn-danger" onclick="return confirm_cancel()">CANCEL</a>
                             <button class="btn btn-info" type="submit">SUBMIT</button>
                         </form>

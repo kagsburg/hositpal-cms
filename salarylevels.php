@@ -122,7 +122,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $getsalarylevels =  mysqli_query($con, "SELECT * FROM salaries WHERE status=1");
+                                        $getsalarylevels =  mysqli_query($con, "SELECT * FROM salaries WHERE status=1 order by salary asc");
                                         while ($row1 =  mysqli_fetch_array($getsalarylevels)) {
                                             $salarylevel_id = $row1['salary_id'];
                                             $salarylevel = $row1['salary'];

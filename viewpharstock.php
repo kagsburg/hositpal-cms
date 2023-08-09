@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
- if(($_SESSION['elcthospitallevel']!='admin')&&(($_SESSION['elcthospitallevel']!='store manager'))&&(($_SESSION['elcthospitallevel']!='pharmacist'))){
+ if(($_SESSION['elcthospitallevel']!='admin')&&(($_SESSION['elcthospitallevel']!='store manager'))&&(($_SESSION['elcthospitallevel']!='head physician'))&&(($_SESSION['elcthospitallevel']!='pharmacist'))){
 header('Location:login.php');
    }
    $ty = isset ($_GET['ty']) ? $_GET['ty'] : '';
@@ -107,7 +107,7 @@ include 'includes/header.php';
                          $getstore=mysqli_query($con,"SELECT * FROM stores WHERE status=1 AND store_id='$store_id'");
                         $row1=  mysqli_fetch_array($getstore);
                           $store=$row1['store'];
-                          $getitems= mysqli_query($con,"SELECT * FROM stockitems WHERE pharstockorder_id='$restockorder_id' AND status=3");
+                          $getitems= mysqli_query($con,"SELECT * FROM stockitems WHERE pharstockorder_id='$restockorder_id' AND status IN (3,1)");
                           $row2=  mysqli_fetch_array($getitems);
                           $type = $row2['type'];
                        ?>
@@ -148,9 +148,7 @@ include 'includes/header.php';
                      if ($status == 1 ){
                         ?>
                         <a href="printstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-info btn-xs">Print</a>
-                        <?php }
-                     
-                     ?>
+                        <?php }?>
                                                                                        </td>
                                   </tr>
 

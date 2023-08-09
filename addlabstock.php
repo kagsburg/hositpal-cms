@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'lab technician')) {
+if (($_SESSION['elcthospitallevel'] != 'lab technician')&& ($_SESSION['elcthospitallevel'] !='lab technologist')) {
     header('Location:login.php');
 }
 ?>
@@ -163,6 +163,7 @@ if (($_SESSION['elcthospitallevel'] != 'lab technician')) {
                                                     }
                                                 }
                                                 $instock = $totalstock - $totalrequested;
+                                                if ($instock > 0){
                                         ?>
                                                 <tr>
                                                     <td><?php echo $itemname . '(' . $measurement . ')'; ?></td>
@@ -178,7 +179,7 @@ if (($_SESSION['elcthospitallevel'] != 'lab technician')) {
                                                         </form>
                                                     </td>
                                                 </tr>
-                                        <?php }
+                                        <?php }}
                                         } ?>
                                     </tbody>
                                 </table>

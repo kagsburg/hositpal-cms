@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitallevel'] != 'store manager')) && ($_SESSION['elcthospitallevel'] != 'accountant')) {
+if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitallevel'] != 'store manager'))&& ($_SESSION['elcthospitallevel'] != 'head physician') && ($_SESSION['elcthospitallevel'] != 'accountant')) {
     header('Location:login.php');
 }
 $ty = isset($_GET['ty']) ? $_GET['ty']: "";
@@ -154,7 +154,7 @@ $store = mysqli_real_escape_string($con, $store);
                                                 //     print_r($instock);
                                                 // if (!empty($ty) && $type != $ty." items")
                                                 //     continue;
-                                                if ($instock <= 0){}else{
+                                                if ($instock > 0){
                                             ?>
                                                 <tr class="gradeA">
                                                     <td><?php echo 'ELVD-' . $inventoryitem_id; ?></td>

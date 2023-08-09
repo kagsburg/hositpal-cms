@@ -13,7 +13,7 @@ header('Location:login.php');
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title> Print Stock Orders</title>
+    <title> Print Requisition Orders</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
      <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -58,25 +58,13 @@ header('Location:login.php');
                 </div>
                         <div class="col-lg-6">
                             <?php
-                           $getorder= mysqli_query($con,"SELECT * FROM restockorders WHERE  restockorder_id='$id'") or die(mysqli_error($con));
+                           $getorder= mysqli_query($con,"SELECT * FROM stockorders WHERE  stockorder_id ='$id'") or die(mysqli_error($con));
                      $row= mysqli_fetch_array($getorder);
-                      $restockorder_id=$row['restockorder_id'];
-                      $store_id=$row['store_id'];
-                      $supplier_id=$row['supplier_id'];
+                      $restockorder_id=$row['stockorder_id'];
+                      $section=$row['section'];
                       $admin_id=$row['admin_id'];
                       $timestamp=$row['timestamp'];
                       $status=$row['status'];
-                      $date = $row['deliver_date'];
-                      if ($supplier_id == '0') {
-                          $suppliername = 'N/A';
-                      } else {
-                       $getsupplier=  mysqli_query($con, "SELECT * FROM suppliers WHERE status=1 AND supplier_id='$supplier_id'") or die(mysqli_error($con));
-                      $row2=mysqli_fetch_array($getsupplier);
-                      $suppliername=$row2['suppliername'];
-                      }
-                         $getstore=mysqli_query($con,"SELECT * FROM stores WHERE status=1 AND store_id='$store_id'");
-                        $row1=  mysqli_fetch_array($getstore);
-                          $storename=$row1['store'];
                            $getstaff= mysqli_query($con,"SELECT * FROM staff WHERE staff_id='$admin_id'") or die(mysqli_error($con));                        
                             $rows= mysqli_fetch_array($getstaff);
                             $fullname=$rows['fullname'];
@@ -93,15 +81,13 @@ header('Location:login.php');
                                 $pin = $restockorder_id;
                             }
                             ?>
-                            <h4 class="card-title">Purchasing Order</h4>
+                            <h4 class="card-title">Requisition Order</h4>
                             <table class="table table-bordered">
                                 <tr><th>Order Id</th><td><?php echo $pin ;?></td></tr>
                                 <tr><th>Date Added</th><td><?php echo date('d/M/Y',$timestamp); ?></td></tr>
-                                <tr><th>Supplier</th><td><?php echo $suppliername; ?></td></tr>
-                                <tr><th>Store</th><td><?php echo $storename; ?></td></tr>
+                                <tr><th>Section</th><td><?php echo $section; ?></td></tr>
                                 <tr><th>Status</th><td><?php if($status==0){echo '<span class="text-danger">PENDING</span>'; }else if ($status == 4){echo '<span class="text-danger">CANCELLED</span>';} else{echo '<span class="text-success">APPROVED</span>'; }?></td></tr>
                               <tr><th>Added by</th><td><?php echo $fullname; ?></td></tr>
-                              <tr><th>Delivery Date</th><td><?php echo $date;?></td></tr>
                            </table>
                         </div>
                      <div class="col-lg-10">
@@ -115,56 +101,67 @@ header('Location:login.php');
                                         <table id="example6" class="table ">
                                             <thead>
                                                 <tr>
-                                                    <th>Item Name</th>
-                                                    <th>Unit Price</th>
-                                                    <th>Quantity</th>
-                                                    <th>Sub Total</th>
+                                                <th>Item Name</th>
+                                                <!-- <th>Total Quantity</th> -->
+                                                <th>Avaliable Quantity</th>
+                                                <th>Quantity</th>
+                                                <th>Measurement Unit</th>
 
                                                 </tr>
                                             </thead>
                                             <tbody>   
                                                 <?php
                                                 $totalcharge = 0;
-                                               $getitems= mysqli_query($con,"SELECT * FROM restockitems WHERE restockorder_id='$restockorder_id' AND status=1");
-                                while($row= mysqli_fetch_array($getitems)){
-                                                       $restockitem_id =$row["restockitem_id"];
-                                                        $product_id= $row["product_id"];
-                                                        $quantity=$row["quantity"];
-                                                        $unitcharge=$row["unitcharge"];                                                   
-                                         $getitem=mysqli_query($con,"SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$product_id'");  
-                                          $row1 = mysqli_fetch_array($getitem);
-                                                  $itemname=$row1['itemname'];
-                                           $measurement_id=$row1['measurement_id'];
-                                                        $getunit = mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
-                                                        $row2 = mysqli_fetch_array($getunit);
-                                                        $measurement = $row2['measurement'];
-                                                        $subtotal = $quantity * $unitcharge;
-                                                        $totalcharge = $totalcharge + $subtotal;
+                                               $getitems= mysqli_query($con,"SELECT * FROM ordereditems WHERE stockorder_id='$id' ");
+                                            while($row1= mysqli_fetch_array($getitems)){
+                                                $quantity = $row1['quantity'];
+                                                $item_id = $row1['item_id'];
+                                                $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$item_id'");
+                                                $row = mysqli_fetch_array($getitems);
+                                                $inventoryitem_id = $row['inventoryitem_id'];
+                                                $itemname = $row['itemname'];
+                                                $measurement_id = $row['measurement_id'];
+                                                $minimum = $row['minimum'];
+                                                $unitprice = $row['unitprice'];
+                                                $subcategory_id = $row['subcategory_id'];
+                                                $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
+                                                $row2 =  mysqli_fetch_array($getunit);
+                                                $measurement = $row2['measurement'];
+                                                if ($section != 'pharmacy'){
+                                                    $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id'and store=2 ") or die(mysqli_error($con));
+
+                                                }else {
+                                                    $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store=3 ") or die(mysqli_error($con));
+                                                }
+                                            
+                                                $row3 = mysqli_fetch_array($getstock);
+                                                $totalstock = $row3['totalstock'];
+                                                $exipry = $row3['expiry'];
+                                                $totalordered = 0;
+                                                $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id' ") or die(mysqli_error($con));
+                                                while ($row4 = mysqli_fetch_array($getordered)) {
+                                                    $stockorder_id = $row4['stockorder_id'];
+                                                    $quantity = $row4['quantity'];
+                                                    $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND section='$section' and status=1 ");
+                                                    if (mysqli_num_rows($getorder) > 0) {
+                                                        $totalordered = $totalordered + $quantity;
+                                                    }
+                                                }
+                                                $instock = $totalstock - $totalordered;
                                                         ?>
-                                                        <tr class="gradeA">                                                           
-                                                            <td><?php echo $itemname. ' (' . $measurement . ')'; ?></td>
-                                                            <td><?php echo $unitcharge; ?></td>
-                                                            <td><?php echo $quantity; ?></td>
-                                                            <td><?php echo $subtotal; ?></td>
-                                                   </tr>
+                                                        <tr class="gradeA">
+                                                    <td><?php echo $itemname; ?></td>
+                                                    <!-- <td><?php echo $totalstock; ?></td> -->
+                                                    <td><?php echo $instock; ?></td>
+                                                    <td><?php echo $quantity; ?></td>
+                                                    <td><?php echo $measurement; ?></td>
+
+                                                </tr>
                                              <?php }      ?>
                                             </tbody>     
-                                            <tfoot><tr><th>TOTAL</th><td>&nbsp;</td><td>&nbsp;</td><th><?php echo number_format($totalcharge); ?></th></tr></tfoot>                 
+                                            
                                         </table>   
-                                        <?php
-                                            if(($status==0)&&($_SESSION['elcthospitallevel']=='admin' || $_SESSION['elcthospitallevel']=='accountant')){
-                                            ?>  
-                                        <!-- <a href="approvestockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-info btn-xs" onclick="return confirm_approve<?php echo $restockorder_id; ?>()">Approve</a>
-                                         <a href="cancelstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_cancel<?php echo $restockorder_id; ?>()">Cancel</a> -->
-                                         <script type="text/javascript">
-                                            function confirm_cancel<?php echo $restockorder_id; ?>() {
-                                                    return confirm('You are about To Cancel this List. Are you sure you want to proceed?');
-                                                }
-                                            function confirm_approve<?php echo $restockorder_id; ?>() {
-                                            return confirm('You are about To Approve this List. Are you sure you want to proceed?');
-                                            }
-                                        </script>
-                     <?php } ?>
+                                       
                                     </div>
                                 </div>
 

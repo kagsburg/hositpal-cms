@@ -11,7 +11,7 @@ header('Location:login.php');
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Pharmacy Stock Orders</title>
+    <title>Lab Stock Orders</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
      <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -50,7 +50,7 @@ include 'includes/header.php';
 				<div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Pharmacy Stock Orders</h4>
+                            <h4>Lab Stock Orders</h4>
                            
                         </div>
                     </div>
@@ -88,7 +88,10 @@ include 'includes/header.php';
                                           $stockorder_id=$row['stockorder_id'];
                                            $timestamp=$row['timestamp'];
                                            $admin_id=$row['admin_id'];                                        	
-                                           $status=$row['status'];                                        	
+                                           $status=$row['status'];   
+                                           $type = $row['type'];     
+                                           
+                                           $section = $row['section'];                                	
                                 $getstaff=mysqli_query($con,"SELECT * FROM staff WHERE status=1  AND staff_id='$admin_id'");  
                                         $row1=mysqli_fetch_array($getstaff);
                                             $fullname=$row1['fullname'];
@@ -120,7 +123,7 @@ include 'includes/header.php';
                                  
                                                    <td>    
                                                      
-                                                       <a href="labordereditems?id=<?php echo $stockorder_id; ?>&&st=<?php echo $status ;?>" class="btn btn-primary btn-xs">Details</a>
+                                                   <a href="ordereditems?id=<?php echo $stockorder_id; ?>&st=<?php echo $status; ?>&ty=<?php echo $type; ?>&section=<?php echo $section ?>" class="btn btn-primary btn-xs">Details</a>
                                                                                        </td>
                                   </tr>
 

@@ -112,8 +112,12 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                     $department = "";
                                                 }
                                                 $getdesignation =  mysqli_query($con, "SELECT * FROM designations WHERE status=1 AND designation_id='$designation_id'");
-                                                $row2 =  mysqli_fetch_array($getdesignation);
-                                                $designation = $row2['designation'];
+                                                if (mysqli_num_rows($getdesignation)){
+                                                    $row2 =  mysqli_fetch_array($getdesignation);
+                                                    $designation = $row2['designation'];
+                                                }else{
+                                                    $designation = "";
+                                                }
                                                 $getsalaries =  mysqli_query($con, "SELECT * FROM salaries WHERE status=1 AND  salary_id='$salary_id'");
                                                 $num = mysqli_num_rows($getsalaries);
                                                 if ($num == 0) {

@@ -67,7 +67,7 @@ if (strlen($id) >= 4) {
                 <div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Stock Order #<?php echo $pin; ?></h4>
+                            <h4>Requisition Order #<?php echo $pin; ?></h4>
 
                         </div>
                     </div>
@@ -81,7 +81,7 @@ if (strlen($id) >= 4) {
                 <div class="row">
                     <div class="col-lg-12">
                         <?php
-                        if (($_SESSION['elcthospitallevel'] == 'store manager' || $_SESSION['elcthospitallevel']=='head physician') && ($st == 0)) {
+                        if (($_SESSION['elcthospitallevel'] == 'admin' || $_SESSION['elcthospitallevel']=='head physician') && ($st == 0)) {
                         ?>
                             <a href="approverequest?id=<?php echo $id; ?>" class="btn btn-success" onclick="return approve()"> <i class="fa fa-thumbs-up"></i> Approve Request</a>
                             <a href="cancelrequest?id=<?php echo $id; ?>" class="btn btn-danger" onclick="return cancel()">
@@ -99,11 +99,11 @@ if (strlen($id) >= 4) {
                         <?php
                         if (($_SESSION['elcthospitallevel'] == 'pharmacist') && ($st == 0) && ($section !='pharmacy') && ( ($ty == "Medical") || ($ty == "Medicine"))) {
                             ?>
-                            <a href="approverequest?id=<?php echo $id; ?>" class="btn btn-success" onclick= "return approve()"><i class="fa fa-thumbs-up"></i> Approve Request
+                            <!-- <a href="approverequest?id=<?php echo $id; ?>" class="btn btn-success" onclick= "return approve()"><i class="fa fa-thumbs-up"></i> Approve Request
                         </a>
                         <a href="cancelrequest?id=<?php echo $id; ?>" class="btn btn-danger" onclick="return cancel()">
                             <i class="fa fa-thumbs-down"></i> Cancel Request
-                            </a>
+                            </a> -->
 
                         <script type="text/javascript">
                                 function approve() {
@@ -165,11 +165,11 @@ if (strlen($id) >= 4) {
                                                 $totalstock = $row3['totalstock'];
                                                 $exipry = $row3['expiry'];
                                                 $totalordered = 0;
-                                                $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id' ") or die(mysqli_error($con));
                                                 while ($row4 = mysqli_fetch_array($getordered)) {
                                                     $stockorder_id = $row4['stockorder_id'];
                                                     $quantity = $row4['quantity'];
-                                                    $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND section='$section'");
+                                                    $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND section='$section' and status=1 ");
                                                     if (mysqli_num_rows($getorder) > 0) {
                                                         $totalordered = $totalordered + $quantity;
                                                     }
