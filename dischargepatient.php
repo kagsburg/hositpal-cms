@@ -9,8 +9,11 @@ $change=  mysqli_query($con,"UPDATE admissions SET status='2',dischargedate=UNIX
 #get the patient id
 $patientid=  mysqli_query($con,"SELECT patient_id FROM admissions WHERE admission_id='$id'") or die(mysqli_error($con));
 $row = mysqli_fetch_array($patientid);
+$pat=$row['patient_id'];
+// update patient status 
+// $changepatient = mysqli_query($con,"UPDATE patients SET level='4' WHERE patient_id='$pat'") or die(mysqli_error($con));
 #get the patient invoice
-$bill=get_bill_by_patient_only($pdo, $row['patient_id'], 2);
+$bill=get_bill_by_patient_only($pdo, $pat, 2);
 #set all invoice items to archived 
 foreach ($bill as $key => $value) {
     $billid=$value['bill_id'];

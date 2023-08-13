@@ -13,6 +13,19 @@ function get_patient(PDO $conn, $patient_id, $status=1)
     $getpatient["image"] = !empty($getpatient["ext"]) ? md5($getpatient["id"]) : "noimage.png";
     return $getpatient;
 }
+function get_patient_by_id(PDO $conn, $patient_id)
+{
+    $stmt = $conn->prepare("SELECT * FROM patients WHERE patient_id=?");
+    $stmt->execute([$patient_id]);
+    $getpatient = $stmt->fetch();
+    if (empty($getpatient)) return null;
+    $getpatient["insurance"] = $getpatient["insurancecompany"];
+    $getpatient["id"] = $getpatient["patient_id"];
+    $getpatient["fullname"] = $getpatient["firstname"] . " " . $getpatient["secondname"] . " " . $getpatient["thirdname"];
+    $getpatient["pin"] = str_pad($patient_id, 4, '0', STR_PAD_LEFT);
+    $getpatient["image"] = !empty($getpatient["ext"]) ? md5($getpatient["id"]) : "noimage.png";
+    return $getpatient;
+}
 
 function get_active_patient(PDO $conn, $patient_id)
 {
@@ -119,7 +132,7 @@ function get_patient_credit_plan(PDO $conn, $patient_id){
     $stmt->execute([$patient_id]);
     $getplan1 = $stmt->fetch();
     // get insurance 
-    $stmt2= $conn->prepare("SELECT * FROM creditclients where creditcompany_id =?");
+    $stmt2= $conn->prepare("SELECT * FROM creditclients where creditclient_id  =?");
     $stmt2->execute([$getplan1['creditclient']]);
     $getplan=$stmt2->fetch();
     return $getplan;

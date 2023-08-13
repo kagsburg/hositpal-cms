@@ -9,15 +9,20 @@ function get_all_bills(PDO $conn, $status=1)
 }
 function get_all_bills_group_patient(PDO $conn, $status=1)
 {
-    $stmt = $conn->prepare("SELECT * FROM bills WHERE status=? GROUP BY patient_id");
-    $stmt->execute([$status]);
+    if ($status == 1){
+        $stmt = $conn->prepare("SELECT * FROM bills WHERE status in (1,8) GROUP BY patient_id");
+        $stmt->execute();
+    }else{
+        $stmt = $conn->prepare("SELECT * FROM bills WHERE status=? GROUP BY patient_id");
+        $stmt->execute([$status]);
+    }
     $getallbills = $stmt->fetchAll();
     return $getallbills;
 }
-function get_all_bill_group_patient_accountant(PDO $conn)
+function get_all_bill_group_patient_accountant(PDO $conn,$payment_method)
 {
-    $stmt = $conn->prepare("SELECT * FROM bills WHERE status IN (1,8)  GROUP BY patient_id");
-    $stmt->execute();
+    $stmt = $conn->prepare("SELECT * FROM bills WHERE status IN (1,8) and payment_method=? GROUP BY patient_id");
+    $stmt->execute([$payment_method]);
     $getallbills = $stmt->fetchAll();
     return $getallbills;
 }
@@ -53,7 +58,14 @@ function get_all_payments(PDO $conn, $payment_method=null)
     $getallpayments = $stmt->fetchAll();
     return $getallpayments;
 }
-
+function get_all_payments_groupby_patient(PDO $conn,$payment_method=null){
+    if ($payment_method) {
+        $stmt = $conn->prepare("SELECT DISTINCT patient_id,bills.* FROM bills WHERE payment_method=? and status in (2,4) GROUP BY patient_id ORDER BY bill_id DESC");
+        $stmt->execute([$payment_method]);
+    } 
+    $getallpayments = $stmt->fetchAll();
+    return $getallpayments;
+}
 function get_all_bills_by_patient(PDO $conn, $patient_id, $status=1)
 {
     $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND status=?");
@@ -100,8 +112,13 @@ function   get_bill_by_id(PDO $conn, $bill_id, $status=1)
 
 function get_bill_by_patient_only(PDO $conn, $patient_id, $status=1)
 {
+    if ($status == 1){
+        $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND status IN (1,8)");
+        $stmt->execute([$patient_id]);
+    }else{
     $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND status=?");
     $stmt->execute([$patient_id, $status]);
+    }
     $getbill = $stmt->fetchAll();
     return $getbill;
 }
@@ -153,21 +170,46 @@ function update_bill_status(PDO $conn, $bill_id, $status, $payment_method=null)
     }
 }
 
-function make_bill_payment(PDO $conn, $bill_id, $amount, $payment_method,$countbills,$patient_id)
+function make_bill_payment(PDO $conn, $bill_id, $amount, $payment_method,$countbills,$patient_id, $totalservice)
 {
     if ($countbills > 1){
         #get all bills amount 
         $bills = get_bill_by_patient_only($conn, $patient_id, 1);
-        foreach($bills as $bl){
-            $stmt = $conn->prepare("INSERT INTO bill_payments (bill_id, amount, payment_method) VALUES (?, ?, ?)");
-            $stmt->execute([$bl['bill_id'],$bl['amount'],$bl['payment_method']]);    
-            update_bill_status($conn,$bl['bill_id'],2,$bl['payment_method']);       
-        }   
+        if ($totalservice >= $amount){
+            foreach($bills as $bl){
+                $stmt = $conn->prepare("INSERT INTO bill_payments (bill_id, amount, payment_method) VALUES (?, ?, ?)");
+                $stmt->execute([$bl['bill_id'],$bl['amount'],$bl['payment_method']]);    
+                update_bill_status($conn,$bl['bill_id'],2,$bl['payment_method']);       
+            }   
+        }else{
+            foreach($bills as $bl){
+                if ($totalservice >= $bl['amount']){
+                    $stmt = $conn->prepare("INSERT INTO bill_payments (bill_id, amount, payment_method) VALUES (?, ?, ?)");
+                    $stmt->execute([$bl['bill_id'],$bl['amount'],$bl['payment_method']]);    
+                    update_bill_status($conn,$bl['bill_id'],2,$bl['payment_method']);       
+                    $totalservice = $totalservice - $bl['amount'];
+                }else{
+                    $stmt = $conn->prepare("INSERT INTO bill_payments (bill_id, amount, payment_method) VALUES (?, ?, ?)");
+                    $stmt->execute([$bl['bill_id'],$totalservice,$bl['payment_method']]);    
+                    update_bill_status($conn,$bl['bill_id'],8,$bl['payment_method']);       
+                    $totalservice = 0;
+                }
+                // $stmt = $conn->prepare("INSERT INTO bill_payments (bill_id, amount, payment_method) VALUES (?, ?, ?)");
+                // $stmt->execute([$bl['bill_id'],$bl['amount'],$bl['payment_method']]);    
+                // update_bill_status($conn,$bl['bill_id'],8,$bl['payment_method']);       
+            }
+        }
 
     }else{
-        $stmt = $conn->prepare("INSERT INTO bill_payments (bill_id, amount, payment_method) VALUES (?, ?, ?)");
-        $stmt->execute([$bill_id, $amount, $payment_method]);
-        update_bill_status($conn, $bill_id, 2, $payment_method);    
+        if ($totalservice >= $amount){
+            $stmt = $conn->prepare("INSERT INTO bill_payments (bill_id, amount, payment_method) VALUES (?, ?, ?)");
+            $stmt->execute([$bill_id, $amount, $payment_method]);
+            update_bill_status($conn, $bill_id, 2, $payment_method);
+        }else{
+            $stmt = $conn->prepare("INSERT INTO bill_payments (bill_id, amount, payment_method) VALUES (?, ?, ?)");
+            $stmt->execute([$bill_id, $totalservice, $payment_method]);
+            update_bill_status($conn, $bill_id, 8, $payment_method);
+        }  
     }
 }
 function make_bill_payment_accountant(PDO $conn, $bill_id, $amount,$total, $payment_method,$countbills,$patient_id){

@@ -424,7 +424,7 @@
           <li>
             <a class="ai-icon" href="addresprequisition?ty=Non Medical" aria-expanded="false">
             <i class="fa fa-reply"></i>
-              <span class="nav-text"> Request Non Medical Items</span>
+              <span class="nav-text"> Requisitions</span>
             </a>
           </li>
 
@@ -474,18 +474,46 @@
           <li>
             <a class="ai-icon" href="addcashrequisition?ty=Non Medical" aria-expanded="false">
             <i class="fa fa-reply"></i>
-              <span class="nav-text"> Request Non Medical Items</span>
+              <span class="nav-text">Requisitions</span>
             </a>
           </li>
         <?php }
         if (($_SESSION['elcthospitallevel'] == 'accountant')) {
         ?>
-          <!-- <li>
-            <a class="ai-icon" href="fullypaid" aria-expanded="false">
+          <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-money"></i>
-              <span class="nav-text">Payments</span>
+              <span class="nav-text">Outstanding Bills</span>
             </a>
-          </li> -->
+            <ul aria-expanded="false">
+              <li><a href="outstanding?paymethod=insurance">Insurance</a></li>
+              <li><a href="outstanding?paymethod=credit">Credit</a></li>
+              <li><a href="outstanding?paymethod=cash">Cash</a></li> 
+            </ul>
+          </li>
+          <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="fa fa-money"></i>
+              <span class="nav-text">Paid Bills</span>
+            </a>
+            <ul aria-expanded="false">
+              <li><a href="fullypaid?paymethod=insurance">Insurance</a></li>
+              <li><a href="fullypaid?paymethod=credit">Credit</a></li>
+              <li><a href="fullypaid?paymethod=cash">Cash</a></li>
+            </ul>
+          </li>
+          
+          <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="flaticon-381-settings-2"></i>
+              <span class="nav-text">Purchases</span>
+            </a>
+            <ul aria-expanded="false">
+              <li><a href="stockorders?ty=1">Supplier Orders</a></li>
+              <li><a href="stockorders?ty=0">Non Supplier Orders</a></li>
+
+            </ul>
+          </li>
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-archive"></i>
@@ -502,28 +530,8 @@
             <i class="fa fa-reply"></i>
             Requisition
             </a>
-          </li>
-          <li>
-            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
-              <i class="flaticon-381-settings-2"></i>
-              <span class="nav-text">Purchases</span>
-            </a>
-            <ul aria-expanded="false">
-              <li><a href="stockorders?ty=1">Supplier Orders</a></li>
-              <li><a href="stockorders?ty=0">Non Supplier Orders</a></li>
-
-            </ul>
-          </li>
-          <li>
-            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
-              <i class="fa fa-archive"></i>
-              <span class="nav-text">Bills</span>
-            </a>
-            <ul aria-expanded="false">
-              <li><a href="fullypaid">Paid Bills</a></li>
-              <li><a href="outstanding">Outstanding Bills </a></li>
-            </ul>
-          </li>
+          </li>          
+          
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-archive"></i>

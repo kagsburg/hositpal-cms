@@ -105,7 +105,22 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                                     $mode = "normal";
                                                     // $paymenttype = get_payment_method($pdo, $patient_id);
                                                 }
+                                                if($paymenttype == "credit"){
+                                                    $credit= get_patient_credit_plan($pdo, $patient_id);
+                                                }else{
+                                                    $credit= '';
+                                                }
+                                                if ($paymenttype == "insurance"){
+                                                    $plan= get_patient_insurance_plan($pdo, $patient_id);
+                                                } else{
+                                                    $plan['plan'] = null;
+                                                }
                                                 if ($mode == 'normal') {
+                                                    if (!($plan['plan']==1)){}
+                                                    else continue;
+                                                    if (!($paymenttype=='credit' && $credit['credittype']=='Postpaid')){}
+                                                    else
+                                                    continue;
                                                     $patient = get_active_patient($pdo, $patient_id);
                                                     $pin = $patient['pin'];
                                                     $fullname = $patient['fullname'];

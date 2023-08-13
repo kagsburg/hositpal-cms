@@ -165,8 +165,12 @@ $id = $_GET['q'];
                                                     $bill_type_id = $b['type_id'];
                                                     $patientque_id = $b['patientsque_id'];
                                                     $getroom = mysqli_query($con, "SELECT room from patientsque WHERE patientsque_id='$patientque_id'");
-                                                    $row23 = mysqli_fetch_array($getroom);
-                                                    $room = $row23['room'];
+                                                    if (mysqli_num_rows($getroom) > 0) {
+                                                        $row23 = mysqli_fetch_array($getroom);
+                                                        $room = $row23['room'];
+                                                    }else{
+                                                        $room = $type;
+                                                    }
 
                                                    
                                                 if ($type == "medical_service") {

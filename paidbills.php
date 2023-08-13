@@ -162,7 +162,7 @@ $payments = get_all_payments_groupby_patient($pdo, $paymethod);
                                                     <!-- <td><?php echo $amount; ?></td> -->
                                                     <td><?php echo ucfirst($payment_method); ?></td>
                                                     <td>
-                                                        <a href="paidbills?id=<?php echo $pa;?>" class="btn btn-primary ">View Bills </a>
+                                                        <a href="bills?id=<?php echo $pa;?>" class="btn btn-primary ">View Bills </a>
                                                     </td>
 
                                                 </tr>

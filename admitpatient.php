@@ -263,6 +263,7 @@ $id = $_GET['id'];
                                             <select class="form-control" name="paymentmethod">
                                                 <option value="">Select option..</option>
                                                 <option value="cash">Cash</option>
+                                                <option value="cash postpaid">Cash Postpaid</option>
                                                 <?php if ($paymenttype == "credit") { ?>
                                                     <option value="credit" selected>Credit - <?php echo $clientname; ?></option>
                                                 <?php } else if ($paymenttype == "insurance") { ?>

@@ -8,6 +8,7 @@ $roles = array('accountant', 'admin');
 if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
     header('Location:login.php');
 }
+$paymentmethod = isset($_GET['paymethod']) ? $_GET['paymethod']: null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -88,7 +89,7 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                         <tbody>
                                             <?php
 
-                                            $bills = get_all_bill_group_patient_accountant($pdo);
+                                            $bills = get_all_bill_group_patient_accountant($pdo,$paymentmethod);
                                             // print_r($bills);
                                             foreach ($bills as $bill) {
                                                 $bill_id = $bill['bill_id'];
@@ -116,7 +117,7 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                                 }
 
                                                 // $plan = get_patient_insurance_plan($pdo, $patient_id);
-                                                if (($mode == 'emergency') || ($plan['plan']==1) || ($paymenttype == "credit")) {
+                                                if (($mode == 'emergency') || ($plan['plan']==1) || ($paymenttype == "credit" && $credit['credittype']=='Postpaid')) {
                                                     $patient = get_active_patient($pdo, $patient_id);
                                                     $pin = $patient['pin'];
                                                     $fullname = $patient['fullname'];
