@@ -60,11 +60,26 @@ function get_all_payments(PDO $conn, $payment_method=null)
 }
 function get_all_payments_groupby_patient(PDO $conn,$payment_method=null){
     if ($payment_method) {
-        $stmt = $conn->prepare("SELECT DISTINCT patient_id,bills.* FROM bills WHERE payment_method=? and status in (2,4) GROUP BY patient_id ORDER BY bill_id DESC");
+        $stmt = $conn->prepare("SELECT DISTINCT patient_id,bills.* FROM bills WHERE payment_method=? and status in (2) GROUP BY patient_id ORDER BY bill_id DESC");
         $stmt->execute([$payment_method]);
-    } 
+    } else{
+        $stmt = $conn->prepare("SELECT DISTINCT patient_id,bills.* FROM bills WHERE status in (2) GROUP BY patient_id ORDER BY bill_id DESC");
+        $stmt->execute();
+    }
     $getallpayments = $stmt->fetchAll();
     return $getallpayments;
+}
+function get_all_bills_patient(PDO $conn, $patient_id,$payment_method){
+    $stmt = $conn->prepare("SELECT * from bills where patient_id=? and payment_method=? and status in (2)");
+    $stmt->execute([$patient_id,$payment_method]);
+    $getallbills = $stmt->fetchAll();
+    foreach ($getallbills as $key => $value) {
+        $stmt = $conn->prepare("SELECT * FROM bill_payments WHERE bill_id=? and payment_method=?");
+        $stmt->execute([$value['bill_id'],$payment_method]);
+        $getpayment = $stmt->fetch();
+        $getallbills[$key]['payment'] = $getpayment;
+    }
+    return $getallbills;
 }
 function get_all_bills_by_patient(PDO $conn, $patient_id, $status=1)
 {

@@ -287,11 +287,17 @@
               <span class="nav-text">Insurance Patients</span>
             </a>
           </li>
+         
           <li>
-            <a class="ai-icon" href="addissurequisition?ty=Non Medical" aria-expanded="false">
-            <i class="fa fa-reply"></i>
-              <span class="nav-text"> Request Non Medical Items</span>
+          <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+          <i class="fa fa-reply"></i>
+              <span class="nav-text">Requisition</span>
             </a>
+            <ul aria-expanded="false">
+              <li><a href="addissurequisition?ty=Non Medical">Request Non Medical Items</a></li>
+              <li><a href="otherstockorders?section=insurance">View Requisitions</a></li>
+              <!-- <li><a href="addaccstock?ty=Non Medical">Request Non Medical Items</a></li> -->
+            </ul>
           </li>
         <?php }
         if (($_SESSION['elcthospitallevel'] == 'head physician')) {
@@ -422,10 +428,15 @@
               <li><a href="cashierpending">Registration Pending Clearance</a></li> -->
           </li>
           <li>
-            <a class="ai-icon" href="addresprequisition?ty=Non Medical" aria-expanded="false">
-            <i class="fa fa-reply"></i>
-              <span class="nav-text"> Requisitions</span>
+          <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+          <i class="fa fa-reply"></i>
+              <span class="nav-text">Requisition</span>
             </a>
+            <ul aria-expanded="false">
+              <li><a href="addresprequisition?ty=Non Medical">Request Non Medical Items</a></li>
+              <li><a href="otherstockorders?section=reception">View Requisitions</a></li>
+              <!-- <li><a href="addaccstock?ty=Non Medical">Request Non Medical Items</a></li> -->
+            </ul>
           </li>
 
 
@@ -450,21 +461,6 @@
               <span class="nav-text">Pending Payments</span>
             </a>
           </li>
-          <!-- <li>
-            <a class="ai-icon" href="registrationpending" aria-expanded="false">
-              <i class="fa fa-money"></i>
-              <span class="nav-text">Pending Registrations</span>
-            </a>
-          </li> -->
-          <!-- <li>
-            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
-              <i class="fa fa-money"></i>
-              <span class="nav-text">Clearance</span>
-            </a>
-            <ul aria-expanded="false">
-              <li><a href="clearance">Pending Bills</a></li>
-            </ul>
-          </li> -->
           <li>
             <a class="ai-icon" href="fullypaid" aria-expanded="false">
               <i class="fa fa-money"></i>
@@ -472,11 +468,17 @@
             </a>
           </li>
           <li>
-            <a class="ai-icon" href="addcashrequisition?ty=Non Medical" aria-expanded="false">
-            <i class="fa fa-reply"></i>
-              <span class="nav-text">Requisitions</span>
+          <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+          <i class="fa fa-reply"></i>
+              <span class="nav-text">Requisition</span>
             </a>
+            <ul aria-expanded="false">
+              <li><a href="addcashrequisition?ty=Non Medical">Request Non Medical Items</a></li>
+              <li><a href="otherstockorders?section=cashier">View Requisitions</a></li>
+              <!-- <li><a href="addaccstock?ty=Non Medical">Request Non Medical Items</a></li> -->
+            </ul>
           </li>
+          
         <?php }
         if (($_SESSION['elcthospitallevel'] == 'accountant')) {
         ?>
@@ -520,16 +522,24 @@
               <span class="nav-text">Stock</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="stock">View Items</a></li>
+              <!-- <li><a href="stock">View Items</a></li> -->
+              <li><a href="stock?ty=Medicine">Medicine</a></li>
+                <li><a href="stock?ty=Medical">Medical Items</a></li>
+                <li><a href="stock?ty=Non Medical">Non Medical Items</a></li>
               <!-- <li><a href="pharmacystock">Pharmacy Stock</a></li> -->
               <!-- <li><a href="addaccstock?ty=Non Medical">Request Non Medical Items</a></li> -->
             </ul>
           </li>
           <li>
-            <a href="addaccstock?ty=Non Medical">
-            <i class="fa fa-reply"></i>
-            Requisition
+          <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+          <i class="fa fa-reply"></i>
+              <span class="nav-text">Requisition</span>
             </a>
+            <ul aria-expanded="false">
+              <li><a href="addaccstock?ty=Non Medical">Request Non Medical Items</a></li>
+              <li><a href="otherstockorders?section=accountant">View Requisitions</a></li>
+              <!-- <li><a href="addaccstock?ty=Non Medical">Request Non Medical Items</a></li> -->
+            </ul>
           </li>          
           
           <li>
@@ -975,16 +985,13 @@
           </ul>
           </li>
           <li>
-            <a class="ai-icon" href="pharmacyorders" aria-expanded="false">
+            <a class="ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-reply"></i>
               <span class="nav-text">Requisitions</span>
             </a>
             <ul>
                 <li><a href="stockrequisition?ty=Non Medical">Non Medical Items Requisitions</a></li>
-              <!-- <li><a href="addstock?ty=Medicine">Request Medicine </a></li>
-              <li><a href="addstock?ty=Medical">Request Medical Items</a></li>
-              <li><a href="addstock?ty=Non Medical">Request Non Medical Items</a></li>
-              <li><a href="pharmacyorders?typ=Non Medical">View Requisitions</a></li>-->
+              <li><a href="otherstockorders?section=store manager">View Requisitions</a></li> 
             </ul>
           </li>
         <?php }

@@ -3,17 +3,30 @@ include 'includes/conn.php';
 include 'utils/bills.php';
 include 'utils/patients.php';
 include 'utils/services.php';
-$roles = array('admin', 'accountant', 'cashier');
-if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
-    header('Location:login.php');
-}
+ if(!isset($_SESSION['elcthospitaladmin'])){
+header('Location:login.php');
+   }
+   $paymethod = isset($_GET['id']) ? $_GET['id']: null;
+   $payment= isset($_GET['type']) ? $_GET['type']: null;
+   
+   $payments = get_all_bills_patient($pdo, $paymethod,$payment);
+   $patient = get_patient_by_id($pdo, $paymethod);
+   $fullname = $patient['fullname'];
+   $pin = $patient['pin'];
+   $paymentype = $patient["paymenttype"];
+   $company="";
+    if ($paymentype == "insurance"){
+        $insu=$patient['insurancecompany'];
+        $getinsurance = mysqli_query($con,"SELECT * FROM insurancecompanies WHERE insurancecompany_id ='$insu'")or die(mysqli_error($con));
+        $insur = mysqli_fetch_array($getinsurance);
+        $company=$insur['company'];
+    }else if ($paymentype == "credit"){
+        $rst = $patient['creditclient'];
+        $getinsurance = mysqli_query($con, "SELECT * FROM creditclients where creditclient_id ='$rst'")or die(mysqli_error($con));
+        $cred= mysqli_fetch_array($getinsurance);
+        $company = $cred['clientname'];
+    }
 
-$paymethod = isset($_GET['id']) ? $_GET['id']: null;
-$payment= isset($_GET['type']) ? $_GET['type']: null;
-
-$payments = get_all_bills_patient($pdo, $paymethod,$payment);
-$patient = get_patient_by_id($pdo, $paymethod);
-$fullname = $patient['fullname'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,16 +35,15 @@ $fullname = $patient['fullname'];
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Paid Services</title>
+    <title> Print Stock Orders</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
-    <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+     <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
     <!-- Custom Stylesheet -->
-    <link href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+    	<link href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
     <link href="css/style.css?<?php echo time(); ?>" rel="stylesheet">
-
+	
 </head>
-
 <body>
 
     <!--*******************
@@ -52,40 +64,45 @@ $fullname = $patient['fullname'];
         Main wrapper start
     ***********************************-->
     <div id="main-wrapper">
-        <?php
-        include 'includes/header.php';
-        ?>
 
-        <div class="content-body">
+     
+        <div class="content-body" style="margin-left: 0px">
             <!-- row -->
-            <div class="container-fluid">
-                <div class="row page-titles mx-0">
-                    <div class="col-sm-6 p-md-0">
-                        <div class="welcome-text">
-                            <h4>Patient Payments</h4>
-
-                        </div>
-                    </div>
-                    <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="#">Patient Payments</a></li>
-                        </ol>
-                    </div>
+			<div class="container-fluid">
+	
+            <div class="row">
+                <div class="col-sm-12">
+                <img alt="image" src="<?php echo BASE_URL; ?>/images/ELVD.png" width="100" />
+                <h1>ELCT-ELVD Nyakato Health Center </h1>
                 </div>
-                <div class="row">
-                <div class="col-lg-4 mb-3">
-                        <a href="printpaidbills.php?id=<?php echo $paymethod ?>&type=<?php echo $payment ?>" class="btn btn-primary">Print</a>
+                <div class="col-sm-6">
+              
+                <address>
+                    <p>P.O Box 3173 Mwanza</p>
+                    <p><b>Invoice #:</b> <?php echo $pin; ?></p>
+                    <p><b>Patient Name:</b> <?php echo $fullname; ?></p>
+                    <p><b>Payment Method:</b> <?php 
+                        if ($payment == "cash"){
+                            ?>
+                            Cash
+                            <?php
+                        }else{
+                            echo $paymentype .'-'. $company;
+                        }
+                    ?></p>
+                </address>
+
+                   
+                </div>
                        
+                     <div class="col-lg-12">
                         
-                    </div>
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title">All Payments for <?php echo $fullname ?></h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
+                                <div class="card">
+                                    <div class="card-header">
+                                        
+                                    </div>
+                                    <div class="card-body">
+                                    <div class="table-responsive">
                                     <table id="example6" class="table  table-bordered display" style="min-width: 845px">
                                         <thead>
                                             <tr>
@@ -295,13 +312,14 @@ $fullname = $patient['fullname'];
                                         </tfoot>
                                     </table>
                                 </div>
-                            </div>
-                        </div>
+                                </div>
 
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+                                       
         <!--**********************************
             Content body end
         ***********************************-->
@@ -309,14 +327,14 @@ $fullname = $patient['fullname'];
         <!--**********************************
             Footer start
         ***********************************-->
-        <?php
-        include 'includes/footer.php';
-        ?>
+     <?php 
+//  include 'includes/footer.php';
+     ?>
         <!--**********************************
             Footer end
         ***********************************-->
 
-        <!--**********************************
+		<!--**********************************
            Support ticket button start
         ***********************************-->
 
@@ -333,29 +351,20 @@ $fullname = $patient['fullname'];
     <!--**********************************
         Scripts
     ***********************************-->
-    <script src="vendor/global/global.min.js"></script>
-    <script src="vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+  <script src="vendor/global/global.min.js"></script>
+	<script src="vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
     <script src="vendor/chart.js/Chart.bundle.min.js"></script>
     <script src="js/custom.min.js"></script>
-    <script src="js/deznav-init.js"></script>
-    <!-- Apex Chart -->
-    <script src="vendor/apexchart/apexchart.js"></script>
-
-
-
-    <!-- Datatable -->
+	<script src="js/deznav-init.js"></script>
+	<!-- Apex Chart -->
+	<script src="vendor/apexchart/apexchart.js"></script>
+    
     <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="js/plugins-init/datatables.init.js"></script>
-
-    <script>
-        $(function() {
-            $('#paymethod').change(function() {
-                var chosenPaymethod = $(this).val();
-                var url = new URL(window.location.href);
-                url.searchParams.set('paymethod', chosenPaymethod);
-                window.location.href = url.href;
-            });
-        })
+<script type="text/javascript">
+        $('document').ready(function(){
+                     window.print(); 
+        });     
     </script>
 </body>
 

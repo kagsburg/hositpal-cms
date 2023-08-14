@@ -94,7 +94,9 @@ $payments = get_all_payments_groupby_patient($pdo, $paymethod);
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
                                                 <!-- <th>Room to Visit</th> -->
+                                                <?php if ($paymethod != 'cash'){?>
                                                 <th>Company</th>
+                                                <?php } ?>
                                                 <!-- <th>Amount</th> -->
                                                 <th>Payment Mode</th>
                                                 <th>Action</th>
@@ -158,11 +160,13 @@ $payments = get_all_payments_groupby_patient($pdo, $paymethod);
                                                     <td><?php echo $fullname; ?></td>
                                                     <td><?php echo $gender; ?></td>
                                                     <!-- <td><?php echo $room; ?></td> -->
+                                                    <?php if ($paymethod != 'cash'){?>
                                                     <td><?php echo $company; ?> </td> 
+                                                    <?php } ?>
                                                     <!-- <td><?php echo $amount; ?></td> -->
                                                     <td><?php echo ucfirst($payment_method); ?></td>
                                                     <td>
-                                                        <a href="paidbills?id=<?php echo $pa;?>" class="btn btn-primary ">View Bills </a>
+                                                        <a href="paidbills?id=<?php echo $pat;?>&type=<?php echo $payment_method; ?>" class="btn btn-primary ">View Bills </a>
                                                     </td>
 
                                                 </tr>

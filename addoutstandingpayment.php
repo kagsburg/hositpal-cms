@@ -469,61 +469,17 @@ $id = $_GET['q'];
 												</select>
 											-->
                                         </div>
+                                        <?php 
+                                            if ($qpaymenttype != "insurance"){
+                                        ?>
                                         <div class="form-group">
                                             <label class="control-label">* Amount</label>
                                             <input type="number" name="payamount" class="form-control" placeholder="Enter amount" required />
-
                                         </div>
-                                        <div class="row forcredit" style="display: none">
-                                            <div class="form-group col-lg-12">
-                                                <label class="control-label">* Credit Client Type</label>
-                                                <select name="clienttype" class="form-control" id="clienttype">
-                                                    <option value="">select type...</option>
-                                                    <option value="individual">Individual</option>
-                                                    <option value="organisation">Organisation</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group col-lg-12 forindividual" style="display: none">
-                                                <?php
-                                                $getclients = mysqli_query($con, "SELECT * FROM creditclients WHERE status=1 AND type='individual' AND clientname='$patient_id'");
-                                                $row = mysqli_fetch_array($getclients);
-                                                $creditclient_id = $row['creditclient_id'];
-                                                $clientname = $row['clientname'];
-                                                $getcredit = mysqli_query($con, "SELECT SUM(amount) AS addedcredit FROM clientcredits WHERE creditclient_id='$creditclient_id'") or die(mysqli_error($con));
-                                                $rowa = mysqli_fetch_array($getcredit);
-                                                $addedcredit = $rowa['addedcredit'];
-                                                $getused = mysqli_query($con, "SELECT SUM(amount) AS creditused FROM usedcredit WHERE creditclient_id='$creditclient_id'") or die(mysqli_error($con));
-                                                $row2 = mysqli_fetch_array($getused);
-                                                $creditused = $row2['creditused'];
-                                                $creditavailable = $addedcredit - $creditused;
-                                                ?>
-                                                <p class="text-info"><strong><i>Credit Available (<?php echo $creditavailable; ?>)</i></strong></p>
-                                                <input name='available' class="form-control" value="<?php echo $creditavailable; ?>" style="display:none">
-                                                <label class="control-label">Add More Credit (Optional)</label>
-                                                <input type="number" name='amount' class="form-control" placeholder="Enter credit">
-                                            </div>
-                                            <div class="form-group col-lg-12 fororganisation" style="display: none">
-                                                <label class="control-label">* Credit Client (Available)</label>
-                                                <select name="creditclient" class="form-control">
-                                                    <option value="">select client...</option>
-                                                    <?php
-                                                    $getclients = mysqli_query($con, "SELECT * FROM creditclients WHERE status=1 AND type='organisation'");
-                                                    while ($row = mysqli_fetch_array($getclients)) {
-                                                        $creditclient_id = $row['creditclient_id'];
-                                                        $clientname = $row['clientname'];
-                                                        $getcredit = mysqli_query($con, "SELECT SUM(amount) AS addedcredit FROM clientcredits WHERE creditclient_id='$creditclient_id'") or die(mysqli_error($con));
-                                                        $row = mysqli_fetch_array($getcredit);
-                                                        $addedcredit = $row['addedcredit'];
-                                                        $getused = mysqli_query($con, "SELECT SUM(amount) AS creditused FROM usedcredit WHERE creditclient_id='$creditclient_id'") or die(mysqli_error($con));
-                                                        $row2 = mysqli_fetch_array($getcredit);
-                                                        $creditused = $row2['creditused'];
-                                                        $creditavailable = $addedcredit - $creditused;
-                                                    ?>
-                                                        <option value="<?php echo  $creditclient_id . '_' . $creditavailable; ?>"><?php echo $clientname . ' (' . $creditavailable . ')'; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                        </div>
+                                        <?php } else{?>
+                                            <input type="number" name="payamount" class="form-control" value="<?php echo $total; ?>" hidden />
+                                        <?php }?>
+                                        
                                         <div class="forinsurance" style="display:none">
                                             <?php
                                             if ($paymenttype != 'insurance') {
@@ -591,7 +547,13 @@ $id = $_GET['q'];
                                         </div>
 
                                         <div class="form-group">
+                                        <?php 
+                                            if ($qpaymenttype == "insurance"){
+                                        ?>
+                                            <button class="btn btn-sm btn-info" name="submit">Confirm Payment</button>
+                                        <?php } else{?>
                                             <button class="btn btn-sm btn-info" name="submit">Submit</button>
+                                        <?php }?>
                                         </div>
 
                                     </form>

@@ -138,7 +138,7 @@ $id = $_GET['q'];
                                         <table class="table table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th colspan="2" class="bg-dark" style="color: #fff"><?php echo $fullname . ' (' . $pin . ')'; ?></th>
+                                                    <th colspan="3" class="bg-dark" style="color: #fff"><?php echo $fullname . ' (' . $pin . ')'; ?></th>
                                                 </tr>
                                                 <?php
                                                 
@@ -178,7 +178,7 @@ $id = $_GET['q'];
 
                                                     $getordered = mysqli_query($con, "SELECT * FROM patientservices WHERE serviceorder_id='$serviceorder_id' AND status=1") or die(mysqli_error($con));
                                                     while ($row = mysqli_fetch_array($getordered)) {
-                                                        $id = $row['patientservice_id'];
+                                                        $id2 = $row['patientservice_id'];
                                                         $medicalservice_id = $row['medicalservice_id'];
                                                         $unitcharge = $row['charge'];
                                                         $total = $total + $unitcharge;
@@ -188,7 +188,7 @@ $id = $_GET['q'];
 
                                                 ?>
                                                         <tr>
-                                                            <td><input type="checkbox" class="selectcheck" id="select<?php echo $id; ?>" data-id="<?php echo $id; ?>" name="service[]" value="<?php echo $id; ?>_<?php echo $unitcharge ?>" ></td>
+                                                            <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-id="<?php echo $id2; ?>" name="service[]" value="<?php echo $id2; ?>_<?php echo $unitcharge ?>" ></td>
                                                             <td><?php echo $room; ?></td>
                                                             <td><?php echo $medicalservice; ?></td>
                                                             <td><?php echo $unitcharge; ?></td>
@@ -203,7 +203,7 @@ $id = $_GET['q'];
                                                         $serviceorder_id = $rowo['laborder_id'];
                                                         $getordered = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id='$serviceorder_id' AND status=1") or die(mysqli_error($con));
                                                         while ($row = mysqli_fetch_array($getordered)) {
-                                                            $id = $row['patientlab_id'];
+                                                            $id2 = $row['patientlab_id'];
                                                             $medicalservice_id = $row['investigationtype_id'];
                                                             $unitcharge = $row['charge'];
                                                             $total = $total + $unitcharge;
@@ -213,7 +213,7 @@ $id = $_GET['q'];
 
                                                         ?>
                                                             <tr>
-                                                            <td><input type="checkbox" class="selectcheck" id="select<?php echo $id; ?>" data-id="<?php echo $id; ?>" name="service[]" value="<?php echo $id; ?>_<?php echo $unitcharge ?>" ></td>
+                                                            <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-id="<?php echo $id2; ?>" name="service[]" value="<?php echo $id2; ?>_<?php echo $unitcharge ?>" ></td>
                                                                 <td><?php echo $room; ?></td>
                                                                 <td><?php echo $medicalservice; ?></td>
                                                                 <td><?php echo $unitcharge; ?></td>
@@ -229,7 +229,7 @@ $id = $_GET['q'];
                                                         $serviceorder_id = $rowo['radioorder_id'];
                                                         $getordered = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id='$serviceorder_id' AND status=1") or die(mysqli_error($con));
                                                         while ($row = mysqli_fetch_array($getordered)) {
-                                                            $id = $row['patientradio_id'];
+                                                            $id2 = $row['patientradio_id'];
                                                             $medicalservice_id = $row['radioinvestigationtype_id'];
                                                             $unitcharge = $row['charge'];
                                                             $total = $total + $unitcharge;
@@ -239,7 +239,7 @@ $id = $_GET['q'];
 
                                                         ?>
                                                             <tr>
-                                                                <td><input type="checkbox" class="selectcheck" id="select<?php echo $id; ?>" data-id="<?php echo $id; ?>" name="service[]" value="<?php echo $id; ?>_<?php echo $unitcharge ?>" ></td>
+                                                                <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-id="<?php echo $id2; ?>" name="service[]" value="<?php echo $id2; ?>_<?php echo $unitcharge ?>" ></td>
                                                                 <td><?php echo $room; ?></td>
                                                                 <td><?php echo $medicalservice; ?></td>
                                                                 <td><?php echo $unitcharge; ?></td>
@@ -296,7 +296,7 @@ $id = $_GET['q'];
                                                         $serviceorder_id = $rowo['pharmacyorder_id'];
                                                         $getordered = mysqli_query($con, "SELECT * FROM pharmacyordereditems WHERE pharmacyorder_id='$serviceorder_id' AND status=1") or die(mysqli_error($con));
                                                         while ($row = mysqli_fetch_array($getordered)) {
-                                                            $id = $row['pharmacyordereditem_id'];
+                                                            $id2 = $row['pharmacyordereditem_id'];
                                                             $medicalservice_id = $row['item_id'];
                                                             $quantity = $row['quantity'];
                                                             $stotal =0; 
@@ -309,7 +309,7 @@ $id = $_GET['q'];
 
                                                         ?>
                                                             <tr>
-                                                                <td><input type="checkbox" class="selectcheck" id="select<?php echo $id; ?>" data-id="<?php echo $id; ?>" name="service[]" value="<?php echo $id; ?>_<?php echo $stotal ?>" ></td>
+                                                                <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-id="<?php echo $id; ?>" name="service[]" value="<?php echo $id; ?>_<?php echo $stotal ?>" ></td>
                                                                 <td><?php echo $room; ?></td>
                                                                 <td><?php echo $medicalservice; ?></td>
                                                                 <td><?php echo $stotal; ?></td>

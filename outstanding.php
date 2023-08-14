@@ -214,7 +214,14 @@ $paymentmethod = isset($_GET['paymethod']) ? $_GET['paymethod']: null;
                                                                     <?php
                                                                     if ($_SESSION['elcthospitallevel'] == 'accountant') {
                                                                     ?>
+                                                                       
+                                                                        <?php 
+                                                                        if ($paymenttype == "insurance"){                                                                        
+                                                                        ?>
+                                                                        <a href="addoutstandingpayment?q=<?php echo $patient_id; ?>" class="btn btn-sm btn-primary"> Confirm Payment</a>
+                                                                        <?php }else{ ?>
                                                                         <a href="addoutstandingpayment?q=<?php echo $patient_id; ?>" class="btn btn-sm btn-primary">Add Payment</a>
+                                                                        <?php } ?>
                                                                         <a href="deletebill?q=<?php echo $patient_id; ?>" onclick="return confirm_delete<?php echo $patient_id; ?>()" class="btn btn-sm btn-danger">Clear</a>
                                                                         <script type="text/javascript">
                                                                             function confirm_delete<?php echo $patient_id; ?>() {
