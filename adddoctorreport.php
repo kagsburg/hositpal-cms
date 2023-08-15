@@ -111,6 +111,14 @@ $id = $_GET['id'];
                     $firstname = $row2['firstname'];
                     $secondname = $row2['secondname'];
                     $thirdname = $row2['thirdname'];
+                    $bloodgroup = $row2['bloodgroup'];
+                    $weight = $row2['weight'];
+                    $height = $row2['height'];
+                    $temp = $row2['temp'];
+                    $bp = $row2['bp'];
+                    $allergies = $row2['allergies'];
+                    $diseases = $row2['diseases'];
+                    $pregnancies = $row2['pregnancies'];
                     $gender = $row2['gender'];
                     $insurancecompany = $row2['insurancecompany'];
                     $ext = $row2['ext'];
@@ -146,6 +154,19 @@ $id = $_GET['id'];
                                     <img src="images/patients/thumbs/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>" alt="" class="img-fluid mt-4 mb-4 w-100">
                                     <h4 class="text-primary"><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?></h4>
 
+                                </div>
+                                <h4 class="text-primary mt-4 mb-4">Medical Information</h4>
+                                <div class="profile-blog mb-5">
+                                    <address>
+                                        <p>Blood Group : <span><?php echo $bloodgroup; ?></span></p>
+                                        <p>Weight (kgs)  : <span><?php echo $weight; ?></span></p>
+                                        <p>Height : <span><?php echo $height; ?></span></p>
+                                        <p>Temperature : <span><?php echo $temp; ?></span></p>
+                                        <p>Blood Pressure : <span><?php echo $bp; ?></span></p>
+                                        <p>Allergies : <span><?php echo $allergies; ?></span></p>
+                                        <p>Diseases : <span><?php echo $diseases; ?></span></p>
+                                        <p>Pregnancies : <span><?php echo $pregnancies; ?></span></p>
+                                    </address>
                                 </div>
                             </div>
                         </div>

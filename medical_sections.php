@@ -3,7 +3,7 @@ include 'includes/conn.php';
 if (($_SESSION['elcthospitallevel'] != 'admin')) {
     header('Location:login.php');
 }
-$id = $_GET['id'];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

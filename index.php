@@ -98,20 +98,25 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 					if (mysqli_num_rows($getemergency) > 0){
 						while ($row = mysqli_fetch_array($getemergency)){
 							$patientid = $row['patient_id'];
+							$admission_id =$row['admission_id'];
 							$getpatient = mysqli_query($con, "SELECT * FROM patients WHERE status=1 and patient_id ='$patientid'");
 							$row = mysqli_fetch_array($getpatient);
 							$fullname = $row['firstname'].' '.$row['secondname'];
 							$patientid = $row['patient_id'];
+							$getque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'and  room ='doctor' AND status=0");
+							if (mysqli_num_rows($getque) > 0){
+								$row = mysqli_fetch_array($getque);
+								$que = $row['patientsque_id'];
 							?>
 							<div class="alert alert-danger alert-dismissible fade show" role="alert">
 								<strong>Emergency Patient!</strong> <?php echo $fullname ?> is on emergency mode.
-								<a href="attendemergency?patientid=<?php echo $patientid ?>" class="btn btn-primary btn-sm">Attend</a>
+								<a href="attendemergency?patientid=<?php echo $patientid ?>&que=<?php  $que;?>" class="btn btn-primary btn-sm">Attend</a>
 								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 									<span aria-hidden="true">×</span>
 								</button>
 							</div>
 							<?php
-						}
+						}}
 					}
 				}
 				

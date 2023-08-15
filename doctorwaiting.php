@@ -188,9 +188,14 @@ if ($mode == '2'){
                                                     <td>
                                                         <?php
                                                         if ($_SESSION['elcthospitallevel'] == 'doctor') {
+                                                            if ($mode == 2){
+                                                                ?>
+                                                                <a href="attendemergency?patientid=<?php echo $patient_id ?>&que=<?php echo $patientsque_id;?>" class="btn btn-primary btn-sm">Attend</a>
+                                                                <?php
+                                                            }else{
                                                         ?>
                                                             <a href="adddoctorreport?id=<?php echo $patientsque_id; ?>" class="btn btn-xs btn-info">Add Patient Report</a>
-                                                            <?php if ($room == 'nurse') { ?>
+                                                            <?php } if ($room == 'nurse') { ?>
                                                                 <button data-toggle="modal" data-target="#nurse<?php echo $patientsque_id; ?>" class="btn btn-xs btn-primary">Nurse Report</button>
                                                                 <div class="modal fade" id="nurse<?php echo $patientsque_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                                     <div class="modal-dialog" role="document">
