@@ -77,6 +77,8 @@ $id = $_GET['id'];
                                         $medicalservice =  mysqli_real_escape_string($con, trim($_POST['medicalservice']));
                                         $charge =  mysqli_real_escape_string($con, trim($_POST['charge']));
                                         $creditprice =  mysqli_real_escape_string($con, trim($_POST['creditprice']));
+                                        $clinic =  mysqli_real_escape_string($con, trim($_POST['clinic']));
+                                        $clinictype =  mysqli_real_escape_string($con, trim($_POST['clinictype']));
                                         $company = $_POST['company'];
                                         $insurancecharge = $_POST['insurancecharge'];
                                         if (empty($medicalservice)) {
@@ -88,14 +90,17 @@ $id = $_GET['id'];
                                                 echo '<div class="alert alert-danger">' . $error . '</div>';
                                             }
                                         } else {
-                                            mysqli_query($con, "INSERT INTO medicalservices(medicalservice,charge,creditprice,section_id,status) VALUES('$medicalservice','$charge','$creditprice','$id',1)") or die(mysqli_error($con));
+                                            mysqli_query($con, "INSERT INTO medicalservices(medicalservice,clinic,clinictype,charge,creditprice,section_id,status) VALUES('$medicalservice','$clinic','$clinictype','$charge','$creditprice','$id',1)") or die(mysqli_error($con));
                                             $last_id = mysqli_insert_id($con);
+                                            // if ()
                                             $companies = sizeof($company);
+                                            if ($companies > 0){
                                             for ($i = 0; $i < $companies; $i++) {
                                                 if (!empty($company[$i])) {
                                                     mysqli_query($con, "INSERT INTO insuredservices(medicalservice_id,insurancecompany_id,charge,status) VALUES('$last_id','$company[$i]','$insurancecharge[$i]','1')") or die(mysqli_error($con));
                                                 }
                                             }
+                                        }
                                             echo '<div class="alert alert-success">Service Successfully Added</div>';
                                         }
                                     }
@@ -121,11 +126,27 @@ $id = $_GET['id'];
                                                 <?php } ?>
                                             </select>                                            
                                         </div>
+                                        <div class="form-group">
+                                            <label class="control-label">Clinic Service</label>
+                                            <select name="clinic" class="clinic form-control" required>
+                                                <option value="">Select Section</option>
+                                                <option value="1">True</option>
+                                                <option value="0">False</option>                                              
+                                            </select>                                            
+                                        </div>
+                                        <div class="form-group forclinic " style="display: none;">
+                                            <label class="control-label">Clinic Type</label>
+                                            <select name="clinictype" class="clitype form-control" id="clitype" >
+                                                <option value="">Select Type</option>
+                                                <option value="1">Free</option>
+                                                <option value="0">Paid</option>                                              
+                                            </select>                                            
+                                        </div>
                                         
-                                        
+                                        <div class="forclitype">
                                         <div class="form-group">
                                             <label>Price Per Unit</label>
-                                            <input type="text" class="form-control" name="charge" required="required">
+                                            <input type="text" class="form-control" name="charge">
                                         </div>
 
                                         <div class="form-group">
@@ -160,6 +181,7 @@ $id = $_GET['id'];
                                                 </div>
 
                                             </div>
+                                        </div>
                                         </div>
                                         <div class="form-group">
                                             <button class="btn btn-primary" type="submit">Submit</button>
@@ -221,6 +243,30 @@ $id = $_GET['id'];
 
 </html>
 <script>
+    $('.clinic').on('change',function(){
+        var clinic = $(this).val();
+        if(clinic == 1){
+            // get the value of the selected option
+            
+            $('.forclinic').show();
+        }else{
+            $clitype = $('#clitype').val();
+            if ($clitype == 1) {
+                $('.forclitype').show();
+            } else {
+                $('.forclitype').hide();
+            }
+            $('.forclinic').hide();
+        }
+    })
+    $('.clitype').on('change',function(){
+        var clitype = $(this).val();
+        if(clitype == 1){
+            $('.forclitype').hide();
+        }else{
+            $('.forclitype').show();
+        }
+    })
    $('.sections').on('change', function() {
             var getselect = $(this).val();
             if ((getselect != '')) {
@@ -237,10 +283,10 @@ $id = $_GET['id'];
     
     $('.subobj_button').click(function(e) { //on add input button click
         e.preventDefault();
-        $('.subobj').append('<div class="row"><div class="col-lg-12"><hr style="border-top: dashed 1px #b7b9cc;"></div><div class="col-lg-11"><div class="row">  <div class="form-group col-lg-6">                                 <label>Insurance company</label>   <select name="company[]" class="form-control"> <option value="">Select company...</option>  <?php $getcompanies =  mysqli_query($con, "SELECT * FROM insurancecompanies WHERE status=1");
+        $('.subobj').append(`<div class="row"><div class="col-lg-12"><hr style="border-top: dashed 1px #b7b9cc;"></div><div class="col-lg-11"><div class="row">  <div class="form-group col-lg-6">                                 <label>Insurance company</label>   <select name="company[]" class="form-control"> <option value="">Select company...</option>  <?php $getcompanies =  mysqli_query($con, "SELECT * FROM insurancecompanies WHERE status=1");
                                                                                                                                                                                                                                                                                                                                                                     while ($row1 =  mysqli_fetch_array($getcompanies)) {
                                                                                                                                                                                                                                                                                                                                                                         $insurancecompany_id = $row1['insurancecompany_id'];
-                                                                                                                                                                                                                                                                                                                                                                        $company = $row1['company'];           ?>    <option value="<?php echo $insurancecompany_id; ?>"><?php echo $company; ?></option>                       <?php } ?>                       </select>   </div><div class="form-group col-lg-6"><label class="control-label">Charge</label>                   <input type="number" name="insurancecharge[]" class="form-control" placeholder="Enter Service Price"></div></div></div> <button class="remove_subobj  btn btn-danger" style="height:30px;margin-top:22px"><i class="fa fa-minus"></i></button></div>'); //add input box
+                                                                                                                                                                                                                                                                                                                                                                        $company = $row1['company'];           ?>    <option value="<?php echo $insurancecompany_id; ?>"><?php echo $company; ?></option>                       <?php } ?>                       </select>   </div><div class="form-group col-lg-6"><label class="control-label">Charge</label>                   <input type="number" name="insurancecharge[]" class="form-control" placeholder="Enter Service Price"></div></div></div> <button class="remove_subobj  btn btn-danger" style="height:30px;margin-top:22px"><i class="fa fa-minus"></i></button></div>`); //add input box
     });
     $('.subobj').on("click", ".remove_subobj", function(e) { //user click on remove text
         e.preventDefault();

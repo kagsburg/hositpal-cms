@@ -92,7 +92,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                 echo '<tr><td colspan="8" class="text-center">No Clients Found</td></tr>';
                                             }else{
                                             while ($row = mysqli_fetch_array($getpatients)) {
-                                             $id = $row['id'];
+                                             $id = $row['clinic_cl_id'];
                                              $name = $row['name'];
                                              $location = $row['location'];
                                              $phone = $row['phone'];
@@ -136,7 +136,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                             
                                                             <!-- <a href="editpatient?id=<?php echo $id; ?>" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit</a> -->
                                                        
-                                                            <a href="hideclinicclient?id=<?php echo $id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_delete<?php echo $id; ?>()">Remove</a>
+                                                            <!-- <a href="hideclinicclient?id=<?php echo $id; ?>" class="btn btn-danger btn-xs" onclick="return confirm_delete<?php echo $id; ?>()">Remove</a> -->
                                                             <script type="text/javascript">
                                                                 function confirm_delete<?php echo $id; ?>() {
                                                                     return confirm('You are about To Remove this client. Are you sure you want to proceed?');

@@ -87,6 +87,8 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             $charge = $row1['charge'];
                                             $creditprice = $row1['creditprice'];
                                             $section_id = $row1['section_id'];
+                                            $clinic = $row1['clinic'];
+                                            $clinictype = $row1['clinictype'];
                                             $getsection =  mysqli_query($con, "SELECT * FROM sections WHERE status=1 AND section_id='$section_id'");
                                             $row1 =  mysqli_fetch_array($getsection);
                                             $section = $row1['section'];
@@ -149,6 +151,22 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                                 <div class="form-group">
                                                                     <label>Credit Price</label>
                                                                     <input type="text" class="form-control" name="creditprice" required="required" value="<?php echo $creditprice; ?>">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="control-label">Clinic Service</label>
+                                                                    <select name="clinic" class="clinic form-control" required>
+                                                                        <option value="">Select Section</option>
+                                                                        <option value="1" <?php if ($clinic == '1'){ ?> selected <?php } ?>>True</option>
+                                                                        <option value="0" <?php if ($clinic == '0'){ ?> selected <?php } ?>>False</option>                                              
+                                                                    </select>                                            
+                                                                </div>
+                                                                <div class="form-group forclinic ">
+                                                                    <label class="control-label">Clinic Type</label>
+                                                                    <select name="clinictype" class="clitype form-control" id="clitype" >
+                                                                        <option value="">Select Type</option>
+                                                                        <option value="1" <?php if ($clinictype == '1'){ ?> selected <?php } ?>>Free</option>
+                                                                        <option value="0" <?php if ($clinictype == '0'){ ?> selected <?php } ?>>Paid</option>                                              
+                                                                    </select>                                            
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <button class="btn btn-primary" type="submit">Submit</button>

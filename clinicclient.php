@@ -16,7 +16,7 @@ $id = $_GET['id'];
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Add Patient Report</title>
+    <title>Add Clinic Client Report</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <script src="ckeditor/ckeditor.js"></script>
@@ -90,18 +90,13 @@ $id = $_GET['id'];
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item"><a href="waitingpatients">Waiting patients</a></li>
+                            <li class="breadcrumb-item"><a href="clinicclients">Waiting patients</a></li>
                             <li class="breadcrumb-item active"><a href="#">Add Report</a></li>
                         </ol>
                     </div>
                 </div>
                 <div class="row">
                     <?php
-                    $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE patientsque_id='$id'");
-                    $row = mysqli_fetch_array($getque);
-                    $patientsque_id = $row['patientsque_id'];
-                    $admission_id = $row['admission_id'];
-                    $room = $row['room'];
                     $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id'");
                     $row1 = mysqli_fetch_array($getadmission);
                     $patient_id = $row1['patient_id'];
@@ -123,10 +118,7 @@ $id = $_GET['id'];
                     $insurancecompany = $row2['insurancecompany'];
                     $ext = $row2['ext'];
                     
-                    $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('nurse','lab') AND status=1 ORDER BY patientsque_id DESC");
-                    $rowp = mysqli_fetch_array($getprevque);
                     $attendant = isset($rowp['attendant']) ? $rowp['attendant'] : "";
-                    $patientsque_id2 = isset($rowp['patientsque_id']) ? $rowp['patientsque_id'] : "";
                     $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
                     $rows = mysqli_fetch_array($getstaff);
                     $fullname = isset($rows['fullname']) ? $rows['fullname'] : "";
@@ -164,8 +156,8 @@ $id = $_GET['id'];
                                         <p>Temperature : <span><?php echo $temp; ?></span></p>
                                         <p>Blood Pressure : <span><?php echo $bp; ?></span></p>
                                         <p>Allergies : <span><?php echo $allergies; ?></span></p>
-                                        <!-- <p>Diseases : <span><?php echo $diseases; ?></span></p>
-                                        <p>Pregnancies : <span><?php echo $pregnancies; ?></span></p> -->
+                                        <p>Diseases : <span><?php echo $diseases; ?></span></p>
+                                        <p>Pregnancies : <span><?php echo $pregnancies; ?></span></p>
                                     </address>
                                 </div>
                             </div>

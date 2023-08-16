@@ -9,6 +9,8 @@
             $charge =  mysqli_real_escape_string($con, trim($_POST['charge']));
             $creditprice =  mysqli_real_escape_string($con, trim($_POST['creditprice']));
             $section =  mysqli_real_escape_string($con, trim($_POST['section']));
+            $clinic =  mysqli_real_escape_string($con, trim($_POST['clinic']));
+            $clinictype =  mysqli_real_escape_string($con, trim($_POST['clinictype']));
             if (empty($medicalservice)) {
                 $errors[] = 'Medical service Name Required';
             }
@@ -21,7 +23,7 @@
                     echo '<div class="alert alert-danger">' . $error . '</div>';
                 }
             } else {
-                mysqli_query($con, "UPDATE medicalservices SET medicalservice='$medicalservice',charge='$charge',creditprice='$creditprice',section_id='$section' WHERE medicalservice_id='$id'") or die(mysqli_error($con));
+                mysqli_query($con, "UPDATE medicalservices SET medicalservice='$medicalservice',clinic='$clinic',clinictype='$clinictype',charge='$charge',creditprice='$creditprice',section_id='$section' WHERE medicalservice_id='$id'") or die(mysqli_error($con));
                 header('Location:' . $_SERVER['HTTP_REFERER']);
             }
         }
