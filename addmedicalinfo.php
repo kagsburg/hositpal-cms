@@ -77,24 +77,26 @@ $patient_id = $patient['patient_id'];
                             <div class="card-body">
                                 <div class="basic-form">
                                 <?php
-                                    if (isset($_POST['bloodgroup'], $_POST['weight'], $_POST['height'], $_POST['allergies'], $_POST['diseases'], $_POST['pregnancies'])) {
+                                    if (isset($_POST['bloodgroup'], $_POST['weight'], $_POST['height'])) {
                                         $bloodgroup = mysqli_real_escape_string($con, trim($_POST['bloodgroup']));
                                         $weight = mysqli_real_escape_string($con, trim($_POST['weight']));
                                         $height = mysqli_real_escape_string($con, trim($_POST['height']));
-                                        $allergies = mysqli_real_escape_string($con, trim($_POST['allergies']));
-                                        $diseases = mysqli_real_escape_string($con, trim($_POST['diseases']));
-                                        $pregnancies = mysqli_real_escape_string($con, trim($_POST['pregnancies']));
+                                        $allergies = "";
+                                        // mysqli_real_escape_string($con, trim($_POST['allergies']));
+                                        $diseases = "";
+                                        $pregnancies = "";
+                                        // mysqli_real_escape_string($con, trim($_POST['pregnancies']));
                                         $temp = mysqli_real_escape_string($con, trim($_POST['temp']));
                                         $bp= mysqli_real_escape_string($con, trim($_POST['bp']));
                                         mysqli_query($con, "UPDATE patients SET bloodgroup='$bloodgroup',weight='$weight',temp='$temp',bp='$bp',height='$height',allergies='$allergies',diseases='$diseases',pregnancies='$pregnancies',level=2, WHERE patient_id='" . $patient_id . "'") or die(mysqli_error($con));
-                                        if (isset($_POST['month'], $_POST['year'])) {
-                                            $month = $_POST['month'];
-                                            $year = $_POST['year'];
-                                            $allsurgeries = sizeof($month);
-                                            for ($i = 0; $i < $allsurgeries; $i++) {
-                                                mysqli_query($con, "INSERT INTO surgeryhistory(month,year,patient_id,status) VALUES('$month[$i]','$year[$i]','" . $patient_id . "','1')") or die(mysqli_error($con));
-                                            }
-                                        }
+                                        // if (isset($_POST['month'], $_POST['year'])) {
+                                        //     $month = $_POST['month'];
+                                        //     $year = $_POST['year'];
+                                        //     $allsurgeries = sizeof($month);
+                                        //     for ($i = 0; $i < $allsurgeries; $i++) {
+                                        //         mysqli_query($con, "INSERT INTO surgeryhistory(month,year,patient_id,status) VALUES('$month[$i]','$year[$i]','" . $patient_id . "','1')") or die(mysqli_error($con));
+                                        //     }
+                                        // }
                                         clear_registration_request($pdo, $reqid);
                                     ?>
                                         
@@ -114,15 +116,15 @@ $patient_id = $patient['patient_id'];
                                                 <input type="text" name="height" class="form-control " placeholder="Enter Height">
                                             </div>
 
-                                            <div class="form-group col-lg-6"><label class="control-label">Allergies to Medication or Food (If Any)</label>
+                                            <!-- <div class="form-group col-lg-6"><label class="control-label">Allergies to Medication or Food (If Any)</label>
                                                 <textarea name="allergies" class="form-control" rows="4"></textarea>
-                                            </div>
-                                            <div class="form-group col-lg-6"><label class="control-label">Any existing disease (seperate with commas)</label>
+                                            </div> -->
+                                            <!-- <div class="form-group col-lg-6"><label class="control-label">Any existing disease (seperate with commas)</label>
                                                 <textarea name="diseases" class="form-control" rows="4"></textarea>
-                                            </div>
-                                            <div class="form-group col-lg-6"><label class="control-label">Number of Pregnancies (if Female)</label>
+                                            </div> -->
+                                            <!-- <div class="form-group col-lg-6"><label class="control-label">Number of Pregnancies (if Female)</label>
                                                 <input type="number" name="pregnancies" class="form-control " placeholder="Enter Number of Pregnancies">
-                                            </div>
+                                            </div> -->
                                             <div class="form-group col-lg-6"><label class="control-label">Temperature</label>
                                                 <input type="number" name="temp" class="form-control " placeholder="Enter Temperature">
                                             </div>
@@ -131,7 +133,7 @@ $patient_id = $patient['patient_id'];
                                                 <input type="text" name="bp" class="form-control " placeholder="Enter Blood Pressure">
                                             </div>
                                         </div>
-                                        <div class="col-lg-12">
+                                        <!-- <div class="col-lg-12">
                                             <h4>Surgery history (if YES)</h4>
                                         </div>
                                         <div class="col-lg-12">
@@ -175,7 +177,7 @@ $patient_id = $patient['patient_id'];
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
 
                                         <div class="form-group pull-left">
                                             <!--<a class="btn btn-success" a href="addpatient3.php">Back</a>-->

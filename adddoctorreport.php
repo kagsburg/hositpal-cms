@@ -155,7 +155,7 @@ $id = $_GET['id'];
                                     <h4 class="text-primary"><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?></h4>
 
                                 </div>
-                                <h4 class="text-primary mt-4 mb-4">Triage</h4>
+                                <h4 class="text-primary mt-4 mb-4">Medical Information</h4>
                                 <div class="profile-blog mb-5">
                                     <address>
                                         <p>Blood Group : <span><?php echo $bloodgroup; ?></span></p>
@@ -163,7 +163,7 @@ $id = $_GET['id'];
                                         <p>Height : <span><?php echo $height; ?></span></p>
                                         <p>Temperature : <span><?php echo $temp; ?></span></p>
                                         <p>Blood Pressure : <span><?php echo $bp; ?></span></p>
-                                        <p>Allergies : <span><?php echo $allergies; ?></span></p>
+                                        <!-- <p>Allergies : <span><?php echo $allergies; ?></span></p> -->
                                         <!-- <p>Diseases : <span><?php echo $diseases; ?></span></p>
                                         <p>Pregnancies : <span><?php echo $pregnancies; ?></span></p> -->
                                     </address>
@@ -687,7 +687,7 @@ $id = $_GET['id'];
                                                                         $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                                                         $row2 =  mysqli_fetch_array($getunit);
                                                                         $measurement = $row2['measurement'];
-                                                                        if ($type == 'Medical') {
+                                                                        if ($type == 'Medicine') {
                                                                     ?>
                                                                             <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname; ?></option>
                                                                     <?php }

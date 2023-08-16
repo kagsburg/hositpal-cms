@@ -3,7 +3,7 @@ include 'includes/conn.php';
 include 'utils/patients.php';
 include 'utils/bills.php';
 
-if (($_SESSION['elcthospitallevel'] != 'doctor')) {
+if (($_SESSION['elcthospitallevel'] != 'nurse')) {
     header('Location:login.php');
 }
 $id = $_GET['id'];
@@ -97,28 +97,19 @@ $id = $_GET['id'];
                 </div>
                 <div class="row">
                     <?php
-                    $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id'");
-                    $row1 = mysqli_fetch_array($getadmission);
-                    $patient_id = $row1['patient_id'];
-                    $paymenttype = get_payment_method($pdo, $patient_id, $admission_id);
-                    $getpatient = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
-                    $row2 = mysqli_fetch_array($getpatient);
-                    $firstname = $row2['firstname'];
-                    $secondname = $row2['secondname'];
-                    $thirdname = $row2['thirdname'];
+                    $getclinic = mysqli_query($con, "SELECT * FROM clinic_clients WHERE clinic_cl_id='$id' and status='1'") or die(mysqli_error($con));
+                    $row2 = mysqli_fetch_array($getclinic);
+                    $patient_id = $row2['clinic_cl_id'];
+                    $patfullname = $row2['name'];
+                    $location = $row2['location'];
+                    $pregnancy_month = $row2['pregnancy_month'];
                     $bloodgroup = $row2['bloodgroup'];
                     $weight = $row2['weight'];
-                    $height = $row2['height'];
-                    $temp = $row2['temp'];
-                    $bp = $row2['bp'];
-                    $allergies = $row2['allergies'];
-                    $diseases = $row2['diseases'];
-                    $pregnancies = $row2['pregnancies'];
-                    $gender = $row2['gender'];
-                    $insurancecompany = $row2['insurancecompany'];
-                    $ext = $row2['ext'];
+                    $partner_name = $row2['partner_name'];
+                    $paytype = $row2['paytype'];
+                    $paytype_id = $row2['paytype_id'];                   
                     
-                    $attendant = isset($rowp['attendant']) ? $rowp['attendant'] : "";
+                    $attendant =  $row2['user_id'];
                     $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
                     $rows = mysqli_fetch_array($getstaff);
                     $fullname = isset($rows['fullname']) ? $rows['fullname'] : "";
@@ -144,20 +135,20 @@ $id = $_GET['id'];
 
                                 <div class="profile-blog mb-5">
                                     <img src="images/patients/thumbs/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>" alt="" class="img-fluid mt-4 mb-4 w-100">
-                                    <h4 class="text-primary"><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?></h4>
+                                    <h4 class="text-primary"><?php echo $patfullname; ?></h4>
 
                                 </div>
-                                <h4 class="text-primary mt-4 mb-4">Triage</h4>
+                                <h4 class="text-primary mt-4 mb-4">Medical Information</h4>
                                 <div class="profile-blog mb-5">
                                     <address>
                                         <p>Blood Group : <span><?php echo $bloodgroup; ?></span></p>
                                         <p>Weight (kgs)  : <span><?php echo $weight; ?></span></p>
-                                        <p>Height : <span><?php echo $height; ?></span></p>
-                                        <p>Temperature : <span><?php echo $temp; ?></span></p>
+                                        <p>pregnancy month : <span><?php echo $pregnancy_month; ?></span></p>
+                                        <!-- <p>Temperature : <span><?php echo $temp; ?></span></p>
                                         <p>Blood Pressure : <span><?php echo $bp; ?></span></p>
                                         <p>Allergies : <span><?php echo $allergies; ?></span></p>
                                         <p>Diseases : <span><?php echo $diseases; ?></span></p>
-                                        <p>Pregnancies : <span><?php echo $pregnancies; ?></span></p>
+                                        <p>Pregnancies : <span><?php echo $pregnancies; ?></span></p> -->
                                     </address>
                                 </div>
                             </div>
@@ -168,11 +159,11 @@ $id = $_GET['id'];
 
                             <div class="card-header" style="padding-bottom: 0.75rem;">
                                 <ul class="nav nav-tabs card-header-tabs" id="form-list" role="tablist">
-                                    <li class="nav-item">
+                                    <!-- <li class="nav-item">
                                         <a class="nav-link active" href="#diagnosis" data-toggle="tab" data-target="#diagnosis" role="tab" aria-controls="diagnosis" aria-selected="true">Diagnosis</a>
-                                    </li>
+                                    </li> -->
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#nurse" data-toggle="tab" data-target="#nurse" role="tab" aria-controls="nurse" aria-selected="false">Nurse</a>
+                                        <a class="nav-link active" href="#nurse" data-toggle="tab" data-target="#nurse" role="tab" aria-controls="nurse" aria-selected="false">Medical Services</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="#pharmacy" data-toggle="tab" data-target="#pharmacy" role="tab" aria-controls="pharmacy" aria-selected="false">Pharmacy</a>
@@ -183,28 +174,7 @@ $id = $_GET['id'];
                                     <li class="nav-item">
                                         <a class="nav-link" href="#radiography" data-toggle="tab" data-target="#radiography" role="tab" aria-controls="radiography" aria-selected="false">Radiology </a>
                                     </li>
-                                    <?php 
-                                    // get admitted details
-                                    $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE admission_id='$admission_id' AND status=1");
-                                    if (mysqli_num_rows($getadmitted)>0){
-                                    ?>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#anesthesiology" data-toggle="tab" data-target="#anesthesiology" role="tab" aria-controls="anesthesiology" aria-selected="false">Anesthesiology</a>
-                                    </li>
-                                    <?php } ?>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#patron" data-toggle="tab" data-target="#patron" role="tab" aria-controls="patron" aria-selected="false">Patron</a>
-                                    </li>
-                                    <?php
-                                    if (mysqli_num_rows($getadmitted)==0){
-                                        ?>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#admission" data-toggle="tab" data-target="#admission" role="tab" aria-controls="admission" aria-selected="false">Admission</a>
-                                    </li>
-                                    <?php } ?>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#referral" data-toggle="tab" data-target="#referral" role="tab" aria-controls="referral" aria-selected="false">Referral</a>
-                                    </li>
+                                   
                                     <!-- <li class="nav-item">
                                         <a class="nav-link" href="#acts" data-toggle="tab" data-target="#acts" role="tab" aria-controls="acts" aria-selected="false">Acts</a>
                                     </li> -->
@@ -216,15 +186,7 @@ $id = $_GET['id'];
                             <div class="card-body">
                                 <?php 
                                     if (isset($_POST['submit'])) {
-                                        $complaint = $_POST["complaint"];
-                                        $physical_exam = $_POST["physical_exam"];
-                                        $systematic_exam = $_POST["systematic_exam"];
-                                        $provisional_diagnosis = $_POST["provisional_diagnosis"];
-                                        $final_diagnosis = $_POST["final_diagnosis"];
-                                        
-                                        $final_diagnosis = is_array($final_diagnosis) ? implode(",", $final_diagnosis) : $final_diagnosis;
-                                        $provisional_diagnosis = is_array($provisional_diagnosis) ? implode(",", $provisional_diagnosis) : $provisional_diagnosis;
-    
+                                         
     
                                         $references = isset($_POST['reference']) ? $_POST['reference'] : [''];
                                             foreach ($references as $reference_key) {
@@ -250,50 +212,7 @@ $id = $_GET['id'];
                                                     }
                                                     if ($reference == 'radiography') {
                                                         $attendant = $radiographer;
-                                                    }
-                                                    if ($reference == 'anesthesiology') {
-                                                        $attendant = $anesthesiologist;
-                                                    }
-                                                    if ($reference == 'patron') {
-                                                        $attendant = $patron;
-                                                    }
-                                                    if ($reference == 'admission'){
-                                                        $attendant=$nurse;
-                                                    }
-                                                    if ($reference == 'referral'){
-                                                        $attendant=$nurse;
-                                                    }
-                                                    if ($reference == 'referral'){
-                                                        $ros = $reference_obj['ros'];
-                                                        $pmh = $reference_obj['pmh'];
-                                                        $dia = $reference_obj['dia'];
-                                                        $treat = $reference_obj['treat'];
-                                                        $details = $reference_obj['ros'];
-                                                        $hpi = $reference_obj['hpi'];
-                                                        mysqli_query($con, "INSERT INTO referral(patient_id,date,HPI,ROS,PMH,diagnosis,treatment,reason,admin_id,status) VALUES('$patient_id',UNIX_TIMESTAMP(),'$hpi','$ros','$pmh','$dia','$treat','$reason','" . $_SESSION['elcthospitaladmin'] . "',1)") or die(mysqli_error($con));
-                                                        $last_id = mysqli_insert_id($con);
-                                                        mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
-                                                        // create_bill($pdo,$patient_id,$admission_id,$id,'referral',$last_id,$referralfee,$paymenttype);
-                                                        $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully Referred.</div>';
-                                                            // redirect to doctorwaiting
-                                                            echo '<script>window.location.href = "doctorwaiting.php";</script>';
-                                                    }
-                                                    
-                                                    if ($reference == 'anesthesiology'){
-                                                        mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','1','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
-                                                        $new_patientsque_id = mysqli_insert_id($con);
-                                                        mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
-                                                        $_SESSION['success'] = '<div class="alert alert-success">Patient Successfully sent to Anesthesiology.</div>';
-                                                            // redirect to doctorwaiting
-                                                        echo '<script>window.location.href = "doctorcleared.php";</script>';
-
-                                                    }
-                                                    if ($reference == 'admission'){
-                                                        mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),5,'$id')") or die(mysqli_error($con));
-                                                    }else{
-                                                        mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','doctor',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
-                                                    }  
-                                                    $new_patientsque_id = mysqli_insert_id($con);
+                                                    } 
                                                     if (isset($reference_obj['medicalservices'])) {
                                                         // format: [{id: charge}]
                                                         $cashfallbacks = [];
@@ -526,65 +445,21 @@ $id = $_GET['id'];
                                 
                                 <form method="post" name='form' class="form" action="" enctype="multipart/form-data">
                                     <div class="tab-content mt-3" id="nextref">
-                                        <div class="tab-pane active" id="diagnosis" role="tabpanel">
-                                            <div class="form-group"><label class="control-label">Main complains</label>
-                                                <textarea class="ckeditor" cols="70" id="complaint" rows="8" name="complaint"></textarea>
-                                            </div>
-                                            <div class="form-group"><label class="control-label">Physical Examination</label>
-                                                <textarea class="ckeditor" cols="70" id="physical_exam" rows="8" name="physical_exam"></textarea>
-                                            </div>
-                                            <div class="form-group"><label class="control-label">Systematic Examination</label>
-                                                <textarea class="ckeditor" cols="70" id="systematic_exam" rows="8" name="systematic_exam"></textarea>
-                                            </div>
-                                            <div class="form-group"><label class="control-label">Provisional Diagnosis</label>
-                                                <select name="provisional_diagnosis[]" id="provisional_diagnosis" class="form-control select2 multi-select" multiple>
-                                                    <option value="">Select Disease</option>
+                                       
 
-                                                    <?php
-                                                    $getmedicalservices =  mysqli_query($con, "SELECT * FROM diseases WHERE status=1");
-                                                    while ($row11 =  mysqli_fetch_array($getmedicalservices)) {
-                                                        $disease_id = $row11['disease_id'];
-                                                        $codename = $row11['codename'];
-                                                        $codenumber = $row11['codenumber'];
-                                                    ?>
-                                                        <option value="<?php echo $disease_id; ?>"><?php echo $codename . ' (' . $codenumber . ')'; ?></option>
-
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label class="control-label">Final Diagnosis</label>
-                                                <select name="final_diagnosis[]" id="final_diagnosis" class="form-control select2 multi-select" multiple>
-                                                    <option value="">Select Disease</option>
-
-
-                                                    <?php
-                                                    $getmedicalservices =  mysqli_query($con, "SELECT * FROM diseases WHERE status=1");
-                                                    while ($row11 =  mysqli_fetch_array($getmedicalservices)) {
-                                                        $disease_id = $row11['disease_id'];
-                                                        $codename = $row11['codename'];
-                                                        $codenumber = $row11['codenumber'];
-                                                    ?>
-                                                        <option value="<?php echo $disease_id; ?>"><?php echo $codename . ' (' . $codenumber . ')'; ?></option>
-
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="tab-pane nref" id="nurse" role="tabpanel" aria-labelledby="nurse-tab">
-                                            <div class="form-check mb-3">
+                                        <div class="tab-pane nref active" id="nurse" role="tabpanel" aria-labelledby="nurse-tab">                                           
+                                        <div class="form-check mb-3">
                                                 <input class="form-check-input reference" name="reference[]" type="checkbox" value="nurse" data-ref="nurse" id="send-nurse">
                                                 <label class="form-check-label" for="send-nurse">
-                                                    Send to nurse
+                                                    Medical Services
                                                 </label>
                                             </div>
-
-                                            <div class="form-group notmedic" style="display: none;">
+                                            <div  class="form-group notmedic" style="display: none;">
                                                 <label class="control-label">Section</label>
                                                 <select name="ref[nurse][section][]" class="sections form-control">
                                                     <option value="">Select Section</option>
                                                     <?php
-                                                    $getsections =  mysqli_query($con, "SELECT * FROM sections WHERE status=1");
+                                                    $getsections =  mysqli_query($con, "SELECT * FROM sections WHERE status=1 ");
                                                     while ($row1 =  mysqli_fetch_array($getsections)) {
                                                         $section_id = $row1['section_id'];
                                                         $section = $row1['section'];
@@ -594,7 +469,7 @@ $id = $_GET['id'];
                                                 </select>
                                             </div>
 
-                                            <div class="form-group notmedic" style="display: none;">
+                                            <div  class="form-group notmedic" style="display: none;">
                                                 <label class="control-label">Medical Services</label>
                                                 <select name="ref[nurse][servicename]" class="form-control servicename msnr multi-select_1">
                                                     <option value="">Select Medical Service</option>
@@ -607,7 +482,7 @@ $id = $_GET['id'];
                                                     <div id="" style="display:none;width:100%;" class="row services service<?php echo $section_id; ?> form-group">
 
                                                         <?php
-                                                        $getmedicalservices =  mysqli_query($con, "SELECT * FROM medicalservices WHERE status=1 AND section_id='$section_id' ORDER BY medicalservice");
+                                                        $getmedicalservices =  mysqli_query($con, "SELECT * FROM medicalservices WHERE status=1 AND section_id='$section_id' and clinic=1 ORDER BY medicalservice");
                                                         while ($row1 =  mysqli_fetch_array($getmedicalservices)) {
                                                             $medicalservice_id = $row1['medicalservice_id'];
                                                             $medicalservice = $row1['medicalservice'];
@@ -625,20 +500,6 @@ $id = $_GET['id'];
                                                     </div>
                                                 <?php } ?>
                                             </div>
-                                            <!-- <div class="form-group fornurse" style="display: none">
-                                                <label>Select Nurse</label>
-                                                <select class="form-control room" name="ref[nurse][nurse]">
-                                                    <option selected="selected" value="">Select option..</option>
-                                                    <?php
-                                                    $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE status=1 AND role='nurse'");
-                                                    while ($row = mysqli_fetch_array($getstaff)) {
-                                                        $staff_id = $row['staff_id'];
-                                                        $fullname = $row['fullname'];
-                                                    ?>
-                                                        <option value="<?php echo $staff_id; ?>"><?php echo $fullname; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div> -->
                                             <div class="form-group fornurse" style="display: none;">
                                                 <label class="control-label">* Details & Instructions</label>
                                                 <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[nurse][details]"></textarea>
@@ -666,7 +527,7 @@ $id = $_GET['id'];
                                                                 <select class="form-control room select2 msnr multi-select_1" name="ref[pharmacy][drug][]">
                                                                     <option selected="selected" value="">Select option..</option>
                                                                     <?php
-                                                                    $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ");
+                                                                    $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1");
                                                                     while ($row = mysqli_fetch_array($getitems)) {
                                                                         $inventoryitem_id = $row['inventoryitem_id'];
                                                                         $itemname = $row['itemname'];
@@ -679,7 +540,7 @@ $id = $_GET['id'];
                                                                         $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                                                         $row2 =  mysqli_fetch_array($getunit);
                                                                         $measurement = $row2['measurement'];
-                                                                        if ($type == 'Medical') {
+                                                                        if ($type == 'Medicine') {
                                                                     ?>
                                                                             <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname; ?></option>
                                                                     <?php }
@@ -704,79 +565,6 @@ $id = $_GET['id'];
                                             <div class="form-group pharmacy" style="display: none;">
                                                 <label class="control-label">* Details & Instructions</label>
                                                 <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[pharmacy][details]"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="tab-pane nref" id="patron" role="tabpanel" aria-labelledby="patron-tab">
-
-                                            <div class="form-check mb-3">
-                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="patron" data-ref="patron" id="send-patron">
-                                                <label class="form-check-label" for="send-patron">
-                                                    Send to patron/matron
-                                                </label>
-                                            </div>
-
-                                            <div class="form-group notmedic" style="display: none;">
-                                                <label class="control-label">Section</label>
-                                                <select name="ref[patron][section][]" class="sections form-control">
-                                                    <option value="">Select Section</option>
-                                                    <?php
-                                                    $getsections =  mysqli_query($con, "SELECT * FROM sections WHERE status=1");
-                                                    while ($row1 =  mysqli_fetch_array($getsections)) {
-                                                        $section_id = $row1['section_id'];
-                                                        $section = $row1['section'];
-                                                    ?>
-                                                        <option value="<?php echo $section_id; ?>"><?php echo $section; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                            <div class="form-group notmedic" style="display: none;">
-                                                <label class="control-label">Medical Services</label>
-                                                <select name="ref[patron][servicename]" class="form-control servicename msnr multi-select_1">
-                                                    <option value="">Select Medical Service</option>
-                                                </select>
-                                                <?php
-                                                $getsection =  mysqli_query($con, "SELECT * FROM sections WHERE status=1");
-                                                while ($row =  mysqli_fetch_array($getsection)) {
-                                                    $section_id = $row['section_id'];
-                                                ?>
-                                                    <div id="" style="display:none;width:100%;" class="row services service<?php echo $section_id; ?> form-group">
-
-                                                        <?php
-                                                        $getmedicalservices =  mysqli_query($con, "SELECT * FROM medicalservices WHERE status=1 AND section_id='$section_id' ORDER BY medicalservice");
-                                                        while ($row1 =  mysqli_fetch_array($getmedicalservices)) {
-                                                            $medicalservice_id = $row1['medicalservice_id'];
-                                                            $medicalservice = $row1['medicalservice'];
-                                                            $charge = $row1['charge'];
-                                                        ?>
-                                                            <div class="col-lg-6">
-                                                                <div class="form-check form-check-inline">
-                                                                    <label class="form-check-label" style="font-size:14px">
-                                                                        <input type="checkbox" class="form-check-input" value="<?php echo $medicalservice_id; ?>" name="ref[patron][medicalservices][]"><?php echo $medicalservice; ?>
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-
-                                                        <?php } ?>
-                                                    </div>
-                                                <?php } ?>
-                                            </div>
-                                            <!-- <div class="form-group forpatron" style="display: none">
-                                                <label>Select Patron / Matron</label>
-                                                <select class="form-control room" name="ref[patron][patron]">
-                                                    <option selected="selected" value="">Select option..</option>
-                                                    <?php
-                                                    $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE status=1 AND role='patron'");
-                                                    while ($row = mysqli_fetch_array($getstaff)) {
-                                                        $staff_id = $row['staff_id'];
-                                                        $fullname = $row['fullname'];
-                                                    ?>
-                                                        <option value="<?php echo $staff_id; ?>"><?php echo $fullname; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div> -->
-                                            <div class="form-group forpatron" style="display: none;">
-                                                <label class="control-label">* Details & Instructions</label>
-                                                <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[patron][details]"></textarea>
                                             </div>
                                         </div>
                                         <div class="tab-pane nref" id="lab" role="tabpanel" aria-labelledby="lab-tab">
@@ -822,56 +610,7 @@ $id = $_GET['id'];
                                                 <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[lab][details]"></textarea>
                                             </div>
                                         </div>
-                                        <div class="tab-pane nref" id="anesthesiology" role="tabpanel" aria-labelledby="anesthesiology-tab">
-                                            <div class="form-check mb-3">
-                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="anesthesiology" data-ref="anesthesiology" id="send-anesthesiology">
-                                                <label class="form-check-label" for="send-anesthesiology">
-                                                    Send to anesthesiology
-                                                </label>
-                                            </div>
-                                            
-                                        </div>
-                                        <div class="tab-pane nref" id="admission" role="tabpanel" aria-labelledby="admission-tab">
-                                            <div class="form-check mb-3">
-                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="admission" data-ref="admission" id="send-admission">
-                                                <label class="form-check-label" for="send-admission">
-                                                    Admit Patient 
-                                                </label>
-                                            </div>
-                                            <div class="foradmission" style="display:none">                                            
-                                                <div class="form-group">
-                                                    <label class="control-label">Select Ward and Bed Number</label>
-                                                    <select name="ref[admission][ward]" id="bedname" class="form-control">
-                                                        <option value="" selected="">Select ward and Bed Number</option>
-                                                   
-                                                    <?php
-                                                    $getwards =  mysqli_query($con, "SELECT * FROM wards WHERE status=1");
-                                                    while ($row = mysqli_fetch_array($getwards)) {
-                                                        $ward_id = $row['ward_id'];
-                                                        $ward_name = $row['wardname'];
-                                                    ?>
-                                                            <?php
-                                                            $getbeds =  mysqli_query($con, "SELECT * FROM beds WHERE status=1 AND ward_id='$ward_id'");
-                                                            while ($row1 =  mysqli_fetch_array($getbeds)) {
-                                                                $bed_id = $row1['bed_id'];
-                                                                $bednumber = $row1['bedname'];
-                                                                $checkbed = mysqli_query($con, "SELECT * FROM admitted WHERE bed_id='$bed_id' AND status=1");
-                                                                if (mysqli_num_rows($checkbed) == 0) {
-                                                            ?>
-                                                                    <option value="<?php echo $ward_id ?>_<?php echo $bed_id ?>">Ward <?php echo $ward_name; ?> (<?php echo $bednumber; ?>)</option>
-                                                            <?php }
-                                                            } ?>
-                                                    <?php } ?>
-                                                </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="control-label">Number of Days </label>
-                                                    <input type="text" class="form-control" name="ref[admission][days]" value=""/>
-
-                                                </div>
-                                            </div>
-                                            
-                                        </div> 
+                                        
                                         <div class="tab-pane nref" id="radiography" role="tabpanel" aria-labelledby="radiography-tab">
                                             <div class="form-check mb-3">
                                                 <input class="form-check-input reference" name="reference[]" type="checkbox" value="radiography" data-ref="radiography" id="send-radiography">
@@ -917,73 +656,7 @@ $id = $_GET['id'];
                                                 <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[radiography][details]"></textarea>
                                             </div>
                                         </div>
-                                        <div class="tab-pane nref" id="referral" role="tabpanel" aria-labelledby="referral-tab">
-                                            <div class="form-check mb-3">
-                                                <input class="form-check-input reference" name="reference[]" type="checkbox" value="referral" data-ref="referral" id="send-referral">
-                                                <label class="form-check-label" for="send-referral">
-                                                    Send to Referral
-                                                </label>
-                                            </div>
-                                            <div class="forreferral" style="display:none">
-                                                <div class="row">
-                                                    <div class="col-sm-6 form-group">
-                                                        <label class="control-label">Date </label>
-                                                        <input type="date" class="form-control" name="ref[referral][date]" value=""/>
-                                                    </div>
-                                                    <div class="col-sm-6 form-group">
-                                                        <label class="control-label">Time </label>
-                                                        <input type="time" class="form-control" name="ref[referral][time]" value=""/>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                        <label class="control-label">HPI </label>
-                                                        <input type="text" class="form-control" name="ref[referral][hpi]" value=""/>
-                                                </div>
-                                                <div class="form-group">
-                                                        <label class="control-label">ROS </label>
-                                                        <input type="text" class="form-control" name="ref[referral][ros]" value=""/>
-                                                </div>
-                                                <div class="form-group">
-                                                        <label class="control-label">PMH </label>
-                                                        <input type="text" class="form-control" name="ref[referral][pmh]" value=""/>
-                                                </div>
-                                                <div class="form-group">
-                                                        <label class="control-label">Diagnosis investigation </label>
-                                                        <textarea type="text" class="form-control" name="ref[referral][dia]" value=""></textarea>
-                                                </div>
-                                                <div class="form-group">
-                                                        <label class="control-label">Treatments </label>
-                                                        <textarea type="text" class="form-control" name="ref[referral][treat]" value=""></textarea>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="control-label">* Reason for referral</label>
-                                                    <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[referral][reason]"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="form-group forradiography" style="display: none;">
-                                                <label class="control-label">Measurement</label>
-                                                <select name="ref[radiography][radiomeasure][]" id="rmname" class="form-control select2 msnr multi-select_1" multiple>
-                                                    <option value="">Select Measurement</option>
-
-
-                                                    <?php
-                                                    $getmedicalservices =  mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1");
-                                                    while ($row1 =  mysqli_fetch_array($getmedicalservices)) {
-                                                        $medicalservice_id = $row1['radioinvestigationtype_id'];
-                                                        $medicalservice = $row1['investigationtype'];
-                                                        $charge = $row1['charge'];
-                                                    ?>
-                                                        <option value="<?php echo $medicalservice_id; ?>"><?php echo $medicalservice; ?></option>
-
-                                                    <?php } ?>
-                                                </select>
-
-                                            </div>
-                                            <div class="form-group forradiography" style="display: none;">
-                                                <label class="control-label">* Details & Instructions</label>
-                                                <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[radiography][details]"></textarea>
-                                            </div>
-                                        </div>
+                                        
                                        
                                         
                                          
