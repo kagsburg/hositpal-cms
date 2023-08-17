@@ -148,6 +148,14 @@ $id = $_GET['id'];
                                             if ($mode == 'normal') {
                                                 $last_id = mysqli_insert_id($con);
                                                 $admission_id = $last_id;
+                                                if ($room == 'clinic'){
+                                                    $getpatient= mysqli_query($con, "SELECT * FROM patients WHERE patient_id='$id'");
+                                                    $row = mysqli_fetch_array($getpatient);
+                                                    $clinic = $row['clinic'];
+                                                    mysqli_query($con, "UPDATE clinic_clients SET status='4' WHERE clinic_cl_id ='$clinic'") or die(mysqli_error($con));
+                                                    echo '<div class="alert alert-success">Patient Successfully Attended.</div>';
+
+                                                }else{
                                                 mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$last_id','$room','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','receptionist',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
                                                 $patientsque_id = mysqli_insert_id($con);
 
@@ -194,6 +202,7 @@ $id = $_GET['id'];
                                                     }
                                                 }
                                                 echo '<div class="alert alert-success">Patient Successfully Attended.</div>';
+                                                }
                                             }else{
                                                 $last_id = mysqli_insert_id($con);
                                                 $admission_id = $last_id;
@@ -277,6 +286,7 @@ $id = $_GET['id'];
                                                 <option selected="selected" value="">Select option..</option>
                                                 <option value="nurse">Nurse Room</option>
                                                 <option value="doctor">Doctor Room</option>
+                                                <option value="clinic">Clinic</option>
                                             </select>
                                         </div>
                                         <!-- <div class="form-group doctors" style="display: none">
@@ -324,7 +334,7 @@ $id = $_GET['id'];
                                             </select>
                                         </div>
                                         <?php */ ?>
-                                        <div class="form-group">
+                                        <div class="form-group ward">
                                             <label class="control-label">Section</label>
                                             <select name="section" class="sections form-control">
                                                 <option value="">Select Section</option>
@@ -338,7 +348,7 @@ $id = $_GET['id'];
                                                 <?php } ?>
                                             </select>                                            
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group ward">
                                             <label class="control-label">Medical Services</label>
                                             <select name="servicename" id="servicename" class="form-control">
                                                 <option value="">Select Medical Service</option>
@@ -452,7 +462,16 @@ $id = $_GET['id'];
 
             }
         });
-
+        $('.room').on('change',function(){
+            var getroom= $(this).val();
+            if (getroom == 'clinic') {
+                $('.clinic').show();
+                $('.ward').hide();
+            }else{
+                $('.clinic').hide();
+                $('.ward').show();
+            }
+        })
         
         $('.sections').on('change', function() {
             var getselect = $(this).val();

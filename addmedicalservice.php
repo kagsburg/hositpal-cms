@@ -135,7 +135,7 @@ $id = $_GET['id'];
                                             </select>                                            
                                         </div>
                                         <div class="form-group forclinic " style="display: none;">
-                                            <label class="control-label">Clinic Type</label>
+                                            <label class="control-label">Payment Type</label>
                                             <select name="clinictype" class="clitype form-control" id="clitype" >
                                                 <option value="">Select Type</option>
                                                 <option value="1">Free</option>

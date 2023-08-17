@@ -88,7 +88,7 @@ $patient_id = $patient['patient_id'];
                                         // mysqli_real_escape_string($con, trim($_POST['pregnancies']));
                                         $temp = mysqli_real_escape_string($con, trim($_POST['temp']));
                                         $bp= mysqli_real_escape_string($con, trim($_POST['bp']));
-                                        mysqli_query($con, "UPDATE patients SET bloodgroup='$bloodgroup',weight='$weight',temp='$temp',bp='$bp',height='$height',allergies='$allergies',diseases='$diseases',pregnancies='$pregnancies',level=2, WHERE patient_id='" . $patient_id . "'") or die(mysqli_error($con));
+                                        mysqli_query($con, "UPDATE patients SET bloodgroup='$bloodgroup',weight='$weight',temp='$temp',bp='$bp',height='$height',level=2 WHERE patient_id='" . $patient_id . "'") or die(mysqli_error($con));
                                         // if (isset($_POST['month'], $_POST['year'])) {
                                         //     $month = $_POST['month'];
                                         //     $year = $_POST['year'];

@@ -84,8 +84,8 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                 <th>Phone</th>
                                                 <th>Blood Group</th>
                                                 <th>Pregnancy Month</th>
-                                                <th>Partner Name</th>
-                                                <th>Partner Mobile</th>
+                                                <!-- <th>Partner Name</th>
+                                                <th>Partner Mobile</th> -->
                                                 <!-- <th>Date Added</th> -->
                                                 <th>Action</th>
 
@@ -93,13 +93,17 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $getpatients = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status in (1,4)");
+                                            $getpatients = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status in (1,2)");
                                             if (mysqli_num_rows($getpatients) ==0) {
-                                                echo '<tr><td colspan="8" class="text-center">No Clients Found</td></tr>';
+                                                echo '<tr><td colspan="6" class="text-center">No Clients Found</td></tr>';
                                             }else{
                                             while ($row = mysqli_fetch_array($getpatients)) {
                                              $id = $row['clinic_cl_id'];
                                              $name = $row['name'];
+                                            //  check for patient file
+                                            $checkfile = mysqli_query($con,"SELECT * FROM patients WHERE clinic='$id' ");
+                                            if (mysqli_num_rows($checkfile) ==0) {
+                                                $file = '0';
                                              $location = $row['location'];
                                              $phone = $row['phone'];
                                              $weight = $row['weight'];
@@ -130,12 +134,12 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                     <td><?php echo $phone; ?></td>
                                                     <td><?php echo $bloodgroup; ?></td>
                                                     <td><?php echo $pregnancy_month; ?></td>
-                                                    <td><?php echo $partner_name; ?></td>
-                                                    <td><?php echo $partner_mobile; ?></td>
+                                                    <!-- <td><?php echo $partner_name; ?></td>
+                                                    <td><?php echo $partner_mobile; ?></td> -->
                                                     
 
                                                     <td>
-                                                        <a href="clinicclient?id=<?php echo $id; ?>" class="btn btn-success btn-xs">Add Report</a>
+                                                        <a href="addpatclinicclient?id=<?php echo $id; ?>" class="btn btn-success btn-xs">Add Patient File</a>
                                                         <?php
                                                         if ($_SESSION['elcthospitallevel'] == 'nurse') {
                                                         ?>
@@ -149,7 +153,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                                 }
                                                             </script>
 
-                                                        <?php } ?>
+                                                        <?php }} ?>
                                                     </td>
 
 

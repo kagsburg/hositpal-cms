@@ -395,6 +395,7 @@
             <ul aria-expanded="false">
               <li><a href="addpatient">Add Patient</a></li>
               <li><a href="registrationpending">Pending Registrations</a></li>
+              <li><a href="cliniccli"> Clinic Clients </a></li>
 
             </ul>
           </li>
@@ -586,6 +587,7 @@
             <ul aria-expanded="false">
               <li><a href="addclinicclient">Add Client</a></li>
               <li><a href="clinicclients">Clients</a></li>
+              <li><a href="clinicwaiting?ty=medical_service">Waiting List</a></li>
             </ul>
           </li>
           <!-- <li>
@@ -753,6 +755,13 @@
             </a>
 
           </li>
+          <li>
+            <a class="ai-icon" href="clinicwaiting?ty=lab" aria-expanded="false">
+              <i class="fa fa-user-plus"></i>
+              <span class="nav-text">Clinic Patients</span>
+            </a>
+
+          </li>
           
           <li>
             <a class="ai-icon" href="labcleared" aria-expanded="false">
@@ -779,6 +788,13 @@
             <a class="ai-icon" href="labwaiting" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Waiting Patients</span>
+            </a>
+
+          </li>
+          <li>
+            <a class="ai-icon" href="clinicwaiting?ty=lab" aria-expanded="false">
+              <i class="fa fa-user-plus"></i>
+              <span class="nav-text">Clinic Patients</span>
             </a>
 
           </li>
@@ -821,6 +837,12 @@
             <a class="ai-icon" href="labcleared" aria-expanded="false">
               <i class="fa fa-users"></i>
               <span class="nav-text">Cleared Patients</span>
+            </a>
+          </li>
+          <li>
+            <a class="ai-icon" href="clinicwaiting?ty=radiography" aria-expanded="false">
+              <i class="fa fa-user-plus"></i>
+              <span class="nav-text">Clinic Patients</span>
             </a>
           </li>
           <li>
@@ -871,6 +893,12 @@
               <!-- <li><a href="labstockorders">Lab Stock Orders</a></li>
               <li><a href="nursestockorders">Nurse Stock Orders</a></li> -->
             </ul>
+            </a>
+          </li>
+          <li>
+            <a class="ai-icon" href="clinicwaiting?ty=pharmacy" aria-expanded="false">
+              <i class="fa fa-user-plus"></i>
+              <span class="nav-text">Clinic Patients</span>
             </a>
           </li>
           <li>

@@ -97,6 +97,7 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                                 $type = $bill['type'];
                                                 $type_id = $bill['type_id'];
                                                 $paymenttype = $bill['payment_method'];
+                                                $clinic = $bill['clinic'];
                                                 
                                                 if (!empty($admission_id)) {
                                                     $row1 = get_admission($pdo, $admission_id);
@@ -121,10 +122,17 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                                     if (!($paymenttype=='credit' && $credit['credittype']=='Postpaid')){}
                                                     else
                                                     continue;
-                                                    $patient = get_active_patient($pdo, $patient_id);
-                                                    $pin = $patient['pin'];
-                                                    $fullname = $patient['fullname'];
-                                                    $insurance_id = $patient['insurancecompany'];
+                                                    if ($clinic == 0){
+                                                        $patient = get_active_patient($pdo, $patient_id);
+                                                        $pin = $patient['pin'];
+                                                        $fullname = $patient['fullname'];
+                                                        $insurance_id = $patient['insurancecompany'];
+                                                    }
+                                                    else if ($clinic == 1){
+                                                        $patient = get_active_clinic_patient($pdo, $patient_id);
+                                                        $pin = $patient['pin'];
+                                                        $fullname = $patient['name'];
+                                                    }
                                                     
 
 

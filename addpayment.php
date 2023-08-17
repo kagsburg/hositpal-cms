@@ -100,6 +100,7 @@ $id = $_GET['q'];
                                         // $status = $bill['status'];
                                         $bill_type_id = $bill[0]['type_id'];
                                         $payment_method = $bill[0]['payment_method'];
+                                        $clinic = $bill[0]['clinic'];
 
                                         
                                         $qpaymenttype = isset($payment_method) ? $payment_method: "cash" ;// get_payment_method($pdo, $patient_id, $admission_id);
@@ -108,23 +109,30 @@ $id = $_GET['q'];
                                         $room = $type;
                                        
                                        
-                                        
-                                        $row2 = get_active_patient($pdo, $patient_id);
-                                        $fullname = $row2['fullname'];
-                                        $pin = $row2['pin'];
-                                        $gender = $row2['gender'];
-                                        $paymenttype = $row2['paymenttype'];
-                                        $policyidnumber = $row2['policyidnumber'];
-                                        $insurance_id = $row2['insurancecompany'];  
-                                        $creditclient = $row2['creditclient'];                                     
-                                        if (!empty($creditclient)) {
-                                            $getclients = mysqli_query($con, "SELECT * FROM creditclients WHERE creditclient_id='$creditclient'");
-                                            $row = mysqli_fetch_array($getclients);
-                                            $clientname = $row['clientname'];
-                                        } else {
-                                            $clientname = "N/A";
+                                        if ($clinic == 0){
+                                            $row2 = get_active_patient($pdo, $patient_id);
+                                            $fullname = $row2['fullname'];
+                                            $pin = $row2['pin'];
+                                            $gender = $row2['gender'];
+                                            $paymenttype = $row2['paymenttype'];
+                                            $policyidnumber = $row2['policyidnumber'];
+                                            $insurance_id = $row2['insurancecompany'];  
+                                            $creditclient = $row2['creditclient'];                                     
+                                            if (!empty($creditclient)) {
+                                                $getclients = mysqli_query($con, "SELECT * FROM creditclients WHERE creditclient_id='$creditclient'");
+                                                $row = mysqli_fetch_array($getclients);
+                                                $clientname = $row['clientname'];
+                                            } else {
+                                                $clientname = "N/A";
+                                            }
+                                             
+
                                         }
-                                         
+                                        else if ($clinic == 1){
+                                            $row2 = get_active_clinic_patient($pdo, $patient_id);
+                                            $fullname = $row2['name'];
+                                            $pin = $row2['pin'];
+                                        }
                                         
                                       
                                         //     $getactsreport= mysqli_query($con,"SELECT * FROM acts WHERE patientsque_id='$patientsque_id'");
@@ -164,9 +172,13 @@ $id = $_GET['q'];
                                                     $type = $b['type'];
                                                     $bill_type_id = $b['type_id'];
                                                     $patientque_id = $b['patientsque_id'];
-                                                    $getroom = mysqli_query($con, "SELECT room from patientsque WHERE patientsque_id='$patientque_id'");
-                                                    $row23 = mysqli_fetch_array($getroom);
-                                                    $room = $row23['room'];
+                                                    if ($patientque_id != 0){
+                                                        $getroom = mysqli_query($con, "SELECT room from patientsque WHERE patientsque_id='$patientque_id'");
+                                                        $row23 = mysqli_fetch_array($getroom);
+                                                        $room = $row23['room'];
+                                                    }else{
+                                                        $room ='';
+                                                    }
 
                                                    
                                                 if ($type == "medical_service") {

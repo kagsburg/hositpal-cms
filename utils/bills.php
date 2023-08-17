@@ -19,6 +19,15 @@ function get_all_bills_group_patient(PDO $conn, $status=1)
     $getallbills = $stmt->fetchAll();
     return $getallbills;
 }
+function get_active_clinic_patient(PDO $conn, $status)
+{
+    $stmt = $conn->prepare("SELECT * FROM clinic_clients WHERE clinic_cl_id =? ");
+    $stmt->execute([$status]);
+    $getpatient = $stmt->fetch();
+    if (empty($getpatient)) return null;
+    $getpatient["pin"] = str_pad($status, 4, '0', STR_PAD_LEFT);
+    return $getpatient;
+}
 function get_all_bill_group_patient_accountant(PDO $conn,$payment_method)
 {
     $stmt = $conn->prepare("SELECT * FROM bills WHERE status IN (1,8) and payment_method=? GROUP BY patient_id");
@@ -208,10 +217,7 @@ function make_bill_payment(PDO $conn, $bill_id, $amount, $payment_method,$countb
                     $stmt->execute([$bl['bill_id'],$totalservice,$bl['payment_method']]);    
                     update_bill_status($conn,$bl['bill_id'],8,$bl['payment_method']);       
                     $totalservice = 0;
-                }
-                // $stmt = $conn->prepare("INSERT INTO bill_payments (bill_id, amount, payment_method) VALUES (?, ?, ?)");
-                // $stmt->execute([$bl['bill_id'],$bl['amount'],$bl['payment_method']]);    
-                // update_bill_status($conn,$bl['bill_id'],8,$bl['payment_method']);       
+                }      
             }
         }
 
