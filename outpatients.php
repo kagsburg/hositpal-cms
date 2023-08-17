@@ -97,7 +97,8 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                 $pending_bills = mysqli_query($con, "SELECT * FROM bills WHERE status IN (1) AND patient_id='$patient_id'");
                                                
                                                 
-                                                $getpatients = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
+                                                $getpatients = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id' and clinic=0");
+                                                if (mysqli_num_rows($getpatients) >0){
                                                 $row = mysqli_fetch_array($getpatients);
                                                 $firstname = $row['firstname'];
                                                 $secondname = $row['secondname'];
@@ -179,7 +180,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 
                                                 </tr>
 
-                                            <?php }} ?>
+                                            <?php }}} ?>
                                         </tbody>
                                     </table>
                                 </div>

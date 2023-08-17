@@ -68,7 +68,7 @@ $type = $_GET['ty'];
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">All waiting Patients</h4>
+                                <h4 class="card-title">All Registered Patients</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -86,13 +86,13 @@ $type = $_GET['ty'];
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $getque = mysqli_query($con, "SELECT * FROM bills WHERE clinic='1' AND type='$type' AND status=2");
-                                            while ($row = mysqli_fetch_array($getque)) {
-                                                $patient_id = $row['patient_id'];
-
-                                                $getadmission = mysqli_query($con, "SELECT * FROM clinic_clients WHERE clinic_cl_id ='$patient_id' and status ='2'");
-                                                if (mysqli_num_rows($getadmission) > 0){
-                                                $row1 = mysqli_fetch_array($getadmission);
+                                            // $getque = mysqli_query($con, "SELECT * FROM bills WHERE clinic='1' AND type='$type' AND status=2");
+                                            // $patient_id = $row['patient_id'];
+                                            
+                                            $getadmission = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status ='2'");
+                                            if (mysqli_num_rows($getadmission) > 0){
+                                                    while ($row1 = mysqli_fetch_array($getadmission)) {
+                                                // $row1 = mysqli_fetch_array($getadmission);
                                                 $patient_id = $row1['clinic_cl_id'];
                                                 $fullname1 = $row1['name'];
                                                 $location = $row1['location'];
@@ -145,9 +145,10 @@ $type = $_GET['ty'];
                                                         }
                                                     }
                                                     else if ($type == 'medical_service'){
-                                                        $getlabreport = mysqli_query($con,"SELECT * from minor where clinic=1 and patientsque_id='$patient_id'") or die(mysqli_error($con));
+                                                        $getlabreport = mysqli_query($con,"SELECT * from clinicreport where status=1 and clinic_client_id='$patient_id'") or die(mysqli_error($con));
                                                         if (mysqli_num_rows($getlabreport) > 0){
                                                             echo '<a href="viewnursereport?id='.$patient_id.'" class="btn btn-xs btn-success">View Report</a>';
+                                                            echo '<a href="dischargenurseclinic?id='.$patient_id.'" class="btn btn-xs btn-info">Discharge</a>';
                                                         }else{
                                                             echo '<a href="addnurseclinic?id='.$patient_id.'" class="btn btn-xs btn-info">Add Report</a>';
                                                         }

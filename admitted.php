@@ -1,5 +1,6 @@
 <?php
 include 'includes/conn.php';
+include 'utils/patients.php';
  if(!isset($_SESSION['elcthospitaladmin'])){
 header('Location:login.php');
    }
@@ -83,6 +84,7 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                             <th>Ward</th>
                                               <th>Bed Number</th>
                                               <th>Admission Date</th>
+                                              <th>Payment Method</th>
                                               <th>Added By</th>
                                              <th>Action</th>
                                             
@@ -124,7 +126,8 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                $row2= mysqli_fetch_array($getpatient);
                                 $firstname=$row2['firstname'];    
                               $lastname=$row2['secondname'];    
-                            $gender=$row2['gender'];    
+                            $gender=$row2['gender'];   
+                            $paymenttype = get_payment_method($pdo, $patient_id, $admission_id); 
                             $getstaff= mysqli_query($con,"SELECT * FROM staff WHERE staff_id='$admin_id'") or die(mysqli_error($con));                        
                             $rows= mysqli_fetch_array($getstaff);
                             $fullname=$rows['fullname'];
@@ -162,6 +165,7 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                       <td><?php echo $wardname; ?></td>
                                          <td><?php echo $bednumber; ?></td>                                
                                         <td><?php echo date('d/M/Y',$admissiondate); ?></td>                                
+                                        <td><?php echo $paymenttype; ?></td>                                
                                         <td><?php echo $fullname; ?></td>                                
                                       <td>     
                                        <a href="admission?id=<?php echo $admitted_id; ?>&que=<?php echo $que_id; ?>" class="btn btn-success btn-xs">View Details</a> 

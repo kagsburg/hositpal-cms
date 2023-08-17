@@ -12,6 +12,14 @@ $clinic_id = isset($_GET['id']) ? $_GET['id']: null;
 $patient = get_active_clinic_patient($pdo, $clinic_id);
                                                         $pin = $patient['pin'];
                                                         $fullname = $patient['name'];
+                                                        $location = $patient['location'];
+                    $pregnancy_month = $patient['pregnancy_month'];
+                    $bloodgroup = $patient['bloodgroup'];
+                    $weight = $patient['weight'];
+                    $dob = $patient['dob'];
+                    $phone = $patient['phone'];
+                    $partner_name = $patient['partner_name'];   
+                    $partner_no= $patient['partner_mobile'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,40 +79,165 @@ $patient = get_active_clinic_patient($pdo, $clinic_id);
                         </ol>
                     </div>
                 </div>
+                <?php 
+                    if (isset($_POST['submitclient'])){
+                        $clinic_id = $_POST['clinic_id'];
+                        $name = mysqli_real_escape_string($con, trim($_POST['name']));
+                        $location = mysqli_real_escape_string($con, trim($_POST['location']));
+                        $phone = mysqli_real_escape_string($con, trim($_POST['phone']));
+                        $weight = mysqli_real_escape_string($con, trim($_POST['weight']));
+                        $dob = mysqli_real_escape_string($con, trim($_POST['dob']));
+                        $bloodgroup = mysqli_real_escape_string($con, trim($_POST['bloodgroup']));
+                        $pregnancy_month = mysqli_real_escape_string($con, trim($_POST['pregnancy_month']));
+                        $partner_name = mysqli_real_escape_string($con, trim($_POST['partner_name']));
+                        $partner_mobile = mysqli_real_escape_string($con, trim($_POST['partner_mobile']));
+                       
+                        $update = update_clinic_patient($pdo, $clinic_id, $name, $weight, $bloodgroup, $pregnancy_month, $dob, $phone, $partner_name, $partner_mobile, $location);
+                        if ($update) {
+                            echo "<div class='alert alert-success'>Clinic Patient Updated Successfully</div>";
+                        }else{
+                            echo "<script>alert('Error Updating Clinic Patient')</script>";
+                            echo "<script>location.href='viewnursereport?id=$clinic_id'</script>";
+                        }       
+                    }
+                ?>
                 <div class="row">
                 <div class="col-lg-4 mb-3">
                         <!-- <a href="printpaidbills.php?id=<?php echo $paymethod ?>&type=<?php echo $payment ?>" class="btn btn-primary">Print</a> -->
-                       
-                        
+                       <?php 
+                         if ($patient['status'] == 2 || $patient['status'] == 4) {
+                         
+                       ?>
+                        <div class="mb-3">
+
+                        <a href="clinicclient?id=<?php echo $clinic_id ?>" class="btn btn-primary">Add Clinic Report</a>
+                        </div>
+                        <?php } ?>
                     </div>
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">All Medical Service Records <?php echo $fullname ?></h4>
+                                <h4 class="card-title">All Clinic Records <?php echo $fullname ?></h4>
                             </div>
                             <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <h4 class="text-primary mt-4 mb-4">Patient Information</h4>
+                                        <div class="profile-blog mb-5">
+                                            <address>
+                                                <p>Pin : <span><?php echo $pin; ?></span></p>
+                                                <p>Full Name : <span><?php echo $fullname; ?></span></p>
+                                                <p>Location : <span><?php echo $location; ?></span></p>
+                                                <p>Partner Name : <span><?php echo $partner_name; ?></span></p>
+                                                <p>Partner Number: <span><?php echo $partner_no; ?></span></p>
+                                            </address>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                    <h4 class="text-primary mt-4 mb-4">Medical Information</h4>
+                                    <div class="profile-blog mb-5">
+                                        <address>
+                                            <p>Blood Group : <span><?php echo $bloodgroup; ?></span></p>
+                                            <p>Weight (kgs)  : <span><?php echo $weight; ?></span></p>
+                                            <p>pregnancy month : <span><?php echo $pregnancy_month; ?></span></p>
+                                        </address>
+                                    </div>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="mb-3">
+                                <button data-toggle="modal" data-target="#basicModal<?php echo $clinic_id; ?>" class="btn btn-xs btn-info">Edit</button>
+
+                                <div class="modal fade" id="basicModal<?php echo $clinic_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLabel">Edit Clinic Client</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="" method="POST">
+                                                                <input type="hidden" name="clinic_id" value="<?php echo $clinic_id; ?>">
+                                                            <div class="form-group"><label class="control-label">*Full Name</label>
+                                 <input type="text" name='name' class="form-control" value="<?php echo $fullname ?>" placeholder="Enter client name" required="required">
+                              </div>
+                              <div class="form-group"><label class="control-label">* Location/Address</label>
+                                 <input type="text" name='location' class="form-control"value="<?php echo $location ?>" placeholder="Enter location" required="required">
+                              </div>
+                              <div class="form-group"><label class="control-label">* Date of Birth</label>
+                                 <input type="date" name='dob' class="form-control"value="<?php echo $dob ?>" placeholder="Enter location" required="required">
+                              </div>
+
+                              <div class="form-group"><label class="control-label">* Mobile Number</label>
+                                 <input type="text" name='phone' value="<?php echo $phone ?>" class="form-control" placeholder="Enter contacts" required="required">
+                              </div>
+                              <div class="form-group"><label class="control-label">Weight</label>
+                                 <input type="text" name='weight' value="<?php echo $weight ?>" class="form-control" placeholder="Enter weight">
+                              </div>
+                              <div class="form-group"><label class="control-label">Blood Group</label>
+                                 <input type="text" name='bloodgroup'value="<?php echo $bloodgroup ?>" class="form-control" placeholder="Enter blood group">
+                              </div>
+                              <div class="form-group"><label class="control-label">Month Of Pregnancy</label>
+                              <select class="form-control" name="pregnancy_month">
+                                                            <option value="" selected="selected">Select Month</option>
+                                                            <option value="January" <?php if ($pregnancy_month=='January') { ?> selected <?php } ?> >January</option>
+                                                            <option value="February" <?php if ($pregnancy_month=='February') { ?> selected <?php } ?>>February</option>
+                                                            <option value="March" <?php if ($pregnancy_month=='March') { ?> selected <?php } ?>>March</option>
+                                                            <option value="April" <?php if ($pregnancy_month=='April') { ?> selected <?php } ?>>April</option>
+                                                            <option value="May" <?php if ($pregnancy_month=='May') { ?> selected <?php } ?>>May</option>
+                                                            <option value="June" <?php if ($pregnancy_month=='June') { ?> selected <?php } ?>>June</option>
+                                                            <option value="July" <?php if ($pregnancy_month=='July') { ?> selected <?php } ?>>July</option>
+                                                            <option value="August" <?php if ($pregnancy_month=='August') { ?> selected <?php } ?>>August</option>
+                                                            <option value="September" <?php if ($pregnancy_month=='September') { ?> selected <?php } ?>>September</option>
+                                                            <option value="October" <?php if ($pregnancy_month=='October') { ?> selected <?php } ?>>October</option>
+                                                            <option value="November" <?php if ($pregnancy_month=='November') { ?> selected <?php } ?>>November</option>
+                                                            <option value="December" <?php if ($pregnancy_month=='December') { ?> selected <?php } ?>>December</option>
+                                                        </select>
+                              </div>
+                              <div class="form-group"><label class="control-label">Partner/Husband Names</label>
+                                 <input type="text" name='partner_name'value="<?php echo $partner_name ?>" class="form-control" placeholder="Enter partner's name">
+                              </div>
+                              <div class="form-group"><label class="control-label">Partner/Husband Mobile</label>
+                                 <input type="text" name='partner_mobile'value="<?php echo $partner_no ?>" class="form-control" placeholder="Enter partner's mobile number"></textarea>
+                              </div>
+                                                                
+                                                                <div class="form-group">
+                                                                    <button class="btn btn-primary" type="submit" name="submitclient">Submit</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                </div>
+                            
+                                <h4 class="card-title">Clinic Report</h4>
+                               
                                 <div class="table-responsive">
                                     <table id="example6" class="table  table-bordered display" style="min-width: 845px">
                                         <thead>
                                             <tr>
                                                 <th>Service</th>
-                                                <!-- <th>Full Names</th>
-                                                <th>Gender</th> -->
-                                                <th>Case </th>
                                                 
                                                 <th>Details</th>
-                                                <!-- <th>Payment Mode</th>-->
-                                                <!-- <th>Action</th>  -->
 
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
                                             $total = 0;
-                                            $services = mysqli_query($con, "SELECT * FROM minor where clinic=1 and patientsque_id='$clinic_id' ") or die(mysqli_error($con)); 
+                                            $services = mysqli_query($con, "SELECT * FROM clinicreport where status=1 and clinic_client_id='$clinic_id' ") or die(mysqli_error($con)); 
+                                            if (mysqli_num_rows($services) <=0) {
+                                                echo '<tr><td colspan="2">No services found</td></tr>';
+                                            }else{
                                             while ($row = mysqli_fetch_array($services))  {
                                                 $service_name = $row['service_id'];
-                                                $cas = $row['casetype'];
+                                                // $cas = $row['casetype'];
                                                 $det = $row['details'];
                                                 // remove html tags
                                                 $det = strip_tags($det);
@@ -117,7 +250,7 @@ $patient = get_active_clinic_patient($pdo, $clinic_id);
                                                     <td><?php echo $medicalservice ?></td>
                                                     <!-- <td><?php echo $service['name'] ?></td>
                                                     <td><?php echo $service['gender'] ?></td> -->
-                                                    <td><?php echo $cas ?></td>
+                                                    <!-- <td><?php echo $cas ?></td> -->
                                                     <td><?php echo $det ?></td>
                                                     <!-- <td><?php echo $service['payment'] ?></td> -->
                                                     <!-- <td>
@@ -126,7 +259,7 @@ $patient = get_active_clinic_patient($pdo, $clinic_id);
                                                     </td> -->
 
                                                 </tr>
-                                            <?php } ?>
+                                            <?php }} ?>
                                         </tbody>
                                         <!-- <tfoot>
                                         <tr>

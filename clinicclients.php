@@ -3,6 +3,7 @@ include 'includes/conn.php';
 if (!isset($_SESSION['elcthospitaladmin'])) {
     header('Location:login.php');
 }
+$type = $_GET['ty'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -93,7 +94,11 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $getpatients = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status in (1,4)");
+                                            if ($type == 1) {
+                                                $getpatients = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status in (1,4) ORDER BY clinic_cl_id DESC");
+                                            }else{
+                                                $getpatients = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status='$type'");
+                                            }
                                             if (mysqli_num_rows($getpatients) ==0) {
                                                 echo '<tr><td colspan="8" class="text-center">No Clients Found</td></tr>';
                                             }else{
@@ -135,6 +140,15 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                     
 
                                                     <td>
+                                                        <?php 
+                                                            if ($type == 3){
+                                                                // show link for registered patients
+                                                                ?>
+                                                                <a href="attendclinic?id=<?php echo $id; ?>" class="btn btn-success btn-xs">Attend</a>
+                                                                <a href="viewnursereport?id=<?php echo $id; ?>" class="btn btn-success btn-xs">Details</a>
+                                                                <?php
+                                                            } else if ($type == 1){
+                                                        ?>
                                                         <a href="clinicclient?id=<?php echo $id; ?>" class="btn btn-success btn-xs">Add Report</a>
                                                         <?php
                                                         if ($_SESSION['elcthospitallevel'] == 'nurse') {
@@ -149,7 +163,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                                 }
                                                             </script>
 
-                                                        <?php } ?>
+                                                        <?php }} ?>
                                                     </td>
 
 

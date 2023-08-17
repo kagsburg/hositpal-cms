@@ -28,6 +28,12 @@ function get_active_clinic_patient(PDO $conn, $status)
     $getpatient["pin"] = str_pad($status, 4, '0', STR_PAD_LEFT);
     return $getpatient;
 }
+function update_clinic_patient(PDO $conn, $clinic_id, $name, $weight, $bloodgroup, $pregnancy_month, $dob, $phone, $partner_name, $partner_no, $location)
+{
+    $stmt = $conn->prepare("UPDATE clinic_clients SET name=?,location=?,dob=?,phone=?,weight=?,bloodgroup=?,pregnancy_month=?,partner_name=?,partner_mobile=? WHERE clinic_cl_id=?");
+    $stmt->execute([$name, $location,$dob,$phone,$weight,$bloodgroup,$pregnancy_month,$partner_name,$partner_no,$clinic_id]);
+    return $stmt->rowCount();
+}
 function get_all_bill_group_patient_accountant(PDO $conn,$payment_method)
 {
     $stmt = $conn->prepare("SELECT * FROM bills WHERE status IN (1,8) and payment_method=? GROUP BY patient_id");

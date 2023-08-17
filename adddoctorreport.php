@@ -738,7 +738,7 @@ $id = $_GET['id'];
                                                                 <input type="text" name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter Purpose">
                                                             </div>
                                                             <div class="form-group col-lg-6">
-                                                                <label>Unit <span id="unit0"></span></label>
+                                                                <label>Units <span id="unit0"></span></label>
                                                                 <input type="number" name="ref[pharmacy][unit][]" class="form-control " placeholder="Enter Unit">
                                                             </div>
                                                             <div class="form-group col-lg-12">
@@ -1436,7 +1436,7 @@ $id = $_GET['id'];
                                                                 <input type="text" name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter Purpose">
                                                             </div>
                                                             <div class="form-group col-lg-6">
-                                                                <label>Unit <span id="unit${count}"></span></label>
+                                                                <label>Units <span id="unit${count}"></span></label>
                                                                 <input type="number"  name="ref[pharmacy][unit][]" class="form-control " placeholder="Enter Unit">
                                                             </div>
                                                             <div class="form-group col-lg-12">

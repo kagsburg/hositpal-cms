@@ -35,6 +35,7 @@ $firstname = $names[0];
 $secondname = $names[1];
 $partner_name = $row['partner_name'];
 $partner_mobile = $row['partner_mobile'];
+$dob = $row['dob'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -163,7 +164,7 @@ $partner_mobile = $row['partner_mobile'];
 
                                             <div class="form-group col-lg-6"><label class="control-label">Date of Birth</label>
 
-                                                <input type="date" name="dob" class="form-control" placeholder="Enter  date of birth">
+                                                <input type="date" name="dob" class="form-control" value="<?php echo $dob; ?>" placeholder="Enter  date of birth">
                                             </div>
                                             <!-- <div class="form-group col-lg-4"><label class="control-label">* Marital Status</label>
                                                 <select name="maritalstatus" class="form-control maritalstatus">

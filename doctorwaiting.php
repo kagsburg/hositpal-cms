@@ -1,5 +1,6 @@
 <?php
 include 'includes/conn.php';
+include 'utils/patients.php';
 // if (($_SESSION['elcthospitallevel'] != 'doctor')) {
 //     header('Location:login.php');
 // }
@@ -101,7 +102,7 @@ if ($mode == '2'){
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
                                                 <th>Previous Room</th>
-                                                <!-- <th>Attendant</th> -->
+                                                <th>Payment Method</th>
                                                 <th>Action</th>
 
                                             </tr>
@@ -123,6 +124,8 @@ if ($mode == '2'){
                                                 if (mysqli_num_rows($getadmission) > 0){
                                                 $row1 = mysqli_fetch_array($getadmission);
                                                 $patient_id = $row1['patient_id'];
+                                                $paymenttype = get_payment_method($pdo, $patient_id, $admission_id);
+
                                                 $getpatient = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
                                                 $row2 = mysqli_fetch_array($getpatient);
                                                 $firstname = $row2['firstname'];
@@ -182,7 +185,7 @@ if ($mode == '2'){
                                                     <td><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?></td>
                                                     <td><?php echo $gender; ?></td>
                                                     <td><?php echo $room; ?></td>
-                                                    <!-- <td><?php echo $fullname; ?></td> -->
+                                                    <td><?php echo $paymenttype; ?></td>
 
 
                                                     <td>

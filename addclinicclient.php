@@ -78,6 +78,7 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                               $location = mysqli_real_escape_string($con, trim($_POST['location']));
                               $phone = mysqli_real_escape_string($con, trim($_POST['phone']));
                               $weight = mysqli_real_escape_string($con, trim($_POST['weight']));
+                              $dob = mysqli_real_escape_string($con, trim($_POST['dob']));
                               $bloodgroup = mysqli_real_escape_string($con, trim($_POST['bloodgroup']));
                               $pregnancy_month = mysqli_real_escape_string($con, trim($_POST['pregnancy_month']));
                               $partner_name = mysqli_real_escape_string($con, trim($_POST['partner_name']));
@@ -87,7 +88,7 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                               if ((empty($name)) || (empty($location)) || (empty($phone))) {
                                  echo '<div class="alert alert-danger">Some fields are empty</div>';
                               } else {
-                                 mysqli_query($con, "INSERT INTO clinic_clients(name,location,phone,weight,bloodgroup,pregnancy_month,partner_name,partner_mobile,user_id,timestamp,status) VALUES('$name','$location','$phone','$weight','$bloodgroup','$pregnancy_month','$partner_name','$partner_mobile','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
+                                 mysqli_query($con, "INSERT INTO clinic_clients(name,location,dob,phone,weight,bloodgroup,pregnancy_month,partner_name,partner_mobile,user_id,timestamp,status) VALUES('$name','$location','$dob','$phone','$weight','$bloodgroup','$pregnancy_month','$partner_name','$partner_mobile','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),3)") or die(mysqli_error($con));
                                  echo '<div class="alert alert-success">Client Successfully Added</div>';
                               }
                            }
@@ -100,6 +101,9 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                               <div class="form-group"><label class="control-label">* Location/Address</label>
                                  <input type="text" name='location' class="form-control" placeholder="Enter location" required="required">
                               </div>
+                              <div class="form-group"><label class="control-label">* Date of Birth</label>
+                                 <input type="date" name='dob' class="form-control" placeholder="Enter location" required="required">
+                              </div>
 
                               <div class="form-group"><label class="control-label">* Mobile Number</label>
                                  <input type="text" name='phone' class="form-control" placeholder="Enter contacts" required="required">
@@ -111,7 +115,21 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                                  <input type="text" name='bloodgroup' class="form-control" placeholder="Enter blood group">
                               </div>
                               <div class="form-group"><label class="control-label">Month Of Pregnancy</label>
-                                 <input type="text" name='pregnancy_month' class="form-control" placeholder="Enter month of pregnancy">
+                              <select class="form-control" name="pregnancy_month">
+                                                            <option value="" selected="selected">Select Month</option>
+                                                            <option value="January">January</option>
+                                                            <option value="February">February</option>
+                                                            <option value="March">March</option>
+                                                            <option value="April">April</option>
+                                                            <option value="May">May</option>
+                                                            <option value="June">June</option>
+                                                            <option value="July">July</option>
+                                                            <option value="August">August</option>
+                                                            <option value="September">September</option>
+                                                            <option value="October">October</option>
+                                                            <option value="November">November</option>
+                                                            <option value="December">December</option>
+                                                        </select>
                               </div>
                               <div class="form-group"><label class="control-label">Partner/Husband Names</label>
                                  <input type="text" name='partner_name' class="form-control" placeholder="Enter partner's name">
