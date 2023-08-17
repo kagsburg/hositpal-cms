@@ -586,8 +586,8 @@
             </a>
             <ul aria-expanded="false">
               <li><a href="addclinicclient">Add Client</a></li>
-              <li><a href="clinicclients">Clients</a></li>
-              <li><a href="clinicwaiting?ty=medical_service">Waiting List</a></li>
+              <li><a href="clinicclients">Waiting List</a></li>
+              <li><a href="clinicwaiting?ty=medical_service">Medical Services</a></li>
             </ul>
           </li>
           <!-- <li>
@@ -755,13 +755,13 @@
             </a>
 
           </li>
-          <li>
+          <!-- <li>
             <a class="ai-icon" href="clinicwaiting?ty=lab" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Clinic Patients</span>
             </a>
 
-          </li>
+          </li> -->
           
           <li>
             <a class="ai-icon" href="labcleared" aria-expanded="false">
@@ -791,13 +791,13 @@
             </a>
 
           </li>
-          <li>
+          <!-- <li>
             <a class="ai-icon" href="clinicwaiting?ty=lab" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Clinic Patients</span>
             </a>
 
-          </li>
+          </li> -->
           <li>
             <a class="ai-icon" href="labcleared" aria-expanded="false">
               <i class="fa fa-users"></i>
@@ -839,12 +839,12 @@
               <span class="nav-text">Cleared Patients</span>
             </a>
           </li>
-          <li>
+          <!-- <li>
             <a class="ai-icon" href="clinicwaiting?ty=radiography" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Clinic Patients</span>
             </a>
-          </li>
+          </li> -->
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-reply"></i>
@@ -888,19 +888,18 @@
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Inpatients</span>
               <ul aria-expanded="false">
-              <!-- <li><a href="pharmacywaiting">Waiting List</a></li> -->
-              <li><a href="admitted">Outpatients</a></li>
+              <li><a href="admitted">Inpatients</a></li>
               <!-- <li><a href="labstockorders">Lab Stock Orders</a></li>
               <li><a href="nursestockorders">Nurse Stock Orders</a></li> -->
             </ul>
             </a>
           </li>
-          <li>
+          <!-- <li>
             <a class="ai-icon" href="clinicwaiting?ty=pharmacy" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Clinic Patients</span>
             </a>
-          </li>
+          </li> -->
           <li>
             <a class="ai-icon" href="pharmacycleared" aria-expanded="false">
               <i class="fa fa-users"></i>

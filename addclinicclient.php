@@ -82,19 +82,12 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                               $pregnancy_month = mysqli_real_escape_string($con, trim($_POST['pregnancy_month']));
                               $partner_name = mysqli_real_escape_string($con, trim($_POST['partner_name']));
                               $partner_mobile = mysqli_real_escape_string($con, trim($_POST['partner_mobile']));
-                              $clinic = mysqli_real_escape_string($con, trim($_POST['clinic']));
-                              if ($clinic == "insurance") {
-                                 $type = mysqli_real_escape_string($con, trim($_POST['insurance']));
-                              } else if ($clinic == "credit") {
-                                 $type = mysqli_real_escape_string($con, trim($_POST['credit']));
-                              }else{
-                                 $type = "";
-                              }
+                             
                               
                               if ((empty($name)) || (empty($location)) || (empty($phone))) {
                                  echo '<div class="alert alert-danger">Some fields are empty</div>';
                               } else {
-                                 mysqli_query($con, "INSERT INTO clinic_clients(name,location,phone,weight,bloodgroup,pregnancy_month,partner_name,partner_mobile,user_id,timestamp,status,paytype,paytype_id) VALUES('$name','$location','$phone','$weight','$bloodgroup','$pregnancy_month','$partner_name','$partner_mobile','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),1,'$clinic','$type')") or die(mysqli_error($con));
+                                 mysqli_query($con, "INSERT INTO clinic_clients(name,location,phone,weight,bloodgroup,pregnancy_month,partner_name,partner_mobile,user_id,timestamp,status) VALUES('$name','$location','$phone','$weight','$bloodgroup','$pregnancy_month','$partner_name','$partner_mobile','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
                                  echo '<div class="alert alert-success">Client Successfully Added</div>';
                               }
                            }
@@ -126,50 +119,7 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                               <div class="form-group"><label class="control-label">Partner/Husband Mobile</label>
                                  <input type="text" name='partner_mobile' class="form-control" placeholder="Enter partner's mobile number"></textarea>
                               </div>
-                              <div class="form-group">
-                                            <label class="control-label">Payment Type</label>
-                                            <select name="clinic" class="clinic form-control" required>
-                                                <option value="">Select Section</option>
-                                                <option value="cash">Cash</option>
-                                                <option value="insurance">Insurance</option>                                              
-                                                <option value="credit">Credit</option>                                              
-                                            </select>                                            
-                                        </div>
-                                        <div class="form-group forinsurance " style="display: none;">
-                                            <label class="control-label">Insurance Company</label>
-                                            <select name="insurance" class="clitype form-control" id="clitype" >
-                                                <option value="">Select Company</option>
-                                                <?php
-                                                        $getcompanies =  mysqli_query($con, "SELECT * FROM insurancecompanies WHERE status=1");
-                                                        while ($row1 =  mysqli_fetch_array($getcompanies)) {
-                                                            $insurancecompany_id = $row1['insurancecompany_id'];
-                                                            $company = $row1['company'];
-                                                        ?>
-                                                            <option value="<?php echo  $insurancecompany_id; ?>"><?php echo $company; ?></option>
-                                                        <?php } ?>                                              
-                                            </select>                                            
-                                        </div>
-                                        <div class="form-group forcredit " style="display: none;">
-                                            <label class="control-label">Credit  Company</label>
-                                            <select name="credit" class="clitype form-control" id="clitype" >
-                                                <option value="">Select Company</option>
-                                                    <?php
-                                                    $getclients = mysqli_query($con, "SELECT * FROM creditclients WHERE status=1 AND type='organisation'");
-                                                    while ($row = mysqli_fetch_array($getclients)) {
-                                                        $creditclient_id = $row['creditclient_id'];
-                                                        $clientname = $row['clientname'];
-                                                        $getcredit = mysqli_query($con, "SELECT SUM(amount) AS addedcredit FROM clientcredits WHERE creditclient_id='$creditclient_id'") or die(mysqli_error($con));
-                                                        $row = mysqli_fetch_array($getcredit);
-                                                        $addedcredit = $row['addedcredit'];
-                                                        $getused = mysqli_query($con, "SELECT SUM(amount) AS creditused FROM usedcredit WHERE creditclient_id='$creditclient_id'") or die(mysqli_error($con));
-                                                        $row2 = mysqli_fetch_array($getcredit);
-                                                        $creditused = $row2['creditused'];
-                                                        $creditavailable = $addedcredit - $creditused;
-                                                    ?>
-                                                        <option value="<?php echo  $creditclient_id . '_' . $creditavailable; ?>"><?php echo $clientname . ' (' . $creditavailable . ')'; ?></option>
-                                                    <?php } ?>                                             
-                                            </select>                                            
-                                        </div>
+                             
                               <div class="form-group">
                                  <button class="btn btn-primary" type="submit" name="submit">Add Client</button>
                               </div>

@@ -96,6 +96,9 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                      } if (($_SESSION['elcthospitallevel']=='nurse')) {
                 $getadmitted= mysqli_query($con,"SELECT * FROM admitted WHERE status=1 ORDER BY admitted_id DESC");
                                          } 
+                                         if (($_SESSION['elcthospitallevel']=='pharmacist')) {
+                                            $getadmitted= mysqli_query($con,"SELECT * FROM admitted WHERE status=1 ORDER BY admitted_id DESC");
+                                         }
 
                                      if(($_SESSION['elcthospitallevel']=='admin')){
                $getadmitted= mysqli_query($con,"SELECT * FROM admitted WHERE status=1 ORDER BY admitted_id DESC");

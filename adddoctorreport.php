@@ -112,6 +112,7 @@ $id = $_GET['id'];
                     $secondname = $row2['secondname'];
                     $thirdname = $row2['thirdname'];
                     $bloodgroup = $row2['bloodgroup'];
+                    $dob = $row2['dob'];
                     $weight = $row2['weight'];
                     $height = $row2['height'];
                     $temp = $row2['temp'];
@@ -158,6 +159,13 @@ $id = $_GET['id'];
                                 <h4 class="text-primary mt-4 mb-4">Medical Information</h4>
                                 <div class="profile-blog mb-5">
                                     <address>
+                                        <p>Age: <span><?php 
+                                        $dob1 = date("Y-m-d", strtotime($dob));
+                                        $dob2 = new DateTime($dob1);
+                                        $now = new DateTime();
+                                        $difference = $now->diff($dob2);
+                                        echo $difference->y;
+                                        ?></span>
                                         <p>Blood Group : <span><?php echo $bloodgroup; ?></span></p>
                                         <p>Weight (kgs)  : <span><?php echo $weight; ?></span></p>
                                         <p>Height : <span><?php echo $height; ?></span></p>
@@ -442,6 +450,10 @@ $id = $_GET['id'];
                                                         $totalbill=0;
                                                         $prescription = $reference_obj['prescription'];
                                                         $dosage= $reference_obj['dosage']; 
+                                                        $unit= $reference_obj['unit']; 
+                                                        $frequency= $reference_obj['Frequency']; 
+                                                        $details= $reference_obj['details'];
+                                                        $exipry= $reference_obj['expiry'];
                                                         $allprescriptions = sizeof($drug);
                                                         mysqli_query($con, "INSERT INTO pharmacyorders(patientsque_id,admin_id,timestamp,payment,insurer,percentage,source,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymenttype',0,'doctor',0)") or die(mysqli_error($con));
                                                         $last_id = mysqli_insert_id($con);
@@ -450,8 +462,8 @@ $id = $_GET['id'];
                                                             $getmedicalcharge = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$drug[$i]'");
                                                             $row1 = mysqli_fetch_array($getmedicalcharge);
                                                             $charge = $row1['unitprice'];
-                                                            $totalbill += intval($charge)* intval($dosage[$i]);  
-                                                            mysqli_query($con, "INSERT INTO pharmacyordereditems(item_id,pharmacyorder_id,prescription,quantity,status) VALUES('$drug[$i]','$last_id','$prescription[$i]','$dosage[$i]',1)") or die(mysqli_error($con));                                                          
+                                                            $totalbill += intval($charge)* intval($unit[$i]);  
+                                                            mysqli_query($con, "INSERT INTO pharmacyordereditems(item_id,pharmacyorder_id,prescription,quantity,dosage,freq,details,expiry,status) VALUES('$drug[$i]','$last_id','$prescription[$i]','$unit[$i]','$dosage[$i]','$frequency[$i]','$details[$i]','$exipry[$i]',1)") or die(mysqli_error($con));                                                          
                                                             
                                                         }
                                                         create_bill($pdo,$patient_id,$admission_id,$new_patientsque_id,'pharmacy',$last_id,$totalbill,$paymenttype);
@@ -667,52 +679,89 @@ $id = $_GET['id'];
                                                     <h4>Recommended Drugs</h4>
                                                 </div>
                                                 <div class="col-lg-12">
-                                                    <div class='subobj1'>
+                                                    <div class='subobj2'>
                                                         <div class='row'>
-                                                            <div class="form-group col-lg-6">
+                                                            <div class="form-group col-lg-12">
                                                                 <label>Drug Name</label>
-                                                                <select class="form-control room select2 msnr multi-select_1" name="ref[pharmacy][drug][]">
+                                                                <select class="form-control room select2 msnr multi-select_1 drug" data-count="0" name="ref[pharmacy][drug][]">
                                                                     <option selected="selected" value="">Select option..</option>
                                                                     <?php
                                                                     $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ");
                                                                     while ($row = mysqli_fetch_array($getitems)) {
                                                                         $inventoryitem_id = $row['inventoryitem_id'];
                                                                         $itemname = $row['itemname'];
-                                                                        // $category_id = $row['category_id'];
                                                                         $measurement_id = $row['measurement_id'];
-                                                                        // $getcat = mysqli_query($con, "SELECT * FROM itemcategories WHERE status=1 AND itemcategory_id='$category_id'");
-                                                                        // $row1 =  mysqli_fetch_array($getcat);
-                                                                        // $category = $row1['category'];
                                                                         $type = $row['type'];
                                                                         $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                                                         $row2 =  mysqli_fetch_array($getunit);
                                                                         $measurement = $row2['measurement'];
                                                                         if ($type == 'Medicine') {
+                                                                            
+                                                                            $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2 and status=1") or die(mysqli_error($con));
+                                                                            
+                                                                            $row3 = mysqli_fetch_array($getstock);
+                                                                            $totalstock = $row3['totalstock'];
+                                                                            $exipry = $row3['expiry'];
+                                                                            $totalordered = 0;
+                                                                            $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                                            while ($row4 = mysqli_fetch_array($getordered)) {
+                                                                                $stockorder_id = $row4['stockorder_id'];
+                                                                                $quantity = $row4['quantity'];
+                                                                                $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
+                                                                                if (mysqli_num_rows($getorder) > 0) {
+                                                                                    $totalordered = $totalordered + $quantity;
+                                                                                }
+                                                                            }
+                                                                            $issued = mysqli_query($con, "SELECT * FROM issueddrugs WHERE drug='$inventoryitem_id' AND status=1");
+                                                                            while ($row5 = mysqli_fetch_array($issued)) {
+                                                                                $quantity = $row5['quantity'];
+                                                                                $totalordered = $totalordered + $quantity;
+                                                                            }
+                                                                            $instock = $totalstock - $totalordered;
+                                                                            if ($instock > 0){
                                                                     ?>
-                                                                            <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname; ?></option>
-                                                                    <?php }
+                                                                            <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname . '(' . $measurement . ')'; ?></option>
+                                                                    <?php }}
                                                                     } ?>
                                                                 </select>
                                                             </div>
-                                                            <div class="form-group col-lg-3">
-                                                                <label>Prescription</label>
-                                                                <input type="text" name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter prescription">
+                                                            <div class="form-group col-lg-6">
+                                                                <label>In stock</label>
+                                                                <input type="text" id="stock0" name="ref[pharmacy][stock][]" class="form-control " readonly>
                                                             </div>
-                                                            <div class="form-group col-lg-3">
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Expiry Date</label>
+                                                                <input type="date"id="date0" name="ref[pharmacy][expiry][]" class="form-control " readonly>
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Purpose</label>
+                                                                <input type="text" name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter Purpose">
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Unit <span id="unit0"></span></label>
+                                                                <input type="number" name="ref[pharmacy][unit][]" class="form-control " placeholder="Enter Unit">
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
                                                                 <label>Dosage</label>
                                                                 <input type="text" name="ref[pharmacy][dosage][]" class="form-control " placeholder="Enter dosage">
                                                             </div>
-                                                            <div class="form-group col-lg-1">
-                                                                <a href='#' class="subobj1_button btn btn-success" style="margin-top:30px">+</a>
+                                                            <div class="form-group col-lg-12">
+                                                                <label>Frequency</label>
+                                                                <input type="text" name="ref[pharmacy][Frequency][]" class="form-control " placeholder="Enter Frequency ">
                                                             </div>
+                                                            <div class="form-group pharmacy" >
+                                                                <label class="control-label">* Details & Instructions</label>
+                                                                <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[pharmacy][details][]"></textarea>
+                                                            </div>
+                                                           
                                                         </div>
                                                     </div>
+                                                    <div class="form-group col-lg-1">
+                                                                <a href='#' class="subobj1_button2 btn btn-success" style="margin-top:30px">+</a>
+                                                            </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group pharmacy" style="display: none;">
-                                                <label class="control-label">* Details & Instructions</label>
-                                                <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[pharmacy][details]"></textarea>
-                                            </div>
+                                           
                                         </div>
                                         <div class="tab-pane nref" id="patron" role="tabpanel" aria-labelledby="patron-tab">
 
@@ -992,10 +1041,6 @@ $id = $_GET['id'];
                                                 <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[radiography][details]"></textarea>
                                             </div>
                                         </div>
-                                       
-                                        
-                                         
-
                                     </div>
 
                                     <div class="form-group pull-left">
@@ -1082,6 +1127,28 @@ $id = $_GET['id'];
                 $nref.find(".services").hide();
             }
         });
+
+        $(document).on('change','.drug',function(){
+            var drug = $(this).val();
+            var $count = $(this).attr('data-count')
+            $.ajax({
+                url: "getprod.php",
+                type: "POST",
+                data: {
+                    drug: drug
+                },
+                dataType: "JSON",
+                success: function(data) {
+                    console.log(data)
+                   if (data.status == 'success'){
+                        $(`#stock${$count}`).val(data.instock)
+                        $(`#date${$count}`).val(data.expiry)
+                        $(`#unit${$count}`).html(`( ${data.measurement}  )`)
+
+                   }
+                }
+            });
+        })
 
         var refsc = 1;
         $(`.multi-select_${refsc}`).select2();
@@ -1307,9 +1374,100 @@ $id = $_GET['id'];
             $(`.multi-select_${refsc}`).select2();
             // $(`.msnr`).select2();
         })
-
+        $(document).on('click','.subobj1_button2',function(e){
+            e.preventDefault();
+        //    count the number of add rows 
+            var count = $('.subobj2').children().length;
+            // count++;
+            $('.subobj2').append(`
+                        <div class="row">
+                           
+                            <div class="col-lg-11">
+                                <div class="row">  
+                                    <div class="form-group col-lg-12">
+                                        <label>Drug Name</label>     
+                                        <select class="form-control room select2 msnr multi-select_1 drug" name="ref[pharmacy][drug][]" data-count="${count}">  
+                                            <option selected="selected" value="">Select option..</option>        
+                                            <?php
+                                            $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ");
+                                            while ($row = mysqli_fetch_array($getitems)) {
+                                                $inventoryitem_id = $row['inventoryitem_id'];
+                                                $itemname = $row['itemname'];
+                                                $measurement_id = $row['measurement_id'];
+                                                $type = $row['type'];
+                                                $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
+                                                $row2 =  mysqli_fetch_array($getunit);
+                                                $measurement = $row2['measurement'];
+                                                if ($type == 'Medicine') {
+                                                    
+                                                    $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2 and status=1") or die(mysqli_error($con));
+                                                    
+                                                    $row3 = mysqli_fetch_array($getstock);
+                                                    $totalstock = $row3['totalstock'];
+                                                    $exipry = $row3['expiry'];
+                                                    $totalordered = 0;
+                                                    $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                    while ($row4 = mysqli_fetch_array($getordered)) {
+                                                        $stockorder_id = $row4['stockorder_id'];
+                                                        $quantity = $row4['quantity'];
+                                                        $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
+                                                        if (mysqli_num_rows($getorder) > 0) {
+                                                            $totalordered = $totalordered + $quantity;
+                                                        }
+                                                    }
+                                                    $instock = $totalstock - $totalordered;
+                                                    if ($instock > 0){
+                                            ?>     
+                                                    <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname . '(' . $measurement . ')'; ?></option>  
+                                                <?php }}
+                                            } ?>      
+                                        </select>
+                                    </div>  
+                                    <div class="form-group col-lg-6">
+                                                                <label>In stock</label>
+                                                                <input type="text" id="stock${count}" name="ref[pharmacy][stock][]" class="form-control " readonly>
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Expiry Date</label>
+                                                                <input type="date" id="date${count}" name="ref[pharmacy][expiry][]" class="form-control " readonly>
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Purpose</label>
+                                                                <input type="text" name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter Purpose">
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Unit <span id="unit${count}"></span></label>
+                                                                <input type="number"  name="ref[pharmacy][unit][]" class="form-control " placeholder="Enter Unit">
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label>Dosage</label>
+                                                                <input type="text" name="ref[pharmacy][dosage][]" class="form-control " placeholder="Enter dosage">
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label>Frequency</label>
+                                                                <input type="text" name="ref[pharmacy][Frequency][]" class="form-control " placeholder="Enter Frequency ">
+                                                            </div>
+                                                            <div class="form-group pharmacy" >
+                                                                <label class="control-label">* Details & Instructions</label>
+                                                                <textarea class="form-control" cols="40" id="editor1" rows="8" name="ref[pharmacy][details][]"></textarea>
+                                                            </div>
+                            </div> 
+                            <button class="remove_subobj1  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    `); //add input box
+        
+                    $(`.multi-select_${refsc}`).select2(); 
+                        // re initilize for ckeditor
+                        if (typeof CKEDITOR !== 'undefined') {
+                            CKEDITOR.replace('editor1');
+                        }
+        });
         $('#nextref').on('click', '.subobj1_button', function(e) { //on add input button click
             e.preventDefault();
+            var count = $(this).closest('.subobj1').find('.subobj1_1').length;
+            count++;
             $(this).closest('.subobj1').append(`
                         <div class="row">
                             <div class="col-lg-12">
@@ -1317,9 +1475,9 @@ $id = $_GET['id'];
                             </div>
                             <div class="col-lg-11">
                                 <div class="row">  
-                                    <div class="form-group col-lg-6">
+                                    <div class="form-group col-lg-12">
                                         <label>Drug Name</label>     
-                                        <select class="form-control room" name="ref[pharmacy][drug][]">  
+                                        <select class="form-control room select2 msnr multi-select_1 drug" name="ref[pharmacy][drug][]" data-count="${count}">  
                                             <option selected="selected" value="">Select option..</option>        
                                             <?php
                                             $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ");
@@ -1328,26 +1486,62 @@ $id = $_GET['id'];
                                                 $itemname = $row['itemname'];
                                                 // $category_id = $row['category_id'];
                                                 $measurement_id = $row['measurement_id'];
-                                                // $getcat = mysqli_query($con, "SELECT * FROM itemcategories WHERE status=1 AND itemcategory_id='$category_id'");
-                                                // $row1 =  mysqli_fetch_array($getcat);
-                                                // $category = $row1['category'];
-                                                $type = $row['type'];
-                                                if ($type == 'Medical') {
+                                                $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
+                                                $row2 =  mysqli_fetch_array($getunit);
+                                                $measurement = $row2['measurement'];
+                                                if ($type == 'Medicine') {
+                                                    
+                                                    $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2 and status=1") or die(mysqli_error($con));
+                                                    
+                                                    $row3 = mysqli_fetch_array($getstock);
+                                                    $totalstock = $row3['totalstock'];
+                                                    $exipry = $row3['expiry'];
+                                                    $totalordered = 0;
+                                                    $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                    while ($row4 = mysqli_fetch_array($getordered)) {
+                                                        $stockorder_id = $row4['stockorder_id'];
+                                                        $quantity = $row4['quantity'];
+                                                        $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
+                                                        if (mysqli_num_rows($getorder) > 0) {
+                                                            $totalordered = $totalordered + $quantity;
+                                                        }
+                                                    }
+                                                    $instock = $totalstock - $totalordered;
+                                                    if ($instock > 0){
                                             ?>     
-                                                    <option  value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname; ?></option>       
-                                                <?php }
+                                                    <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname . '(' . $measurement . ')'; ?></option>  
+                                                <?php }}
                                             } ?>      
                                         </select>
                                     </div>  
-                                    <div class="form-group col-lg-3"> 
-                                        <label>Prescription</label>   
-                                        <input type="text"  name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter Prescription">
-                                    </div>
-                                    <div class="form-group col-lg-3"> 
-                                        <label>Dosage</label>   
-                                        <input type="text"  name="ref[pharmacy][dosage][]" class="form-control " placeholder="Enter Dosage">
-                                    </div>
-                                </div> 
+                                    <div class="form-group col-lg-6">
+                                                                <label>In stock</label>
+                                                                <input type="text" id="stock${count}" name="ref[pharmacy][stock][]" class="form-control " readonly>
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Expiry Date</label>
+                                                                <input type="date" id="date${count}" name="ref[pharmacy][expiry][]" class="form-control " readonly>
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Purpose</label>
+                                                                <input type="text" name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter Purpose">
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Unit <span id="unit${count}"></span></label>
+                                                                <input type="number"  name="ref[pharmacy][unit][]" class="form-control " placeholder="Enter U">
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label>Dosage</label>
+                                                                <input type="text" name="ref[pharmacy][dosage][]" class="form-control " placeholder="Enter dosage">
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label>Frequency</label>
+                                                                <input type="text" name="ref[pharmacy][Frequency][]" class="form-control " placeholder="Enter Frequency ">
+                                                            </div>
+                                                            <div class="form-group pharmacy" >
+                                                                <label class="control-label">* Details & Instructions</label>
+                                                                <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[pharmacy][details][]"></textarea>
+                                                            </div>
                             </div> 
                             <button class="remove_subobj1  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
                                 <i class="fa fa-minus"></i>

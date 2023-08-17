@@ -105,9 +105,7 @@ $id = $_GET['id'];
                     $pregnancy_month = $row2['pregnancy_month'];
                     $bloodgroup = $row2['bloodgroup'];
                     $weight = $row2['weight'];
-                    $partner_name = $row2['partner_name'];
-                    $paymenttype = $row2['paytype'];
-                    $paytype_id = $row2['paytype_id'];      
+                    $partner_name = $row2['partner_name'];     
                     $status=$row2['status'];             
                     
                     $attendant =  $row2['user_id'];
@@ -269,117 +267,132 @@ $id = $_GET['id'];
 
                                                         }
                                                     }
-                                                    if (!empty($reference_obj['labmeasure'])) {
-                                                        $labmeasures = $reference_obj['labmeasure'];
-                                                        // format: [{id: charge}]
-                                                        $cashfallbacks = [];
-                                                        $lbmeasures = [];
-                                                        foreach ($labmeasures as $service) {
-                                                            $getmedicalservices =  mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$service'");
-                                                            $row1 =  mysqli_fetch_array($getmedicalservices);
-                                                            if ($paymenttype == 'cash') {
-                                                                $charge = $row1['unitprice'];
-                                                            } else if ($paymenttype == 'credit') {
-                                                                $charge = $row1['creditprice'];
-                                                            } else if ($paymenttype == 'insurance') {
-                                                                $getinsured =  mysqli_query($con, "SELECT * FROM insuredinvestigationtypes WHERE status=1 AND investigationtype_id='$service' AND insurancecompany_id='$insurancecompany'");
-                                                                if (mysqli_num_rows($getinsured) > 0) {
-                                                                    $insurance =  mysqli_fetch_array($getinsured);
-                                                                    $charge = $insurance['charge'];
+                                                    if ($status == 4){
+                                                        $getpatient = mysqli_query($con, "SELECT * FROM patients WHERE clinic='$patient_id'");
+                                                        $row = mysqli_fetch_array($getpatient);
+                                                        $patient_id = $row['patient_id'];
+                                                        $getadmision = mysqli_query($con, "SELECT * FROM admissions WHERE patient_id='$patient_id' AND status=1");
+                                                        $row1 = mysqli_fetch_array($getadmision);
+                                                        $admission_id = $row1['admission_id'];
+                                                        $paymenttype = get_payment_method($pdo, $patient_id, $admission_id);
+                                                        mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','clinic',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
+                                                        $new_patientsque_id = mysqli_insert_id($con);
+                                                        if (!empty($reference_obj['labmeasure'])) {
+                                                            $labmeasures = $reference_obj['labmeasure'];
+                                                            // format: [{id: charge}]
+                                                            $cashfallbacks = [];
+                                                            $lbmeasures = [];
+                                                            foreach ($labmeasures as $service) {
+                                                                $getmedicalservices =  mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$service'");
+                                                                $row1 =  mysqli_fetch_array($getmedicalservices);
+                                                                if ($paymenttype == 'cash') {
+                                                                    $charge = $row1['unitprice'];
+                                                                } else if ($paymenttype == 'credit') {
+                                                                    $charge = $row1['creditprice'];
+                                                                } else if ($paymenttype == 'insurance') {
+                                                                    $getinsured =  mysqli_query($con, "SELECT * FROM insuredinvestigationtypes WHERE status=1 AND investigationtype_id='$service' AND insurancecompany_id='$insurancecompany'");
+                                                                    if (mysqli_num_rows($getinsured) > 0) {
+                                                                        $insurance =  mysqli_fetch_array($getinsured);
+                                                                        $charge = $insurance['charge'];
+                                                                    }
+                                                                }
+                                                                if (empty($charge)) {
+                                                                    $cashfallbacks[$service] = $row1['unitprice'];
+                                                                } else {
+                                                                    $lbmeasures[$service] = $charge;
                                                                 }
                                                             }
-                                                            if (empty($charge)) {
-                                                                $cashfallbacks[$service] = $row1['unitprice'];
-                                                            } else {
-                                                                $lbmeasures[$service] = $charge;
-                                                            }
-                                                        }
-                                                        if (!empty($cashfallbacks)) {
-                                                            mysqli_query($con, "INSERT INTO laborders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$patient_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'cash',0,'clinic',0,0)") or die(mysqli_error($con));
-                                                            $last_id = mysqli_insert_id($con);
-                                                            $total_amount = array_sum($cashfallbacks);
-                                                            create_bill($pdo, $patient_id, '','', 'lab', $last_id, $total_amount, 'cash',1);
-                                                            foreach ($cashfallbacks as $service => $charge) {
-                                                                mysqli_query($con, "INSERT INTO patientlabs(laborder_id,investigationtype_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
-                                                            }
-                                                        }
-                                                        if (!empty($lbmeasures)) {
-                                                            mysqli_query($con, "INSERT INTO laborders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$patient_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymenttype',0,'clinic',0,0)") or die(mysqli_error($con));
-                                                            $last_id = mysqli_insert_id($con);
-                                                            $total_amount = array_sum($lbmeasures);
-                                                            create_bill($pdo, $patient_id, '', '', 'lab', $last_id, $total_amount, $paymenttype,1);
-                                                            foreach ($lbmeasures as $key =>$charge){
-                                                                $charge = intval($charge);
-                                                                $service = intval($key);
-                                                                mysqli_query($con, "INSERT INTO patientlabs(laborder_id,investigationtype_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));                                                            } 
-                                                        }
-                                                    }
-        
-                                                    if (!empty($reference_obj['radiomeasure'])) {
-                                                        $radiomeasures = $reference_obj['radiomeasure'];
-                                                        $cashfallbacks = [];
-                                                        $lbmeasures = [];
-        
-                                                        foreach ($radiomeasures as $service) {
-                                                            $getmedicalservices =  mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1 AND radioinvestigationtype_id='$service'");
-                                                            $row1 =  mysqli_fetch_array($getmedicalservices);
-                                                            if ($paymenttype == 'cash') {
-                                                                $charge = $row1['unitprice'];
-                                                            } else if ($paymenttype == 'credit') {
-                                                                $charge = $row1['creditprice'];
-                                                            } else if ($paymenttype == 'insurance') {
-                                                                $getinsured =  mysqli_query($con, "SELECT * FROM insuredradiotypes WHERE status=1 AND investigationtype_id='$service' AND insurancecompany_id='$insurancecompany'");
-                                                                if (mysqli_num_rows($getinsured) > 0) {
-                                                                    $insurance =  mysqli_fetch_array($getinsured);
-                                                                    $charge = $insurance['charge'];
+                                                            if (!empty($cashfallbacks)) {
+                                                                mysqli_query($con, "INSERT INTO laborders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'cash',0,'clinic',0,0)") or die(mysqli_error($con));
+                                                                $last_id = mysqli_insert_id($con);
+                                                                $total_amount = array_sum($cashfallbacks);
+                                                                create_bill($pdo, $patient_id, $admission_id, $new_patientsque_id, 'lab', $last_id, $total_amount, 'cash');
+                                                                foreach ($cashfallbacks as $service => $charge) {
+                                                                    mysqli_query($con, "INSERT INTO patientlabs(laborder_id,investigationtype_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
                                                                 }
                                                             }
-                                                            if (empty($charge)) {
-                                                                $cashfallbacks[$service] = $row1['unitprice'];
-                                                            } else {
-                                                                $lbmeasures[$service] = $charge;
+                                                            if (!empty($lbmeasures)) {
+                                                                mysqli_query($con, "INSERT INTO laborders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymenttype',0,'clinic',0,0)") or die(mysqli_error($con));
+                                                                $last_id = mysqli_insert_id($con);
+                                                                $total_amount = array_sum($lbmeasures);
+                                                                create_bill($pdo, $patient_id, $admission_id, $new_patientsque_id, 'lab', $last_id, $total_amount, $paymenttype);
+                                                                foreach ($lbmeasures as $key =>$charge){
+                                                                    $charge = intval($charge);
+                                                                    $service = intval($key);
+                                                                    mysqli_query($con, "INSERT INTO patientlabs(laborder_id,investigationtype_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));                                                            } 
                                                             }
                                                         }
-        
-                                                        if (!empty($cashfallbacks)) {
-                                                            mysqli_query($con, "INSERT INTO radioorders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$patient_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'cash',0,'clinic',0,0)") or die(mysqli_error($con));
+            
+                                                        if (!empty($reference_obj['radiomeasure'])) {
+                                                            $radiomeasures = $reference_obj['radiomeasure'];
+                                                            $cashfallbacks = [];
+                                                            $lbmeasures = [];
+            
+                                                            foreach ($radiomeasures as $service) {
+                                                                $getmedicalservices =  mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1 AND radioinvestigationtype_id='$service'");
+                                                                $row1 =  mysqli_fetch_array($getmedicalservices);
+                                                                if ($paymenttype == 'cash') {
+                                                                    $charge = $row1['unitprice'];
+                                                                } else if ($paymenttype == 'credit') {
+                                                                    $charge = $row1['creditprice'];
+                                                                } else if ($paymenttype == 'insurance') {
+                                                                    $getinsured =  mysqli_query($con, "SELECT * FROM insuredradiotypes WHERE status=1 AND investigationtype_id='$service' AND insurancecompany_id='$insurancecompany'");
+                                                                    if (mysqli_num_rows($getinsured) > 0) {
+                                                                        $insurance =  mysqli_fetch_array($getinsured);
+                                                                        $charge = $insurance['charge'];
+                                                                    }
+                                                                }
+                                                                if (empty($charge)) {
+                                                                    $cashfallbacks[$service] = $row1['unitprice'];
+                                                                } else {
+                                                                    $lbmeasures[$service] = $charge;
+                                                                }
+                                                            }
+            
+                                                            if (!empty($cashfallbacks)) {
+                                                                mysqli_query($con, "INSERT INTO radioorders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'cash',0,'clinic',0,0)") or die(mysqli_error($con));
+                                                                $last_id = mysqli_insert_id($con);
+                                                                $total_amount = array_sum($cashfallbacks);
+                                                                create_bill($pdo, $patient_id, $admission_id, $new_patientsque_id, 'radiography', $last_id, $total_amount, 'cash');
+                                                                foreach ($cashfallbacks as $service => $charge) {
+                                                                    $charge = intval($charge);
+                                                                    mysqli_query($con, "INSERT INTO patientradios(radioorder_id,radioinvestigationtype_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
+                                                                }
+                                                            }
+                                                            if (!empty($lbmeasures)) {
+                                                                mysqli_query($con, "INSERT INTO radioorders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymenttype',0,'clinic',0,0)") or die(mysqli_error($con));
+                                                                $last_id = mysqli_insert_id($con);
+                                                                $total_amount = array_sum($lbmeasures);
+                                                                create_bill($pdo, $patient_id, $admission_id, $new_patientsque_id, 'radiography', $last_id, $total_amount, $paymenttype);
+                                                                foreach ($lbmeasures as $service => $charge) {
+                                                                    mysqli_query($con, "INSERT INTO patientradios(radioorder_id,radioinvestigationtype_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
+                                                                }
+                                                            }
+                                                        }
+                                                        if(!empty($reference_obj['drug'])){
+                                                            $drug = $reference_obj['drug'];
+                                                            $totalbill=0;
+                                                            $prescription = $reference_obj['prescription'];
+                                                            $dosage= $reference_obj['dosage']; 
+                                                            $unit= $reference_obj['unit']; 
+                                                            $frequency= $reference_obj['Frequency']; 
+                                                            $details= $reference_obj['details'];
+                                                            $exipry= $reference_obj['expiry'];
+                                                            $allprescriptions = sizeof($drug);
+                                                            mysqli_query($con, "INSERT INTO pharmacyorders(patientsque_id,admin_id,timestamp,payment,insurer,percentage,source,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymenttype',0,'clinic',0)") or die(mysqli_error($con));
                                                             $last_id = mysqli_insert_id($con);
-                                                            $total_amount = array_sum($cashfallbacks);
-                                                            create_bill($pdo, $patient_id, '', '', 'radiography', $last_id, $total_amount, 'cash',1);
-                                                            foreach ($cashfallbacks as $service => $charge) {
-                                                                $charge = intval($charge);
-                                                                mysqli_query($con, "INSERT INTO patientradios(radioorder_id,radioinvestigationtype_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
+                                                            for ($i = 0; $i < $allprescriptions; $i++) {
+                                                                // create pharmacy order
+                                                                $getmedicalcharge = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$drug[$i]'");
+                                                                $row1 = mysqli_fetch_array($getmedicalcharge);
+                                                                $charge = $row1['unitprice'];
+                                                                $totalbill += intval($charge)* intval($unit[$i]);  
+                                                                mysqli_query($con, "INSERT INTO pharmacyordereditems(item_id,pharmacyorder_id,prescription,quantity,dosage,freq,details,expiry,status) VALUES('$drug[$i]','$last_id','$prescription[$i]','$unit[$i]','$dosage[$i]','$frequency[$i]','$details[$i]','$exipry[$i]',1)") or die(mysqli_error($con));                                                          
+                                                                
                                                             }
+                                                            create_bill($pdo,$patient_id,$admission_id,$new_patientsque_id,'pharmacy',$last_id,$totalbill,$paymenttype);
                                                         }
-                                                        if (!empty($lbmeasures)) {
-                                                            mysqli_query($con, "INSERT INTO radioorders(patientsque_id,admin_id,timestamp,payment,paymentmethod,payment_id,source,approvedby,status) VALUES('$patient_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymenttype',0,'clinic',0,0)") or die(mysqli_error($con));
-                                                            $last_id = mysqli_insert_id($con);
-                                                            $total_amount = array_sum($lbmeasures);
-                                                            create_bill($pdo, $patient_id, '', '', 'radiography', $last_id, $total_amount, $paymenttype,1);
-                                                            foreach ($lbmeasures as $service => $charge) {
-                                                                mysqli_query($con, "INSERT INTO patientradios(radioorder_id,radioinvestigationtype_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
-                                                            }
-                                                        }
-                                                    }
-                                                    if(!empty($reference_obj['drug'])){
-                                                        $drug = $reference_obj['drug'];
-                                                        $totalbill=0;
-                                                        $prescription = $reference_obj['prescription'];
-                                                        $dosage= $reference_obj['dosage']; 
-                                                        $allprescriptions = sizeof($drug);
-                                                        mysqli_query($con, "INSERT INTO pharmacyorders(patientsque_id,admin_id,timestamp,payment,insurer,percentage,source,status) VALUES('$patient_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymenttype',0,'clinic',0)") or die(mysqli_error($con));
-                                                        $last_id = mysqli_insert_id($con);
-                                                        for ($i = 0; $i < $allprescriptions; $i++) {
-                                                            // create pharmacy order
-                                                            $getmedicalcharge = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 AND inventoryitem_id='$drug[$i]'");
-                                                            $row1 = mysqli_fetch_array($getmedicalcharge);
-                                                            $charge = $row1['unitprice'];
-                                                            $totalbill += intval($charge)* intval($dosage[$i]);  
-                                                            mysqli_query($con, "INSERT INTO pharmacyordereditems(item_id,pharmacyorder_id,prescription,quantity,status) VALUES('$drug[$i]','$last_id','$prescription[$i]','$dosage[$i]',1)") or die(mysqli_error($con));                                                          
-                                                            
-                                                        }
-                                                        create_bill($pdo,$patient_id,'','','pharmacy',$last_id,$totalbill,$paymenttype,1);
-                                                    }
+                                                }
                                                     
                                                     
         
@@ -473,14 +486,14 @@ $id = $_GET['id'];
                                                     <h4>Recommended Drugs</h4>
                                                 </div>
                                                 <div class="col-lg-12">
-                                                    <div class='subobj1'>
+                                                    <div class='subobj2'>
                                                         <div class='row'>
-                                                            <div class="form-group col-lg-6">
+                                                            <div class="form-group col-lg-12">
                                                                 <label>Drug Name</label>
-                                                                <select class="form-control room select2 msnr multi-select_1" name="ref[pharmacy][drug][]">
+                                                                <select class="form-control room select2 msnr multi-select_1 drug" data-count="0" name="ref[pharmacy][drug][]">
                                                                     <option selected="selected" value="">Select option..</option>
                                                                     <?php
-                                                                    $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1");
+                                                                    $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ");
                                                                     while ($row = mysqli_fetch_array($getitems)) {
                                                                         $inventoryitem_id = $row['inventoryitem_id'];
                                                                         $itemname = $row['itemname'];
@@ -515,28 +528,42 @@ $id = $_GET['id'];
                                                                 </select>
                                                             </div>
                                                             <div class="form-group col-lg-6">
-                                                                <label>Purpose</label>
-                                                                <input type="text" name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter purpose">
+                                                                <label>In stock</label>
+                                                                <input type="text" id="stock0" name="ref[pharmacy][stock][]" class="form-control " readonly>
                                                             </div>
                                                             <div class="form-group col-lg-6">
+                                                                <label>Expiry Date</label>
+                                                                <input type="date"id="date0" name="ref[pharmacy][expiry][]" class="form-control " readonly>
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Purpose</label>
+                                                                <input type="text" name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter Purpose">
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Unit <span id="unit0"></span></label>
+                                                                <input type="number" name="ref[pharmacy][unit][]" class="form-control " placeholder="Enter Unit">
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
                                                                 <label>Dosage</label>
                                                                 <input type="text" name="ref[pharmacy][dosage][]" class="form-control " placeholder="Enter dosage">
                                                             </div>
-                                                            <div class="form-group col-lg-6">
+                                                            <div class="form-group col-lg-12">
                                                                 <label>Frequency</label>
                                                                 <input type="text" name="ref[pharmacy][Frequency][]" class="form-control " placeholder="Enter Frequency ">
                                                             </div>
-                                                            <div class="form-group col-lg-1">
-                                                                <a href='#' class="subobj1_button btn btn-success" style="margin-top:30px">+</a>
+                                                            <div class="form-group pharmacy" >
+                                                                <label class="control-label">* Details & Instructions</label>
+                                                                <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[pharmacy][details][]"></textarea>
                                                             </div>
+                                                           
                                                         </div>
                                                     </div>
+                                                    <div class="form-group col-lg-1">
+                                                                <a href='#' class="subobj1_button2 btn btn-success" style="margin-top:30px">+</a>
+                                                            </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group pharmacy" style="display: none;">
-                                                <label class="control-label">* Details & Instructions</label>
-                                                <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[pharmacy][details]"></textarea>
-                                            </div>
+                                           
                                         </div>
                                         <div class="tab-pane nref" id="lab" role="tabpanel" aria-labelledby="lab-tab">
                                             <div class="form-check mb-3">
@@ -704,7 +731,27 @@ $id = $_GET['id'];
             }
         });
 
+        $(document).on('change','.drug',function(){
+            var drug = $(this).val();
+            var $count = $(this).attr('data-count')
+            $.ajax({
+                url: "getprod.php",
+                type: "POST",
+                data: {
+                    drug: drug
+                },
+                dataType: "JSON",
+                success: function(data) {
+                    console.log(data)
+                   if (data.status == 'success'){
+                        $(`#stock${$count}`).val(data.instock)
+                        $(`#date${$count}`).val(data.expiry)
+                        $(`#unit${$count}`).html(`( ${data.measurement}  )`)
 
+                   }
+                }
+            });
+        })
         $('#nextref').on('change', '.sections', function() {
             var $nref = $(this).closest(".nref");
             var section = $(this).val();
@@ -938,7 +985,96 @@ $id = $_GET['id'];
             $(`.multi-select_${refsc}`).select2();
             // $(`.msnr`).select2();
         })
-
+        $(document).on('click','.subobj1_button2',function(e){
+            e.preventDefault();
+        //    count the number of add rows 
+            var count = $('.subobj2').children().length;
+            // count++;
+            $('.subobj2').append(`
+                        <div class="row">
+                           
+                            <div class="col-lg-11">
+                                <div class="row">  
+                                    <div class="form-group col-lg-12">
+                                        <label>Drug Name</label>     
+                                        <select class="form-control room select2 msnr multi-select_1 drug" name="ref[pharmacy][drug][]" data-count="${count}">  
+                                            <option selected="selected" value="">Select option..</option>        
+                                            <?php
+                                            $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ");
+                                            while ($row = mysqli_fetch_array($getitems)) {
+                                                $inventoryitem_id = $row['inventoryitem_id'];
+                                                $itemname = $row['itemname'];
+                                                $measurement_id = $row['measurement_id'];
+                                                $type = $row['type'];
+                                                $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
+                                                $row2 =  mysqli_fetch_array($getunit);
+                                                $measurement = $row2['measurement'];
+                                                if ($type == 'Medicine') {
+                                                    
+                                                    $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2 and status=1") or die(mysqli_error($con));
+                                                    
+                                                    $row3 = mysqli_fetch_array($getstock);
+                                                    $totalstock = $row3['totalstock'];
+                                                    $exipry = $row3['expiry'];
+                                                    $totalordered = 0;
+                                                    $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                    while ($row4 = mysqli_fetch_array($getordered)) {
+                                                        $stockorder_id = $row4['stockorder_id'];
+                                                        $quantity = $row4['quantity'];
+                                                        $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
+                                                        if (mysqli_num_rows($getorder) > 0) {
+                                                            $totalordered = $totalordered + $quantity;
+                                                        }
+                                                    }
+                                                    $instock = $totalstock - $totalordered;
+                                                    if ($instock > 0){
+                                            ?>     
+                                                    <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname . '(' . $measurement . ')'; ?></option>  
+                                                <?php }}
+                                            } ?>      
+                                        </select>
+                                    </div>  
+                                    <div class="form-group col-lg-6">
+                                                                <label>In stock</label>
+                                                                <input type="text" id="stock${count}" name="ref[pharmacy][stock][]" class="form-control " readonly>
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Expiry Date</label>
+                                                                <input type="date" id="date${count}" name="ref[pharmacy][expiry][]" class="form-control " readonly>
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Purpose</label>
+                                                                <input type="text" name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter Purpose">
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Unit <span id="unit${count}"></span></label>
+                                                                <input type="number"  name="ref[pharmacy][unit][]" class="form-control " placeholder="Enter Unit">
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label>Dosage</label>
+                                                                <input type="text" name="ref[pharmacy][dosage][]" class="form-control " placeholder="Enter dosage">
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label>Frequency</label>
+                                                                <input type="text" name="ref[pharmacy][Frequency][]" class="form-control " placeholder="Enter Frequency ">
+                                                            </div>
+                                                            <div class="form-group pharmacy" >
+                                                                <label class="control-label">* Details & Instructions</label>
+                                                                <textarea class="form-control" cols="40" id="editor1" rows="8" name="ref[pharmacy][details][]"></textarea>
+                                                            </div>
+                            </div> 
+                            <button class="remove_subobj1  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    `); //add input box
+        
+                    $(`.multi-select_${refsc}`).select2(); 
+                        // re initilize for ckeditor
+                        if (typeof CKEDITOR !== 'undefined') {
+                            CKEDITOR.replace('editor1');
+                        }
+        });
         $('#nextref').on('click', '.subobj1_button', function(e) { //on add input button click
             e.preventDefault();
             $(this).closest('.subobj1').append(`

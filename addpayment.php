@@ -321,7 +321,7 @@ $id = $_GET['q'];
 
                                                         ?>
                                                             <tr>
-                                                                <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-id="<?php echo $id; ?>" name="service[]" value="<?php echo $id; ?>_<?php echo $stotal ?>" ></td>
+                                                                <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-id="<?php echo $id2; ?>" name="service[]" value="<?php echo $id2; ?>_<?php echo $stotal ?>" ></td>
                                                                 <td><?php echo $room; ?></td>
                                                                 <td><?php echo $medicalservice; ?></td>
                                                                 <td><?php echo $stotal; ?></td>
@@ -470,7 +470,7 @@ $id = $_GET['q'];
                                                     foreach($bill as $b) {
                                                         $type_id = $b['type_id'];
                                                         foreach ($_SESSION['service'] as $key => $service ){
-                                                            mysqli_query($con, "UPDATE pharmacyordereditems SET status=2 where pharmacyorder_id='$type_id' and item_id='$key'") or die(mysqli_error($con));
+                                                            mysqli_query($con, "UPDATE pharmacyordereditems SET status=2 where pharmacyordereditem_id ='$key'") or die(mysqli_error($con));
                                                         }
                                                         mysqli_query($con, "UPDATE pharmacyorders SET payment='1',insurer='" . $_SESSION['elcthospitaladmin'] . "',percentage='$paymentmethod',status=1 WHERE pharmacyorder_id='$type_id'") or die(mysqli_error($con));
                                                     }

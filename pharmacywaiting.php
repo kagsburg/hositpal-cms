@@ -92,6 +92,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                         </thead>
                                         <tbody>
                                             <?php
+                                            
                                             $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room='pharmacy' AND status=0 group by admission_id ORDER BY patientsque_id DESC");
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];

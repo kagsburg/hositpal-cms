@@ -153,11 +153,13 @@ $id = $_GET['id'];
                                                     $row = mysqli_fetch_array($getpatient);
                                                     $clinic = $row['clinic'];
                                                     mysqli_query($con, "UPDATE clinic_clients SET status='4' WHERE clinic_cl_id ='$clinic'") or die(mysqli_error($con));
+                                                    mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$last_id','$room','$attendant','1','" . $_SESSION['elcthospitaladmin'] . "','receptionist',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
+                                                    $patientsque_id = mysqli_insert_id($con);
                                                     echo '<div class="alert alert-success">Patient Successfully Attended.</div>';
-
+                                                    
                                                 }else{
-                                                mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$last_id','$room','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','receptionist',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
-                                                $patientsque_id = mysqli_insert_id($con);
+                                                    mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$last_id','$room','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','receptionist',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
+                                                    $patientsque_id = mysqli_insert_id($con);
 
                                                 if (isset($_POST['medicalservices'])) {
                                                     $cashfallbacks = [];

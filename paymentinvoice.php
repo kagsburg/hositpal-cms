@@ -238,7 +238,7 @@ $id = $_GET['id'];
                         // print_r($type); 
                         echo "<br>";
                       if ($type == 'pharmacy') {
-                        $getorder = mysqli_query($con, "SELECT * FROM pharmacyorders WHERE status=0  AND pharmacyorder_id='$bill_type_id'");
+                        $getorder = mysqli_query($con, "SELECT * FROM pharmacyorders WHERE status=1  AND pharmacyorder_id='$bill_type_id'");
                         if (mysqli_num_rows($getorder) > 0){
                         $row1o = mysqli_fetch_array($getorder);
                         $pharmacyorder_id = $row1o['pharmacyorder_id'];
