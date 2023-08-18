@@ -586,7 +586,7 @@
             </a>
             <ul aria-expanded="false">
               <li><a href="addclinicclient">Add Client</a></li>
-              <li><a href="clinicclients?ty=3">Registered List</a></li>
+              <li><a href="clinicclients">Registered List</a></li>
               <li><a href="clinicclients?ty=1">Waiting List</a></li>
               <li><a href="clinicwaiting?ty=medical_service">Attended List</a></li>
             </ul>

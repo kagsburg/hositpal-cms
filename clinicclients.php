@@ -3,7 +3,7 @@ include 'includes/conn.php';
 if (!isset($_SESSION['elcthospitaladmin'])) {
     header('Location:login.php');
 }
-$type = $_GET['ty'];
+$type = isset($_GET['ty']) ? $_GET['ty']: "";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -96,7 +96,11 @@ $type = $_GET['ty'];
                                             <?php
                                             if ($type == 1) {
                                                 $getpatients = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status in (1,4) ORDER BY clinic_cl_id DESC");
-                                            }else{
+                                            }
+                                            if ($type ==""){
+                                                $getpatients = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status in (1,2,3,4)");
+                                            }
+                                            else{
                                                 $getpatients = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status='$type'");
                                             }
                                             if (mysqli_num_rows($getpatients) ==0) {
@@ -141,13 +145,7 @@ $type = $_GET['ty'];
 
                                                     <td>
                                                         <?php 
-                                                            if ($type == 3){
-                                                                // show link for registered patients
-                                                                ?>
-                                                                <a href="attendclinic?id=<?php echo $id; ?>" class="btn btn-success btn-xs">Attend</a>
-                                                                <a href="viewnursereport?id=<?php echo $id; ?>" class="btn btn-success btn-xs">Details</a>
-                                                                <?php
-                                                            } else if ($type == 1){
+                                                             if ($type == 1){
                                                         ?>
                                                         <a href="clinicclient?id=<?php echo $id; ?>" class="btn btn-success btn-xs">Add Report</a>
                                                         <?php
@@ -163,7 +161,13 @@ $type = $_GET['ty'];
                                                                 }
                                                             </script>
 
-                                                        <?php }} ?>
+                                                        <?php }} else{
+                                                                // show link for registered patients
+                                                                ?>
+                                                                <a href="attendclinic?id=<?php echo $id; ?>" class="btn btn-success btn-xs">Attend</a>
+                                                                <a href="viewnursereport?id=<?php echo $id; ?>" class="btn btn-success btn-xs">Details</a>
+                                                                <?php
+                                                            } ?>
                                                     </td>
 
 
