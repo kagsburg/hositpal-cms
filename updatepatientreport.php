@@ -112,6 +112,15 @@ $id = $_GET['id'];
                     $firstname = $row2['firstname'];
                     $secondname = $row2['secondname'];
                     $thirdname = $row2['thirdname'];
+                    $bloodgroup = $row2['bloodgroup'];
+                    $dob = $row2['dob'];
+                    $weight = $row2['weight'];
+                    $height = $row2['height'];
+                    $temp = $row2['temp'];
+                    $bp = $row2['bp'];
+                    $allergies = $row2['allergies'];
+                    $diseases = $row2['diseases'];
+                    $pregnancies = $row2['pregnancies'];
                     $gender = $row2['gender'];
                     $insurancecompany = $row2['insurancecompany'];
                     $ext = $row2['ext'];
@@ -170,6 +179,35 @@ $id = $_GET['id'];
                                     <h4 class="text-primary"><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?></h4>
 
                                 </div>
+                                <h4 class="text-primary mt-4 mb-4">Medical Information</h4>
+                                <div class="profile-blog mb-5">
+                                    <address>
+                                        <p>Age: <span><?php 
+                                        $dob1 = date("Y-m-d", strtotime($dob));
+                                        $dob2 = new DateTime($dob1);
+                                        $now = new DateTime();
+                                        $difference = $now->diff($dob2);
+                                        echo $difference->y;
+                                        ?></span></p>
+                                        <p>Blood Group : <span><?php echo $bloodgroup; ?></span></p>
+                                        <p>Weight (kgs)  : <span><?php echo $weight; ?></span></p>
+                                        <p>Height : <span><?php echo $height; ?></span></p>
+                                        <p>Temperature : <span><?php echo $temp; ?></span></p>
+                                        <p>Blood Pressure : <span><?php echo $bp; ?></span></p>
+                                        <!-- <p>Allergies : <span><?php echo $allergies; ?></span></p> -->
+                                        <!-- <p>Diseases : <span><?php echo $diseases; ?></span></p>
+                                        <p>Pregnancies : <span><?php echo $pregnancies; ?></span></p> -->
+                                    </address>
+                                </div>
+                                <?php  
+                                  $checkpathistory = mysqli_query($con, "SELECT * FROM patienthistory WHERE patient_id='$patient_id' AND status=1");
+                                  if (mysqli_num_rows($checkpathistory) > 0){
+                                ?>
+                                <h4 class="text-primary mt-4 mb-4">Past Medical History</h4>
+                                <div class="mb-3">
+                                    <a href="patienthistory?patient_id=<?php echo $patient_id; ?>" target="_blank" class="btn btn-primary btn-block">View History</a>
+                                </div>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>
@@ -589,74 +627,33 @@ $id = $_GET['id'];
                                                 
                                     }
                                 ?>
-                                                                <?php
-                                                                $nursereports = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$id'") or die(mysqli_error($con));
-                                                                while ($row = mysqli_fetch_array($nursereports)) {
-                                                                    $drug = $row['drug'];
-                                                                    $prescription = $row['prescription'];
-                                                                    $details = $row['details'];
-                                                                    $complaint = $row["complaint"];
-                                                                        $physical_exam = $row["physical_exam"];
-                                                                        $systematic_exam = $row["systematic_exam"];
-                                                                        $provisional_diagnosis = $row["provisional_diagnosis"];
-                                                                        $final_diagnosis = $row["final_diagnosis"];
-
-                                                                    if ($room == 'pharmacy') {
-                                                                ?>
-                                                                        <div class="row mb-2">
-                                                                            <div class="col-sm-5 col-5">
-                                                                                <h5 class="f-w-500"><?php echo $drug; ?><span class="pull-right">:</span>
-                                                                                </h5>
-                                                                            </div>
-                                                                            <div class="col-sm-7 col-7"><span><?php echo $prescription; ?></span>
-                                                                            </div>
-                                                                        </div>
-                                                                <?php }
-                                                                } ?>
                                                                 
-                                                                <!-- <label class="text-primary"><strong>Details</strong></label>
-                                                                <p><?php echo $details; ?></p> -->
                                 <form method="post" name='form' class="form" action="" enctype="multipart/form-data">
                                     <div class="tab-content mt-3" id="nextref">
                                         <div class="tab-pane active" id="diagnosis" role="tabpanel">
                                             <div class="form-group"><label class="control-label">Main complains</label>
-                                                <textarea class="ckeditor" cols="70" id="complaint" rows="8" name="complaint"><?php  echo $complaint; ?></textarea>
+                                                <textarea class="ckeditor" cols="70" id="complaint" rows="8" name="complaint"></textarea>
                                             </div>
                                             <div class="form-group"><label class="control-label">Physical Examination</label>
-                                                <textarea class="ckeditor" cols="70" id="physical_exam" rows="8" name="physical_exam"><?php  echo $physical_exam; ?></textarea>
+                                                <textarea class="ckeditor" cols="70" id="physical_exam" rows="8" name="physical_exam"></textarea>
                                             </div>
                                             <div class="form-group"><label class="control-label">Systematic Examination</label>
-                                                <textarea class="ckeditor" cols="70" id="systematic_exam" rows="8" name="systematic_exam"><?php  echo $systematic_exam; ?></textarea>
+                                                <textarea class="ckeditor" cols="70" id="systematic_exam" rows="8" name="systematic_exam"></textarea>
                                             </div>
                                             <div class="form-group"><label class="control-label">Provisional Diagnosis</label>
                                                 <select name="provisional_diagnosis[]" id="provisional_diagnosis" class="form-control select2 multi-select" multiple>
                                                     <option value="">Select Disease</option>
 
                                                     <?php
-                                                    
                                                     $getmedicalservices =  mysqli_query($con, "SELECT * FROM diseases WHERE status=1");
                                                     while ($row11 =  mysqli_fetch_array($getmedicalservices)) {
                                                         $disease_id = $row11['disease_id'];
                                                         $codename = $row11['codename'];
                                                         $codenumber = $row11['codenumber'];
                                                     ?>
-                                                        <option value="<?php echo $disease_id; ?>"
-                                                        <?php 
-                                                            if (!empty($provisional_diagnosis)) {
-                                                                $getdiseases = mysqli_query($con, "SELECT * FROM diseases WHERE disease_id IN ($provisional_diagnosis) AND status=1") or die(mysqli_error($con));
-                                                               
-                                                                while ($row118 = mysqli_fetch_array($getdiseases)) {
-                                                                    $disease2_id = $row118['disease_id'];
-                                                               
-                                                                    if ($disease_id == $disease2_id) {
-                                                                        echo 'selected';
-                                                                    }
-                                                                }
-                                                            }
-                                                        ?>
-                                                        ><?php echo $codename . ' (' . $codenumber . ')'; ?></option>
+                                                        <option value="<?php echo $disease_id; ?>"><?php echo $codename . ' (' . $codenumber . ')'; ?></option>
 
-                                                    <?php  }?>
+                                                    <?php } ?>
                                                 </select>
                                             </div>
                                             <div class="form-group"><label class="control-label">Final Diagnosis</label>
@@ -671,44 +668,13 @@ $id = $_GET['id'];
                                                         $codename = $row11['codename'];
                                                         $codenumber = $row11['codenumber'];
                                                     ?>
-                                                        <option value="<?php echo $disease_id; ?>"
-                                                        <?php 
-                                                            if (!empty($final_diagnosis)) {
-                                                                $getdiseases = mysqli_query($con, "SELECT * FROM diseases WHERE disease_id IN ($final_diagnosis) AND status=1") or die(mysqli_error($con));
-                                                               
-                                                                while ($row118 = mysqli_fetch_array($getdiseases)) {
-                                                                    $disease2_id = $row118['disease_id'];
-                                                               
-                                                                    if ($disease_id == $disease2_id) {
-                                                                        echo 'selected';
-                                                                    }
-                                                                }
-                                                            }
-                                                        ?>
-                                                        
-                                                        ><?php echo $codename . ' (' . $codenumber . ')'; ?></option>
+                                                        <option value="<?php echo $disease_id; ?>"><?php echo $codename . ' (' . $codenumber . ')'; ?></option>
 
                                                     <?php } ?>
                                                 </select>
                                             </div>
                                         </div>
-                                        <?php 
-                                        $rooms = [];
-                                        $patient_ids =[];
-                                        $patient_reports= mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room ='doctor'AND status='1'and admission_id='$admission_id' and attendant='" . $_SESSION['elcthospitaladmin'] . "'");
-                                        if (mysqli_num_rows($patient_reports) > 0){
-                                           while($row23 = mysqli_fetch_array($patient_reports)){
-                                               $previd = $row23['prev_id'];
-                                               $patientsque22_id = $row23['patientsque_id'];
-                                               $getprevid = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('nurse','lab','doctor','radiography') and status='1' AND patientsque_id = '$previd'");
-                                               while ($row = mysqli_fetch_array($getprevid)) {
-                                                   $room = $row['room'];
-                                                   $rooms[] = $room;
-                                                   $patient_ids[] = $row['patientsque_id'];
-                                               }
-                                           }
-                                        }
-                                        ?>
+                                        
 
                                         <div class="tab-pane nref" id="nurse" role="tabpanel" aria-labelledby="nurse-tab">
                                             <div class="form-check mb-3">
@@ -717,40 +683,6 @@ $id = $_GET['id'];
                                                     Send to nurse
                                                 </label>
                                             </div>
-                                            <?php
-                                           if (in_array('nurse', $rooms)) {
-                                            ?>
-                                            
-                                            <div class='row'>
-                                            <?php
-                                            foreach($patient_ids as $npatientsque_id){
-                                                                    $getreports = mysqli_query($con, "SELECT * FROM nursereports WHERE patientsque_id='$npatientsque_id'");
-                                                                if (mysqli_num_rows($getreports) > 0) {
-                                                                    while ($row = mysqli_fetch_array($getreports)) {
-                                                                        $medicalservice_id = $row['nursereport_id'];
-                                                                                    $test = $row['type'];
-                                                                                    $presult = $row['measurement'];
-                                                                                    $details =strip_tags($row['details']);
-                                                                                                                                           
-                                                                        
-                                                                    ?>
-                                                                <div class="form-group col-lg-6">
-                                                                    <label>Test done</label>
-                                                                    <!-- <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>"> -->
-                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $test; ?>" disabled>
-                                                                </div>
-                                                                <div class="form-group col-lg-5">
-                                                                    <label>Result</label>
-                                                                    <input type="text" class="form-control " value="<?php echo $presult; ?>" placeholder="Enter result" disabled>
-                                                                </div>
-                                                                <?php } ?>
-                                                                <div>
-                                                                    <label>Details</label>
-                                                                    <textarea class="form-control" cols="70" id="editor1" rows="8"  disabled><?php echo $details ; ?></textarea>
-                                                                </div>
-                                                                <?php }}?>
-                                                            </div>
-                                                            <?php } ?>
 
                                             <div class="form-group notmedic" style="display: none;" >
                                                 <label class="control-label">Section</label>
@@ -819,41 +751,6 @@ $id = $_GET['id'];
                                         </div>
 
                                         <div class="tab-pane nref" id="pharmacy" role="tabpanel" aria-labelledby="pharmacy-tab">
-                                        <?php
-                                           if (in_array('pharmacy', $rooms)) {
-                                            ?>
-                                            <div class="row">
-                                            <?php 
-                                             foreach($patient_ids as $npatientsque_id){
-                                                // get issued drugs 
-                                                $getdrugs = mysqli_query($con, "SELECT * FROM issueddrugs WHERE patientsque_id='$npatientsque_id'") or die(mysqli_error($con));
-                                                if (mysqli_num_rows($getdrugs ) > 0){
-                                                    while ($rowdr = mysqli_fetch_row($getdrugs)){
-                                                        $drug_id = $rowdr['drug'];
-                                                        $dosage = $rowdr['dosage'];
-                                                        // get drug name
-                                                        $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 and inventoryitem_id='$drug_id' ");
-                                                        $row = mysqli_fetch_array($getitems);
-                                                        $itemname = $row['itemname'];
-                                                        $measurement_id = $row['measurement_id'];
-                                                        $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
-                                                        $row2 =  mysqli_fetch_array($getunit);
-                                                        $measurement = $row2['measurement'];
-                                                        ?>
-                                                        <div class="form-group col-lg-6">
-                                                            <label>Drug Name</label>
-                                                            <input type="text" class="form-control " placeholder="Enter drug name" value="<?php echo $itemname; ?>" disabled>
-                                                        </div>
-                                                        <div class="form-group col-lg-6">
-                                                            <label>Dosage</label>
-                                                            <input type="text" class="form-control " placeholder="Enter dosage" value="<?php echo $dosage; ?>" disabled>
-                                                        </div>
-                                                        <?php
-                                                    }
-                                                }
-                                            ?>
-                                            </div>
-                                            <?php }} ?>
                                             <div class="form-check mb-3">
                                                 <input class="form-check-input reference" name="reference[]" type="checkbox" value="pharmacy" data-ref="pharmacy" id="send-pharmacy">
                                                 <label class="form-check-label" for="send-pharmacy">
@@ -867,52 +764,89 @@ $id = $_GET['id'];
                                                     <h4>Recommended Drugs</h4>
                                                 </div>
                                                 <div class="col-lg-12">
-                                                    <div class='subobj1'>
+                                                    <div class='subobj2'>
                                                         <div class='row'>
-                                                            <div class="form-group col-lg-6">
+                                                            <div class="form-group col-lg-12">
                                                                 <label>Drug Name</label>
-                                                                <select class="form-control room select2 msnr multi-select_1" name="ref[pharmacy][drug][]">
+                                                                <select class="form-control room select2 msnr multi-select_1 drug" data-count="0" name="ref[pharmacy][drug][]">
                                                                     <option selected="selected" value="">Select option..</option>
                                                                     <?php
                                                                     $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ");
                                                                     while ($row = mysqli_fetch_array($getitems)) {
                                                                         $inventoryitem_id = $row['inventoryitem_id'];
                                                                         $itemname = $row['itemname'];
-                                                                        // $category_id = $row['category_id'];
                                                                         $measurement_id = $row['measurement_id'];
-                                                                        // $getcat = mysqli_query($con, "SELECT * FROM itemcategories WHERE status=1 AND itemcategory_id='$category_id'");
-                                                                        // $row1 =  mysqli_fetch_array($getcat);
-                                                                        // $category = $row1['category'];
                                                                         $type = $row['type'];
                                                                         $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                                                         $row2 =  mysqli_fetch_array($getunit);
                                                                         $measurement = $row2['measurement'];
-                                                                        if ($type == 'Medical') {
+                                                                        if ($type == 'Medicine') {
+                                                                            
+                                                                            $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2 and status=1") or die(mysqli_error($con));
+                                                                            
+                                                                            $row3 = mysqli_fetch_array($getstock);
+                                                                            $totalstock = $row3['totalstock'];
+                                                                            $exipry = $row3['expiry'];
+                                                                            $totalordered = 0;
+                                                                            $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                                            while ($row4 = mysqli_fetch_array($getordered)) {
+                                                                                $stockorder_id = $row4['stockorder_id'];
+                                                                                $quantity = $row4['quantity'];
+                                                                                $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
+                                                                                if (mysqli_num_rows($getorder) > 0) {
+                                                                                    $totalordered = $totalordered + $quantity;
+                                                                                }
+                                                                            }
+                                                                            $issued = mysqli_query($con, "SELECT * FROM issueddrugs WHERE drug='$inventoryitem_id' AND status=1");
+                                                                            while ($row5 = mysqli_fetch_array($issued)) {
+                                                                                $quantity = $row5['quantity'];
+                                                                                $totalordered = $totalordered + $quantity;
+                                                                            }
+                                                                            $instock = $totalstock - $totalordered;
+                                                                            if ($instock > 0){
                                                                     ?>
-                                                                            <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname; ?></option>
-                                                                    <?php }
+                                                                            <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname . '(' . $measurement . ')'; ?></option>
+                                                                    <?php }}
                                                                     } ?>
                                                                 </select>
                                                             </div>
-                                                            <div class="form-group col-lg-3">
-                                                                <label>Prescription</label>
-                                                                <input type="text" name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter prescription">
+                                                            <div class="form-group col-lg-6">
+                                                                <label>In stock</label>
+                                                                <input type="text" id="stock0" name="ref[pharmacy][stock][]" class="form-control " readonly>
                                                             </div>
-                                                            <div class="form-group col-lg-3">
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Expiry Date</label>
+                                                                <input type="date"id="date0" name="ref[pharmacy][expiry][]" class="form-control " readonly>
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Purpose</label>
+                                                                <input type="text" name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter Purpose">
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Units <span id="unit0"></span></label>
+                                                                <input type="number" name="ref[pharmacy][unit][]" class="form-control " placeholder="Enter Unit">
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
                                                                 <label>Dosage</label>
                                                                 <input type="text" name="ref[pharmacy][dosage][]" class="form-control " placeholder="Enter dosage">
                                                             </div>
-                                                            <div class="form-group col-lg-1">
-                                                                <a href='#' class="subobj1_button btn btn-success" style="margin-top:30px">+</a>
+                                                            <div class="form-group col-lg-12">
+                                                                <label>Frequency</label>
+                                                                <input type="text" name="ref[pharmacy][Frequency][]" class="form-control " placeholder="Enter Frequency ">
                                                             </div>
+                                                            <div class="form-group pharmacy" >
+                                                                <label class="control-label">* Details & Instructions</label>
+                                                                <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[pharmacy][details][]"></textarea>
+                                                            </div>
+                                                           
                                                         </div>
                                                     </div>
+                                                    <div class="form-group col-lg-1">
+                                                                <a href='#' class="subobj1_button2 btn btn-success" style="margin-top:30px">+</a>
+                                                            </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group pharmacy" style="display: none;">
-                                                <label class="control-label">* Details & Instructions</label>
-                                                <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[pharmacy][details]"></textarea>
-                                            </div>
+                                           
                                         </div>
                                         <div class="tab-pane nref" id="patron" role="tabpanel" aria-labelledby="patron-tab">
 
@@ -990,43 +924,6 @@ $id = $_GET['id'];
                                         </div>
                                         <div class="tab-pane nref" id="lab" role="tabpanel" aria-labelledby="lab-tab">
                                            
-                                             <?php
-                                           if (in_array('lab', $rooms)) {
-                                            ?>
-                                            
-                                            <div class='row'>
-                                            <?php
-                                            foreach($patient_ids as $npatientsque_id){
-                                                                    $getreports = mysqli_query($con, "SELECT * FROM labreports WHERE patientsque_id='$npatientsque_id'");
-                                                                
-                                                                    while ($row = mysqli_fetch_array($getreports)) {
-                                                                        $medicalservice_id = $row['test'];
-                                                                                    $presult = $row['result'];
-                                                                                    $details = $row['details']; 
-                                                                        $getservice = mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'");
-                                                                                    $row2 = mysqli_fetch_array($getservice);
-                                                                                    $test = $row2['investigationtype'];
-                                                                                    $unit_id = $row2['unit_id'];                                                                      
-                                                                        
-                                                                    ?>
-                                                                <div class="form-group col-lg-6">
-                                                                    <label>Test done</label>
-                                                                    <!-- <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>"> -->
-                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $test; ?>" disabled>
-                                                                </div>
-                                                                <div class="form-group col-lg-5">
-                                                                    <label>Result</label>
-                                                                    <input type="text" name="result[<?php echo $presult; ?>]" class="form-control " value="<?php echo $presult; ?>" placeholder="Enter result" disabled>
-                                                                </div>
-                                                                <?php } ?>
-                                                                
-                                                                <?php }?>
-                                                                <div>
-                                                                    <label>Details</label>
-                                                                    <?php echo $details ; ?>
-                                                                </div>
-                                                            </div>
-                                                            <?php } ?>
                                                             <div class="form-check mb-3">
                                                 <input class="form-check-input reference" name="reference[]" type="checkbox" value="lab" data-ref="lab" id="send-lab">
                                                 <label class="form-check-label" for="send-lab">
@@ -1212,73 +1109,7 @@ $id = $_GET['id'];
                                             
                                         </div> 
                                         <div class="tab-pane nref" id="radiography" role="tabpanel" aria-labelledby="radiography-tab">
-                                        <?php 
-                                            if (in_array('radiography', $rooms)) {
-                                                ?>
-                                                <?php
-                                            foreach($patient_ids as $npatientsque_id){
-
-                                                                            $radioreports = mysqli_query($con, "SELECT * FROM radiologyreports WHERE patientsque_id='$npatientsque_id'") or die(mysqli_error($con));
-                                                                            
-                                                                            if (mysqli_num_rows($radioreports) > 0) {
-                                                                            while ($row = mysqli_fetch_array($radioreports)) {
-                                                                                // print_r($row);
-                                                                                $radiologyreport_id = $row['radiologyreport_id'];
-                                                                                $reason = $row['reason'];
-                                                                                $description = $row['description'];
-                                                                                $results = $row['results'];
-                                                                                $conclusion = $row['conclusion'];
-                                                                                $responsible = $row['responsible'];
-                                                                                $getservice = mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1 AND radioinvestigationtype_id='$results'");
-                                                                                $row2 = mysqli_fetch_array($getservice);
-                                                                                $medicalservice = $row2['investigationtype'];
-                                                                                // $getservice = mysqli_query($con, "SELECT * FROM radiologyimages WHERE status=1 AND radiology_report_id='$radiologyreport_id'");
-                                                                                // $row2 = mysqli_fetch_array($getservice);
-                                                                            ?>
-                                                                             <!-- <div class="row form-group">
-                                                                                <div class="col col-md-2"><label for="website"
-                                                                                        class=" form-control-label">Reason:</label>
-                                                                                </div>
-                                                                                <div class="col-12 col-md-9"><?php echo $reason; ?></div>
-                                                                            </div> -->
-                                                                            <div class="row form-group">
-                                                                                <div class="col col-md-2"><label for="website"
-                                                                                        class=" form-control-label">Tests:</label>
-                                                                                </div>
-                                                                                <div class="col-12 col-md-9"><?php echo $medicalservice; ?></div>
-                                                                            </div>
-                                                                                
-                                                                           
-                                                                            <label class="text-primary"><strong>Images</strong></label>
-                                                                            <div class="row">
-                                                                                <?php
-                                                                                $getservice = mysqli_query($con, "SELECT * FROM radiologyimages WHERE status=1 AND radiology_report_id='$radiologyreport_id'");
-                                                                                while ($row2 = mysqli_fetch_array($getservice)) {
-                                                                                    // $image = $row2['image'];
-                                                                                    $ext = $row2['image'];
-                                                                                    $image_id = $row2['radioimage_id'];
-                                                                                    if (!empty($ext))
-                                                                                        $pimage = md5($image_id) . '.' . $ext;
-                                                                                    else 
-                                                                                        $pimage = "noimage.png";
-                                                                                ?>
-                                                                                    <div class="col-md-6">
-                                                                                        <a href="#" target="_blank">
-                                                                                            <img src="<?php echo BASE_URL ?>/images/radiology/<?php echo $pimage; ?>" width="100%">
-                                                                                        </a>
-                                                                                    </div>
-                                                                                <?php } ?>
-                                                                        </div>
-                                                                        <label class="text-primary mt-3"><strong>Description</strong></label>
-                                                                        <p><?php echo $description; ?></p>
-                                                                        <?php } ?>
-                                                                        <div class="row form-group">
-                                                                                <div class="col col-md-3"><label for="website"
-                                                                                        class=" form-control-label">Conclusion:</label>
-                                                                                </div>
-                                                                                <div class="col-12 col-md-9"><?php echo $conclusion; ?></div>
-                                                                            </div>
-                                                                        <?php } } }?>
+                                       
                                             <div class="form-check mb-3">
                                                 <input class="form-check-input reference" name="reference[]" type="checkbox" value="radiography" data-ref="radiography" id="send-radiography">
                                                 <label class="form-check-label" for="send-radiography">
@@ -1522,6 +1353,28 @@ $id = $_GET['id'];
                 $nref.find(".services").hide();
             }
         });
+        
+        $(document).on('change','.drug',function(){
+            var drug = $(this).val();
+            var $count = $(this).attr('data-count')
+            $.ajax({
+                url: "getprod.php",
+                type: "POST",
+                data: {
+                    drug: drug
+                },
+                dataType: "JSON",
+                success: function(data) {
+                    console.log(data)
+                   if (data.status == 'success'){
+                        $(`#stock${$count}`).val(data.instock)
+                        $(`#date${$count}`).val(data.expiry)
+                        $(`#unit${$count}`).html(`( ${data.measurement}  )`)
+
+                   }
+                }
+            });
+        })
 
         var refsc = 1;
         $(`.multi-select_${refsc}`).select2();
@@ -1747,7 +1600,96 @@ $id = $_GET['id'];
             $(`.multi-select_${refsc}`).select2();
             // $(`.msnr`).select2();
         })
-
+        $(document).on('click','.subobj1_button2',function(e){
+            e.preventDefault();
+        //    count the number of add rows 
+            var count = $('.subobj2').children().length;
+            // count++;
+            $('.subobj2').append(`
+                        <div class="row">
+                           
+                            <div class="col-lg-11">
+                                <div class="row">  
+                                    <div class="form-group col-lg-12">
+                                        <label>Drug Name</label>     
+                                        <select class="form-control room select2 msnr multi-select_1 drug" name="ref[pharmacy][drug][]" data-count="${count}">  
+                                            <option selected="selected" value="">Select option..</option>        
+                                            <?php
+                                            $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 ");
+                                            while ($row = mysqli_fetch_array($getitems)) {
+                                                $inventoryitem_id = $row['inventoryitem_id'];
+                                                $itemname = $row['itemname'];
+                                                $measurement_id = $row['measurement_id'];
+                                                $type = $row['type'];
+                                                $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
+                                                $row2 =  mysqli_fetch_array($getunit);
+                                                $measurement = $row2['measurement'];
+                                                if ($type == 'Medicine') {
+                                                    
+                                                    $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2 and status=1") or die(mysqli_error($con));
+                                                    
+                                                    $row3 = mysqli_fetch_array($getstock);
+                                                    $totalstock = $row3['totalstock'];
+                                                    $exipry = $row3['expiry'];
+                                                    $totalordered = 0;
+                                                    $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                    while ($row4 = mysqli_fetch_array($getordered)) {
+                                                        $stockorder_id = $row4['stockorder_id'];
+                                                        $quantity = $row4['quantity'];
+                                                        $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
+                                                        if (mysqli_num_rows($getorder) > 0) {
+                                                            $totalordered = $totalordered + $quantity;
+                                                        }
+                                                    }
+                                                    $instock = $totalstock - $totalordered;
+                                                    if ($instock > 0){
+                                            ?>     
+                                                    <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname . '(' . $measurement . ')'; ?></option>  
+                                                <?php }}
+                                            } ?>      
+                                        </select>
+                                    </div>  
+                                    <div class="form-group col-lg-6">
+                                                                <label>In stock</label>
+                                                                <input type="text" id="stock${count}" name="ref[pharmacy][stock][]" class="form-control " readonly>
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Expiry Date</label>
+                                                                <input type="date" id="date${count}" name="ref[pharmacy][expiry][]" class="form-control " readonly>
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Purpose</label>
+                                                                <input type="text" name="ref[pharmacy][prescription][]" class="form-control " placeholder="Enter Purpose">
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <label>Units <span id="unit${count}"></span></label>
+                                                                <input type="number"  name="ref[pharmacy][unit][]" class="form-control " placeholder="Enter Unit">
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label>Dosage</label>
+                                                                <input type="text" name="ref[pharmacy][dosage][]" class="form-control " placeholder="Enter dosage">
+                                                            </div>
+                                                            <div class="form-group col-lg-12">
+                                                                <label>Frequency</label>
+                                                                <input type="text" name="ref[pharmacy][Frequency][]" class="form-control " placeholder="Enter Frequency ">
+                                                            </div>
+                                                            <div class="form-group pharmacy" >
+                                                                <label class="control-label">* Details & Instructions</label>
+                                                                <textarea class="form-control" cols="40" id="editor1" rows="8" name="ref[pharmacy][details][]"></textarea>
+                                                            </div>
+                            </div> 
+                            <button class="remove_subobj1  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    `); //add input box
+        
+                    $(`.multi-select_${refsc}`).select2(); 
+                        // re initilize for ckeditor
+                        if (typeof CKEDITOR !== 'undefined') {
+                            CKEDITOR.replace('editor1');
+                        }
+        });
         $('#nextref').on('click', '.subobj1_button', function(e) { //on add input button click
             e.preventDefault();
             $(this).closest('.subobj1').append(`

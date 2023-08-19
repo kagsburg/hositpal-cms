@@ -172,7 +172,7 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                        <?php 
                                             if ($_SESSION['elcthospitallevel'] == 'doctor'){
                                                 ?>
-                                        <a href="updatepatientreport?id=<?php echo $que_id; ?>" class="btn btn-primary btn-xs">Patient Report</a>
+                                        <a href="outpatientreport?id=<?php echo $que_id; ?>" class="btn btn-primary btn-xs">Patient Report</a>
                                         <?php
                                             }
                                        ?>

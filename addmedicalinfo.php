@@ -8,6 +8,18 @@ $reqid = $_GET['id'];
 $registration_request = get_registration_request($pdo, $reqid);
 $patient = $registration_request['patient'];
 $patient_id = $patient['patient_id'];
+$clinic = $patient['clinic'];
+if ($clinic != 0){
+    $getclinic = mysqli_query($con, "SELECT * FROM clinic_clients WHERE clinic_cl_id='$clinic' ") or die(mysqli_error($con));
+                    $row2 = mysqli_fetch_array($getclinic);
+                    $patfullname = $row2['name'];
+                    $location = $row2['location'];
+                    $pregnancy_month = $row2['pregnancy_month'];
+                    $bloodgroup = $row2['bloodgroup'];
+                    $weight = $row2['weight'];
+                    $partner_name = $row2['partner_name'];     
+                    $status=$row2['status'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -107,10 +119,16 @@ $patient_id = $patient['patient_id'];
                                     <form method="post" name='form' class="form" action="" enctype="multipart/form-data">
                                         <div class="row">
                                             <div class="form-group col-lg-4"><label class="control-label">Blood Group</label>
-                                                <input type="text" name="bloodgroup" class="form-control " placeholder="Enter Blood Group">
+                                                <input type="text" name="bloodgroup" class="form-control " 
+                                                <?php if ($clinic !=0){?>
+                                                    value="<?php echo $bloodgroup; ?>" 
+                                                    <?php } ?>
+                                                placeholder="Enter Blood Group">
                                             </div>
                                             <div class="form-group col-lg-4"><label class="control-label">Weight (kgs)</label>
-                                                <input type="text" name="weight" class="form-control " placeholder="Enter Weight">
+                                                <input type="text" name="weight" class="form-control "<?php if ($clinic !=0){?>
+                                                    value="<?php echo $weight; ?>" 
+                                                    <?php } ?> placeholder="Enter Weight">
                                             </div>
                                             <div class="form-group col-lg-4"><label class="control-label">Height</label>
                                                 <input type="text" name="height" class="form-control " placeholder="Enter Height">

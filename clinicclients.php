@@ -83,10 +83,12 @@ $type = isset($_GET['ty']) ? $_GET['ty']: "";
                                                 <th>Name</th>
                                                 <th>Location</th>
                                                 <th>Phone</th>
+                                                <?php if ($type != 1){ ?>
                                                 <th>Blood Group</th>
                                                 <th>Pregnancy Month</th>
                                                 <th>Partner Name</th>
                                                 <th>Partner Mobile</th>
+                                                <?php } ?>
                                                 <!-- <th>Date Added</th> -->
                                                 <th>Action</th>
 
@@ -95,9 +97,9 @@ $type = isset($_GET['ty']) ? $_GET['ty']: "";
                                         <tbody>
                                             <?php
                                             if ($type == 1) {
-                                                $getpatients = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status in (1,4) ORDER BY clinic_cl_id DESC");
+                                                $getpatients = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status in (1,4) ");
                                             }
-                                            if ($type ==""){
+                                           else if ($type ==""){
                                                 $getpatients = mysqli_query($con, "SELECT * FROM clinic_clients WHERE status in (1,2,3,4)");
                                             }
                                             else{
@@ -137,10 +139,12 @@ $type = isset($_GET['ty']) ? $_GET['ty']: "";
                                                     <td><?php echo $name; ?></td>
                                                     <td><?php echo $location; ?></td>
                                                     <td><?php echo $phone; ?></td>
+                                                    <?php if ($type != 1){ ?>
                                                     <td><?php echo $bloodgroup; ?></td>
                                                     <td><?php echo $pregnancy_month; ?></td>
                                                     <td><?php echo $partner_name; ?></td>
                                                     <td><?php echo $partner_mobile; ?></td>
+                                                    <?php } ?>
                                                     
 
                                                     <td>

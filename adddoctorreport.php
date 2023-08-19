@@ -165,7 +165,7 @@ $id = $_GET['id'];
                                         $now = new DateTime();
                                         $difference = $now->diff($dob2);
                                         echo $difference->y;
-                                        ?></span>
+                                        ?></span></p>
                                         <p>Blood Group : <span><?php echo $bloodgroup; ?></span></p>
                                         <p>Weight (kgs)  : <span><?php echo $weight; ?></span></p>
                                         <p>Height : <span><?php echo $height; ?></span></p>
@@ -176,6 +176,15 @@ $id = $_GET['id'];
                                         <p>Pregnancies : <span><?php echo $pregnancies; ?></span></p> -->
                                     </address>
                                 </div>
+                                <?php  
+                                  $checkpathistory = mysqli_query($con, "SELECT * FROM patienthistory WHERE patient_id='$patient_id' AND status=1");
+                                  if (mysqli_num_rows($checkpathistory) > 0){
+                                ?>
+                                <h4 class="text-primary mt-4 mb-4">Past Medical History</h4>
+                                <div class="mb-3">
+                                    <a href="patienthistory?patient_id=<?php echo $patient_id; ?>" class="btn btn-primary btn-block">View History</a>
+                                </div>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>

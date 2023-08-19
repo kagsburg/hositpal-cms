@@ -106,7 +106,8 @@ $pque=$_GET['que'];
                             <?php 
                             if (($_SESSION['elcthospitallevel'] == 'doctor') && ($status == 1)) {
                             ?>
-                            <a href="updatepatientreport?id=<?php echo $pque; ?>" class="btn btn-xs btn-info"> Patient Report </a>
+                            <a href="outpatientreport?id=<?php echo $pque; ?>" class="btn btn-xs btn-info"> OutPatient Report </a>
+                            <!-- <a href="updatepatientreport?id=<?php echo $pque; ?>" class="btn btn-xs btn-info"> Patient Report </a> -->
                             <?php } ?>
                             <?php 
                             if ($status != 2){

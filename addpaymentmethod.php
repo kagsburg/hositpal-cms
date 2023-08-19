@@ -19,6 +19,7 @@ if (($_SESSION['elcthospitallevel'] != 'receptionist')) {
     <link href="vendor/jqvmap/css/jqvmap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="vendor/chartist/css/chartist.min.css">
     <link href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+    <link href="vendor/select2/css/select2.min.css" rel="stylesheet">
     <link href="css/style.css?<?php echo time(); ?>" rel="stylesheet">
     <link href="../../cdn.lineicons.com/2.0/LineIcons.css" rel="stylesheet">
 
@@ -117,7 +118,7 @@ if (($_SESSION['elcthospitallevel'] != 'receptionist')) {
                                         <div class="row">
                                             <div class="form-group col-lg-12">
                                                 <label class="control-label">* Patient</label>
-                                                <select name="patient" class="form-control" required>
+                                                <select name="patient" class="form-control select2 msnr multi-select_1" required>
                                                     <option value="">select patient...</option>
                                                     <?php
                                                     $getclients = mysqli_query($con, "SELECT * FROM patients WHERE status IN (1,3) ");
@@ -223,6 +224,8 @@ if (($_SESSION['elcthospitallevel'] != 'receptionist')) {
     <!-- Apex Chart -->
     <script src="vendor/apexchart/apexchart.js"></script>
     <script language="JavaScript" src="js/gen_validatorv4.js" type="text/javascript"></script>
+    <script src="vendor/select2/js/select2.min.js"></script>
+    <script src="js/plugins-init/select2-init.js"></script>
     <!-- <script src="js/dashboard/dashboard-1.js"></script> -->
     <script>
         $('.paymenttype').on('change', function() {
@@ -240,6 +243,8 @@ if (($_SESSION['elcthospitallevel'] != 'receptionist')) {
                 $('.forcredit').hide();
             }
         });
+        var refsc = 1;
+        $(`.multi-select_${refsc}`).select2();
     </script>
 </body>
 

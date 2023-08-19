@@ -157,7 +157,7 @@ $dob = $row['dob'];
                                                 <select name="gender" class="form-control">
                                                     <option value="">select gender...</option>
                                                     <option value="Male">Male</option>
-                                                    <option value="Female">Female</option>
+                                                    <option value="Female" selected>Female</option>
                                                 </select>
                                                 <div id='form_gender_errorloc' class='text-danger'></div>
                                             </div>

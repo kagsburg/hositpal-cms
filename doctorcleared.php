@@ -187,7 +187,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 
 
                                                     <td>
-                                                        <a href="updatepatientreport?id=<?php echo $prev22_id; ?>" class="btn btn-xs btn-info"> Patient Report </a>
+                                                        <a href="outpatientreport?id=<?php echo $prev22_id; ?>" class="btn btn-xs btn-info"> Patient Report </a>
                                                     <!-- <button data-toggle="modal" data-target="#basicModal<?php echo $prev22_id; ?>" class="btn btn-xs btn-info">Patient Report</button> -->
                                                     <div class="modal fade" id="basicModal<?php echo $prev22_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
