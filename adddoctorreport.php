@@ -182,7 +182,7 @@ $id = $_GET['id'];
                                 ?>
                                 <h4 class="text-primary mt-4 mb-4">Past Medical History</h4>
                                 <div class="mb-3">
-                                    <a href="patienthistory?patient_id=<?php echo $patient_id; ?>" class="btn btn-primary btn-block">View History</a>
+                                    <a href="patienthistory?patient_id=<?php echo $patient_id; ?>" target="_blank" class="btn btn-primary btn-block">View History</a>
                                 </div>
                                 <?php } ?>
                             </div>
@@ -245,7 +245,7 @@ $id = $_GET['id'];
                                         $physical_exam = $_POST["physical_exam"];
                                         $systematic_exam = $_POST["systematic_exam"];
                                         $provisional_diagnosis = $_POST["provisional_diagnosis"];
-                                        $final_diagnosis = $_POST["final_diagnosis"];
+                                        $final_diagnosis = "";
                                         
                                         $final_diagnosis = is_array($final_diagnosis) ? implode(",", $final_diagnosis) : $final_diagnosis;
                                         $provisional_diagnosis = is_array($provisional_diagnosis) ? implode(",", $provisional_diagnosis) : $provisional_diagnosis;
@@ -581,7 +581,7 @@ $id = $_GET['id'];
                                                     <?php } ?>
                                                 </select>
                                             </div>
-                                            <div class="form-group"><label class="control-label">Final Diagnosis</label>
+                                            <!-- <div class="form-group"><label class="control-label">Final Diagnosis</label>
                                                 <select name="final_diagnosis[]" id="final_diagnosis" class="form-control select2 multi-select" multiple>
                                                     <option value="">Select Disease</option>
 
@@ -597,7 +597,7 @@ $id = $_GET['id'];
 
                                                     <?php } ?>
                                                 </select>
-                                            </div>
+                                            </div> -->
                                         </div>
 
                                         <div class="tab-pane nref" id="nurse" role="tabpanel" aria-labelledby="nurse-tab">
@@ -961,10 +961,8 @@ $id = $_GET['id'];
                                             </div> -->
                                             <div class="form-group forradiography" style="display: none;">
                                                 <label class="control-label">Measurement</label>
-                                                <select name="ref[radiography][radiomeasure][]" id="rmname" class="form-control select2 msnr multi-select_1" multiple>
+                                                <select name="ref[radiography][radiomeasure][]" id="rmname" class="form-control select2 msnr multi-select_2" multiple>
                                                     <option value="">Select Measurement</option>
-
-
                                                     <?php
                                                     $getmedicalservices =  mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1");
                                                     while ($row1 =  mysqli_fetch_array($getmedicalservices)) {
@@ -1161,6 +1159,7 @@ $id = $_GET['id'];
 
         var refsc = 1;
         $(`.multi-select_${refsc}`).select2();
+        $(`.multi-select_2`).select2();
 
         $('#addnref').on("click", function() {
             refsc += 1;

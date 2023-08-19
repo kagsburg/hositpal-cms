@@ -286,8 +286,8 @@ $id = $_GET['id'];
                                             <label>Select Destination</label>
                                             <select class="form-control room" name="room">
                                                 <option selected="selected" value="">Select option..</option>
-                                                <option value="nurse">Nurse Destination</option>
-                                                <option value="doctor">Doctor Destination</option>
+                                                <option value="nurse">Nurse Room</option>
+                                                <option value="doctor">Doctor Room</option>
                                                 <option value="clinic">Clinic</option>
                                             </select>
                                         </div>

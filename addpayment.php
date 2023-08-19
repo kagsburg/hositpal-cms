@@ -362,6 +362,7 @@ $id = $_GET['q'];
                                         if (empty($paymentmethod)) {
                                             $errors[] = 'Select Payment Method';
                                         }
+                                        
                                         if ($paymentmethod == 'credit') {
                                             $getclient = mysqli_query($con, "SELECT * FROM creditclients WHERE status=1 AND creditclient_id='$creditclient'") or die(mysqli_error($con));
                                             $row = mysqli_fetch_array($getclient);
@@ -432,7 +433,6 @@ $id = $_GET['q'];
                                                 foreach ($_SESSION['service'] as $service){
                                                     $totalservice += intval($service);
                                                 }
-
                                             }                                            
                                             make_bill_payment($pdo, $bill_id, $total, $paymentmethod, $count_bills,$patient_id,$totalservice);                                            
                                             if ($type == "medical_service"){
@@ -445,15 +445,7 @@ $id = $_GET['q'];
                                                     mysqli_query($con, "UPDATE serviceorders SET payment='1',approvedby='" . $_SESSION['elcthospitaladmin'] . "',paymentmethod='$paymentmethod',payment_id='$type_id',status=1,timestamp='$timenow' WHERE serviceorder_id='$type_id'") or die(mysqli_error($con));
                                                 }
                                             }
-                                            else if ($type == "lab"){
-                                                foreach($bill as $b) {
-                                                    $type_id = $b['type_id'];
-                                                    foreach ($_SESSION['service'] as $key => $service ){
-                                                        mysqli_query($con, "UPDATE patientlabs SET status=2 where patientlab_id='$key'") or die(mysqli_error($con));
-                                                    }
-                                                    // mysqli_query($con, "UPDATE laborders SET payment='1',insurer='" . $_SESSION['elcthospitaladmin'] . "',percentage='$paymentmethod',status=1 WHERE laborder_id='$type_id'") or die(mysqli_error($con));
-                                                }
-                                            }
+                                            
                                             else if ($type == "radiography"){
                                                 foreach($bill as $b) {
                                                     $type_id = $b['type_id'];
@@ -461,6 +453,15 @@ $id = $_GET['q'];
                                                         mysqli_query($con, "UPDATE patientradios SET status=2 where patientradio_id='$key'") or die(mysqli_error($con));
                                                     }
                                                     // mysqli_query($con, "UPDATE radiologyorders SET payment='1',insurer='" . $_SESSION['elcthospitaladmin'] . "',percentage='$paymentmethod',status=1 WHERE radiologyorder_id='$type_id'") or die(mysqli_error($con));
+                                                }
+                                            }
+                                            else if ($type == "lab"){
+                                                foreach($bill as $b) {
+                                                    $type_id = $b['type_id'];
+                                                    foreach ($_SESSION['service'] as $key => $service ){
+                                                        mysqli_query($con, "UPDATE patientlabs SET status=2 where patientlab_id='$key'") or die(mysqli_error($con));
+                                                    }
+                                                   
                                                 }
                                             }
 

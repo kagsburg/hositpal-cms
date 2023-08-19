@@ -73,7 +73,12 @@ header('Location:login.php');
             <div class="row">
                 <div class="col-sm-12">
                 <img alt="image" src="<?php echo BASE_URL; ?>/images/ELVD.png" width="100" />
-                <h1>ELCT-ELVD Nyakato Health Center </h1>
+                <h1 class="text-center" style="font-family:Times New roman;color: #000">ELCT-ELVD Nyakato Health Center </h1>
+                <address class="text-center">
+                      P.O.BOX 3173<br>
+                      Mwanza, Tanzania<br>
+                      <!-- <abbr title="Phone">P:</abbr> +255 28 250 0885 -->
+                    </address>
                 </div>
                 <div class="col-sm-6">
               

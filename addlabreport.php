@@ -157,7 +157,7 @@ $id = $_GET['id'];
 
 
                                         <div class="col-lg-12">
-                                            <h4>Measurements</h4>
+                                            <h4>Test</h4>
                                         </div>
                                         <div class="col-lg-12">
                                             <div class='subobj1'>

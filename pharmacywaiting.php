@@ -77,7 +77,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                 } 
                                  ?>
                                 <div class="table-responsive">
-                                    <table id="example5" class="display" style="min-width: 845px">
+                                    <table id="example6" class="display" style="min-width: 845px">
                                         <thead>
                                             <tr>
                                                 <th>PIN</th>
@@ -93,7 +93,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                         <tbody>
                                             <?php
                                             
-                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room='pharmacy' AND status=0 group by admission_id ORDER BY patientsque_id DESC");
+                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room='pharmacy' AND status=0  ORDER BY patientsque_id DESC");
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];
                                                 $admission_id = $row['admission_id'];
@@ -130,7 +130,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                                 }
                                             ?>
                                                 <tr class="gradeA">
-                                                    <td><?php echo $pin; ?></td>
+                                                    <td><?php echo $patientsque_id; ?></td>
                                                     <!-- <td>
                                                         <a href="images/patients/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>" target="_blank">
                                                             <img src="images/patients/thumbs/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>" width="60">
@@ -211,6 +211,13 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
     <!-- Datatable -->
     <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="js/plugins-init/datatables.init.js"></script>
+    <script>
+        $('#example6').DataTable({
+            "order": [
+                [0, "desc"]
+            ]
+        });
+    </script>
 
 </body>
 

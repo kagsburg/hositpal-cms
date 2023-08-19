@@ -85,7 +85,14 @@ $id = $_GET['id'];
             <div class="invoice-print">
               <div class="row">
                 <div class="col-lg-12">
-                  <img alt="image" src="<?php echo BASE_URL; ?>/images/logo.png" width="100" />
+                    <img alt="image" src="<?php echo BASE_URL; ?>/images/ELVD.png" width="100" />
+                    <h1 class="text-center" style="font-family:Times New roman;color: #000">ELCT-ELVD Nyakato Health Center </h1>
+                    <address class="text-center">
+                      P.O.BOX 3173<br>
+                      Mwanza, Tanzania<br>
+                      <!-- <abbr title="Phone">P:</abbr> +255 28 250 0885 -->
+                    </address>
+                    <hr/>
                   <div class="row">
                     <?php
                     // $bill = get_bill_by_id($pdo, $id, 2);
@@ -311,9 +318,9 @@ $id = $_GET['id'];
                       else if ($type == 'lab'){
                         $getorder = mysqli_query($con, "SELECT * FROM laborders WHERE laborder_id='$bill_type_id'");
                         if (mysqli_num_rows($getorder) > 0) {
+
                             $rowo = mysqli_fetch_array($getorder);
                             $timestamp = $rowo['timestamp'];
-                            // $paymethod = $rowo['paymentmethod'];
                             $serviceorder_id = $rowo['laborder_id'];
                             $getordered = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id='$serviceorder_id' AND status=2") or die(mysqli_error($con));
                             while ($row = mysqli_fetch_array($getordered)) {

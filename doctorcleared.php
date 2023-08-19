@@ -78,10 +78,10 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                 } 
                                  ?>
                                 <div class="table-responsive">
-                                    <table id="example5" class="display" style="min-width: 845px">
+                                    <table id="example6" class="display" style="min-width: 845px">
                                         <thead>
                                             <tr>
-                                                <th>PIN</th>
+                                                <th>Que ID</th>
                                                 <th>Image</th>
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
@@ -115,8 +115,14 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                 $thirdname = $row2['thirdname'];
                                                 $gender = $row2['gender'];
                                                 $ext = $row2['ext'];
-                                                // $room = $row['room'];
-
+                                                $insurance_id = $row2['insurancecompany'];  
+                                                if ($paymenttype == "insurance") {
+                                                    $getcompany =  mysqli_query($con, "SELECT * FROM insurancecompanies WHERE insurancecompany_id='$insurance_id'");
+                                                    $row1 =  mysqli_fetch_array($getcompany);
+                                                    $company = $row1['company'];
+                                                } else {
+                                                    $company = "";
+                                                }
                                                 if (!empty($ext))
                                                     $pimage = md5($patient_id) . '.' . $ext . '?' .  time();
                                                 else 
@@ -174,7 +180,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                 }
                                             ?>
                                                 <tr class="gradeA">
-                                                    <td><?php echo $pin; ?></td>
+                                                    <td><?php echo $patientsque_id; ?></td>
                                                     <td>
                                                         <a href="images/patients/<?php echo $pimage; ?>" target="_blank">
                                                             <img src="images/patients/thumbs/<?php echo $pimage; ?>" width="60">
@@ -183,7 +189,10 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                     <td><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?></td>
                                                     <td><?php echo $gender; ?></td>
                                                     <td><?php echo $room; ?></td>
-                                                    <td><?php echo $paymenttype; ?></td>
+                                                    <td><?php if ($paymenttype == "insurance") {
+                                                        echo  $paymenttype.' - '. $company;
+                                                    } else {
+                                                    echo $paymenttype; } ?></td>
 
 
                                                     <td>
@@ -481,6 +490,15 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
     <!-- Datatable -->
     <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="js/plugins-init/datatables.init.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#example6').DataTable({
+                "order": [
+                [0, "desc"]
+            ],
+        });
+        });
+    </script>
 
 </body>
 

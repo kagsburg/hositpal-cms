@@ -189,6 +189,7 @@ include 'includes/header.php';
                 
                 
                 </div>
+                <hr>
                <?php }?>
                <div class="form-group pull-right">
                                <button class="btn btn-primary" type="submit">Issue</button>

@@ -156,8 +156,8 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 <input type="text" class="form-control" name="creditprice">
                                             </div>
                                         <div class="col-sm-12"></div>    
-                                        <p><strong>Add Insurance Charges</strong></p>
-
+                                        <h5><strong>Add Insurance Charges</strong></h5>
+                                        <div class="col-sm-12"></div>
                                         <div class='subobj'>
                                             <div class='row'>
                                                 <div class="form-group col-lg-6">
@@ -256,9 +256,14 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             $unitprice = $row['unitprice'];
                                             $creditprice = $row['creditprice'];
                                             $getunit =  mysqli_query($con, "SELECT * FROM labunits WHERE status=1 AND measurement_id='$unit_id'");
-                                            $row1 =  mysqli_fetch_array($getunit);
-                                            $measurement_id = $row1['measurement_id'];
-                                            $measurement = $row1['measurement'];
+                                            if (mysqli_num_rows($getunit) == 0) {
+                                                $measurement = "";
+                                            }else{
+
+                                                $row1 =  mysqli_fetch_array($getunit);
+                                                $measurement_id = $row1['measurement_id'];
+                                                $measurement = $row1['measurement'];
+                                            }
                                             $getclassification =  mysqli_query($con, "SELECT * FROM classifications WHERE status=1 AND classification_id='$classification_id'");
                                             $row2 =  mysqli_fetch_array($getclassification);
                                             $classification = $row2['classification'];

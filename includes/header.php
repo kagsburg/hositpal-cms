@@ -835,7 +835,7 @@
 
           </li>
           <li>
-            <a class="ai-icon" href="labcleared" aria-expanded="false">
+            <a class="ai-icon" href="radiocleared" aria-expanded="false">
               <i class="fa fa-users"></i>
               <span class="nav-text">Cleared Patients</span>
             </a>

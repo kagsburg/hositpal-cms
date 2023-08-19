@@ -70,10 +70,10 @@ if (($_SESSION['elcthospitallevel'] != 'radiographer')) {
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table id="example5" class="display" style="min-width: 845px">
+                                    <table id="example6" class="display" style="min-width: 845px">
                                         <thead>
                                             <tr>
-                                                <th>PIN</th>
+                                                <th>Que ID</th>
                                                 
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
@@ -126,7 +126,7 @@ if (($_SESSION['elcthospitallevel'] != 'radiographer')) {
                                                 }
                                             ?>
                                             <tr class="gradeA">
-                                                <td><?php echo $pin; ?></td>
+                                                <td><?php echo $patientsque_id; ?></td>
                                                 <!-- <td>
                                                     <a href="images/patients/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>"
                                                         target="_blank">
@@ -261,6 +261,13 @@ if (($_SESSION['elcthospitallevel'] != 'radiographer')) {
     <!-- Datatable -->
     <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="js/plugins-init/datatables.init.js"></script>
+    <script>
+        $('#example6').DataTable({
+            "order": [
+                [0, "desc"]
+            ]
+        });
+        </script>
 
 </body>
 
