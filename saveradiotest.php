@@ -61,7 +61,7 @@ foreach($image_name as $key22 => $val_image){
 }
            
    mysqli_query($con, "INSERT INTO radiologyreports(patientsque_id,month,year,reason,clinic,description,results,conclusion,responsible,exitmode,destination,admin_id,timestamp,status) 
-   VALUES('$id','$month','$year','$reason','$description','$results','$clinic','$conclusion','$responsible','$exitmode','$destination','".$_SESSION['elcthospitaladmin']."',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
+   VALUES('$id','$month','$year','$reason','$clinic','$description','$results','$conclusion','$responsible','$exitmode','$destination','".$_SESSION['elcthospitaladmin']."',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
    $last_id= mysqli_insert_id($con);
 //    update radio order 
     mysqli_query($con,"UPDATE patientradios set status='3' WHERE patientradio_id='$radioorder_id'") or die(mysqli_error($con));

@@ -134,7 +134,7 @@ include 'includes/header.php';
                                                               
                                             
                                                    <td>   
-                                                    <a href="radiography?patientsque_id=<?php echo $patientsque_id; ?>" class="btn btn-primary btn-sm">Radiology Report</a>
+                                                    <a href="radiography?patientsque_id=<?php echo $patientsque_id; ?>&id=<?php echo $patient_id ?>" class="btn btn-primary btn-sm">Radiology Report</a>
                                         </td>
                                          
                                          
