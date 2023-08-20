@@ -250,7 +250,10 @@ $id = $_GET['id'];
                                         $final_diagnosis = is_array($final_diagnosis) ? implode(",", $final_diagnosis) : $final_diagnosis;
                                         $provisional_diagnosis = is_array($provisional_diagnosis) ? implode(",", $provisional_diagnosis) : $provisional_diagnosis;
     
-    
+                                        mysqli_query($con, "INSERT INTO `doctorexam`(`admission_id`, `complaint`, `physical_exam`, `systematic_exam`, `provisional_diagnosis`, `final_diagnosis`,`patientque_id`,`timestamp`,`status`) 
+                                        VALUES ('$admission_id','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','$id','UNIX_TIMESTAMP()','1')");
+                                        $new_exam_id = mysqli_insert_id($con);
+
                                         $references = isset($_POST['reference']) ? $_POST['reference'] : [''];
                                             foreach ($references as $reference_key) {
                                                 $reference_obj = isset($_POST['ref'][$reference_key]) ? $_POST['ref'][$reference_key] : [];
@@ -520,7 +523,7 @@ $id = $_GET['id'];
                                                             $prescription = $reference_obj['prescription'];
                                                             $allprescriptions = sizeof($prescription);
                                                             for ($i = 0; $i < $allprescriptions; $i++) {
-                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('$drug[$i]','$dosage[$i]','$prescription[$i]','','','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
+                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,doctorexam_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('$drug[$i]','$dosage[$i]','$prescription[$i]','','','$id','$new_exam_id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
                                                             }
                                                         }
                                                     } else if ($reference == 'lab') {
@@ -528,7 +531,7 @@ $id = $_GET['id'];
                                                             $measure = $labmeasures;
                                                             $allprescriptions = sizeof($measure);
                                                             for ($i = 0; $i < $allprescriptions; $i++) {
-                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','$measure[$i]','','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
+                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,doctorexam_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','$measure[$i]','','$id','$new_exam_id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
                                                             }
                                                         }
                                                     } elseif ($reference == 'radiography') {
@@ -536,11 +539,11 @@ $id = $_GET['id'];
                                                             $measure = $radiomeasures;
                                                             $allprescriptions = sizeof($measure);
                                                             for ($i = 0; $i < $allprescriptions; $i++) {
-                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','','$measure[$i]','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
+                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,doctorexam_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','','$measure[$i]','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
                                                             }
                                                         }
                                                     } else {
-                                                        mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','','','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
+                                                        mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,doctorexam_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','','','$id','$new_exam_id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
                                                     }
                                                 }
                                             }

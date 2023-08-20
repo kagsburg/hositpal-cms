@@ -13,6 +13,8 @@ header('Location:login.php');
        $clinic= mysqli_real_escape_string($con,trim($_POST['clinic']));   
        $id= mysqli_real_escape_string($con,trim($_POST['id']));   
        $radioorder_id= mysqli_real_escape_string($con,trim($_POST['radioorder_id']));
+       $start= mysqli_real_escape_string($con,trim($_POST['start']));
+         $end= mysqli_real_escape_string($con,trim($_POST['end']));
 
        $count = $_POST['count'];   
        if ($count == 1) {
@@ -60,8 +62,8 @@ foreach($image_name as $key22 => $val_image){
 
 }
            
-   mysqli_query($con, "INSERT INTO radiologyreports(patientsque_id,month,year,reason,clinic,description,results,conclusion,responsible,exitmode,destination,admin_id,timestamp,status) 
-   VALUES('$id','$month','$year','$reason','$clinic','$description','$results','$conclusion','$responsible','$exitmode','$destination','".$_SESSION['elcthospitaladmin']."',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
+   mysqli_query($con, "INSERT INTO radiologyreports(patientsque_id,month,year,reason,clinic,description,start,end,results,conclusion,responsible,exitmode,destination,admin_id,timestamp,status) 
+   VALUES('$id','$month','$year','$reason','$clinic','$description','$start','$end','$results','$conclusion','$responsible','$exitmode','$destination','".$_SESSION['elcthospitaladmin']."',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
    $last_id= mysqli_insert_id($con);
 //    update radio order 
     mysqli_query($con,"UPDATE patientradios set status='3' WHERE patientradio_id='$radioorder_id'") or die(mysqli_error($con));
@@ -91,8 +93,10 @@ if ($count == 1){
     $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'") or die(mysqli_error($con));
        $row_prev_admin_id=mysqli_fetch_array($get_prev_admin_id);
        $prev_admin_id=$row_prev_admin_id['admin_id'];
+       $prev_id = $row_prev_admin_id['prev_id'];
        mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
        $_SESSION['success'] = '<div class="alert alert-success">Radiology Report Successfully Added</div>';
+       mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','radiographer',UNIX_TIMESTAMP(),1,'$prev_id')") or die(mysqli_error($con));
                 // redirect to radiowaiting
                 echo '<script>window.location.href = "radiowaiting.php";</script>';exit();
 

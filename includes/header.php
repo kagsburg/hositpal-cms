@@ -216,7 +216,7 @@
             <ul aria-expanded="false">
               <li><a href="measurementclassifications">Measurement Classifications</a></li>
               <li><a href=" measurementunits">Measurement Units</a></li>
-              <li><a href="investigationtypes">Investigation Types</a></li>
+              <li><a href="investigationtypes">Measurement Types</a></li>
             </ul>
           </li>
           <li>

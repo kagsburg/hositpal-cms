@@ -5,12 +5,12 @@ header('Location:login.php');
    }
 $id=$_GET['id'];
  // get service order 
- $getservice = mysqli_query($con, "SELECT * FROM serviceorders WHERE patientsque_id='$id' AND status=0");
+ $getservice = mysqli_query($con, "SELECT * FROM serviceorders WHERE patientsque_id='$id' AND status=1");
  $services = array();
  if (mysqli_num_rows($getservice) > 0) {
      while ($rows = mysqli_fetch_array($getservice)) {
          $service_id = $rows['serviceorder_id'];
-         $getpatservice = mysqli_query($con, "SELECT * FROM patientservices WHERE serviceorder_id='$service_id' AND status=1");
+         $getpatservice = mysqli_query($con, "SELECT * FROM patientservices WHERE serviceorder_id='$service_id' AND status=2");
          if (mysqli_num_rows($getpatservice) > 0) {
             while ($rows = mysqli_fetch_array($getpatservice)) {
                 $service_name = $rows['medicalservice_id'];
@@ -176,8 +176,12 @@ include 'includes/header.php';
                                     mysqli_query($con,"INSERT INTO nursereports(type,measurement,patientsque_id,details,status) VALUES('$type[$i]','$measurement[$i]','$id','$details','1')") or die(mysqli_error($con));
                                 }  
                             }
-                            // update patient que status
+                            $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                            $row_prev_admin_id=mysqli_fetch_array($get_prev_admin_id);
+                            $prev_admin_id=$row_prev_admin_id['admin_id'];
+                            $prev_id = $row_prev_admin_id['prev_id'];
                             mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                            mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),1,'$prev_id')") or die(mysqli_error($con));
     ?>  
                           
  <?php
@@ -194,8 +198,13 @@ echo '<div class="alert alert-success">Patient Report Successfully Added</div>';
                 mysqli_query($con,"INSERT INTO minor(admission_id,service_id,casetype,details,admin_id,patientsque_id,timestamp,status) VALUES('$admission_id','$key','$case','$case_details','" . $_SESSION['elcthospitaladmin'] . "','$id',UNIX_TIMESTAMP(),'1')") or die(mysqli_error($con));
             }
         }
-        // mysqli_query($con,"INSERT INTO minortheater(admission_id,case_details,case_name,patientsque_id,status) VALUES('$casedetails','$case','$id','1')") or die(mysqli_error($con));
-        mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+        $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'") or die(mysqli_error($con));
+       $row_prev_admin_id=mysqli_fetch_array($get_prev_admin_id);
+       $prev_admin_id=$row_prev_admin_id['admin_id'];
+       $prev_id = $row_prev_admin_id['prev_id'];
+       mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+       mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),1,'$prev_id')") or die(mysqli_error($con));
+ 
         echo '<div class="alert alert-success">Patient Report Successfully Updated</div>';
     }
    ?>

@@ -189,9 +189,18 @@ include 'includes/header.php';
                                                                     <input type="file" name="file[]" class="form-control" multiple="multiple" placeholder="Enter Results " > 
                                                                      
                                                                 </div>
+                                                                <div class="form-group col-lg-12"><label class="control-label">Start Time</label>
+                                                                    <input type="time" name="start" class="form-control" placeholder="Enter Start Time " required="required" />                                                                            
+                                                                </div> 
+                                                                <div class="form-group col-lg-12"><label class="control-label">End Time</label>
+                                                                <input type="time" name="end" class="form-control" placeholder="Enter End Time " required="required" />                                                                            
+                                                                                                                                               
+                                                                </div> 
+                                                                
                                                                 <div class="form-group col-lg-12"><label class="control-label">Description</label>
                                                                     <textarea  name="description" class="form-control" placeholder="Enter description " required="required" rows="4"></textarea>                                                                            
                                                                 </div> 
+
                                                             </div>
                                                         <?php 
                                                         

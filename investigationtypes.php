@@ -11,7 +11,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Investigation Types</title>
+    <title>Measurement Types</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -51,14 +51,14 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                 <div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Investigation Types</h4>
+                            <h4>Measurement Types</h4>
 
                         </div>
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="#">Investigation Types</a></li>
+                            <li class="breadcrumb-item active"><a href="#">Measurement Types</a></li>
                         </ol>
                     </div>
                 </div>
@@ -66,7 +66,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Add Investigation Type</h4>
+                                <h4 class="card-title">Add Measurement Type</h4>
                             </div>
                             <div class="card-body">
                                 <div class="basic-form">
@@ -81,14 +81,30 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                         $subtypeunit = $_POST['subtypeunit'];
                                         $company = $_POST['company'];
                                         $insurancecharge = $_POST['insurancecharge'];
-
+                                       
+                                       
                                         if ((empty($typename)) || (empty($classification))) {
                                             echo '<div class="alert alert-danger"><i class="fa fa-warning"></i>Fill The Field To Proceed</div>';
                                         } else {
 
-                                            mysqli_query($con, "INSERT INTO investigationtypes(investigationtype,unitprice,creditprice,classification_id,unit_id,status) VALUES('$typename','$unitprice','$creditprice','$classification','$unit',1)") or die(mysqli_error($con));
+                                            mysqli_query($con, "INSERT INTO investigationtypes(investigationtype,unitprice,creditprice,classification_id,unit_id,status) 
+                                            VALUES('$typename','$unitprice','$creditprice','$classification','$unit',1)") or die(mysqli_error($con));
                                             $last_id = mysqli_insert_id($con);                                            
                                             $companies = sizeof($company);
+                                            if (isset($_POST['hasrange'])){
+                                                $hasrange = $_POST['hasrange'];
+                                                $lowX =  mysqli_real_escape_string($con, trim($_POST['lowX']));
+                                                $lowY =  mysqli_real_escape_string($con, trim($_POST['lowY']));
+                                                $normalX =  mysqli_real_escape_string($con, trim($_POST['normalX']));
+                                                $normalY =  mysqli_real_escape_string($con, trim($_POST['normalY']));
+                                                $highX =  mysqli_real_escape_string($con, trim($_POST['highX']));
+                                                $highY =  mysqli_real_escape_string($con, trim($_POST['highY']));
+                                                mysqli_query($con, "INSERT INTO investigationtypesrange(investigationtype_id,lowx,lowy,normalx,normaly,highx,highy,timestamp,status,admin_id) 
+                                                VALUES('$last_id','$lowX','$lowY','$normalX','$normalY','$highX','$highY',UNIX_TIMESTAMP(),1,'".$_SESSION['elcthospitaladmin']."')") or die(mysqli_error($con));
+
+                                                mysqli_query($con, "UPDATE investigationtypes SET range_type = 1 WHERE investigationtype_id = '$last_id'") or die(mysqli_error($con));
+
+                                            }
                                             for ($i = 0; $i < $companies; $i++) {
                                                 if (!empty($company[$i])) {
                                                     mysqli_query($con, "INSERT INTO insuredinvestigationtypes(investigationtype_id,insurancecompany_id,charge,status) VALUES('$last_id','$company[$i]','$insurancecharge[$i]','1')") or die(mysqli_error($con));
@@ -98,6 +114,21 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 $allsubtypes = sizeof($subtype);
                                                 for ($i = 0; $i < $allsubtypes; $i++) {
                                                     mysqli_query($con, "INSERT INTO investigationsubtypes(investigationtype_id,subtype,unit_id,status) VALUES('$last_id','$subtype[$i]','$subtypeunit[$i]',1)") or die(mysqli_error($con));
+                                                    $sub_id = mysqli_insert_id($con);
+                                                    if (isset($_POST['hassubtyperange'])){
+                                                        $hasrange = $_POST['hassubtyperange'];
+                                                        $lowX =  $_POST['lowX1'];
+                                                        $lowY =  $_POST['lowY1'];
+                                                        $normalX =  $_POST['normalX1'];
+                                                        $normalY =  $_POST['normalY1'];
+                                                        $highX =  $_POST['highX1'];
+                                                        $highY =  $_POST['highY1'];
+                                                        mysqli_query($con, "INSERT INTO investigationtypesrange(investigationtype_id,lowx,lowy,normalx,normaly,highx,highy,timestamp,status,admin_id) 
+                                                        VALUES('$sub_id','$lowX[$i]','$lowY[$i]','$normalX[$i]','$normalY[$i]','$highX[$i]','$highY[$i]',UNIX_TIMESTAMP(),1,'".$_SESSION['elcthospitaladmin']."')") or die(mysqli_error($con));
+                                                    }
+                                                }
+                                                if (isset($_POST['hassubtyperange'])){
+                                                    mysqli_query($con, "UPDATE investigationtypes SET range_type = 1 WHERE investigationtype_id = '$last_id'") or die(mysqli_error($con));
                                                 }
                                             } else {
                                                 mysqli_query($con, "INSERT INTO investigationsubtypes(investigationtype_id,subtype,unit_id,status) VALUES('$last_id','$typename','$unit',1)") or die(mysqli_error($con));
@@ -109,7 +140,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                     <form action="" method="POST">
                                         <div class="row">
                                             <div class="form-group col-lg-4">
-                                                <label>Investigation Type</label>
+                                                <label>Measurement Type</label>
                                                 <input type="text" class="form-control" name="typename" required="required">
                                             </div>
                                             <div class="form-group col-lg-4">
@@ -148,12 +179,12 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
 
                                             <div class="form-group col-lg-4 unitprice">
                                                 <label>Unit Price</label>
-                                                <input type="text" class="form-control" name="unitprice">
+                                                <input type="number" class="form-control" name="unitprice">
                                             </div>
 
                                             <div class="form-group col-lg-4 creditprice">
                                                 <label>Credit Price</label>
-                                                <input type="text" class="form-control" name="creditprice">
+                                                <input type="number" class="form-control" name="creditprice">
                                             </div>
                                         <div class="col-sm-12"></div>    
                                         <h5><strong>Add Insurance Charges</strong></h5>
@@ -191,8 +222,14 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 <input type="checkbox" class="form-check-input" value="yes" id="subtypes" name="hassubtypes">Does it have sub types?
                                             </label>
                                         </div>
+                                       
                                         <div class='subobj1 subtypes' style="display:none">
                                             <h4>Add Sub Types</h4>
+                                            <div class="form-check mb-2">
+                                            <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input subtyperange" value="yes" id="subtyperange" name="hassubtyperange">Does it have Range?
+                                            </label>
+                                        </div>
                                             <div class='row'>
                                                 <div class="form-group col-lg-4">
                                                     <label>Sub Type</label>
@@ -213,11 +250,93 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                         <?php } ?>
                                                     </select>
                                                 </div>
+                                                <div class="forsubtyperange" style="display:none">
+                                                <div class="row">
+                                                    <div class="col">
+                                                    <label class="form-check-label">Low Range</label>
+                                                    <div class="mb-3">
+                                                        <label for="lowX">X: <span id="low"></span></label>
+                                                        <input type="number"  value="" class="form-control" id="lowX" name="lowX1[]">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="lowY">Y:</label>
+                                                        <input type="number" class="form-control" id="lowY" name="lowY1[]">
+                                                    </div>
+                                                    </div>
+                                                    <div class="col">
+                                                    <label class="form-check-label">Normal Range</label>
+                                                    <div class="mb-3">
+                                                        <label for="normalX">X:</label>
+                                                        <input type="number" class="form-control" id="normalX" name="normalX1[]">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="normalY">Y:</label>
+                                                        <input type="number" class="form-control" id="normalY" name="normalY1[]">
+                                                    </div>
+                                                    </div>
+                                                    <div class="col">
+                                                    <label class="form-check-label">High Range</label>
+                                                    <div class="mb-3">
+                                                        <label for="highX">X:</label>
+                                                        <input type="number" class="form-control"  id="highX" name="highX1[]">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="highY">Y:</label>
+                                                        <input type="number" class="form-control" id="highY" name="highY1[]">
+                                                    </div>
+                                                    </div>
+                                                </div>
+
+                                                </div>
+                                                
 
                                                 <div class="form-group col-lg-1">
                                                     <a href='#' class="subobj1_button btn btn-success" style="margin-top:30px">+</a>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="form-check mb-2 forrange">
+                                            <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" value="yes" id="subrange" name="hasrange">Does it have Range?
+                                            </label>
+                                        </div>
+                                        <div class="subrange" style="display:none">
+                                        <div class="row">
+                                            <div class="col">
+                                            <label class="form-check-label">Low Range</label>
+                                            <div class="mb-3">
+                                                <label for="lowX">X: <span id="low"></span></label>
+                                                <input type="number"  value="" class="form-control" id="lowX" name="lowX">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="lowY">Y:</label>
+                                                <input type="number" class="form-control" id="lowY" name="lowY">
+                                            </div>
+                                            </div>
+                                            <div class="col">
+                                            <label class="form-check-label">Normal Range</label>
+                                            <div class="mb-3">
+                                                <label for="normalX">X:</label>
+                                                <input type="number" class="form-control" id="normalX" name="normalX">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="normalY">Y:</label>
+                                                <input type="number" class="form-control" id="normalY" name="normalY">
+                                            </div>
+                                            </div>
+                                            <div class="col">
+                                            <label class="form-check-label">High Range</label>
+                                            <div class="mb-3">
+                                                <label for="highX">X:</label>
+                                                <input type="number" class="form-control"  id="highX" name="highX">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="highY">Y:</label>
+                                                <input type="number" class="form-control" id="highY" name="highY">
+                                            </div>
+                                            </div>
+                                        </div>
+
                                         </div>
                                         <div class="form-group">
                                             <button class="btn btn-primary" type="submit">Submit</button>
@@ -277,7 +396,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
 
                                                 <td>
                                                     <button data-toggle="modal" data-target="#basicModal<?php echo $investigationtype_id; ?>" class="btn btn-xs btn-info">Sub Types</button>
-                                                    <a href="editinvestigationtype?id=<?php echo $investigationtype_id; ?>" class="btn btn-xs btn-primary">Edit</a>
+                                                    <!-- <a href="editinvestigationtype?id=<?php echo $investigationtype_id; ?>" class="btn btn-xs btn-primary">Edit</a> -->
                                                     <a href="removeinvestigationtype?id=<?php echo $investigationtype_id; ?>" class="btn btn-xs btn-danger" onclick="return confirm_delete<?php echo $investigationtype_id; ?>()">Remove</a>
                                                     <script type="text/javascript">
                                                         function confirm_delete<?php echo $investigationtype_id; ?>() {
@@ -398,16 +517,100 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                 $('.measurementunit').hide();
             } else {
                 $('.subtypes').hide();
-
                 $('.measurementunit').show();
             }
         });
+        $(document).on('click','.subtyperange',function(){
+            if ($(this).prop("checked") === true) {
+                $('.forsubtyperange').show();
+                $('.forrange').hide();
+                $('#subrange').prop('checked',false);
+                $('.subrange').hide();
+            } else {
+                $('.forsubtyperange').hide();
+                
+
+                $('.forrange').show();
+            }
+        })
+        $('#subrange').click(function() {
+            if ($(this).prop("checked") === true) {
+                $('.subrange').show();
+                // $('.measurementunit').hide();
+            } else {
+                $('.subrange').hide();
+
+                // $('.measurementunit').show();
+            }
+        });
+
         $('.subobj1_button').click(function(e) { //on add input button click
             e.preventDefault();
-            $('.subobj1').append('<div class="row"><div class="col-lg-12"><hr style="border-top: dashed 1px #b7b9cc;"></div><div class="col-lg-8"><div class="row">  <div class="form-group col-lg-6"><label>Sub Type</label><input type="text" class="form-control" name="subtype[]" required="required"> </div>      <div class="form-group col-lg-6">   <label class="control-label">Measurement Unit</label> <select name="subtypeunit[]" class="form-control" id="category">     <option value="">select unit...</option>	<?php $getunits =  mysqli_query($con, "SELECT * FROM labunits WHERE status=1");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    while ($row1 =  mysqli_fetch_array($getunits)) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        $measurement_id = $row1['measurement_id'];
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        $measurement = $row1['measurement']; ?>             <option value="<?php echo $measurement_id; ?>"><?php echo $measurement; ?></option>                  <?php } ?>                                </select>       </div></div> </div> <button class="remove_subobj1  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;"><i class="fa fa-minus"></i></button></div>'); //add input box
+            if ($("#subtyperange").prop("checked")=== true){
+                var sty = 'block';
+            }else{
+                var sty = 'none';
+            }
+            $(`.subobj1`).append(`<div class="row">
+            <div class="col-lg-12"><hr style="border-top: dashed 1px #b7b9cc;"></div>
+            <div class="col-lg-8">
+            <div class="row">  
+            <div class="form-group col-lg-6"><label>Sub Type</label>
+            <input type="text" class="form-control" name="subtype[]" required="required"> </div>      
+            <div class="form-group col-lg-6">   
+            <label class="control-label">Measurement Unit</label> 
+            <select name="subtypeunit[]" class="form-control" id="category">     
+            <option value="">select unit...</option>	
+            <?php $getunits =  mysqli_query($con, "SELECT * FROM labunits WHERE status=1");   
+            while ($row1 =  mysqli_fetch_array($getunits)) {
+                                                                $measurement_id = $row1['measurement_id'];
+                                                                                            $measurement = $row1['measurement']; ?>             
+                                                                                            <option value="<?php echo $measurement_id; ?>"><?php echo $measurement; ?></option>                  
+                                                                                            <?php } ?>                                
+                                                                                            </select>       
+                                                                                            </div>
+                                                                                            <div class="forsubtyperange" style="display:`+sty+`;" >
+                                                <div class="row">
+                                                    <div class="col">
+                                                    <label class="form-check-label">Low Range</label>
+                                                    <div class="mb-3">
+                                                        <label for="lowX">X: <span id="low"></span></label>
+                                                        <input type="number"  value="" class="form-control" id="lowX" name="lowX1[]">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="lowY">Y:</label>
+                                                        <input type="number" class="form-control" id="lowY" name="lowY1[]">
+                                                    </div>
+                                                    </div>
+                                                    <div class="col">
+                                                    <label class="form-check-label">Normal Range</label>
+                                                    <div class="mb-3">
+                                                        <label for="normalX">X:</label>
+                                                        <input type="number" class="form-control" id="normalX" name="normalX1[]">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="normalY">Y:</label>
+                                                        <input type="number" class="form-control" id="normalY" name="normalY1[]">
+                                                    </div>
+                                                    </div>
+                                                    <div class="col">
+                                                    <label class="form-check-label">High Range</label>
+                                                    <div class="mb-3">
+                                                        <label for="highX">X:</label>
+                                                        <input type="number" class="form-control"  id="highX" name="highX1[]">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="highY">Y:</label>
+                                                        <input type="number" class="form-control" id="highY" name="highY1[]">
+                                                    </div>
+                                                    </div>
+                                                </div>
+
+                                                </div>
+                                                                                            </div> 
+                                                                                            </div> 
+            <button class="remove_subobj1  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;"><i class="fa fa-minus"></i></button></div>`
+            ); //add input box
         });
         $('.subobj1').on("click", ".remove_subobj1", function(e) { //user click on remove text
             e.preventDefault();
@@ -417,9 +620,9 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
 
         $('.subobj_button').click(function(e) { //on add input button click
             e.preventDefault();
-            $('.subobj').append('<div class="row"><div class="col-lg-12"><hr style="border-top: dashed 1px #b7b9cc;"></div><div class="col-lg-11"><div class="row">  <div class="form-group col-lg-6">                                 <label>Insurance company</label>   <select name="company[]" class="form-control"> <option value="">Select company...</option>  <?php $getcompanies =  mysqli_query($con, "SELECT * FROM insurancecompanies WHERE status=1");
+            $('.subobj').append(`<div class="row"><div class="col-lg-12"><hr style="border-top: dashed 1px #b7b9cc;"></div><div class="col-lg-11"><div class="row">  <div class="form-group col-lg-6">                                 <label>Insurance company</label>   <select name="company[]" class="form-control"> <option value="">Select company...</option>  <?php $getcompanies =  mysqli_query($con, "SELECT * FROM insurancecompanies WHERE status=1");
                                                                                                                                                                                                                                                                                                                                                                         while ($row1 =  mysqli_fetch_array($getcompanies)) {                                                                                                                                                                                                                                                                                                                                               $insurancecompany_id = $row1['insurancecompany_id'];
-                                                                                                                                                                                                                                                                                                                                                                            $company = $row1['company'];           ?>    <option value="<?php echo $insurancecompany_id; ?>"><?php echo $company; ?></option>                       <?php } ?>                       </select>   </div><div class="form-group col-lg-6"><label class="control-label">Charge</label>                   <input type="number" name="insurancecharge[]" class="form-control" placeholder="Enter Service Price"></div></div></div> <button class="remove_subobj  btn btn-danger" style="height:30px;margin-top:22px"><i class="fa fa-minus"></i></button></div>'); //add input box
+                                                                                                                                                                                                                                                                                                                                                                            $company = $row1['company'];           ?>    <option value="<?php echo $insurancecompany_id; ?>"><?php echo $company; ?></option>                       <?php } ?>                       </select>   </div><div class="form-group col-lg-6"><label class="control-label">Charge</label>                   <input type="number" name="insurancecharge[]" class="form-control" placeholder="Enter Service Price"></div></div></div> <button class="remove_subobj  btn btn-danger" style="height:30px;margin-top:22px"><i class="fa fa-minus"></i></button></div>`); //add input box
         });
         $('.subobj').on("click", ".remove_subobj", function(e) { //user click on remove text
             e.preventDefault();

@@ -82,22 +82,20 @@ header('Location:login.php');
                 </div>
                 <div class="col-sm-6">
               
-                <address>
-                    <p>P.O Box 3173 Mwanza</p>
-                    <p><b>Invoice #:</b> <?php echo $pin; ?></p>
-                    <p><b>Patient Name:</b> <?php echo $fullname; ?></p>
-                    <p><b>Payment Method:</b> <?php 
-                        if ($payment == "cash"){
-                            ?>
-                            Cash
-                            <?php
-                        }else{
-                            echo $paymentype .'-'. $company;
-                        }
-                    ?></p>
-                </address>
-
-                   
+                    <address>
+                        <p>P.O Box 3173 Mwanza</p>
+                        <p><b>Invoice #:</b> <?php echo $pin; ?></p>
+                        <p><b>Patient Name:</b> <?php echo $fullname; ?></p>
+                        <p><b>Payment Method:</b> <?php 
+                            if ($payment == "cash"){
+                                ?>
+                                Cash
+                                <?php
+                            }else{
+                                echo $paymentype .'-'. $company;
+                            }
+                        ?></p>
+                    </address>
                 </div>
                        
                      <div class="col-lg-12">

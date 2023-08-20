@@ -134,6 +134,11 @@ include 'includes/header.php';
                                             mysqli_query($con,"UPDATE pharmacyordereditems SET status='3' WHERE pharmacyorder_id='$serviceorder_id' AND item_id='$drug[$i]'") or die(mysqli_error($con));
                                           
                                         } 
+                                        $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                        $row_prev_admin_id=mysqli_fetch_array($get_prev_admin_id);
+                                        $prev_admin_id=$row_prev_admin_id['admin_id'];
+                                        $prev_id = $row_prev_admin_id['prev_id'];
+                                        mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','pharmacy',UNIX_TIMESTAMP(),1,'$prev_id')") or die(mysqli_error($con));
                                         $_SESSION['success'] =  '<div class="alert alert-success">Drugs Successfully Issued</div>';
                                         // redirect to doctorwaiting
                                         echo '<script>window.location.href = "pharmacywaiting";</script>'; 

@@ -249,7 +249,7 @@ $id = $_GET['id'];
                         if (mysqli_num_rows($getorder) > 0){
                         $row1o = mysqli_fetch_array($getorder);
                         $pharmacyorder_id = $row1o['pharmacyorder_id'];
-                        $getordered = mysqli_query($con, "SELECT * FROM pharmacyordereditems WHERE pharmacyorder_id='$pharmacyorder_id' AND status=2") or die(mysqli_error($con));
+                        $getordered = mysqli_query($con, "SELECT * FROM pharmacyordereditems WHERE pharmacyorder_id='$pharmacyorder_id' AND status in (2,3)") or die(mysqli_error($con));
                         while ($row = mysqli_fetch_array($getordered)) {
                           $item_id = $row['item_id'];
                           $prescription = $row['prescription'];
@@ -278,7 +278,7 @@ $id = $_GET['id'];
                         $timestamp = $rowo['timestamp'];
                         // $paymethod = $rowo['paymentmethod'];
                         $serviceorder_id = $rowo['serviceorder_id'];
-                        $getordered = mysqli_query($con, "SELECT * FROM patientservices WHERE serviceorder_id='$serviceorder_id' AND status=2") or die(mysqli_error($con));
+                        $getordered = mysqli_query($con, "SELECT * FROM patientservices WHERE serviceorder_id='$serviceorder_id' AND status in (2,3)") or die(mysqli_error($con));
                         while ($row = mysqli_fetch_array($getordered)) {
                           $medicalservice_id = $row['medicalservice_id'];
                           $unitcharge = $row['charge'];
@@ -299,7 +299,7 @@ $id = $_GET['id'];
                         }
                       } else if ($type == 'unselective') {
                         
-                          $getservice = mysqli_query($con, "SELECT * FROM medicalservices WHERE status=2 AND medicalservice_id='$type_id'");
+                          $getservice = mysqli_query($con, "SELECT * FROM medicalservices WHERE status in (2,3) AND medicalservice_id='$type_id'");
                           $row2 = mysqli_fetch_array($getservice);
                           $medicalservice = $row2['medicalservice'];
                           $unitcharge = $amount;
@@ -322,7 +322,7 @@ $id = $_GET['id'];
                             $rowo = mysqli_fetch_array($getorder);
                             $timestamp = $rowo['timestamp'];
                             $serviceorder_id = $rowo['laborder_id'];
-                            $getordered = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id='$serviceorder_id' AND status=2") or die(mysqli_error($con));
+                            $getordered = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id='$serviceorder_id' AND status in (2,3)") or die(mysqli_error($con));
                             while ($row = mysqli_fetch_array($getordered)) {
                                 $medicalservice_id = $row['investigationtype_id'];
                                 $unitcharge = $row['charge'];
@@ -348,7 +348,7 @@ $id = $_GET['id'];
                             $timestamp = $rowo['timestamp'];
                             // $paymethod = $rowo['paymentmethod'];
                             $serviceorder_id = $rowo['radioorder_id'];
-                            $getordered = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id='$serviceorder_id' AND status=2") or die(mysqli_error($con));
+                            $getordered = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id='$serviceorder_id' AND status in (2,3)") or die(mysqli_error($con));
                             while ($row = mysqli_fetch_array($getordered)) {
                                 $medicalservice_id = $row['radioinvestigationtype_id'];
                                 $unitcharge = $row['charge'];

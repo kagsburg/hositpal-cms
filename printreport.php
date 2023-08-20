@@ -17,12 +17,36 @@ $patient_id = $_GET['id'];
     <title>Radiology Report</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
-      <script src="ckeditor/ckeditor.js"></script>
-       <link href="css/chosen/chosen.css" rel="stylesheet">
-    <link rel="stylesheet" href="ckeditor/samples/sample.css">
-    <link href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+     <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+    <!-- Custom Stylesheet -->
+    	<link href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
     <link href="css/style.css?<?php echo time(); ?>" rel="stylesheet">
-	
+    <style>
+        @media print {
+  [class*="col-sm-"] {
+    float: left;
+  }
+}
+       @media print and (max-width: 767px) {
+  .row{
+    display: flex;
+    flex-direction: row;
+  }
+  .col-md-3{
+    flex-basis: 25%;
+  }
+  .col-md-1{
+    flex-basis: 8.33%;
+  }
+  .col-md-8{
+    flex-basis: 66.67%;
+  }
+  .col-md-6{
+    flex-basis: 50%;
+  }
+}
+        
+    </style>
 	
 </head>
 <body>
@@ -45,32 +69,22 @@ $patient_id = $_GET['id'];
         Main wrapper start
     ***********************************-->
     <div id="main-wrapper">
-<?php 
-include 'includes/header.php';
-   if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){ 
-                                           include 'fr/addradiologyreport.php';                     
-                                       }else{
-?>
+
      
-        <div class="content-body">
+        <div class="content-body" style="margin-left: 0px">
             <!-- row -->
 			<div class="container-fluid">
-				<div class="row page-titles mx-0">
-                    <div class="col-sm-6 p-md-0">
-                        <div class="welcome-text">
-                            <h4> Radiology Report</h4>
-                           
-                        </div>
-                    </div>
-                    <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <!-- <li class="breadcrumb-item"><a href="waitingpatients"> In Patients</a></li> -->
-                            <li class="breadcrumb-item active"><a href="#">Radiology Report</a></li>
-                        </ol>
-                    </div>
-                </div>
+				
        	<div class="row">
+           <div class="col-sm-12">
+                <img alt="image" src="<?php echo BASE_URL; ?>/images/ELVD.png" width="100" />
+                <h1 class="text-center" style="font-family:Times New roman;color: #000">ELCT-ELVD Nyakato Health Center </h1>
+                <address class="text-center">
+                      P.O.BOX 3173<br>
+                      Mwanza, Tanzania<br>
+                      <!-- <abbr title="Phone">P:</abbr> +255 28 250 0885 -->
+                    </address>
+                </div>
                      <?php
                                   $getque=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$patientsque_id'");  
                                     $row = mysqli_fetch_array($getque);
@@ -118,34 +132,37 @@ include 'includes/header.php';
                                                     }
 
                                                 if(strlen($patient_id)==1){
-      $pin='000'.$patient_id;
-     }
-       if(strlen($patient_id)==2){
-      $pin='00'.$patient_id;
-     }
-        if(strlen($patient_id)==3){
-      $pin='0'.$patient_id;
-     }
-  if(strlen($patient_id)>=4){
-      $pin=$patient_id;
-     }      
-     $getreporttitle = mysqli_query($con, "SELECT * FROM radiolodyreporttitle WHERE status=1 and admission_id='$admission_id'") or die(mysqli_error($con));
-        $rowtitle = mysqli_fetch_array($getreporttitle);
-        $title = $rowtitle['title'];
-        $summary = $rowtitle['summary'];
-        $report_id = $rowtitle['reporttitle'];
-        $report_date = $rowtitle['timestamp'];
-        $conculsion = $rowtitle['conclusion'];
+                                                    $pin='000'.$patient_id;
+                                                    }
+                                                    if(strlen($patient_id)==2){
+                                                    $pin='00'.$patient_id;
+                                                    }
+                                                        if(strlen($patient_id)==3){
+                                                    $pin='0'.$patient_id;
+                                                    }
+                                                if(strlen($patient_id)>=4){
+                                                    $pin=$patient_id;
+                                                    }      
+                                                    $getreporttitle = mysqli_query($con, "SELECT * FROM radiolodyreporttitle WHERE status=1 and admission_id='$admission_id'") or die(mysqli_error($con));
+                                                        $rowtitle = mysqli_fetch_array($getreporttitle);
+                                                        $title = $rowtitle['title'];
+                                                        $summary = $rowtitle['summary'];
+                                                        $report_id = $rowtitle['reporttitle'];
+                                                        $report_date = $rowtitle['timestamp'];
+                                                        $conculsion = $rowtitle['conclusion'];
       
                                ?>
                     
                      <div class="col-lg-12">
-                        <div class="card">
+                        <div class="">
                             <div class="card-header">
-                                <h4 class="card-title"><?php echo $title ?></h4>
+                                <h4 class="card-title">RADIOLOGY REPORT FOR <?php echo $title ?></h4>
                             </div>
                             <div class="card-body">
                                 <div class="row">
+                                    <table>
+                                        <tr>
+                                            <td>
                                     <div class="col-lg-4">
                                         <address>
                                             Names:<strong><?php echo $fullname ?></strong><br>
@@ -153,7 +170,9 @@ include 'includes/header.php';
                                             <abbr title="Phone">PIN #</abbr> <?php echo $pin ?>
                                         </address>
                                     </div>
-                                    <div class="col-lg-4">
+                                </td>
+                                <td>
+                                    <div class="col-lg-4" >
                                         <address>
                                             <strong>Sponsor: <?php echo $company?></strong><br>
                                             Age: <span><?php 
@@ -166,6 +185,9 @@ include 'includes/header.php';
                                             <abbr title="Phone">Date:</abbr> <?php echo date('Y-m-d',$report_date); ?>
                                         </address>
                                     </div>
+                                </td>
+                                                </tr>
+                                    </table>
                                 </div>
                                 <h5>RELEVANT CLINICAL SUMMARY</h5>
                                 <p><?php echo $summary ?></p>
@@ -192,14 +214,22 @@ include 'includes/header.php';
                                             <h5><?php echo $medicalservice ?></h5>
                                             <p><?php echo $description ?></p>
                                         </div>
+                                        <table>
+                                            <tr>
+                                                <td>
                                         <div class="col-lg-6">
                                             <h5>START TIME</h5>
                                             <p><?php echo $start ?></p>
                                         </div>
+                                                </td>
+                                                <td>
                                         <div class="col-lg-6">
                                             <h5>END TIME</h5>
                                             <p><?php echo $end ?></p>
                                         </div>
+                                                </td>
+                                            </tr>
+                                        </table>
                                         <hr>
                                         <?php 
                                         $getimages = mysqli_query($con, "SELECT * FROM radiologyimages WHERE status=1 and radiology_report_id='$report_radio_id'") or die(mysqli_error($con));
@@ -217,9 +247,9 @@ include 'includes/header.php';
                                                 $pimage = "noimage.png";
                                             
                                             ?>
-                                            <div class="col-lg-4">
+                                            <!-- <div class="col-lg-4">
                                                 <img src="<?php echo BASE_URL ?>/images/radiology/<?php echo $pimage; ?>" width="100%">
-                                            </div>
+                                            </div> -->
                                         <?php }} ?>
                                         
                                     <?php } ?>
@@ -236,23 +266,18 @@ include 'includes/header.php';
                                         echo $user;
                                         ?></p>
                                         </div>
-                                    <div class="col-lg-4">
-                                        <h5>DATE</h5>
-                                        <p><?php echo date('Y-m-d',$report_date); ?></p>
-                                    </div>
-                                    <div>
-                                        <a href="printreport.php?patientsque_id=<?php echo $patientsque_id; ?>&id=<?php echo $patient_id ?>" class="btn btn-primary">Print</a>
-                                    </div>
+                                    
+                                   
 
                                 </div>
                             </div>
-                        </div>
-	                </div>
-                     
                             </div>
+                        </div>
+                     
+                    </div>
 			   </div>
             </div>
-                                       <?php }?>
+                                       
         </div>
         <!--**********************************
             Content body end
@@ -261,9 +286,7 @@ include 'includes/header.php';
         <!--**********************************
             Footer start
         ***********************************-->
-     <?php 
- include 'includes/footer.php';
-     ?>
+
         <!--**********************************
             Footer end
         ***********************************-->
@@ -295,6 +318,11 @@ include 'includes/header.php';
         <script language="JavaScript" src="js/gen_validatorv4.js" type="text/javascript"></script>
 	<!-- <script src="js/dashboard/dashboard-1.js"></script> -->
          <script src="js/chosen/chosen.jquery.js"></script>
+         <script>
+               $('document').ready(function(){
+                     window.print(); 
+        }); 
+            </script>
 
 </body>
 

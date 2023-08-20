@@ -128,7 +128,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                 else 
                                                     $pimage = "noimage.png";
                                                     // print_r($prev_id);
-                                                $getnextque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('nurse','lab','doctor','radiography') and status='1' AND patientsque_id = '$prev_id'");
+                                                $getnextque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('nurse','lab','doctor','radiographer') and status='1' AND patientsque_id = '$prev_id'");
                                                 if (mysqli_num_rows($getnextque) > 0) {
                                                     $rown = mysqli_fetch_array($getnextque);
                                                     $npatientsque_id = $rown['patientsque_id'];                                                
@@ -139,6 +139,9 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                     $rows = mysqli_fetch_array($getstaff);
                                                     $fullname = $rows['fullname'];
                                                     $prev22_id= $rown['prev_id'];
+                                                    if ($prev22_id == '') {
+                                                        $prev22_id = $npatientsque_id;
+                                                    }
                                                     // $getnextque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND room IN('nurse','lab') AND status=1 ORDER BY patientsque_id DESC");
                                                 }else{
                                                     $npatientsque_id = $patientsque_id;
@@ -150,21 +153,6 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                     $fullname = $rows['fullname'];
                                                     $prev22_id=$row['prev_id'];
                                                 }
-                                               
-
-                                                // $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('nurse','lab') AND status=1 ORDER BY patientsque_id DESC");
-                                                // $rowp = mysqli_fetch_array($getprevque);
-                                                // $pattendant = isset($rowp) ? $rowp['attendant'] : "";
-                                                // $patientsque_id2 = isset($rowp) ? $rowp['patientsque_id'] : null;
-                                                // $proom = isset($rowp) ? $rowp['room'] : "";
-
-                                                
-
-                                                // if (isset($rowp)) {
-                                                //     $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$pattendant'") or die(mysqli_error($con));
-                                                //     $prows = mysqli_fetch_array($getstaff);
-                                                //     $pfullname = $prows['fullname'];
-                                                // } else $fullname = "";
 
                                                 if (strlen($patient_id) == 1) {
                                                     $pin = '000' . $patient_id;
