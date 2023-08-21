@@ -127,29 +127,7 @@ include 'includes/header.php';
                             </div>
                             <div class="card-body">
                                 <div class="basic-form"> 
-                            <?php 
-                            if (isset($_POST['submittitle'])){
-                                $title = mysqli_real_escape_string($con,trim($_POST['title_1']));
-                                $summary = mysqli_real_escape_string($con,trim($_POST['summary_1']));
-                                if((empty($title))||(empty($summary) )){
-                                    $errors[]='Some Fields are empty';
-                                }
-                                if(!empty($errors)){
-                                foreach ($errors as $error) {
-                                echo '<div class="alert alert-danger">'.$error.'</div>';
-                                   }
-                                }else{
-                                    mysqli_query($con, "INSERT INTO radiolodyreporttitle(patientque_id,title,summary,admission_id,timestamp,status)
-                                    VALUES('$id','$title','$summary','$admission_id',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
-                                     $last_id = mysqli_insert_id($con);
-                                     $_SESSION['reporttit_id'] = $last_id;
-                                     
-
-                                     echo '<script>window.location.href = "addradiorep?id='.$id.'";</script>';exit();
-
-                                }
-
-                            }?>
+                            
      <form method="post" name='form' class="form" action="saveradiotest"  enctype="multipart/form-data">      
                     
                   <div class="row">
@@ -161,7 +139,7 @@ include 'includes/header.php';
                                                         $rowo = mysqli_fetch_array($getorder);
                                                         $timestamp = $rowo['timestamp'];
                                                         $serviceorder_id = $rowo['radioorder_id'];
-                                                        $getordered = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id ='$serviceorder_id' AND status=2") or die(mysqli_error($con));
+                                                        $getordered = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id ='$serviceorder_id' AND status in (1,2)") or die(mysqli_error($con));
                                                         $count = mysqli_num_rows($getordered);
                                                         $row = mysqli_fetch_array($getordered);
                                                             $medicalservice_id = $row['radioinvestigationtype_id'];
@@ -178,6 +156,7 @@ include 'includes/header.php';
                                                                 <input type="hidden" name="clinic" value="<?php echo $clinic; ?>">
                                                                 <input type="hidden" name="id" value="<?php echo $id; ?>">
                                                                 <input type="hidden" name="radioorder_id" value="<?php echo $radioorder_id; ?>">
+                                                                <input type="hidden" name="admission_id" value="<?php echo $admission_id; ?>">
                                                                 
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Test done</label>

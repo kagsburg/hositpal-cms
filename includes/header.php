@@ -749,13 +749,24 @@
         <?php }
         if (($_SESSION['elcthospitallevel'] == 'lab technician')) {
         ?>
-          <li>
+        <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="fa fa-users"></i>
+              <span class="nav-text">Outpatients</span>
+            </a>
+            <ul aria-expanded="false">
+            <li><a href="labwaiting?mode=2">Emergency List</a></li>
+              <li><a href="labwaiting?mode=1">Waiting List</a></li>
+              <li><a href="labcleared">Patient With Results</a></li>
+            </ul>
+          </li>
+          <!-- <li>
             <a class="ai-icon" href="labwaiting" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Waiting Patients</span>
             </a>
 
-          </li>
+          </li> -->
           <!-- <li>
             <a class="ai-icon" href="clinicwaiting?ty=lab" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
@@ -764,12 +775,12 @@
 
           </li> -->
           
-          <li>
+          <!-- <li>
             <a class="ai-icon" href="labcleared" aria-expanded="false">
               <i class="fa fa-users"></i>
               <span class="nav-text">Lab Results</span>
             </a>
-          </li>
+          </li> -->
           <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-reply"></i>
@@ -786,12 +797,22 @@
         if (($_SESSION['elcthospitallevel'] == 'lab technologist')) {
           ?>
           <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="fa fa-users"></i>
+              <span class="nav-text">Outpatients</span>
+            </a>
+            <ul aria-expanded="false">
+            <li><a href="labwaiting?mode=2">Emergency List</a></li>
+              <li><a href="labwaiting?mode=1">Waiting List</a></li>
+              <li><a href="labcleared">Patient With Results</a></li>
+            </ul>
+          </li>
+          <!-- <li>
             <a class="ai-icon" href="labwaiting" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Waiting Patients</span>
             </a>
-
-          </li>
+          </li> -->
           <!-- <li>
             <a class="ai-icon" href="clinicwaiting?ty=lab" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
@@ -799,12 +820,12 @@
             </a>
 
           </li> -->
-          <li>
+          <!-- <li>
             <a class="ai-icon" href="labcleared" aria-expanded="false">
               <i class="fa fa-users"></i>
               <span class="nav-text">Lab Results</span>
             </a>
-          </li>
+          </li> -->
           <!-- <li>
             <a class="ai-icon" href="labresults" aria-expanded="false">
               <i class="fa fa-users"></i>
@@ -827,7 +848,18 @@
           <?php }
         if (($_SESSION['elcthospitallevel'] == 'radiographer')) {
         ?>
-          <li>
+        <li>
+            <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+              <i class="fa fa-users"></i>
+              <span class="nav-text">Outpatients</span>
+            </a>
+            <ul aria-expanded="false">
+            <li><a href="radiowaiting?mode=2">Emergency List</a></li>
+              <li><a href="radiowaiting?mode=1">Waiting List</a></li>
+              <li><a href="radiocleared">Patient With Results</a></li>
+            </ul>
+          </li>
+          <!-- <li>
             <a class="ai-icon" href="radiowaiting" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Waiting Patients</span>
@@ -839,7 +871,7 @@
               <i class="fa fa-users"></i>
               <span class="nav-text">Cleared Patients</span>
             </a>
-          </li>
+          </li> -->
           <!-- <li>
             <a class="ai-icon" href="clinicwaiting?ty=radiography" aria-expanded="false">
               <i class="fa fa-user-plus"></i>

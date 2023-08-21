@@ -93,7 +93,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room ='doctor'AND status='1' and attendant='" . $_SESSION['elcthospitaladmin'] . "' GROUP BY admission_id");
+                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment in (1,0) AND room ='doctor'AND status='1' and attendant='" . $_SESSION['elcthospitaladmin'] . "' GROUP BY admission_id");
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];
                                                 $admission_id = $row['admission_id'];

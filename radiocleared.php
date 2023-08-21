@@ -83,7 +83,7 @@ include 'includes/header.php';
                                     </thead>
                                         <tbody>   
                                          <?php                                               
-                                 $getque=mysqli_query($con,"SELECT * FROM patientsque WHERE payment='1' AND room='radiography' AND status=1");  
+                                 $getque=mysqli_query($con,"SELECT * FROM patientsque WHERE payment in (1,0) AND room='radiography' AND status=1");  
                                         while ($row = mysqli_fetch_array($getque)) {
                                           $patientsque_id=$row['patientsque_id'];
                                           $admission_id=$row['admission_id'];
@@ -130,12 +130,10 @@ include 'includes/header.php';
                                                        </td>
                                             <td><?php echo $firstname.' '.$secondname.' '.$thirdname; ?></td>
                                               <td><?php echo $gender; ?></td>                                                                         
-                                              <td><?php echo $fullname; ?></td>                                
-                                                              
-                                            
-                                                   <td>   
+                                              <td><?php echo $fullname; ?></td>  
+                                            <td>   
                                                     <a href="radiography?patientsque_id=<?php echo $patientsque_id; ?>&id=<?php echo $patient_id ?>" class="btn btn-primary btn-sm">Radiology Report</a>
-                                        </td>
+                                            </td>
                                          
                                          
                                         </tr>

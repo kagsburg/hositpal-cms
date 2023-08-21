@@ -217,10 +217,7 @@ include 'includes/header.php';
                                     VALUES('$id','$title','$summary','$admission_id',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
                                      $last_id = mysqli_insert_id($con);
                                      $_SESSION['reporttit_id'] = $last_id;
-                                     
-
                                      echo '<script>window.location.href = "addradiorep?id='.$id.'";</script>';exit();
-
                                 }
 
                             }?>
