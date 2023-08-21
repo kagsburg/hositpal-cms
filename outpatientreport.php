@@ -1433,7 +1433,15 @@ if (strlen($patient_id) >= 4) {
                                                     ?>
                                                     <div class="table-responsive pt-4">
                                                             <h4><strong>Lab Report</strong></h4>
-                                                            <table class="table  table-striped table-responsive-sm table-bordered">
+                                                            <?php 
+                                                             $getlabre = mysqli_query($con, "SELECT * FROM patientsque where admission_id ='$admission_id' and room='lab' AND status='1' AND admintype='doctor' AND prev_id='$id'")or die(mysqli_error($con));
+                                                             if (mysqli_num_rows($getlabre) > 0){
+                                                                 while($rowpharm3 = mysqli_fetch_array($getlabre)){
+                                                                     $npatientsque_id = $rowpharm3['patientsque_id'];
+                                                            ?>
+                                                            <a href="labreport?patient_id=<?php echo $patient_id; ?>&que=<?php echo $npatientsque_id ?>" target="_blank" class="btn btn-primary"> Radiology Report</a>
+                                                            <?php }} ?>
+                                                            <!-- <table class="table  table-striped table-responsive-sm table-bordered">
                                                                 <thead>
                                                                     <tr>
                                                                     <th>Test done</th>
@@ -1445,7 +1453,7 @@ if (strlen($patient_id) >= 4) {
                                                                 <tbody>
                                                                     
                                                                         <?php  
-                                                                        while($row2=mysqli_fetch_array($checkpharmacy)){
+                                                                        while($row2=mysqli_fetch_array($checklab)){
                                                                             $getlab = mysqli_query($con, "SELECT * FROM patientsque where admission_id ='$admission_id' and room='lab technician' AND status='1' AND admintype='doctor' AND prev_id='$id'")or die(mysqli_error($con));
                                                                             if (mysqli_num_rows($getlab) > 0){
                                                                                 while($rowpharm3 = mysqli_fetch_array($getlab)){
@@ -1471,7 +1479,7 @@ if (strlen($patient_id) >= 4) {
                                                                                 <?php }}}}?>
                                                                 
                                                                 </tbody>
-                                                            </table>
+                                                            </table> -->
                                                         </div>
 
                                                     <?php } ?>  

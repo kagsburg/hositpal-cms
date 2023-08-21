@@ -85,7 +85,7 @@ if (($_SESSION['elcthospitallevel'] != 'lab technician')) {
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room='lab' AND status=0");
+                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE (payment='1' || payment='0') AND room='lab' AND status=0");
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];
                                                 $admission_id = $row['admission_id'];
@@ -102,6 +102,7 @@ if (($_SESSION['elcthospitallevel'] != 'lab technician')) {
                                                 $thirdname = $row2['thirdname'];
                                                 $gender = $row2['gender'];
                                                 $ext = $row2['ext'];
+                                                $mode=$row1['mode'];
 
                                                 $filter = empty($prev_id) ? "ORDER BY patientsque_id DESC" : "AND patientsque_id = '$prev_id'";
                                                 $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND patientsque_id < '$patientsque_id'  AND status=1 $filter LIMIT 1");

@@ -124,40 +124,40 @@ $id = $_GET['id'];
                             <div class="card-body">
                                 <div class="basic-form">
                                     <?php
-                                    if (isset($_POST['details'])) {
-                                        $details =mysqli_real_escape_string($con,trim($_POST['details']));
+                                    // if (isset($_POST['details'])) {
+                                    //     $details =mysqli_real_escape_string($con,trim($_POST['details']));
 
-                                        mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$admin_id','1','" . $_SESSION['elcthospitaladmin'] . "','lab technician',UNIX_TIMESTAMP(),1,'$id')") or die(mysqli_error($con));
-                                        //                      $last_id= mysqli_insert_id($con);
-                                        mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
-                                        if (isset($_POST['test'], $_POST['result'])) {
-                                            $test = $_POST['test'];
-                                            $result = $_POST['result'];
-                                            $alltests = sizeof($test);
-                                            foreach($test as $key => $value){
-                                                $test_id = $value;
-                                                $result_id = $result[$key];
-                                                mysqli_query($con, "INSERT INTO labreports(test,result,patientsque_id,details,status) VALUES('$test_id','$result_id','$id','$details','1')") or die(mysqli_error($con));
-                                            }
+                                    //     mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$admin_id','1','" . $_SESSION['elcthospitaladmin'] . "','lab technician',UNIX_TIMESTAMP(),1,'$id')") or die(mysqli_error($con));
+                                    //     //                      $last_id= mysqli_insert_id($con);
+                                    //     mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                    //     if (isset($_POST['test'], $_POST['result'])) {
+                                    //         $test = $_POST['test'];
+                                    //         $result = $_POST['result'];
+                                    //         $alltests = sizeof($test);
+                                    //         foreach($test as $key => $value){
+                                    //             $test_id = $value;
+                                    //             $result_id = $result[$key];
+                                    //             mysqli_query($con, "INSERT INTO labreports(test,result,patientsque_id,details,status) VALUES('$test_id','$result_id','$id','$details','1')") or die(mysqli_error($con));
+                                    //         }
                                            
-                                        }
+                                    //     }
                                     ?>
 
                                     <?php
-                                     $_SESSION['success'] = '<div class="alert alert-success">Patient Report Successfully Added</div>';
-                                     // redirect to labwaiting
-                                     echo '<script>window.location.href = "labwaiting.php";</script>';
+                                    //  $_SESSION['success'] = '<div class="alert alert-success">Patient Report Successfully Added</div>';
+                                    //  // redirect to labwaiting
+                                    //  echo '<script>window.location.href = "labwaiting.php";</script>';
                                                 
-                                     exit();
-                                        // echo '<div class="alert alert-success">Patient Report Successfully Added</div>';
-                                    }
+                                    //  exit();
+                                    //     // echo '<div class="alert alert-success">Patient Report Successfully Added</div>';
+                                    // }
 
                                     ?>
-                                    <form method="post" name='form' class="form" action="" enctype="multipart/form-data">
+                                    <!-- <form method="post" name='form' class="form" action="" enctype="multipart/form-data"> -->
 
 
                                         <div class="col-lg-12">
-                                            <h4>Test</h4>
+                                            <h4>Tests</h4>
                                         </div>
                                         <div class="col-lg-12">
                                             <div class='subobj1'>
@@ -168,32 +168,171 @@ $id = $_GET['id'];
                                                         $rowo = mysqli_fetch_array($getorder);
                                                         $timestamp = $rowo['timestamp'];
                                                         $serviceorder_id = $rowo['laborder_id'];
-                                                        $getordered = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id='$serviceorder_id' AND status=1") or die(mysqli_error($con));
+                                                        $getordered = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id='$serviceorder_id' AND status in (1,2)") or die(mysqli_error($con));
+                                                        $count = mysqli_num_rows($getordered);
                                                         while ($row = mysqli_fetch_array($getordered)) {
                                                             $medicalservice_id = $row['investigationtype_id'];
+                                                            $patientlab_id = $row['patientlab_id'];
                                                             $unitcharge = $row['charge'];
                                                             $total = $total + $unitcharge;
                                                             $getservice = mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'");
                                                             $row2 = mysqli_fetch_array($getservice);
                                                             $medicalservice = $row2['investigationtype'];
+                                                            $investigationtype_id=$row2['investigationtype_id'];
+                                                            $unit_id = $row2['unit_id'];
+                                                            $range = $row2['range_type'];
+                                                            $has_answer = $row2['has_answers'];
+                                                            $getunit =  mysqli_query($con, "SELECT * FROM labunits WHERE status=1 AND measurement_id='$unit_id'");
+                                                            if (mysqli_num_rows($getunit) == 0) {
+                                                                $measurement = "";
+                                                            }else{
+                
+                                                                $row1 =  mysqli_fetch_array($getunit);
+                                                                $measurement_id = $row1['measurement_id'];
+                                                                $measurement = $row1['measurement'];
+                                                            }
+                                                            if ($range != 0){
                                                             ?>
-
+                                                            <form method="post" action="savelabreport">
                                                             <div class='row'>
+                                                            <input type="hidden" name="has_answer" value="<?php echo $has_answer; ?>">
+                                                                <input type="hidden" name="patientlab_id" value="<?php echo $patientlab_id; ?>">
+                                                                <input type="hidden" name="investigationtype_id" value="<?php echo $investigationtype_id; ?>">
+                                                                <input type="hidden" name="admission_id" value="<?php echo $admission_id; ?>">
+                                                                <input type="hidden" name="patientque_id" value="<?php echo $id; ?>">
+                                                                <input type="hidden" name="count" value="<?php echo $count; ?>">
                                                                 <div class="form-group col-lg-6">
-                                                                    <label>Test done</label>
+                                                                    <label>Test </label>
                                                                     <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>">
                                                                     <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $medicalservice; ?>" disabled>
                                                                 </div>
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>SI Unit </label>
+                                                                    <input type="hidden" name="unit[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $measurement_id; ?>">
+                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $measurement; ?>" disabled>
+                                                                </div>
+                                                                <div class="form-group col-lg-5">
+                                                                    <label>Start Time</label>
+                                                                    <input type="time" name="start[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter Start Time" required>
+                                                                </div><div class="form-group col-lg-5">
+                                                                    <label>End Time</label>
+                                                                    <input type="time" name="end[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter End Time" required>
+                                                                </div>
                                                                 <div class="form-group col-lg-5">
                                                                     <label>Result</label>
-                                                                    <input type="text" name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result">
+                                                                    <input type="number" name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result" required>
                                                                 </div>
-
-                                                                <!-- <div class="form-group col-lg-1">
-                                                                    <a href='#' class="subobj1_button btn btn-success" style="margin-top:30px">+</a>
-                                                                </div> -->
                                                             </div>
+                                                            <div class="form-group pull-right">
+                                                                <button class="btn btn-primary" type="submit" name="submit">Submit</button>
+                                                            </div>
+                                                            </form>
                                                         <?php 
+                                                            }
+                                                            else if ($range == 0 && $has_answer==0){
+                                                                ?>
+                                                                <hr/>
+                                                                <form class="form mb-3" method="post" action="savelabreport">
+                                                                <input type="hidden" name="has_answer" value="<?php echo $has_answer; ?>">
+                                                                <input type="hidden" name="patientlab_id" value="<?php echo $patientlab_id; ?>">
+                                                                <input type="hidden" name="investigationtype_id" value="<?php echo $investigationtype_id; ?>">
+                                                                <input type="hidden" name="admission_id" value="<?php echo $admission_id; ?>">
+                                                                <input type="hidden" name="patientque_id" value="<?php echo $id; ?>">
+                                                                <input type="hidden" name="count" value="<?php echo $count; ?>">
+
+
+                                                            <div class='row'>
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>Test </label>
+                                                                    <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>">
+                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $medicalservice; ?>" disabled>
+                                                                </div>
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>SI Unit </label>
+                                                                    <input type="hidden" name="unit[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $measurement_id; ?>">
+                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $measurement; ?>" disabled>
+                                                                </div>
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>Start Time</label>
+                                                                    <input type="time" name="start[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter Start Time" required>
+                                                                </div><div class="form-group col-lg-5">
+                                                                    <label>End Time</label>
+                                                                    <input type="time" name="end[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter End Time" required>
+                                                                </div>
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>Result</label>
+                                                                    <input type="text" name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result" required>
+                                                                </div>
+                                                                <div class="form-group"><label class="control-label">* More Details if any</label>
+                                                                        <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details"></textarea>
+                                                                    </div>
+
+                                                            </div>
+                                                            <div class="form-group pull-right">
+                                                                <button class="btn btn-primary" type="submit" name="submit">Submit</button>
+                                                            </div>
+                                                            </form>
+                                                                <?php
+                                                            } else if ($range == 0 && $has_answer==1){
+                                                                ?>
+                                                                <hr/>
+                                                                 <form class="form" method="post" action="savelabreport">
+                                                            <div class='row'>
+                                                                <input type="hidden" name="has_answer" value="<?php echo $has_answer; ?>">
+                                                                <input type="hidden" name="patientlab_id" value="<?php echo $patientlab_id; ?>">
+                                                                <input type="hidden" name="investigationtype_id" value="<?php echo $investigationtype_id; ?>">
+                                                                <input type="hidden" name="admission_id" value="<?php echo $admission_id; ?>">
+                                                                <input type="hidden" name="patientque_id" value="<?php echo $id; ?>">
+                                                                <input type="hidden" name="count" value="<?php echo $count; ?>">
+
+
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>Test </label>
+                                                                    <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>">
+                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $medicalservice; ?>" disabled>
+                                                                </div>  
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>SI Unit </label>
+                                                                    <input type="hidden" name="unit[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $measurement_id; ?>">
+                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $measurement; ?>" disabled>
+                                                                </div>                                                              
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>Start Time</label>
+                                                                    <input type="time" name="start[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter Start Time" required>
+                                                                </div><div class="form-group col-lg-6">
+                                                                    <label>End Time</label>
+                                                                    <input type="time" name="end[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter End Time" required>
+                                                                </div>
+                                                                <div class="form-group col-lg-12">
+                                                                    <label>Answers:</label>
+                                                                    <?php 
+                                                                      $getanwers = mysqli_query($con, "SELECT * FROM investigationselect where investigationtype_id = '$investigationtype_id'") or die(mysqli_error($con));
+                                                                      while ($row22= mysqli_fetch_array($getanwers)){
+                                                                        ?>
+                                                                         
+                                                                         <div class="form-check form-check-inline">
+                                                                             <label class="form-check-label" style="font-size:14px">
+                                                                                        <input class="form-check-input" type="radio" name="result[<?php echo $medicalservice_id; ?>]" id="inlineRadio1" value="<?php echo $row22['investigationselect_id'];; ?>">
+                                                                                        <?php echo $row22['answer']; ?>
+                                                                                    </label>
+                                                                                    </div>                                                                
+                                                                        
+                                                                        <?php
+                                                                      }
+                                                                    
+                                                                    ?>
+                                                                </div>
+                                                                <div class="form-group"><label class="control-label">* More Details if any</label>
+                                                                        <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details"></textarea>
+                                                                    </div>
+
+                                                            </div>
+                                                            <div class="form-group pull-right">
+                                                                <button class="btn btn-primary" type="submit" name="submit">Submit</button>
+                                                            </div>
+                                                            <!-- </form> -->
+                                                                    <?php
+                                                            }
                                                         } 
                                                     }
                                                 ?>
@@ -201,15 +340,11 @@ $id = $_GET['id'];
                                             </div>
                                         </div>
 
-                                        <div class="form-group"><label class="control-label">* More Details if any</label>
-                                            <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details"></textarea>
-                                        </div>
+                                        
                                         <div class="form-group pull-left">
                                             <!--<a class="btn btn-success" a href="addpatient3.php">Back</a>-->
                                         </div>
-                                        <div class="form-group pull-right">
-                                            <button class="btn btn-primary" type="submit">Proceed</button>
-                                        </div>
+                                       
                                     </form>
                                 </div>
                             </div>

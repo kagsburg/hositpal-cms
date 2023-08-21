@@ -110,6 +110,16 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                     mysqli_query($con, "INSERT INTO insuredinvestigationtypes(investigationtype_id,insurancecompany_id,charge,status) VALUES('$last_id','$company[$i]','$insurancecharge[$i]','1')") or die(mysqli_error($con));
                                                 }
                                             }
+                                            if (isset($_POST['hasanswers'])){
+                                                $hasanswers = $_POST['hasanswers'];
+                                                $answers = $_POST['answers'];
+                                                $answer = sizeof($answers);
+                                                for ($i = 0; $i < $answer; $i++) {
+                                                    mysqli_query($con, "INSERT INTO investigationselect (investigationtype_id,answer,timestamp,status,admin_id) VALUES('$last_id','$answers[$i]',UNIX_TIMESTAMP(),1,'".$_SESSION['elcthospitaladmin']."')") or die(mysqli_error($con));
+                                                }
+                                                mysqli_query($con, "UPDATE investigationtypes SET has_answers = 1 WHERE investigationtype_id = '$last_id'") or die(mysqli_error($con));
+
+                                            }
                                             if (isset($_POST['hassubtypes'])) {
                                                 $allsubtypes = sizeof($subtype);
                                                 for ($i = 0; $i < $allsubtypes; $i++) {
@@ -336,7 +346,24 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             </div>
                                             </div>
                                         </div>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" value="yes" id="subanswer" name="hasanswers">Does it have Selective Answers?
+                                            </label>
+                                        </div>
+                                        <div class='subobj23' style="display: none;">
+                                            <div class='row'>
+                                                
+                                                <div class="form-group col-lg-5"><label class="control-label">Answers</label>
+                                                    <input type="text" name='answers[]' class="form-control" placeholder="Enter Measurement Type Answers">
+                                                </div>
 
+                                                <div class="form-group col-lg-1">
+                                                    <a href='#' class="subobj_button2 btn btn-success" style="margin-top:30px">+</a>
+                                                </div>
+
+                                            </div>
                                         </div>
                                         <div class="form-group">
                                             <button class="btn btn-primary" type="submit">Submit</button>
@@ -520,6 +547,14 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                 $('.measurementunit').show();
             }
         });
+        $(document).on('click','#subanswer',function(){
+            if ($(this).prop("checked")===true){
+                $('.subobj23').show();
+            }else{
+                $('.subobj23').hide();
+
+            }
+        })
         $(document).on('click','.subtyperange',function(){
             if ($(this).prop("checked") === true) {
                 $('.forsubtyperange').show();
@@ -613,6 +648,22 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
             ); //add input box
         });
         $('.subobj1').on("click", ".remove_subobj1", function(e) { //user click on remove text
+            e.preventDefault();
+            $(this).parent('div').remove();
+            x--;
+        });
+        $('.subobj_button2').click(function(e){
+            e.preventDefault();
+            $('.subobj23').append(`<div class="row">
+            
+            <div class="col-lg-8">
+            <div class="row">  <div class="form-group col-lg-6"><label> Answers</label>
+            <input type="text" class="form-control" placeholder="Enter Measurement Type Answers" name="answers[]" required="required"> </div>
+            <button class="remove_subobj23  btn btn-danger" style="height:30px;margin-top:22px;padding-top:5px;"><i class="fa fa-minus"></i></button></div>`
+            );
+
+        })
+        $('.subobj23').on("click", ".remove_subobj23", function(e) { //user click on remove text
             e.preventDefault();
             $(this).parent('div').remove();
             x--;
