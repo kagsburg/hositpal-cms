@@ -18,4 +18,4 @@ $datenow = date('m/d/Y',  time());
 $timenow =  strtotime($datenow);
 $timestamp = date('Y-m-d h:i:s',  time());
 // define('BASE_URL', 'https://elctelvdhospital.info/version1');
-define('BASE_URL', 'http://localhost/p0030');
+define('BASE_URL', 'http://localhost/hositpal-cms');

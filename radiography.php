@@ -6,6 +6,7 @@ header('Location:login.php');
    }
 $patientsque_id=$_GET['patientsque_id'];
 $patient_id = $_GET['id'];
+$test=$_GET['test'];
 // $patient=get_patient_by_id($pdo,$patient_id);
    ?>
 <!DOCTYPE html>
@@ -103,6 +104,9 @@ include 'includes/header.php';
                                $ext = $row2['ext'];
                                $patient = get_patient_by_id($pdo, $patient_id);
                                $paymentype = $patient["paymenttype"];
+                               $ordered = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$admin_id'") or die(mysqli_error($con));
+                                 $rowordered = mysqli_fetch_array($ordered);
+                                    $orderedby = $rowordered['fullname'];
                                                     if ($paymentype == "insurance"){
                                                         $insu=$patient['insurancecompany'];
                                                         $getinsurance = mysqli_query($con,"SELECT * FROM insurancecompanies WHERE insurancecompany_id ='$insu'")or die(mysqli_error($con));
@@ -136,7 +140,12 @@ include 'includes/header.php';
         $report_id = $rowtitle['reporttitle'];
         $report_date = $rowtitle['timestamp'];
         $conculsion = $rowtitle['conclusion'];
-      
+        $getreport2 = mysqli_query($con, "SELECT * FROM radiologyreports WHERE status=1 and report_id='$report_id' and results='$test'") or die(mysqli_error($con));
+        $rowreport = mysqli_fetch_array($getreport2);
+        $admin_id = $rowreport['admin_id'];
+        $conducted= mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$admin_id'") or die(mysqli_error($con));
+        $rowconducted = mysqli_fetch_array($conducted);
+        $conductedby = $rowconducted['fullname'];
                                ?>
                     
                      <div class="col-lg-12">
@@ -148,22 +157,28 @@ include 'includes/header.php';
                                 <div class="row">
                                     <div class="col-lg-4">
                                         <address>
-                                            Names:<strong><?php echo $fullname ?></strong><br>
-                                            Gender:<?php echo $gender ?><br>
-                                            <abbr title="Phone">PIN #</abbr> <?php echo $pin ?>
+                                        <strong>Names:<?php echo $fullname ?></strong><br>
+                                            <strong>Gender:<?php echo $gender ?></strong><br>
+                                            <strong>PIN #: <?php echo $pin ?></strong>
                                         </address>
                                     </div>
                                     <div class="col-lg-4">
                                         <address>
                                             <strong>Sponsor: <?php echo $company?></strong><br>
-                                            Age: <span><?php 
+                                            <strong>Age: <span><?php 
                                         $dob1 = date("Y-m-d", strtotime($dob));
                                         $dob2 = new DateTime($dob1);
                                         $now = new DateTime();
                                         $difference = $now->diff($dob2);
                                         echo $difference->y;
-                                        ?></span><br>
-                                            <abbr title="Phone">Date:</abbr> <?php echo date('Y-m-d',$report_date); ?>
+                                        ?></span> </strong><br>
+                                            <strong> Date: <?php echo date('Y-m-d',$report_date); ?></strong>
+                                        </address>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <address>
+                                            <strong>Order By: <?php echo $orderedby?></strong><br>
+                                            <strong>Conducted By : <span><?php echo $conductedby?></span></strong><br>
                                         </address>
                                     </div>
                                 </div>
@@ -173,7 +188,7 @@ include 'includes/header.php';
                                 <h5>FINDINGS</h5>
                                 <div class="row">
                                 <?php 
-                                $getreport = mysqli_query($con, "SELECT * FROM radiologyreports WHERE status=1 and report_id='$report_id'") or die(mysqli_error($con));
+                                $getreport = mysqli_query($con, "SELECT * FROM radiologyreports WHERE status=1 and report_id='$report_id' and results='$test'") or die(mysqli_error($con));
                                 while ($rowreport = mysqli_fetch_array($getreport)) {
                                     $results = $rowreport['results'];
                                     $report_radio_id = $rowreport['radiologyreport_id'];
@@ -189,7 +204,7 @@ include 'includes/header.php';
                                     ?>
                                     
                                         <div class="col-lg-12">
-                                            <h5><?php echo $medicalservice ?></h5>
+                                            <!-- <h5><?php echo $medicalservice ?></h5> -->
                                             <p><?php echo $description ?></p>
                                         </div>
                                         <div class="col-lg-6">
@@ -227,21 +242,8 @@ include 'includes/header.php';
                                         <h5>CONCLUSION</h5>
                                         <p><?php echo $conculsion ?></p>
                                     </div>
-                                    <div class="col-lg-4">
-                                        <h5>REPORTED BY</h5>
-                                        <p><?php 
-                                        $getuser = mysqli_query($con, "SELECT * FROM staff WHERE staff_id ='$admin_id'") or die(mysqli_error($con));
-                                        $rowuser = mysqli_fetch_array($getuser);
-                                        $user = $rowuser['fullname'];
-                                        echo $user;
-                                        ?></p>
-                                        </div>
-                                    <div class="col-lg-4">
-                                        <h5>DATE</h5>
-                                        <p><?php echo date('Y-m-d',$report_date); ?></p>
-                                    </div>
                                     <div>
-                                        <a href="printreport.php?patientsque_id=<?php echo $patientsque_id; ?>&id=<?php echo $patient_id ?>" class="btn btn-primary">Print</a>
+                                        <a href="printreport.php?patientsque_id=<?php echo $patientsque_id; ?>&id=<?php echo $patient_id ?>&test=<?php echo $test; ?>" class="btn btn-primary">Print</a>
                                     </div>
 
                                 </div>

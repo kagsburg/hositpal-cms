@@ -50,7 +50,12 @@ header('Location:login.php');
 	
             <div class="row">
                 <div class="col-sm-12">
+                <div style="
+    display: flex;
+    justify-content: center;
+    align-items: center;">
                 <img alt="image" src="<?php echo BASE_URL; ?>/images/ELVD.png" width="100" />
+                </div>
                 <h1>Nyakato Health Center </h1>
                 </div>
                 <div class="col-sm-6">

@@ -77,7 +77,12 @@ $patient_id = $_GET['patient_id'];
 				
        	<div class="row">
            <div class="col-sm-12">
-                <img alt="image" src="<?php echo BASE_URL; ?>/images/ELVD.png" width="100" />
+           <div style="
+    display: flex;
+    justify-content: center;
+    align-items: center;">
+                <img alt="image" src="<?php echo BASE_URL; ?>/images/ELVD.png" />
+           </div>
                 <h1 class="text-center" style="font-family:Times New roman;color: #000">ELCT-ELVD Nyakato Health Center </h1>
                 <address class="text-center">
                       P.O.BOX 3173<br>

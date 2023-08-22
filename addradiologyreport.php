@@ -4,6 +4,10 @@ include 'includes/conn.php';
 header('Location:login.php');
    }
 $id=$_GET['id'];
+$test=$_GET['test'];
+$getservice2 = mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1 AND radioinvestigationtype_id='$test'");
+$row2 = mysqli_fetch_array($getservice2);
+$medicalservice2 = $row2['investigationtype'];
    ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -55,14 +59,14 @@ include 'includes/header.php';
 				<div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Add Radiology Report</h4>
+                            <h4>Add <?php echo $medicalservice2 ?> Radiology Report</h4>
                            
                         </div>
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item"><a href="waitingpatients"> In Patients</a></li>
+                            <!-- <li class="breadcrumb-item"><a href="waitingpatients"> In Patients</a></li> -->
                             <li class="breadcrumb-item active"><a href="#">Add Radiology Report</a></li>
                         </ol>
                     </div>
@@ -85,18 +89,25 @@ include 'includes/header.php';
                                 $firstname=$row2['firstname'];    
                                   $lastname=$row2['secondname'] ;   
                             $gender=$row2['gender'];    
+                            $bloodgroup = $row2['bloodgroup'];
+                            $dob = $row2['dob'];
+                            $weight = $row2['weight'];
+                            $height = ($row2['height'] != '') ? $row2['height'] : 'NIL';
+                            $temp = ($row2['temp'] != '') ? $row2['temp'] : 'NIL';
+                            $bp = ($row2['bp'] != '') ? $row2['bp'] : 'NIL';
+                            $clinic = $row2['clinic'];
                                                 if(strlen($patient_id)==1){
-      $pin='000'.$patient_id;
-     }
-       if(strlen($patient_id)==2){
-      $pin='00'.$patient_id;
-     }
-        if(strlen($patient_id)==3){
-      $pin='0'.$patient_id;
-     }
-  if(strlen($patient_id)>=4){
-      $pin=$patient_id;
-     }      
+                                            $pin='000'.$patient_id;
+                                            }
+                                            if(strlen($patient_id)==2){
+                                            $pin='00'.$patient_id;
+                                            }
+                                                if(strlen($patient_id)==3){
+                                            $pin='0'.$patient_id;
+                                            }
+                                        if(strlen($patient_id)>=4){
+                                            $pin=$patient_id;
+                                            }      
                                ?>
                     <div class="col-lg-3">
                         <div class="card">
@@ -110,118 +121,36 @@ include 'includes/header.php';
                                     <h4 class="text-primary"><?php echo $firstname.' '.$lastname; ?></h4>
                                                                
                                            </div>
+                                           <h4 class="text-primary mt-4 mb-4">Medical Information</h4>
+                                <div class="profile-blog mb-5">
+                                    <address>
+                                        <p>Age: <span><?php 
+                                        $dob1 = date("Y-m-d", strtotime($dob));
+                                        $dob2 = new DateTime($dob1);
+                                        $now = new DateTime();
+                                        $difference = $now->diff($dob2);
+                                        echo $difference->y;
+                                        ?></span></p>
+                                        <p>Blood Group : <span><?php echo $bloodgroup; ?></span></p>
+                                        <p>Weight (kgs)  : <span><?php echo $weight; ?></span></p>
+                                        <p>Height : <span><?php echo $height; ?></span></p>
+                                        <p>Temperature : <span><?php echo $temp; ?></span></p>
+                                        <p>Blood Pressure : <span><?php echo $bp; ?></span></p>
+                                    </address>
+                                </div>
                                 </div>
                                 </div>
                                 </div>
                      <div class="col-lg-9">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Add Radiology Report</h4>
+                                <h4 class="card-title">Add <?php echo $medicalservice2 ?> Radiology Report</h4>
                             </div>
                             <div class="card-body">
                                 <div class="basic-form">      
-                                    <?php
-                            if(isset($_POST['submit'])){
-                                         $month=date('F',$timenow);
-                                        $year=date('Y',$timenow);
-                                        $exitmode="";
-                                        $destination="";
-                                        $reason= "Radiology Report";           
-                                        $results= "";              
-                                        $conclusion= mysqli_real_escape_string($con,trim($_POST['conclusion']));      
-                                      $description= "";     
-                                      $responsible= "";  
-
-                                        //   print_r($_FILES['file']);
-                                        //   print_r($_POST['description']);
-                                        //   print_r($_POST['test']);
-                                        //   exit();
-                             if((empty($month))||(empty($year) || empty($_FILES['file']))){
-                                   $errors[]='Some Fields are empty';
-                               }
-                               if(!empty($errors)){
-                               foreach ($errors as $error) {
-                               echo '<div class="alert alert-danger">'.$error.'</div>';
-                                  }
-                               }else{
-                                foreach ($_POST['test'] as $key => $value) {
-                                    // print_r($value);
-                                    $test=$value;
-                                    $description=$_POST['description'][$key];
-                                    $image_name=$_FILES['file']['name'][$key];
-                                    $image_size=$_FILES['file']['size'][$key];
-                                    $image_temp=$_FILES['file']['tmp_name'][$key];
-                                    $allowed_ext=array('jpg','jpeg','png','gif','');                                    
-                                    foreach($image_name as $key22 => $val_image){
-                                        // print_r($);
-                                        $ext=explode('.',$val_image);
-                                        $image_ext=  strtolower(end($ext));
-                                        $errors=array();
-                                        if (in_array($image_ext,$allowed_ext)===false){
-                                        $errors[]='File type not allowed';
-                                        }
-                                        $img_size = $image_size[$key22];
-                                        if($img_size>10097152){
-                                        $errors[]='Maximum size is 10Mb';
-                                        }
-                                        if(!empty($errors)){
-                                            foreach($errors as $error){ 
-                                            echo ' <div class="alert alert-danger" role="alert">'.$error.'
-                                                </div>';
-                                            }
-                                            exit();
-                                            }
-                                    }                                
-                                    mysqli_query($con, "INSERT INTO radiologyreports(patientsque_id,month,year,reason,description,results,conclusion,responsible,exitmode,destination,admin_id,timestamp,status) 
-                                    VALUES('$id','$month','$year','$reason','$description','$value','$conclusion','$responsible','$exitmode','$destination','".$_SESSION['elcthospitaladmin']."',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
-                                    $last_id= mysqli_insert_id($con);
-                                    // Insert image content into database 
-                                   foreach ($image_name as $key23 => $val_image) {
-                                    $ext=explode('.',$val_image);
-                                    $image_ext=  strtolower(end($ext));
-                                    mysqli_query($con, "INSERT INTO radiologyimages(radiology_report_id,image,status) VALUES('$last_id','$image_ext','1')") or die(mysqli_error($con)); 
-                                    // get last created Id 
-                                    $img_temp = $image_temp[$key23];
-                                    $last_id_img = mysqli_insert_id($con);  
-                                    $image_file1=md5($last_id_img).'.'.$image_ext;
-                                    move_uploaded_file($img_temp,'./images/radiology/'.$image_file1);
-                                    // mysqli_query($con, "UPDATE radiologyimages SET image='$image_file1' WHERE radiology_image_id='$last_id_img'") or die(mysqli_error($con));
-                                    }
-                                }
-                                // get previous id admin id 
-                                     $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'") or die(mysqli_error($con));
-                                        $row_prev_admin_id=mysqli_fetch_array($get_prev_admin_id);
-                                        $prev_admin_id=$row_prev_admin_id['admin_id'];
-                                        mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
-                                    mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','radiographer',UNIX_TIMESTAMP(),1,'$id')") or die(mysqli_error($con));
-                                    $_SESSION['success'] = '<div class="alert alert-success">Radiology Report Successfully Added</div>';
-                                                // redirect to radiowaiting
-                                                echo '<script>window.location.href = "radiowaiting.php";</script>';exit();
-                                }             
-                                }             
-                                            
-                            ?>
-                            <?php 
-                            if (isset($_POST['submittitle'])){
-                                $title = mysqli_real_escape_string($con,trim($_POST['title_1']));
-                                $summary = mysqli_real_escape_string($con,trim($_POST['summary_1']));
-                                if((empty($title))||(empty($summary) )){
-                                    $errors[]='Some Fields are empty';
-                                }
-                                if(!empty($errors)){
-                                foreach ($errors as $error) {
-                                echo '<div class="alert alert-danger">'.$error.'</div>';
-                                   }
-                                }else{
-                                    mysqli_query($con, "INSERT INTO radiolodyreporttitle(patientque_id,title,summary,admission_id,timestamp,status)
-                                    VALUES('$id','$title','$summary','$admission_id',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
-                                     $last_id = mysqli_insert_id($con);
-                                     $_SESSION['reporttit_id'] = $last_id;
-                                     echo '<script>window.location.href = "addradiorep?id='.$id.'";</script>';exit();
-                                }
-
-                            }?>
-     <form method="post" name='form' class="form" action=""  enctype="multipart/form-data">      
+                                   
+                           
+     <form method="post" name='form' class="form" action="saveradiotest"  enctype="multipart/form-data">      
                     
                   <div class="row">
                   <div class="form-group col-lg-12"><label class="control-label uppercase">Report Title</label>
@@ -230,16 +159,19 @@ include 'includes/header.php';
                                 <div class="form-group col-lg-12"><label class="control-label">CLINICAL SUMMARY</label>
                     <textarea  name="summary_1" class="form-control" placeholder="Enter Report CLINICAL SUMMARY" required="required" rows="4"></textarea>                                                                       
                                 </div>
-                                            <!-- <?php 
+                                            <?php 
                                                 $total = 0;
                                                     $getorder = mysqli_query($con, "SELECT * FROM radioorders WHERE  patientsque_id='$id'");
                                                     if (mysqli_num_rows($getorder) > 0) {
                                                         $rowo = mysqli_fetch_array($getorder);
                                                         $timestamp = $rowo['timestamp'];
                                                         $serviceorder_id = $rowo['radioorder_id'];
-                                                        $getordered = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id ='$serviceorder_id' AND status=2") or die(mysqli_error($con));
+                                                        $getordered2 = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id ='$serviceorder_id' AND status in (1,2)") or die(mysqli_error($con));
+                                                        $count = mysqli_num_rows($getordered2);
+                                                        $getordered = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id ='$serviceorder_id' AND radioinvestigationtype_id='$test'") or die(mysqli_error($con));
                                                         while ($row = mysqli_fetch_array($getordered)) {
                                                             $medicalservice_id = $row['radioinvestigationtype_id'];
+                                                            $patientradio_id = $row['patientradio_id'];
                                                             $unitcharge = $row['charge'];
                                                             $total = $total + $unitcharge;
                                                             $getservice = mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1 AND radioinvestigationtype_id='$medicalservice_id'");
@@ -248,33 +180,49 @@ include 'includes/header.php';
                                                             ?>
 
                                                             <div class='row'>
+                                                            <input type="hidden" name="count" value="<?php echo $count; ?>">
+                                                                <input type="hidden" name="clinic" value="<?php echo $clinic; ?>">
+                                                                <input type="hidden" name="id" value="<?php echo $id; ?>">
+                                                                <input type="hidden" name="radioorder_id" value="<?php echo $patientradio_id; ?>">
+                                                                <input type="hidden" name="admission_id" value="<?php echo $admission_id; ?>">
+                                                                
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Test done</label>
-                                                                    <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>">
+                                                                    <input type="hidden" name="test" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>">
                                                                     <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $medicalservice; ?>" disabled>
                                                                 </div>
                                                                 <div class="form-group col-lg-5">
                                                                     <label>Result Images</label>
-                                                                    <input type="file" name="file[<?php echo $medicalservice_id; ?>][]" class="form-control" multiple="multiple" placeholder="Enter Results " required="required" > 
-                                                                     <input type="text" name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result"> 
+                                                                    <input type="file" name="file[]" class="form-control" multiple="multiple" placeholder="Enter Results " > 
+                                                                     
                                                                 </div>
+                                                                <div class="form-group col-lg-12"><label class="control-label">Start Time</label>
+                                                                    <input type="time" name="start" class="form-control" placeholder="Enter Start Time " required="required" />                                                                            
+                                                                </div> 
+                                                                <div class="form-group col-lg-12"><label class="control-label">End Time</label>
+                                                                <input type="time" name="end" class="form-control" placeholder="Enter End Time " required="required" />                                                                            
+                                                                                                                                               
+                                                                </div> 
+                                                                
                                                                 <div class="form-group col-lg-12"><label class="control-label">Description</label>
-                                                                    <textarea  name="description[<?php echo $medicalservice_id; ?>]" class="form-control" placeholder="Enter description " required="required" rows="4"></textarea>                                                                            
-                                                                </div>
-                                                                 <div class="form-group col-lg-1">
-                                                                    <a href='#' class="subobj1_button btn btn-success" style="margin-top:30px">+</a>
+                                                                    <textarea  name="description" class="form-control" placeholder="Enter description " required="required" rows="4"></textarea>                                                                            
                                                                 </div> 
                                                             </div>
                                                         <?php 
                                                         } 
                                                     }
-                                                ?> -->
-               <!-- <div class="form-group col-lg-12"><label class="control-label">Conclusion</label>
+                                                ?>
+               <div class="form-group col-lg-12"><label class="control-label">Conclusion</label>
                     <textarea  name="conclusion" class="form-control" placeholder="Enter Conclusion " required="required" rows="4"></textarea>                                                                       
-                                </div>    -->
+                                </div>   
                                          </div>
                                      <div class="form-group pull-right">
-                                         <button class="btn btn-primary" type="submit" name="submittitle">Proceed</button>
+                                         <button class="btn btn-primary" type="submit" name="submitreport" onclick="return confirm_approve() ">Proceed</button>
+                                         <script type="text/javascript">
+                                            function confirm_approve() {
+                                                return confirm('You are about To Submit Report to Doctor. Are you sure you want to proceed?');
+                                            }
+                                        </script>
                                                                   </div>
                             </form>
                                 </div>

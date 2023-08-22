@@ -92,12 +92,12 @@ if ($mode == '2'){
                                             <?php
                                             
                                             $modestr = ($mode == 1) ? "payment='1' and": "";
-                                            if ($mode == 1){
-                                                $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment=1 and room='radiography' AND status=0") or die(mysqli_error($con));
-                                            }
-                                            else if ($mode == 2){
-                                                $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment=0 and room='radiography' AND status=0") or die(mysqli_error($con));
-                                            }
+                                            // if ($mode == 1){
+                                            //     $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment=1 and room='radiography' AND status=0") or die(mysqli_error($con));
+                                            // }
+                                           
+                                                $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE  room='radiography' AND status=0") or die(mysqli_error($con));
+                                           
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];
                                                 $admission_id = $row['admission_id'];
@@ -137,7 +137,7 @@ if ($mode == '2'){
                                                 if (strlen($patient_id) >= 4) {
                                                     $pin = $patient_id;
                                                 }
-                                                if ($mode2 == 'emergency' && $mode == 2) {
+                                                if ($mode2 == 'emergency' ) {
                                             ?>
                                             <tr class="gradeA">
                                                 <td><?php echo $patientsque_id; ?></td>
@@ -157,64 +157,8 @@ if ($mode == '2'){
                                                     <!-- <a href="addradiologyreport.php?id=<?php echo $patientsque_id; ?>"
                                                         class="btn btn-xs btn-info">Add Report</a> -->
                                                         <a href="radiologylist?id=<?php echo $patientsque_id; ?>"
-                                                        class="btn btn-xs btn-info">Add Report</a>
-                                                    <button data-toggle="modal"
-                                                        data-target="#modal<?php echo $patientsque_id; ?>"
-                                                        class="btn btn-xs btn-primary">Doctor Report</button>
-                                                    <div class="modal fade" id="modal<?php echo $patientsque_id; ?>"
-                                                        tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                                                        aria-hidden="true">
-                                                        <div class="modal-dialog" role="document">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="exampleModalLabel">
-                                                                        Doctor Report</h5>
-                                                                    <button type="button" class="close"
-                                                                        data-dismiss="modal" aria-label="Close">
-                                                                        <span aria-hidden="true">&times;</span>
-                                                                    </button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <label class="text-primary"><strong>Measurements</strong></label>
-                                                                    <?php
-                                                                        $doctorreports = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$patientsque_id2' and radiomeasure !=''") or die(mysqli_error($con));
-                                                                       
-                                                                        while ($row = mysqli_fetch_array($doctorreports)) {                                                                               
-                                                                            $drug = $row['radiomeasure'];
-                                                                            $prescription = $row['prescription'];
-                                                                            $details = $row['details'];
-                                                                            $provisional_diagnosis = $row['provisional_diagnosis'];
-                                                                            $final_diagnosis = $row['final_diagnosis'];
-
-                                                                            if (!empty($drug)) {
-                                                                                $getitem = mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1 AND radioinvestigationtype_id='$drug'");
-                                                                                $row1 = mysqli_fetch_array($getitem);
-                                                                                $itemname = $row1['investigationtype'];
-                                                                            ?>
-                                                                            <div class="row mb-2">
-                                                                                <div class="col-sm-7 col-7">
-                                                                                    <h5 class="f-w-500">
-                                                                                        <?php echo $itemname; ?>
-                                                                                        <!-- <span class="pull-right">:</span> -->
-                                                                                    </h5>
-                                                                                </div>
-                                                                                <!-- <div class="col-sm-7 col-7">
-                                                                                                <span><?php //echo $prescription; ?></span>
-                                                                                            </div> -->
-                                                                            </div>
-                                                                            <?php } 
-                                                                           
-                                                                        } 
-                                                                        ?>
-                                                                        <label class="text-primary mt-3"><strong>Details</strong></label>
-                                                                            <?php echo $details; ?>
-
-                                                                    
-                                                                    
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                        class="btn btn-xs btn-info">Details</a>
+                                                    
 
                                                 </td>
 
@@ -237,65 +181,11 @@ if ($mode == '2'){
                                                 <td><?php echo $room; ?></td>
                                                 <td><?php echo $fullname; ?></td>
                                                 <td>
-                                                    <a href="addradiologyreport.php?id=<?php echo $patientsque_id; ?>"
-                                                        class="btn btn-xs btn-info">Add Report</a>
-                                                    <button data-toggle="modal"
-                                                        data-target="#modal<?php echo $patientsque_id; ?>"
-                                                        class="btn btn-xs btn-primary">Doctor Report</button>
-                                                    <div class="modal fade" id="modal<?php echo $patientsque_id; ?>"
-                                                        tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                                                        aria-hidden="true">
-                                                        <div class="modal-dialog" role="document">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="exampleModalLabel">
-                                                                        Doctor Report</h5>
-                                                                    <button type="button" class="close"
-                                                                        data-dismiss="modal" aria-label="Close">
-                                                                        <span aria-hidden="true">&times;</span>
-                                                                    </button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <label class="text-primary"><strong>Measurements</strong></label>
-                                                                    <?php
-                                                                        $doctorreports = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$patientsque_id2' and radiomeasure !=''") or die(mysqli_error($con));
-                                                                       
-                                                                        while ($row = mysqli_fetch_array($doctorreports)) {                                                                               
-                                                                            $drug = $row['radiomeasure'];
-                                                                            $prescription = $row['prescription'];
-                                                                            $details = $row['details'];
-                                                                            $provisional_diagnosis = $row['provisional_diagnosis'];
-                                                                            $final_diagnosis = $row['final_diagnosis'];
-
-                                                                            if (!empty($drug)) {
-                                                                                $getitem = mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1 AND radioinvestigationtype_id='$drug'");
-                                                                                $row1 = mysqli_fetch_array($getitem);
-                                                                                $itemname = $row1['investigationtype'];
-                                                                            ?>
-                                                                            <div class="row mb-2">
-                                                                                <div class="col-sm-7 col-7">
-                                                                                    <h5 class="f-w-500">
-                                                                                        <?php echo $itemname; ?>
-                                                                                        <!-- <span class="pull-right">:</span> -->
-                                                                                    </h5>
-                                                                                </div>
-                                                                                <!-- <div class="col-sm-7 col-7">
-                                                                                                <span><?php //echo $prescription; ?></span>
-                                                                                            </div> -->
-                                                                            </div>
-                                                                            <?php } 
-                                                                           
-                                                                        } 
-                                                                        ?>
-                                                                        <label class="text-primary mt-3"><strong>Details</strong></label>
-                                                                            <?php echo $details; ?>
-
-                                                                    
-                                                                    
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <!-- <a href="addradiologyreport.php?id=<?php echo $patientsque_id; ?>"
+                                                        class="btn btn-xs btn-info">Add Report</a> -->
+                                                        <a href="radiologylist?id=<?php echo $patientsque_id; ?>"
+                                                        class="btn btn-xs btn-info">Details</a>
+                                                    
 
                                                 </td>
 

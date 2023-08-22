@@ -859,24 +859,24 @@
               <li><a href="radiocleared">Patient With Results</a></li>
             </ul>
           </li> -->
-          <li>
+          <!-- <li>
             <a class="ai-icon" href="radiowaiting?mode=2" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Emergency List</span>
             </a>
 
-          </li>
+          </li> -->
           <li>
-            <a class="ai-icon" href="radiowaiting?mode=1" aria-expanded="false">
+            <a class="ai-icon" href="radiowaiting" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
-              <span class="nav-text">Waiting Patients</span>
+              <span class="nav-text">Awaiting Patients</span>
             </a>
 
           </li>
           <li>
             <a class="ai-icon" href="radiocleared" aria-expanded="false">
               <i class="fa fa-users"></i>
-              <span class="nav-text">Patient With Results</span>
+              <span class="nav-text">Records</span>
             </a>
           </li>
           <!-- <li>

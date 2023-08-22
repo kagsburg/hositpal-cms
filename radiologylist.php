@@ -1,9 +1,10 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'admin')) {
+if (($_SESSION['elcthospitallevel'] != 'radiographer')) {
    header('Location:login.php');
 }
 $id = $_GET['id'];
+$type = isset($_GET['ty'])?$_GET['ty']:0;
 // $getinvestigation =  mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$id'");
 // $row1 =  mysqli_fetch_array($getinvestigation);
 // $investigation_id = $row1['investigationtype_id'];
@@ -74,6 +75,12 @@ $id = $_GET['id'];
                   <!-- <button type="button" data-toggle="modal" data-target="#addPriceModal" class="btn btn-xs btn-info">Add Charge</button> -->
                </div>   
             </div>
+            <?php 
+             if (isset($_SESSION['success'])) {
+               echo $_SESSION['success'];
+               unset($_SESSION['success']);
+            }
+            ?>
 
             <div class="row">
 
@@ -94,60 +101,93 @@ $id = $_GET['id'];
                            </thead>
                            <tbody>
                               <?php
-                                                $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE room='radiography' AND status=0 AND ") or die(mysqli_error($con));
+                              if ($type == 1){
+                                 $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE room='radiography' AND status=1 AND patientsque_id ='$id' ") or die(mysqli_error($con));
+                              }else{
+                                 $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE room='radiography' AND status=0 AND patientsque_id ='$id' ") or die(mysqli_error($con));
+                              }
+                                                
+                                                if (mysqli_num_rows($getque) > 0) {
+                                                $row = mysqli_fetch_array($getque);
+                                                $patientsque_id = $row['patientsque_id'];
+                                                $admission_id = $row['admission_id'];
+                                                $prev_id = $row['prev_id'];
 
-                              $getinsured =  mysqli_query($con, "SELECT * FROM insuredinvestigationtypes WHERE status=1 AND investigationtype_id='$id'");
-                              while ($row1 =  mysqli_fetch_array($getinsured)) {
-                                 $insured_id = $row1['insuredinvestigationtype_id'];
-                                 $insurancecompany_id = $row1['insurancecompany_id'];
-                                 $insurancecharge = $row1['charge'];
-                                 $getcompanies =  mysqli_query($con, "SELECT * FROM insurancecompanies WHERE status=1 AND insurancecompany_id='$insurancecompany_id'");
-                                 $row2 =  mysqli_fetch_array($getcompanies);
-                                 $company = $row2['company'];
-                              ?>
-                                 <tr>
-                                    <td><?php echo $company; ?></td>
-                                    <td><?php
-                                          echo $insurancecharge;
-                                          ?></td>
+                                                $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id' and status='1' ");
+                                                if (mysqli_num_rows($getadmission) > 0) {
+                                                $row1 = mysqli_fetch_array($getadmission);
+                                                $patient_id = $row1['patient_id'];
+                                                $getpatient = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
+                                                $row2 = mysqli_fetch_array($getpatient);
+                                                $firstname = $row2['firstname'];
+                                                $secondname = $row2['secondname'];
+                                                $thirdname = $row2['thirdname'];
+                                                $gender = $row2['gender'];
+                                                $ext = $row2['ext'];
+                                                $mode2=$row1['mode'];
 
-                                    <td>
-                                       <button data-toggle="modal" data-target="#basicModal<?php echo $insured_id; ?>" class="btn btn-xs btn-info">Edit</button>
-                                       <a href="removeinsuranceinvestigationcharge?id=<?php echo $insured_id; ?>" class="btn btn-xs btn-danger" onclick="return confirm_delete<?php echo $insured_id; ?>()">Remove</a>
+                                                $filter = empty($prev_id) ? "AND patientsque_id < '$patientsque_id' ORDER BY patientsque_id DESC" : "AND patientsque_id = '$prev_id'";
+                                                $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND status=1 $filter");
+                                                $rowp = mysqli_fetch_array($getprevque);
+                                                $attendant = $_SESSION['elcthospitaladmin'];
+                                                $patientsque_id2 = $rowp['patientsque_id'];
+                                                $room = $rowp['room'];
+                                                $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
+                                                $rows = mysqli_fetch_array($getstaff);
+                                                $fullname = $rows['fullname'];
+                                                if (strlen($patient_id) == 1) {
+                                                    $pin = '000' . $patient_id;
+                                                }
+                                                if (strlen($patient_id) == 2) {
+                                                    $pin = '00' . $patient_id;
+                                                }
+                                                if (strlen($patient_id) == 3) {
+                                                    $pin = '0' . $patient_id;
+                                                }
+                                                if (strlen($patient_id) >= 4) {
+                                                    $pin = $patient_id;
+                                                }
+                                                
+                                                $doctorreports = mysqli_query($con, "SELECT * FROM radioorders WHERE  patientsque_id='$id' ") or die(mysqli_error($con));
+                                                                       
+                                                                        while ($rowo = mysqli_fetch_array($doctorreports)) {
+                                                                           // $rowo = mysqli_fetch_array($getorder);
+                                                                           $timestamp = $rowo['timestamp'];
+                                                                           $serviceorder_id = $rowo['radioorder_id'];
+                                                                           if ($type == 1){
+                                                                           $getordered2 = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id ='$serviceorder_id' AND status in (3)") or die(mysqli_error($con));
+                                                                           }else{
+                                                                           $getordered2 = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id ='$serviceorder_id' AND status in (1,2)") or die(mysqli_error($con));
+                                                                           }
+                                                                           if (mysqli_num_rows($getordered2) > 0) {
+                                                                              while ($row = mysqli_fetch_array($getordered2)) {
+                                                                                 $medicalservice_id = $row['radioinvestigationtype_id'];
+                                                                                 $status = $row['status'];
+                                                                               $getitem = mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1 AND radioinvestigationtype_id='$medicalservice_id'");
+                                                                               $row1 = mysqli_fetch_array($getitem);
+                                                                               $itemname = $row1['investigationtype'];
+                                                                               $doctorreport_s = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$patientsque_id2' and radiomeasure ='$medicalservice_id'") or die(mysqli_error($con));
+                                                                                 $row_o = mysqli_fetch_array($doctorreport_s);
+                                                                                 $details = $row_o['details'];
+                                                                           ?>
+                                                                              <tr>
+                                                                                 <td><?php echo $itemname; ?></td>
+                                                                                 <td><?php echo $details; ?></td>
+                                                                                 <td>
+                                                                                    <?php if ($status == 1 || $status == 2) { ?>
+                                                                                       <a href="addradiologyreport.php?id=<?php echo $patientsque_id; ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-xs btn-info">Add Report </a>
+                                                                                    <?php } else { ?>
+                                                                                       <a href="radiography?patientsque_id=<?php echo $patientsque_id; ?>&id=<?php echo $patient_id ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-primary btn-sm">View Report</a>
+                                                                                   
+                                                                                   <?php  }?>
 
-                                       <script type="text/javascript">
-                                          function confirm_delete<?php echo $insured_id; ?>() {
-                                             return confirm('You are about To Remove this item. Are you sure you want to proceed?');
-                                          }
-                                       </script>
-
-                                    </td>
-                                 </tr>
-                                 <div class="modal fade" id="basicModal<?php echo $insured_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                       <div class="modal-content">
-                                          <div class="modal-header">
-                                             <h5 class="modal-title" id="exampleModalLabel">Edit Insurance charge</h5>
-                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                             </button>
-                                          </div>
-                                          <div class="modal-body">
-                                             <form action="editinsuranceinvestigationcharge?id=<?php echo $insured_id ?>" method="POST">
-                                                <div class="form-group">
-                                                   <label>Charge</label>
-                                                   <input type="text" class="form-control" name="charge" required="required" value="<?php echo $insurancecharge; ?>">
-                                                </div>
-                                                <div class="form-group">
-                                                   <button class="btn btn-primary" type="submit">Submit</button>
-                                                </div>
-                                             </form>
-                                          </div>
-
-                                       </div>
-                                    </div>
-                                 </div>
-                              <?php } ?>
+                                                                                 </td>
+                                                                              </tr>
+                                                                           <?php } }}?>
+                             
+                                 
+                                 
+                              <?php }} ?>
                            </tbody>
                         </table>
 
