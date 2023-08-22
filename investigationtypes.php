@@ -143,7 +143,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             } else {
                                                 mysqli_query($con, "INSERT INTO investigationsubtypes(investigationtype_id,subtype,unit_id,status) VALUES('$last_id','$typename','$unit',1)") or die(mysqli_error($con));
                                             }
-                                            echo '<div class="alert alert-success"><i class="fa fa-check"></i>Investigation successfully added</div>';
+                                            echo '<div class="alert alert-success"><i class="fa fa-check"></i>Measurement type successfully added</div>';
                                         }
                                     }
                                     ?>
@@ -377,7 +377,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
 
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Classifications</h4>
+                                <h4 class="card-title">Measurement Type</h4>
                             </div>
                             <div class="card-body">
                                 <table id="example5" class="display" style="min-width: 600px">
@@ -401,6 +401,8 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             $unit_id = $row['unit_id'];
                                             $unitprice = $row['unitprice'];
                                             $creditprice = $row['creditprice'];
+                                            $range = $row['range_type'];
+                                            $has_answers = $row['has_answers'];
                                             $getunit =  mysqli_query($con, "SELECT * FROM labunits WHERE status=1 AND measurement_id='$unit_id'");
                                             if (mysqli_num_rows($getunit) == 0) {
                                                 $measurement = "";
@@ -423,14 +425,21 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
 
                                                 <td>
                                                     <button data-toggle="modal" data-target="#basicModal<?php echo $investigationtype_id; ?>" class="btn btn-xs btn-info">Sub Types</button>
-                                                    <!-- <a href="editinvestigationtype?id=<?php echo $investigationtype_id; ?>" class="btn btn-xs btn-primary">Edit</a> -->
+                                                    <a href="editinvestigation?id=<?php echo $investigationtype_id; ?>" class="btn btn-xs btn-primary">Edit</a>
                                                     <a href="removeinvestigationtype?id=<?php echo $investigationtype_id; ?>" class="btn btn-xs btn-danger" onclick="return confirm_delete<?php echo $investigationtype_id; ?>()">Remove</a>
                                                     <script type="text/javascript">
                                                         function confirm_delete<?php echo $investigationtype_id; ?>() {
                                                             return confirm('You are about To Remove this item. Are you sure you want to proceed?');
                                                         }
                                                     </script>
-                                                    <a href="insuranceinvestigationcharges?id=<?php echo $investigationtype_id; ?>" class="btn btn-xs btn-primary">Insurance Prices</a>
+                                                    <a href="insuranceinvestigationcharges?id=<?php echo $investigationtype_id; ?>" target="_blank" class="btn btn-xs btn-primary">Insurance Prices</a>
+                                                    <?php if ($range == 1) { ?>
+                                                        <a href="rangeinvest?id=<?php echo $investigationtype_id; ?>" target="_blank" class="btn btn-xs btn-info">Range Value</a>
+                                                    <?php } ?>
+                                                    <?php if ($has_answers == 1) { ?>
+                                                        <a href="investigationanswers?id=<?php echo $investigationtype_id; ?>" target="_blank" class="btn btn-xs btn-info">Answers</a>
+                                                    <?php } ?>
+                                                    <!-- <a href="rangeinvest?id=<?php echo $investigationtype_id; ?>" class="btn btn-xs btn-info">Range Value</a> -->
                                                 </td>
                                             </tr>
 

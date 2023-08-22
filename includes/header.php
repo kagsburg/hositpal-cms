@@ -848,7 +848,7 @@
           <?php }
         if (($_SESSION['elcthospitallevel'] == 'radiographer')) {
         ?>
-        <li>
+        <!-- <li>
             <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
               <i class="fa fa-users"></i>
               <span class="nav-text">Outpatients</span>
@@ -858,9 +858,16 @@
               <li><a href="radiowaiting?mode=1">Waiting List</a></li>
               <li><a href="radiocleared">Patient With Results</a></li>
             </ul>
+          </li> -->
+          <li>
+            <a class="ai-icon" href="radiowaiting?mode=2" aria-expanded="false">
+              <i class="fa fa-user-plus"></i>
+              <span class="nav-text">Emergency List</span>
+            </a>
+
           </li>
-          <!-- <li>
-            <a class="ai-icon" href="radiowaiting" aria-expanded="false">
+          <li>
+            <a class="ai-icon" href="radiowaiting?mode=1" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Waiting Patients</span>
             </a>
@@ -869,9 +876,9 @@
           <li>
             <a class="ai-icon" href="radiocleared" aria-expanded="false">
               <i class="fa fa-users"></i>
-              <span class="nav-text">Cleared Patients</span>
+              <span class="nav-text">Patient With Results</span>
             </a>
-          </li> -->
+          </li>
           <!-- <li>
             <a class="ai-icon" href="clinicwaiting?ty=radiography" aria-expanded="false">
               <i class="fa fa-user-plus"></i>

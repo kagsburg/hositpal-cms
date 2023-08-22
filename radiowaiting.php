@@ -154,7 +154,9 @@ if ($mode == '2'){
                                                 <td><?php echo $room; ?></td>
                                                 <td><?php echo $fullname; ?></td>
                                                 <td>
-                                                    <a href="addradiologyreport.php?id=<?php echo $patientsque_id; ?>"
+                                                    <!-- <a href="addradiologyreport.php?id=<?php echo $patientsque_id; ?>"
+                                                        class="btn btn-xs btn-info">Add Report</a> -->
+                                                        <a href="radiologylist?id=<?php echo $patientsque_id; ?>"
                                                         class="btn btn-xs btn-info">Add Report</a>
                                                     <button data-toggle="modal"
                                                         data-target="#modal<?php echo $patientsque_id; ?>"

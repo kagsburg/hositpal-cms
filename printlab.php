@@ -242,11 +242,11 @@ $patient_id = $_GET['patient_id'];
                                                                 }else{
                                                                     $row3 = mysqli_fetch_array($getrange);
                                                                     $lowx = $row3['lowx'];
-                                                                    $lowx = $row3['lowy'];
-                                                                    $lowx = $row3['normalx'];
-                                                                    $lowx = $row3['normaly'];
-                                                                    $lowx = $row3['highx'];
-                                                                    $lowx = $row3['highy'];
+                                                                    $lowy = $row3['lowy'];
+                                                                    $normalx = $row3['normalx'];
+                                                                    $normaly = $row3['normaly'];
+                                                                    $highx = $row3['highx'];
+                                                                    $highy = $row3['highy'];
                                                                     // check if the result is within range
                                                                     if ($result >= $lowx && $result <= $lowy) {
                                                                         $interval = $lowx .' - '.$lowy;

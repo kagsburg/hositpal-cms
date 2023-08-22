@@ -92,7 +92,13 @@ if ($mode == '2'){
                                         <tbody>
                                             <?php
                                              $modestr = ($mode == 1) ? "payment='1' and": "";
-                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE $modestr room='lab' AND status=0");
+                                             if ($mode == '1'){
+                                                $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment=1 and room='lab' AND status=0") or die(mysqli_error($con));
+                                            }
+                                            else if ($mode == '2'){
+                                                $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment=0 and room='lab' AND status=0") or die(mysqli_error($con));
+                                            }
+                                            // $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE $modestr room='lab' AND status=0");
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];
                                                 $admission_id = $row['admission_id'];
@@ -132,7 +138,7 @@ if ($mode == '2'){
                                                 if (strlen($patient_id) >= 4) {
                                                     $pin = $patient_id;
                                                 }
-                                                if ($mode2 == 'emergency') {
+                                                if ($mode2 == 'emergency' && $mode == 2) {
                                                     ?>
                                             <tr class="gradeA">
                                                 <td><?php echo $patientsque_id; ?></td>
