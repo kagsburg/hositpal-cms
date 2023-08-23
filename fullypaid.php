@@ -87,18 +87,16 @@ $payments = get_all_payments_groupby_patient($pdo, $paymethod);
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table id="example5" class="display" style="min-width: 845px">
+                                    <table id="example6" class="display" style="min-width: 845px">
                                         <thead>
                                             <tr>
+                                                <th>DATE</th>
                                                 <th>PIN</th>
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
                                                 <!-- <th>Room to Visit</th> -->
-                                                <?php if ($paymethod != 'cash'){?>
-                                                <th>Company</th>
-                                                <?php } ?>
                                                 <!-- <th>Amount</th> -->
-                                                <th>Payment Mode</th>
+                                                <th>Payment Method</th>
                                                 <th>Action</th>
 
                                             </tr>
@@ -111,6 +109,7 @@ $payments = get_all_payments_groupby_patient($pdo, $paymethod);
                                                 $amount = $payment['amount'];
                                                 $payment_id = $payment['bill_id'];
                                                 $pat = $payment['patient_id'];
+                                                $updated_at = $payment['updated_at'];
                                                 
                                                 // $billtyp = mysqli_query($con, "SELECT * FROM bills WHERE bill_id='$payment_id' AND status=2")or die(mysqli_error($con));
                                                 // if (mysqli_num_rows($billtyp) > 0){
@@ -131,7 +130,7 @@ $payments = get_all_payments_groupby_patient($pdo, $paymethod);
                                                         $insu=$patient['insurancecompany'];
                                                         $getinsurance = mysqli_query($con,"SELECT * FROM insurancecompanies WHERE insurancecompany_id ='$insu'")or die(mysqli_error($con));
                                                         $insur = mysqli_fetch_array($getinsurance);
-                                                        $company=$insur['company'];
+                                                        $company=isset($insur['company']) ? $insur['company'] : "N/A";
                                                     }else if ($paymentype == "credit"){
                                                         $rst = $patient['creditclient'];
                                                         $getinsurance = mysqli_query($con, "SELECT * FROM creditclients where creditclient_id ='$rst'")or die(mysqli_error($con));
@@ -151,6 +150,7 @@ $payments = get_all_payments_groupby_patient($pdo, $paymethod);
                                                 
                                             ?>
                                                 <tr class="gradeA">
+                                                    <td><?php echo $updated_at; ?></td>
                                                     <td><?php echo $pin; ?></td>
                                                     <!-- <td>
                                                         <a href="images/patients/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>" target="_blank">
@@ -160,11 +160,17 @@ $payments = get_all_payments_groupby_patient($pdo, $paymethod);
                                                     <td><?php echo $fullname; ?></td>
                                                     <td><?php echo $gender; ?></td>
                                                     <!-- <td><?php echo $room; ?></td> -->
-                                                    <?php if ($paymethod != 'cash'){?>
-                                                    <td><?php echo $company; ?> </td> 
-                                                    <?php } ?>
                                                     <!-- <td><?php echo $amount; ?></td> -->
-                                                    <td><?php echo ucfirst($payment_method); ?></td>
+                                                    <td><?php 
+                                                    if ($payment_method == "insurance") {
+                                                       echo  $payment_method.' - '. $company;
+                                                   } else if ($payment_method == "credit") {
+                                                       echo $payment_method.' - '. $company;
+                                                   }
+                                                   else {
+                                                   echo $payment_method; }
+                                                    // echo ucfirst($payment_method); 
+                                                    ?></td>
                                                     <td>
                                                         <a href="paidbills?id=<?php echo $pat;?>&type=<?php echo $payment_method; ?>" class="btn btn-primary ">View Bills </a>
                                                     </td>
@@ -236,6 +242,11 @@ $payments = get_all_payments_groupby_patient($pdo, $paymethod);
                 window.location.href = url.href;
             });
         })
+        $('#example6').DataTable({
+            "order": [
+                [0, "desc"]
+            ]
+        });
     </script>
 </body>
 

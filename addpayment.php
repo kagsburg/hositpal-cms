@@ -479,7 +479,7 @@ $id = $_GET['q'];
                                             // else if ($type == "admission")
                                                 // unset service session
                                                 unset($_SESSION['service']);
-                                            echo '<div class="alert alert-success">Payment Successfully Approved.Click <a href="paymentinvoice?id=' . $id . '" target="_blank" class="btn btn-primary btn-xs"><strong>Print Invoice</strong></a> to Print Invoice</div>';
+                                            echo '<div class="alert alert-success"><a href="paymentinvoice?id=' . $id . '" target="_blank" class="btn btn-primary btn-xs"><i cclass="fa fa-print" aria-hidden="true"></i><strong>Print Invoice</strong></a></div>';
                                         }
                                     }
 

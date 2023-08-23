@@ -97,7 +97,7 @@ if ($mode == '2'){
                                     <table id="example6" class="display" style="min-width: 845px">
                                         <thead>
                                             <tr>
-                                                <th>Que ID</th>
+                                                <th>PIN</th>
                                                 <th>Image</th>
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
