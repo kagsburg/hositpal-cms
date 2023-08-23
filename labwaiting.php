@@ -92,13 +92,13 @@ if ($mode == '2'){
                                         <tbody>
                                             <?php
                                              $modestr = ($mode == 1) ? "payment='1' and": "";
-                                             if ($mode == '1'){
-                                                $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment=1 and room='lab' AND status=0") or die(mysqli_error($con));
-                                            }
-                                            else if ($mode == '2'){
-                                                $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment=0 and room='lab' AND status=0") or die(mysqli_error($con));
-                                            }
-                                            // $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE $modestr room='lab' AND status=0");
+                                            //  if ($mode == '1'){
+                                            //     $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment=1 and room='lab' AND status=0") or die(mysqli_error($con));
+                                            // }
+                                            // else if ($mode == '2'){
+                                            //     $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment=0 and room='lab' AND status=0") or die(mysqli_error($con));
+                                            // }
+                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE  room='lab' AND status=0");
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];
                                                 $admission_id = $row['admission_id'];
@@ -155,12 +155,12 @@ if ($mode == '2'){
                                                 <td><?php echo $room; ?></td>
                                                 <td><?php echo $fullname; ?></td>
                                                 <td>
-                                                    <a href="addlabreport?id=<?php echo $patientsque_id; ?>"
-                                                        class="btn btn-xs btn-info">Add Report</a>
+                                                    <a href="labreportlist?id=<?php echo $patientsque_id; ?>"
+                                                        class="btn btn-xs btn-info">Details</a>
 
-                                                    <button data-toggle="modal"
+                                                    <!-- <button data-toggle="modal"
                                                         data-target="#modal<?php echo $patientsque_id; ?>"
-                                                        class="btn btn-xs btn-primary">Doctor Report</button>
+                                                        class="btn btn-xs btn-primary">Doctor Report</button> -->
                                                     <div class="modal fade" id="modal<?php echo $patientsque_id; ?>"
                                                         tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                                                         aria-hidden="true">
@@ -237,12 +237,12 @@ if ($mode == '2'){
                                                 <td><?php echo $room; ?></td>
                                                 <td><?php echo $fullname; ?></td>
                                                 <td>
-                                                    <a href="addlabreport?id=<?php echo $patientsque_id; ?>"
-                                                        class="btn btn-xs btn-info">Add Report</a>
+                                                    <a href="labreportlist?id=<?php echo $patientsque_id; ?>"
+                                                        class="btn btn-xs btn-info">Details</a>
 
-                                                    <button data-toggle="modal"
+                                                    <!-- <button data-toggle="modal"
                                                         data-target="#modal<?php echo $patientsque_id; ?>"
-                                                        class="btn btn-xs btn-primary">Doctor Report</button>
+                                                        class="btn btn-xs btn-primary">Doctor Report</button> -->
                                                     <div class="modal fade" id="modal<?php echo $patientsque_id; ?>"
                                                         tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                                                         aria-hidden="true">

@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'radiographer')) {
+if (($_SESSION['elcthospitallevel'] != 'lab technician')) {
    header('Location:login.php');
 }
 $id = $_GET['id'];
@@ -17,7 +17,7 @@ $type = isset($_GET['ty'])?$_GET['ty']:0;
    <meta charset="utf-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width,initial-scale=1">
-   <title>Radiology List Tests</title>
+   <title>Laboratory List Tests</title>
    <!-- Favicon icon -->
    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
    <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -57,7 +57,7 @@ $type = isset($_GET['ty'])?$_GET['ty']:0;
             <div class="row page-titles mx-0">
                <div class="col-sm-6 p-md-0">
                   <div class="welcome-text">
-                     <h4>Radiology List Reports</h4>
+                     <h4>Laboratory List </h4>
 
                   </div>
                </div>
@@ -65,7 +65,7 @@ $type = isset($_GET['ty'])?$_GET['ty']:0;
                   <ol class="breadcrumb">
                      <li class="breadcrumb-item"><a href="index">Home</a></li>
                      <!-- <li class="breadcrumb-item"><a href="investigationtypes">Investigation Types</a></li> -->
-                     <li class="breadcrumb-item active"><a href="#">Radiology List Reports</a></li>
+                     <li class="breadcrumb-item active"><a href="#">Laboratory List Reports</a></li>
                   </ol>
                </div>
             </div>
@@ -86,27 +86,23 @@ $type = isset($_GET['ty'])?$_GET['ty']:0;
 
                <div class="col-lg-10">
                   <div class="card">
-                     <div class="card-header">
-                        <h4 class="card-title">Radiology List Reports</h4>
-                     </div>
+                     
                      <div class="card-body">
 
                         <table id="example5" class="display" class="table table-striped" style="width:100%;">
                            <thead>
                               <tr>
                                  <th>Test</th>
-                                 <?php if ($type != 1) {?>
                                  <th>Details</th>
-                                 <?php }?>
                                  <th>Action</th>
                               </tr>
                            </thead>
                            <tbody>
                               <?php
                               if ($type == 1){
-                                 $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE room='radiography' AND status in (1,0) AND patientsque_id ='$id' ") or die(mysqli_error($con));
+                                 $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE room='lab' AND status in (1,0) AND patientsque_id ='$id' ") or die(mysqli_error($con));
                               }else{
-                                 $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE room='radiography' AND status=0 AND patientsque_id ='$id' ") or die(mysqli_error($con));
+                                 $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE room='lab' AND status=0 AND patientsque_id ='$id' ") or die(mysqli_error($con));
                               }
                                                 
                                                 if (mysqli_num_rows($getque) > 0) {
@@ -150,38 +146,36 @@ $type = isset($_GET['ty'])?$_GET['ty']:0;
                                                     $pin = $patient_id;
                                                 }
                                                 
-                                                $doctorreports = mysqli_query($con, "SELECT * FROM radioorders WHERE  patientsque_id='$id' ") or die(mysqli_error($con));
+                                                $doctorreports = mysqli_query($con, "SELECT * FROM laborders WHERE  patientsque_id='$id' ") or die(mysqli_error($con));
                                                                        
                                                                         while ($rowo = mysqli_fetch_array($doctorreports)) {
                                                                            // $rowo = mysqli_fetch_array($getorder);
                                                                            $timestamp = $rowo['timestamp'];
-                                                                           $serviceorder_id = $rowo['radioorder_id'];
+                                                                           $serviceorder_id = $rowo['laborder_id'];
                                                                            if ($type == 1){
-                                                                           $getordered2 = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id ='$serviceorder_id' AND status in (3)") or die(mysqli_error($con));
+                                                                           $getordered2 = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id  ='$serviceorder_id' AND status in (3)") or die(mysqli_error($con));
                                                                            }else{
-                                                                           $getordered2 = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id ='$serviceorder_id' AND status in (1,2)") or die(mysqli_error($con));
+                                                                           $getordered2 = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id  ='$serviceorder_id' AND status in (1,2)") or die(mysqli_error($con));
                                                                            }
                                                                            if (mysqli_num_rows($getordered2) > 0) {
                                                                               while ($row = mysqli_fetch_array($getordered2)) {
-                                                                                 $medicalservice_id = $row['radioinvestigationtype_id'];
+                                                                                 $medicalservice_id = $row['investigationtype_id'];
                                                                                  $status = $row['status'];
-                                                                               $getitem = mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1 AND radioinvestigationtype_id='$medicalservice_id'");
+                                                                               $getitem = mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id ='$medicalservice_id'");
                                                                                $row1 = mysqli_fetch_array($getitem);
                                                                                $itemname = $row1['investigationtype'];
-                                                                               $doctorreport_s = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$patientsque_id2' and radiomeasure ='$medicalservice_id'") or die(mysqli_error($con));
+                                                                               $doctorreport_s = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$patientsque_id2' and labmeasure ='$medicalservice_id'") or die(mysqli_error($con));
                                                                                  $row_o = mysqli_fetch_array($doctorreport_s);
                                                                                  $details = $row_o['details'];
                                                                            ?>
                                                                               <tr>
                                                                                  <td><?php echo $itemname; ?></td>
-                                                                                 <?php if ($type != 1) {?>
                                                                                  <td><?php echo $details; ?></td>
-                                                                                 <?php }?>
                                                                                  <td>
                                                                                     <?php if ($status == 1 || $status == 2) { ?>
-                                                                                       <a href="addradiologyreport.php?id=<?php echo $patientsque_id; ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-xs btn-info">Add Report </a>
+                                                                                       <a href="addlabreport.php?id=<?php echo $patientsque_id; ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-xs btn-info">Add Report </a>
                                                                                     <?php } else { ?>
-                                                                                       <a href="radiography?patientsque_id=<?php echo $patientsque_id; ?>&id=<?php echo $patient_id ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-primary btn-sm">View Report</a>
+                                                                                       <a href="labreport?que=<?php echo $patientsque_id; ?>&patient_id=<?php echo $patient_id ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-primary btn-sm">View Report</a>
                                                                                    
                                                                                    <?php  }?>
 

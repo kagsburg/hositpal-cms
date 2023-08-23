@@ -6,6 +6,7 @@ header('Location:login.php');
    }
 $id=$_GET['que'];
 $patient_id = $_GET['patient_id'];
+$test= $_GET['test'];
 // $patient=get_patient_by_id($pdo,$patient_id);
    ?>
 <!DOCTYPE html>
@@ -130,15 +131,23 @@ include 'includes/header.php';
       $pin=$patient_id;
      }  
      $labtests='';
-     $getreport= mysqli_query($con, "SELECT * FROM labreports WHERE status=1 and admission_id='$admission_id'") or die(mysqli_error($con));
+     $getreport= mysqli_query($con, "SELECT * FROM labreports WHERE status=1 and admission_id='$admission_id' and test='$test'") or die(mysqli_error($con));
        while ($rowtitle = mysqli_fetch_array($getreport)) {
-        $medicalservice_id = $rowtitle['test'];
+        $medicalservice_id = $rowtitle['test'];        
+        $admin_id2 = $rowtitle['admin_id'];
+        $approve = $rowtitle['approved'];
         $getservice = mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'");
         $row2 = mysqli_fetch_array($getservice);
         $medicalservice = $row2['investigationtype'];
         $investigationtype_id=$row2['investigationtype_id'];
-        $labtests.= $medicalservice.',';
+        $labtests.= $medicalservice.'';
         $report_date=$rowtitle['timestamp'];
+        $getuser = mysqli_query($con, "SELECT * FROM staff WHERE staff_id ='$admin_id'") or die(mysqli_error($con));
+        $rowuser = mysqli_fetch_array($getuser);
+        $user = $rowuser['fullname'];
+        $getuser = mysqli_query($con, "SELECT * FROM staff WHERE staff_id ='$admin_id2'") or die(mysqli_error($con));
+        $rowuser = mysqli_fetch_array($getuser);
+        $user2 = $rowuser['fullname'];
        }      
                                ?>
                     
@@ -151,22 +160,36 @@ include 'includes/header.php';
                                 <div class="row">
                                     <div class="col-lg-4">
                                         <address>
-                                            Names:<strong><?php echo $fullname ?></strong><br>
-                                            Gender:<?php echo $gender ?><br>
-                                            <abbr title="Phone">PIN #</abbr> <?php echo $pin ?>
+                                        <strong>Names:<?php echo $fullname ?></strong><br>
+                                            <strong>Gender:<?php echo $gender ?> </strong><br>
+                                            <strong>PIN #: <?php echo $pin ?> </strong>
                                         </address>
                                     </div>
                                     <div class="col-lg-4">
                                         <address>
                                             <strong>Sponsor: <?php echo $company?></strong><br>
-                                            Age: <span><?php 
+                                            <strong>Age: <span><?php 
                                         $dob1 = date("Y-m-d", strtotime($dob));
                                         $dob2 = new DateTime($dob1);
                                         $now = new DateTime();
                                         $difference = $now->diff($dob2);
                                         echo $difference->y;
-                                        ?></span><br>
-                                            <abbr title="Phone">Date:</abbr> <?php echo date('Y-m-d',$report_date); ?>
+                                        ?></span>  </strong><br>
+                                            <strong>Date: <?php echo date('Y-m-d',$report_date); ?> </strong>
+                                        </address>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <address>
+                                            <strong>Order By: <?php echo $user?></strong><br>
+                                            <strong>Conducted By : <span><?php echo $user2?></span></strong><br>
+                                            <?php if ($approve !=0){ ?>
+                                            <strong>Approved  By : <span><?php 
+                                             $getuser = mysqli_query($con, "SELECT * FROM staff WHERE staff_id ='$approve'") or die(mysqli_error($con));
+                                             $rowuser2 = mysqli_fetch_array($getuser);
+                                             $user2 = $rowuser2['fullname'];
+                                             echo $user;
+                                                ?></span></strong><br>
+                                            <?php } ?>
                                         </address>
                                     </div>
                                 </div>
@@ -178,7 +201,7 @@ include 'includes/header.php';
                                 <table style="min-width: 845px">
                                 <tbody>
                                 <?php 
-                                $getreport = mysqli_query($con, "SELECT * FROM labreports WHERE status=1 and admission_id='$admission_id'") or die(mysqli_error($con));
+                                $getreport = mysqli_query($con, "SELECT * FROM labreports WHERE status=1 and admission_id='$admission_id'and test='$test'") or die(mysqli_error($con));
                                 while ($rowtitle = mysqli_fetch_array($getreport)) {
                                     $medicalservice_id = $rowtitle['test'];
                                     $result=$rowtitle['result'];
@@ -285,41 +308,18 @@ include 'includes/header.php';
                                         </tbody>
                                         <tfoot>
                                         <tr>
+                                        
                                         <td>
-                                        <h5>ORDERED BY</h5>
-                                        <p><?php 
-                                        $getuser = mysqli_query($con, "SELECT * FROM staff WHERE staff_id ='$admin_id'") or die(mysqli_error($con));
-                                        $rowuser = mysqli_fetch_array($getuser);
-                                        $user = $rowuser['fullname'];
-                                        echo $user;
-                                        ?></p>
                                         </td>
                                         <td>
-                                        <h5>CREATED BY</h5>
-                                        <p><?php 
-                                        $getuser = mysqli_query($con, "SELECT * FROM staff WHERE staff_id ='$admin_id2'") or die(mysqli_error($con));
-                                        $rowuser = mysqli_fetch_array($getuser);
-                                        $user = $rowuser['fullname'];
-                                        echo $user;
-                                        ?></p>
-                                        </td>
-                                        <td>
-                                        <a href="printlab?patient_id=<?php echo $patient_id ?>&que=<?php echo $id?>" target="_blank" class="btn btn-primary">Print</a>
+                                        <a href="printlab?patient_id=<?php echo $patient_id ?>&que=<?php echo $id?>&test=<?php echo $test ?>" target="_blank" class="btn btn-primary">Print</a>
                                             <?php if ($approve == 0 && ($_SESSION['elcthospitallevel'] == 'lab technologist')){?>
-                                        <a href="approvereport.php?patientsque_id=<?php echo $id; ?>&admission_id=<?php echo $admission_id ?>" class="btn btn-primary">Approve</a>
+                                        <a href="approvereport.php?patientsque_id=<?php echo $id; ?>&admission_id=<?php echo $admission_id ?>&test=<?php echo $test ?>" class="btn btn-primary">Approve</a>
                                         <?php } ?>
 
                                         </td>
                                         <?php if ($approve != 0){?>
-                                        <td>
-                                        <h5>VERIFIED BY</h5>
-                                        <p><?php
-                                        $getuser = mysqli_query($con, "SELECT * FROM staff WHERE staff_id ='$approve'") or die(mysqli_error($con));
-                                        $rowuser2 = mysqli_fetch_array($getuser);
-                                        $user2 = $rowuser2['fullname'];
-                                        echo $user;
-                                        ?></p>
-                                        </td>
+                                        
                                         <?php } ?>
                                         </tr>
 

@@ -11,7 +11,7 @@ header('Location:login.php');
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Cleared Patients</title>
+    <title>Records Patients</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
      <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -88,6 +88,7 @@ include 'includes/header.php';
                                           $patientsque_id=$row['patientsque_id'];
                                           $admission_id=$row['admission_id'];
                                           $room=$row['room'];
+                                    $prev = $row['prev_id'];
                                                              $getadmission= mysqli_query($con,"SELECT * FROM admissions WHERE admission_id='$admission_id' and status='1'");
                                                              if (mysqli_num_rows($getadmission)>0){
                                             $row1= mysqli_fetch_array($getadmission);
@@ -99,7 +100,7 @@ include 'includes/header.php';
                                         $thirdname=$row2['thirdname'];    
                                         $gender=$row2['gender'];    
                                         $ext=$row2['ext']; 
-                                        $admin= mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$patientsque_id'");
+                                        $admin= mysqli_query($con,"SELECT * FROM patientsque WHERE admission_id='$admission_id' and room ='doctor' and admintype='radiographer'");
                                         if (mysqli_num_rows($admin)>0){
                                         $row4= mysqli_fetch_array($admin);
                                         $admin_id=$row4['admin_id'];

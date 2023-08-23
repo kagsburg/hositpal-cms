@@ -79,7 +79,7 @@ if ($mode == '2'){
                                     <table id="example6" class="display" style="min-width: 845px">
                                         <thead>
                                             <tr>
-                                                <th>Que ID</th>
+                                                <th>PIN</th>
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
                                                 <th>Previous Room</th>
@@ -140,14 +140,7 @@ if ($mode == '2'){
                                                 if ($mode2 == 'emergency' ) {
                                             ?>
                                             <tr class="gradeA">
-                                                <td><?php echo $patientsque_id; ?></td>
-                                                <!-- <td>
-                                                    <a href="images/patients/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>"
-                                                        target="_blank">
-                                                        <img src="images/patients/thumbs/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>"
-                                                            width="60">
-                                                    </a>
-                                                </td> -->
+                                                <td><?php echo $patientsque_id; ?></td>                                                
                                                 <td><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?>
                                                 </td>
                                                 <td><?php echo $gender; ?></td>

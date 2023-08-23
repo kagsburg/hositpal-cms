@@ -4,6 +4,7 @@ if (($_SESSION['elcthospitallevel'] != 'lab technician')) {
     header('Location:login.php');
 }
 $id = $_GET['id'];
+$test = $_GET['test'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +13,7 @@ $id = $_GET['id'];
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Add Patient Report</title>
+    <title>Add Lab Report</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <script src="ckeditor/ckeditor.js"></script>
@@ -168,9 +169,9 @@ $id = $_GET['id'];
                                                         $rowo = mysqli_fetch_array($getorder);
                                                         $timestamp = $rowo['timestamp'];
                                                         $serviceorder_id = $rowo['laborder_id'];
-                                                        $getordered = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id='$serviceorder_id' AND status in (1,2)") or die(mysqli_error($con));
+                                                        $getordered = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id='$serviceorder_id' AND status in (1,2) and investigationtype_id='$test'") or die(mysqli_error($con));
                                                         $count = mysqli_num_rows($getordered);
-                                                        while ($row = mysqli_fetch_array($getordered)) {
+                                                            $row = mysqli_fetch_array($getordered);
                                                             $medicalservice_id = $row['investigationtype_id'];
                                                             $patientlab_id = $row['patientlab_id'];
                                                             $unitcharge = $row['charge'];
@@ -333,7 +334,7 @@ $id = $_GET['id'];
                                                             <!-- </form> -->
                                                                     <?php
                                                             }
-                                                        } 
+                                                        
                                                     }
                                                 ?>
                                                 

@@ -72,18 +72,19 @@ include 'includes/header.php';
                                     <table id="example6" class="display" style="min-width: 845px">
                                       <thead>
                                         <tr>
-                                              <th>PIN</th>
-                                              <th>Image</th>
+                                        <th>DATE</th>    
+                                           <th>PIN</th>
                                             <th>Full Names</th>
                                             <th>Gender</th>
-                                             <th>Next Attendant</th>
+                                             <th> Attended By</th>
                                                 <th>Action</th>
                                             
                                         </tr>
                                     </thead>
                                         <tbody>   
                                          <?php                                               
-                                 $getque=mysqli_query($con,"SELECT * FROM patientsque WHERE (payment='1' || payment = '0') AND room='lab' AND status=1");  
+                                 $getque=mysqli_query($con,"SELECT * FROM patientsque WHERE payment IN(1,0) AND room='lab' AND status in (1,0)");  
+                                    if (mysqli_num_rows($getque) >0){
                                         while ($row = mysqli_fetch_array($getque)) {
                                           $patientsque_id=$row['patientsque_id'];
                                           $admission_id=$row['admission_id'];
@@ -99,13 +100,18 @@ include 'includes/header.php';
                             $thirdname=$row2['thirdname'];    
                             $gender=$row2['gender'];    
                                $ext=$row2['ext']; 
-                                                    
-                                $getnextque=mysqli_query($con,"SELECT * FROM patientsque WHERE admission_id='$admission_id' AND admin_id='".$_SESSION['elcthospitaladmin']."'");  
-                                            $rown= mysqli_fetch_array($getnextque);
-                                        $attendant=$rown['attendant'];     
-                                        $getstaff= mysqli_query($con,"SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));                        
-                                                    $rows= mysqli_fetch_array($getstaff);
-                                                    $fullname=$rows['fullname'];
+                               $admin= mysqli_query($con,"SELECT * FROM patientsque WHERE admission_id='$admission_id' and room ='doctor' and admintype='lab technician'");
+                               if (mysqli_num_rows($admin)>0){
+                               $row4= mysqli_fetch_array($admin);
+                               $admin_id=$row4['admin_id'];
+                               $timestamp=$row4['timestamp'];
+                                   $attendant = mysqli_query($con, "SELECT * FROM staff where staff_id='$admin_id'") or die(mysqli_error($con));
+                                   $row3 = mysqli_fetch_array($attendant);
+                                   $attfullname = $row3['fullname'];
+                               }else{
+                                   $attfullname='Not yet attended';
+                                   $timestamp=0;
+                               }
                                             if(strlen($patient_id)==1){
                                         $pin='000'.$patient_id;
                                         }
@@ -120,25 +126,26 @@ include 'includes/header.php';
                                         }       
                                            ?>
                                           <tr class="gradeA">
-                                              <td><?php echo $patientsque_id; ?></td>
+                                            
+                                              <td><?php echo date('Y-m-d',$timestamp); ?></td>
                                                                <td>
-                                                                   <a href="images/patients/<?php echo md5($patient_id).'.'.$ext.'?'.  time(); ?>" target="_blank">
-                                          <img src="images/patients/thumbs/<?php echo md5($patient_id).'.'.$ext.'?'.  time(); ?>" width="60">
-                                                                   </a>
+                                                               <?php echo $pin; ?>
                                                        </td>
                                             <td><?php echo $firstname.' '.$secondname.' '.$thirdname; ?></td>
                                               <td><?php echo $gender; ?></td>                                                                         
-                                              <td><?php echo $fullname; ?></td>                                
+                                              <td><?php echo $attfullname; ?></td>                                
                                                               
                                             
                                                    <td>   
-          <a href="labreport?patient_id=<?php echo $patient_id ?>&que=<?php echo $patientsque_id?>" class="btn btn-xs btn-info">Lab Report</a>             
+                                                   
+                                                    <a href="labreportlist?id=<?php echo $patientsque_id; ?>&ty=1" class="btn btn-primary btn-sm">View Lab Report</a>
+          <!-- <a href="labreport?patient_id=<?php echo $patient_id ?>&que=<?php echo $patientsque_id?>" class="btn btn-xs btn-info">Lab Report</a>              -->
                                         </td>
                                          
                                          
                                         </tr>
                     
-                                        <?php }}?>
+                                        <?php }}}?>
                                         </tbody>     
                                     </table>     
                             </div>

@@ -384,37 +384,39 @@ if (strlen($patient_id) >= 4) {
                                                     ?>
                                                     <div class="table-responsive pt-4">
                                                             <h4><strong>Lab Report</strong></h4>
-                                                            <?php 
-                                                             $getlabre = mysqli_query($con, "SELECT * FROM patientsque where admission_id ='$admission_id' and room='lab' AND status='1' AND admintype='doctor' AND prev_id='$id'")or die(mysqli_error($con));
-                                                             if (mysqli_num_rows($getlabre) > 0){
-                                                                 while($rowpharm3 = mysqli_fetch_array($getlabre)){
-                                                                     $npatientsque_id = $rowpharm3['patientsque_id'];
-                                                            ?>
-                                                            <a href="labreport?patient_id=<?php echo $patient_id; ?>&que=<?php echo $npatientsque_id ?>" target="_blank" class="btn btn-primary"> Radiology Report</a>
-                                                            <?php }} ?>
-                                                            <!-- <table class="table  table-striped table-responsive-sm table-bordered">
+                                                            
+                                                            <table class="table  table-striped table-responsive-sm table-bordered">
                                                                 <thead>
                                                                     <tr>
                                                                     <th>Test done</th>
-                                                                        <th>Result</th>
-                                                                        <th>Details</th>
+                                                                        <!-- <th>Result</th> -->
+                                                                        <th>Action</th>
                                                                         
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     
                                                                         <?php  
-                                                                        while($row2=mysqli_fetch_array($checklab)){
-                                                                            $getlab = mysqli_query($con, "SELECT * FROM patientsque where admission_id ='$admission_id' and room='lab technician' AND status='1' AND admintype='doctor' AND prev_id='$id'")or die(mysqli_error($con));
+                                                                        // while($row2=mysqli_fetch_array($checklab)){
+                                                                        $getlab = mysqli_query($con, "SELECT * FROM patientsque where admission_id ='$admission_id' and room='lab' AND status in (1,0) AND admintype='doctor' AND prev_id='$id'")or die(mysqli_error($con));
+                                                                            
+                                                                            // $getlab = mysqli_query($con, "SELECT * FROM patientsque where admission_id ='$admission_id' and room='lab technician' AND status='1' AND admintype='doctor' AND prev_id='$id'")or die(mysqli_error($con));
                                                                             if (mysqli_num_rows($getlab) > 0){
                                                                                 while($rowpharm3 = mysqli_fetch_array($getlab)){
                                                                                     $npatientsque_id = $rowpharm3['patientsque_id'];
-                                                                            $getreports = mysqli_query($con, "SELECT * FROM labreports WHERE patientsque_id='$npatientsque_id'");
-                                                                        
-                                                                            while ($row = mysqli_fetch_array($getreports)) {
-                                                                                $medicalservice_id = $row['test'];
-                                                                                            $presult = $row['result'];
-                                                                                            $details = $row['details']; 
+                                                                            $doctorreports = mysqli_query($con, "SELECT * FROM laborders WHERE  patientsque_id='$npatientsque_id' ") or die(mysqli_error($con));
+
+                                                                            // $getreports = mysqli_query($con, "SELECT * FROM labreports WHERE patientsque_id='$npatientsque_id'");
+                                                                            if (mysqli_num_rows($doctorreports) > 0) {
+                                                                                while ($rowo = mysqli_fetch_array($doctorreports)) {
+                                                                                    $timestamp = $rowo['timestamp'];
+                                                                               $serviceorder_id = $rowo['laborder_id'];
+                                                                               $getordered2 = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id ='$serviceorder_id' AND status in (3)") or die(mysqli_error($con));
+    
+                                                                               if (mysqli_num_rows($getordered2) > 0) {
+                                                                                  while ($row = mysqli_fetch_array($getordered2)) {
+                                                                                    $medicalservice_id = $row['investigationtype_id'];
+                                                                                    $status = $row['status'];
                                                                                 $getservice = mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'");
                                                                                             $row2 = mysqli_fetch_array($getservice);
                                                                                             $test = $row2['investigationtype'];
@@ -423,14 +425,20 @@ if (strlen($patient_id) >= 4) {
                                                                         
                                                                         <tr>
                                                                                 <td><?php echo $test; ?></td>
-                                                                                <td><?php echo $presult; ?></td>
-                                                                                <td><?php echo $details; ?></td>
+                                                                                <td>
+                                                                                    <?php if ($status == 1 || $status == 2) { ?>
+                                                                                       <!-- <a href="addradiologyreport.php?id=<?php echo $patientsque_id; ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-xs btn-info">Add Test</a> -->
+                                                                                    <?php } else { ?>
+                                                                                       <a href="labreport?que=<?php echo $npatientsque_id; ?>&patient_id=<?php echo $patient_id ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-primary btn-sm">View Report</a>
+                                                                                   
+                                                                                   <?php  }?>
+                                                                                 </td>
                                                                                 
                                                                                 </tr>
-                                                                                <?php }}}}?>
+                                                                                <?php }}}}}}?>
                                                                 
                                                                 </tbody>
-                                                            </table> -->
+                                                            </table>
                                                         </div>
 
                                                     <?php } ?>  
@@ -559,7 +567,6 @@ if (strlen($patient_id) >= 4) {
                                                                                        <a href="radiography?patientsque_id=<?php echo $npatientsque_id; ?>&id=<?php echo $patient_id ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-primary btn-sm">View Report</a>
                                                                                    
                                                                                    <?php  }?>
-
                                                                                  </td>
                                                                                 
                                                                                 </tr>
