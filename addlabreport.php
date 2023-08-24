@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'lab technician')) {
+if (($_SESSION['elcthospitallevel'] != 'lab technician')&& ($_SESSION['elcthospitallevel']!='lab technologist')) {
     header('Location:login.php');
 }
 $id = $_GET['id'];
@@ -226,6 +226,10 @@ $test = $_GET['test'];
                                                                 <input type="hidden" name="admission_id" value="<?php echo $admission_id; ?>">
                                                                 <input type="hidden" name="patientque_id" value="<?php echo $id; ?>">
                                                                 <input type="hidden" name="count" value="<?php echo $count; ?>">
+                                                                <div class="form-group col-lg-12">
+                                                                    <label>Report Title </label>
+                                                                    <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="" required/>
+                                                                </div>
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Test </label>
                                                                     <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>">
@@ -265,7 +269,10 @@ $test = $_GET['test'];
                                                                 <input type="hidden" name="patientque_id" value="<?php echo $id; ?>">
                                                                 <input type="hidden" name="count" value="<?php echo $count; ?>">
 
-
+                                                                <div class="form-group col-lg-12">
+                                                                    <label>Report Title </label>
+                                                                    <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="" required />
+                                                                </div>
                                                             <div class='row'>
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Test </label>
@@ -309,7 +316,10 @@ $test = $_GET['test'];
                                                                 <input type="hidden" name="admission_id" value="<?php echo $admission_id; ?>">
                                                                 <input type="hidden" name="patientque_id" value="<?php echo $id; ?>">
                                                                 <input type="hidden" name="count" value="<?php echo $count; ?>">
-
+                                                                <div class="form-group col-lg-12">
+                                                                    <label>Report Title </label>
+                                                                    <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="" required />
+                                                                </div>
 
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Test </label>
@@ -319,7 +329,7 @@ $test = $_GET['test'];
                                                                 <div class="form-group col-lg-6">
                                                                     <label>SI Unit </label>
                                                                     <input type="hidden" name="unit[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $measurement_id; ?>">
-                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $measurement; ?>" disabled>
+                                                                    <input type="text" class="form-control " placeholder="NIL" value="<?php echo $measurement; ?>" disabled>
                                                                 </div>                                                              
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Start Time</label>
@@ -329,23 +339,16 @@ $test = $_GET['test'];
                                                                     <input type="time" name="end[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter End Time" required>
                                                                 </div>
                                                                 <div class="form-group col-lg-12">
-                                                                    <label>Answers:</label>
+                                                                    <label>Result</label>
+                                                                    <select name="result[<?php echo $medicalservice_id; ?>]" class="form-control">
+                                                                        <option value="0" selected>Select Result</option>
                                                                     <?php 
                                                                       $getanwers = mysqli_query($con, "SELECT * FROM investigationselect where investigationtype_id = '$investigationtype_id'") or die(mysqli_error($con));
                                                                       while ($row22= mysqli_fetch_array($getanwers)){
                                                                         ?>
-                                                                         
-                                                                         <div class="form-check form-check-inline">
-                                                                             <label class="form-check-label" style="font-size:14px">
-                                                                                        <input class="form-check-input" type="radio" name="result[<?php echo $medicalservice_id; ?>]" id="inlineRadio1" value="<?php echo $row22['investigationselect_id'];; ?>">
-                                                                                        <?php echo $row22['answer']; ?>
-                                                                                    </label>
-                                                                                    </div>                                                                
-                                                                        
-                                                                        <?php
-                                                                      }
-                                                                    
-                                                                    ?>
+                                                                        <option value="<?php echo $row22['investigationselect_id']; ?>"><?php echo $row22['answer']; ?></option>                                                                                        
+                                                                        <?php } ?>
+                                                                    </select>
                                                                 </div>
                                                                 <div class="form-group"><label class="control-label">* More Details if any</label>
                                                                         <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details"></textarea>

@@ -205,7 +205,7 @@ $test= $_GET['test'];
                                 <td>
                                 <div class="col-lg-4">
                                         <address>
-                                            <strong>Order By: <?php echo $orderedby?></strong><br>
+                                            <strong>Requested By: <?php echo $orderedby?></strong><br>
                                             <strong>Conducted By : <span><?php echo $conductedby?></span></strong><br>
                                         </address>
                                     </div>
@@ -281,15 +281,14 @@ $test= $_GET['test'];
                                         <h5>CONCLUSION</h5>
                                         <p><?php echo $conculsion ?></p>
                                     </div>
-                                    <!-- <div class="col-lg-4">
-                                        <h5>REPORTED BY</h5>
-                                        <p><?php 
-                                        $getuser = mysqli_query($con, "SELECT * FROM staff WHERE staff_id ='$admin_id'") or die(mysqli_error($con));
-                                        $rowuser = mysqli_fetch_array($getuser);
-                                        $user = $rowuser['fullname'];
-                                        echo $user;
-                                        ?></p>
-                                        </div> -->
+                                    <div class="col-lg-4">
+                                        <h5>REQUESTED BY</h5>
+                                        <p><?php echo $orderedby; ?></p>
+                                        </div>
+                                        <div class="col-lg-4">
+                                        <h5>CONDUCTED BY</h5>
+                                        <p><?php echo $conductedby; ?></p>
+                                        </div>
                                     
                                    
 

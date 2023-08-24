@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
- if(($_SESSION['elcthospitallevel']!='lab technician')&& ($_SESSION['elcthospitallevel']!='lab technologist')){
+ if(($_SESSION['elcthospitallevel']!='lab technician') && ($_SESSION['elcthospitallevel']!='lab technologist')){
 header('Location:login.php');
    }
 ?>
@@ -11,7 +11,7 @@ header('Location:login.php');
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Cleared Patients</title>
+    <title>Pending Patients</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
      <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -50,14 +50,14 @@ include 'includes/header.php';
 				<div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Cleared Patients</h4>
+                            <h4>Pending Patients</h4>
                            
                         </div>
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="#">Cleared Patients</a></li>
+                            <li class="breadcrumb-item active"><a href="#">Pending Patients</a></li>
                         </ol>
                     </div>
                 </div>
@@ -65,7 +65,7 @@ include 'includes/header.php';
        		<div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">All cleared Patients</h4>
+                                <h4 class="card-title">All Pending Patients</h4>
                             </div>
                             <div class="card-body">
                             <div class="table-responsive">
@@ -93,7 +93,9 @@ include 'includes/header.php';
                                                              if (mysqli_num_rows($getadmission) >0){
                                 $row1= mysqli_fetch_array($getadmission);
                                $patient_id=$row1['patient_id'];
-                                     $getpatient=mysqli_query($con,"SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");  
+                                     $getpatient=mysqli_query($con,"SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
+                                     $getpendinglab = mysqli_query($con, "SELECT * FROM labreports where patientsque_id='$patientsque_id' AND admission_id='$admission_id' and approved=0  and status='1'") or die(mysqli_error($con));  
+                                     if (mysqli_num_rows($getpendinglab) > 0){
                                $row2= mysqli_fetch_array($getpatient);
                                 $firstname=$row2['firstname'];    
                             $secondname=$row2['secondname'];    
@@ -145,7 +147,7 @@ include 'includes/header.php';
                                          
                                         </tr>
                     
-                                        <?php }}}?>
+                                        <?php }}}}?>
                                         </tbody>     
                                     </table>     
                             </div>

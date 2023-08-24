@@ -177,7 +177,7 @@ include 'includes/header.php';
                                     </div>
                                     <div class="col-lg-4">
                                         <address>
-                                            <strong>Order By: <?php echo $orderedby?></strong><br>
+                                            <strong>Requested By: <?php echo $orderedby?></strong><br>
                                             <strong>Conducted By : <span><?php echo $conductedby?></span></strong><br>
                                         </address>
                                     </div>
@@ -242,6 +242,14 @@ include 'includes/header.php';
                                         <h5>CONCLUSION</h5>
                                         <p><?php echo $conculsion ?></p>
                                     </div>
+                                    <div class="col-lg-4">
+                                        <h5>REQUESTED BY</h5>
+                                        <p><?php echo $orderedby; ?></p>
+                                        </div>
+                                        <div class="col-lg-4">
+                                        <h5>CONDUCTED BY</h5>
+                                        <p><?php echo $conductedby; ?></p>
+                                        </div>
                                     <div>
                                         <a href="printreport.php?patientsque_id=<?php echo $patientsque_id; ?>&id=<?php echo $patient_id ?>&test=<?php echo $test; ?>" class="btn btn-primary">Print</a>
                                     </div>

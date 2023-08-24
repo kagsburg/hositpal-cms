@@ -156,6 +156,7 @@ $test= $_GET['test'];
         $medicalservice_id = $rowtitle['test'];
         $admin_id2 = $rowtitle['admin_id'];
         $approve = $rowtitle['approved'];
+        $title=$rowtitle['title'];
         $getservice = mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'");
         $row2 = mysqli_fetch_array($getservice);
         $medicalservice = $row2['investigationtype'];
@@ -230,6 +231,10 @@ $test= $_GET['test'];
                                 ?>
                                 <div class="basic-form">   
                                 <div class="row ">
+                                <div class="col-lg-12">
+                                        <p> <?php echo $title ?></p>
+                                    </div>
+                                    <h5>FINDINGS</h5>
                                 <table style="min-width: 845px">
                                 <tbody>
                                 <?php 

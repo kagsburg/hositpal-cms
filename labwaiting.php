@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
-if (($_SESSION['elcthospitallevel'] != 'lab technician')) {
+if (($_SESSION['elcthospitallevel'] != 'lab technician')&& ($_SESSION['elcthospitallevel']!='lab technologist')) {
     header('Location:login.php');
 }
 $mode = isset($_GET['mode']) ? $_GET['mode']: "";
@@ -145,13 +145,6 @@ if ($mode == '2'){
                                             <tr class="gradeA">
                                                 <td><?php echo date('Y-m-d',$timestamp); ?></td>
                                                 <td><?php echo $pin; ?></td>
-                                                <!-- <td>
-                                                    <a href="images/patients/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>"
-                                                        target="_blank">
-                                                        <img src="images/patients/thumbs/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>"
-                                                            width="60">
-                                                    </a>
-                                                </td> -->
                                                 <td><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?>
                                                 </td>
                                                 <td><?php echo $gender; ?></td>
@@ -226,6 +219,7 @@ if ($mode == '2'){
                                                 }else{
                                             ?>
                                             <tr class="gradeA">
+                                            <td><?php echo date('Y-m-d',$timestamp); ?></td>
                                                 <td><?php echo $patientsque_id; ?></td>
                                                 <!-- <td>
                                                     <a href="images/patients/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>"

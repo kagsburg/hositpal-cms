@@ -15,11 +15,12 @@ header('Location:login.php');
         $result=$_POST['result'];
         $admission_id = $_POST['admission_id'];
         $patientque_id = $_POST['patientque_id'];
+        $title=$_POST['title'];
         $unit=$_POST['unit'];
         $details=mysqli_real_escape_string($con,trim($_POST['details']));
     
-       mysqli_query($con,"INSERT INTO labreports(test,siunit,admission_id,start,end,result,patientsque_id, details,status,timestamp,admin_id,approved) 
-       VALUES('$investigationtype_id','$unit[$investigationtype_id]','$admission_id','$start[$investigationtype_id]','$end[$investigationtype_id]','$result[$investigationtype_id]','$patientque_id','$details',1,UNIX_TIMESTAMP(),'".$_SESSION['elcthospitaladmin']."',0)") or die(mysqli_error($con));
+       mysqli_query($con,"INSERT INTO labreports(title,test,siunit,admission_id,start,end,result,patientsque_id, details,status,timestamp,admin_id,approved) 
+       VALUES('$title[$investigationtype_id]','$investigationtype_id','$unit[$investigationtype_id]','$admission_id','$start[$investigationtype_id]','$end[$investigationtype_id]','$result[$investigationtype_id]','$patientque_id','$details',1,UNIX_TIMESTAMP(),'".$_SESSION['elcthospitaladmin']."',0)") or die(mysqli_error($con));
         $last_id = mysqli_insert_id($con);
         $count = $_POST['count'];
        mysqli_query($con,"UPDATE patientlabs SET status='3' WHERE patientlab_id ='$patientlab_id'") or die(mysqli_error($con));

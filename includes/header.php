@@ -767,6 +767,12 @@
             </a>
 
           </li>
+          <li>
+            <a class="ai-icon" href="labpending" aria-expanded="false">
+              <i class="fa fa-user-plus"></i>
+              <span class="nav-text">Pending Records</span>
+            </a>
+          </li>
           <!-- <li>
             <a class="ai-icon" href="clinicwaiting?ty=lab" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
@@ -801,6 +807,12 @@
             <a class="ai-icon" href="labwaiting" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Awaiting Patients</span>
+            </a>
+          </li>
+          <li>
+            <a class="ai-icon" href="labpending" aria-expanded="false">
+              <i class="fa fa-user-plus"></i>
+              <span class="nav-text">Pending Records</span>
             </a>
           </li>
           <!-- <li>

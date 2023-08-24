@@ -1,6 +1,6 @@
 <?php
 include 'includes/conn.php';
- if(($_SESSION['elcthospitallevel']!='pharmacist')){
+ if(($_SESSION['elcthospitallevel']!='lab technician')&& ($_SESSION['elcthospitallevel']!='lab technologist')){
 header('Location:login.php');
       }else{
 $id=$_GET['id'];

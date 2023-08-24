@@ -1,6 +1,7 @@
 <?php
 include 'includes/conn.php';
 include 'utils/patients.php';
+include 'utils/bills.php';
  if(!isset($_SESSION['elcthospitaladmin'])){
 header('Location:login.php');
    }
@@ -102,15 +103,17 @@ include 'includes/header.php';
                                $gender = $row2['gender'];
                                $insurancecompany = $row2['insurancecompany'];
                                $ext = $row2['ext'];
-                               $patient = get_patient_by_id($pdo, $patient_id);
-                               $paymentype = $patient["paymenttype"];
+                               $bill= get_bill_by_patient_only($pdo, $patient_id, 1);
+                               $paymentype = $bill[0]['payment_method'];
+                            //    $patient = get_patient_by_id($pdo, $patient_id);
+                            //    $paymentype = $patient["paymenttype"];
                                                     if ($paymentype == "insurance"){
-                                                        $insu=$patient['insurancecompany'];
+                                                        $insu=$row2['insurancecompany'];
                                                         $getinsurance = mysqli_query($con,"SELECT * FROM insurancecompanies WHERE insurancecompany_id ='$insu'")or die(mysqli_error($con));
                                                         $insur = mysqli_fetch_array($getinsurance);
                                                         $company=$insur['company'];
                                                     }else if ($paymentype == "credit"){
-                                                        $rst = $patient['creditclient'];
+                                                        $rst = $row2['creditclient'];
                                                         $getinsurance = mysqli_query($con, "SELECT * FROM creditclients where creditclient_id ='$rst'")or die(mysqli_error($con));
                                                         $cred= mysqli_fetch_array($getinsurance);
                                                         $company = $cred['clientname'];
@@ -136,6 +139,7 @@ include 'includes/header.php';
         $medicalservice_id = $rowtitle['test'];        
         $admin_id2 = $rowtitle['admin_id'];
         $approve = $rowtitle['approved'];
+        $title=$rowtitle['title'];
         $getservice = mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'");
         $row2 = mysqli_fetch_array($getservice);
         $medicalservice = $row2['investigationtype'];
@@ -148,13 +152,14 @@ include 'includes/header.php';
         $getuser = mysqli_query($con, "SELECT * FROM staff WHERE staff_id ='$admin_id2'") or die(mysqli_error($con));
         $rowuser = mysqli_fetch_array($getuser);
         $user2 = $rowuser['fullname'];
+
        }      
                                ?>
                     
                      <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Test(s) <?php echo $labtests ?></h4>
+                                <h4 class="card-title">Test <?php echo $labtests ?></h4>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -198,6 +203,10 @@ include 'includes/header.php';
                                 ?>
                                 <div class="basic-form">   
                                 <div class="row ">
+                                    <div class="col-lg-12">
+                                        <p> <?php echo $title ?></p>
+                                    </div>
+                                    <h5>FINDINGS</h5>
                                 <table style="min-width: 845px">
                                 <tbody>
                                 <?php 
