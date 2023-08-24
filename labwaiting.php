@@ -79,7 +79,8 @@ if ($mode == '2'){
                                     <table id="example6" class="display" style="min-width: 845px">
                                         <thead>
                                             <tr>
-                                                <th>Que ID</th>
+                                                <th>DATE</th>
+                                                <th>PIN</th>
                                                 
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
@@ -103,6 +104,7 @@ if ($mode == '2'){
                                                 $patientsque_id = $row['patientsque_id'];
                                                 $admission_id = $row['admission_id'];
                                                 $prev_id = $row['prev_id'];
+                                                $timestamp= $row['timestamp'];
 
                                                 $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id' and status ='1'");
                                                 if (mysqli_num_rows($getadmission) > 0){
@@ -141,7 +143,8 @@ if ($mode == '2'){
                                                 if ($mode2 == 'emergency' && $mode == 2) {
                                                     ?>
                                             <tr class="gradeA">
-                                                <td><?php echo $patientsque_id; ?></td>
+                                                <td><?php echo date('Y-m-d',$timestamp); ?></td>
+                                                <td><?php echo $pin; ?></td>
                                                 <!-- <td>
                                                     <a href="images/patients/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>"
                                                         target="_blank">

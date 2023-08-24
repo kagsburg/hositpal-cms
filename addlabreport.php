@@ -89,6 +89,13 @@ $test = $_GET['test'];
                     $thirdname = $row2['thirdname'];
                     $gender = $row2['gender'];
                     $ext = $row2['ext'];
+                    
+                    $bloodgroup = $row2['bloodgroup'];
+                    $dob = $row2['dob'];
+                    $weight = $row2['weight'];
+                    $height = ($row2['height'] != '') ? $row2['height'] : 'NIL';
+                    $temp = ($row2['temp'] != '') ? $row2['temp'] : 'NIL';
+                    $bp = ($row2['bp'] != '') ? $row2['bp'] : 'NIL';
                     if (strlen($patient_id) == 1) {
                         $pin = '000' . $patient_id;
                     }
@@ -113,6 +120,23 @@ $test = $_GET['test'];
                                     <img src="images/patients/thumbs/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>" alt="" class="img-fluid mt-4 mb-4 w-100">
                                     <h4 class="text-primary"><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?></h4>
 
+                                </div>
+                                <h4 class="text-primary mt-4 mb-4">Medical Information</h4>
+                                <div class="profile-blog mb-5">
+                                    <address>
+                                        <p>Age: <span><?php 
+                                        $dob1 = date("Y-m-d", strtotime($dob));
+                                        $dob2 = new DateTime($dob1);
+                                        $now = new DateTime();
+                                        $difference = $now->diff($dob2);
+                                        echo $difference->y;
+                                        ?></span></p>
+                                        <p>Blood Group : <span><?php echo $bloodgroup; ?></span></p>
+                                        <p>Weight (kgs)  : <span><?php echo $weight; ?></span></p>
+                                        <p>Height : <span><?php echo $height; ?></span></p>
+                                        <p>Temperature : <span><?php echo $temp; ?></span></p>
+                                        <p>Blood Pressure : <span><?php echo $bp; ?></span></p>
+                                    </address>
                                 </div>
                             </div>
                         </div>
