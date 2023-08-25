@@ -5,6 +5,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
   header('Location:login.php');
 }
 $id = $_GET['id'];
+$admission_id=$_GET['admission'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -101,12 +102,13 @@ $id = $_GET['id'];
                   <div class="row">
                     <?php
                     // $bill = get_bill_by_id($pdo, $id, 2);
-                    $bill=get_bill_by_patient_only($pdo, $id,2); 
+                    $bill=get_bill_by_patient_only($pdo, $id,$admission_id,2); 
+                    // print_r($bill);
                     if (empty($bill)) {
-                      $bill = get_bill_by_id($pdo, $id, 8);                      
+                      $bill = get_bill_by_patient_only($pdo, $id,$admission_id, 8);                      
                     }
                     $patient_id = $bill[0]['patient_id'];
-                    $admission_id = $bill[0]['admission_id'];
+                    // $admission_id = $bill[0]['admission_id'];
                     $type = $bill[0]['type'];
                     // $amount = $bill['amount'];
                     // $status = $bill['status'];

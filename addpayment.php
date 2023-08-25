@@ -86,7 +86,7 @@ $id = $_GET['q'];
                                     <div class="table-responsive">
                                         <?php
                                         // $bill = get_bill_by_id($pdo, $id, 1);  
-                                        $bill= get_bill_by_patient_only($pdo, $id, 1);  
+                                        $bill= get_bill_by_patient_only($pdo, $id,null, 1);  
                                                                         //   print_r($bill);
                                         // $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE  patientsque_id='$id'");
                                         // $row = mysqli_fetch_array($getque);
@@ -233,6 +233,7 @@ $id = $_GET['q'];
                                                         <?php }
                                                     }
                                                 } else if ($type == "radiography") {
+                                                    // print_r($bill_type_id);
                                                     $getorder = mysqli_query($con, "SELECT * FROM radioorders WHERE radioorder_id='$bill_type_id'");
                                                     if (mysqli_num_rows($getorder) > 0) {
                                                         $rowo = mysqli_fetch_array($getorder);
@@ -240,7 +241,9 @@ $id = $_GET['q'];
                                                         // $paymethod = $rowo['paymentmethod'];
                                                         $serviceorder_id = $rowo['radioorder_id'];
                                                         $getordered = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id='$serviceorder_id' AND status=1") or die(mysqli_error($con));
+                                                        print_r($getordered);
                                                         while ($row = mysqli_fetch_array($getordered)) {
+                                                            // print_r($row);
                                                             $id2 = $row['patientradio_id'];
                                                             $medicalservice_id = $row['radioinvestigationtype_id'];
                                                             $unitcharge = $row['charge'];
@@ -479,7 +482,7 @@ $id = $_GET['q'];
                                             // else if ($type == "admission")
                                                 // unset service session
                                                 unset($_SESSION['service']);
-                                            echo '<div class="alert alert-success"><a href="paymentinvoice?id=' . $id . '" target="_blank" class="btn btn-primary btn-xs"><i cclass="fa fa-print" aria-hidden="true"></i><strong>Print Invoice</strong></a></div>';
+                                            echo '<div class="alert alert-success"><a href="paymentinvoice?id=' . $id . '&admission='.$admission_id.'" target="_blank" class="btn btn-primary btn-xs"><i cclass="fa fa-print" aria-hidden="true"></i><strong>Print Invoice</strong></a></div>';
                                         }
                                     }
 

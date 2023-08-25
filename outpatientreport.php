@@ -1471,6 +1471,9 @@ if (strlen($patient_id) >= 4) {
                                                                                                         if (mysqli_num_rows($getlab) > 0){
                                                                                                             while($rowpharm3 = mysqli_fetch_array($getlab)){
                                                                                                                 $npatientsque_id = $rowpharm3['patientsque_id'];
+                                                                                                    $getpendinglab = mysqli_query($con, "SELECT * FROM labreports where patientsque_id='$npatientsque_id' AND admission_id='$admission_id' and approved!=0  and status='1'") or die(mysqli_error($con));  
+                                                                                                    if (mysqli_num_rows($getpendinglab) > 0){
+
                                                                                                         $doctorreports = mysqli_query($con, "SELECT * FROM laborders WHERE  patientsque_id='$npatientsque_id' ") or die(mysqli_error($con));
 
                                                                                                         // $getreports = mysqli_query($con, "SELECT * FROM labreports WHERE patientsque_id='$npatientsque_id'");
@@ -1502,7 +1505,10 @@ if (strlen($patient_id) >= 4) {
                                                                                                             </td>
                                                                                                             
                                                                                                             </tr>
-                                                                                                            <?php }}}}}}?>
+                                                                                                            <?php }}}}}else{
+                                                                                                                echo "<tr><td colspan='2'>No Lab Report</td></tr>";
+                                                                                                            }
+                                                                                                        }}?>
                                                                                             
                                                                                             </tbody>
                                                                                         </table>

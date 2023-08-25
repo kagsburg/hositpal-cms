@@ -140,14 +140,24 @@ function   get_bill_by_id(PDO $conn, $bill_id, $status=1)
     return $getbill;
 }
 
-function get_bill_by_patient_only(PDO $conn, $patient_id, $status=1)
+function get_bill_by_patient_only(PDO $conn, $patient_id,$admission_id=null, $status=1)
 {
     if ($status == 1){
-        $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND status IN (1,8)");
-        $stmt->execute([$patient_id]);
+        if ($admission_id == null){
+            $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND status IN (1,8)");
+            $stmt->execute([$patient_id]);
     }else{
-    $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND status=?");
-    $stmt->execute([$patient_id, $status]);
+        $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND admission_id=? AND status IN (1,8)");
+            $stmt->execute([$patient_id,$admission_id]);
+    }
+    }else{
+        if ($admission_id == null){
+            $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND status=?");
+            $stmt->execute([$patient_id, $status]);
+        }else{
+            $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=?AND admission_id=? AND status IN (2,8)");
+            $stmt->execute([$patient_id,$admission_id]);
+        }
     }
     $getbill = $stmt->fetchAll();
     return $getbill;
