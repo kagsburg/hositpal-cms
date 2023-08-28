@@ -193,7 +193,7 @@ $test = $_GET['test'];
                                                         $rowo = mysqli_fetch_array($getorder);
                                                         $timestamp = $rowo['timestamp'];
                                                         $serviceorder_id = $rowo['laborder_id'];
-                                                        $getordered = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id='$serviceorder_id' AND status in (1,2) and investigationtype_id='$test'") or die(mysqli_error($con));
+                                                        $getordered = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id='$serviceorder_id' AND status in (1,2)") or die(mysqli_error($con));
                                                         $count = mysqli_num_rows($getordered);
                                                             $row = mysqli_fetch_array($getordered);
                                                             $medicalservice_id = $row['investigationtype_id'];

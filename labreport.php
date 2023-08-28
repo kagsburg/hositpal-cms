@@ -103,7 +103,7 @@ include 'includes/header.php';
                                $gender = $row2['gender'];
                                $insurancecompany = $row2['insurancecompany'];
                                $ext = $row2['ext'];
-                               $bill= get_bill_by_patient_only($pdo, $patient_id, 1);
+                               $bill= get_bill_by_patient_only($pdo, $patient_id,null, 1);
                                $paymentype = $bill[0]['payment_method'];
                             //    $patient = get_patient_by_id($pdo, $patient_id);
                             //    $paymentype = $patient["paymenttype"];
@@ -188,11 +188,11 @@ include 'includes/header.php';
                                             <strong>Order By: <?php echo $user?></strong><br>
                                             <strong>Conducted By : <span><?php echo $user2?></span></strong><br>
                                             <?php if ($approve !=0){ ?>
-                                            <strong>Approved  By : <span><?php 
+                                            <strong>Authorized  By : <span><?php 
                                              $getuser = mysqli_query($con, "SELECT * FROM staff WHERE staff_id ='$approve'") or die(mysqli_error($con));
                                              $rowuser2 = mysqli_fetch_array($getuser);
                                              $user2 = $rowuser2['fullname'];
-                                             echo $user;
+                                             echo $user2;
                                                 ?></span></strong><br>
                                             <?php } ?>
                                         </address>
@@ -215,6 +215,8 @@ include 'includes/header.php';
                                     $medicalservice_id = $rowtitle['test'];
                                     $result=$rowtitle['result'];
                                     $unit_id=$rowtitle['siunit'];
+                                    $start= $rowtitle['start'];
+                                    $end= $rowtitle['end'];
                                     $details=$rowtitle['details'];
                                     $approve = $rowtitle['approved'];
                                     $admin_id2 = $rowtitle['admin_id'];
@@ -292,11 +294,20 @@ include 'includes/header.php';
                                             <h5>RESULT</h5>
                                             <p><?php echo $result ?></p>
                                         
-                                        </td><td>
-                                       
+                                        </td>
+                                        <td>
+                                            <h5>START TIME</h5>
+                                            <p><?php echo $start ?></p>
+                                        </td>
+                                        <td>
+                                            <h5>END TIME</h5>
+                                            <p><?php echo $end ?></p>
+                                        </td>
+                                        <!-- <td>
                                             <h5>SI Unit</h5>
                                             <p><?php echo $measurement ?></p>
-                                        </td>
+                                        </td> -->
+
                                         <?php if ($range == 1){?>
                                             <td>
                                             <h5>Flag</h5>
@@ -308,7 +319,7 @@ include 'includes/header.php';
                                         <?php } ?>
                                         <td>
                                             <h5>Details</h5>
-                                            <p><?php echo $result ?></p>
+                                            <p><?php echo $details ?></p>
                                         
                                         </td>
                                         </tr>
@@ -323,6 +334,7 @@ include 'includes/header.php';
                                         <td>
                                         <a href="printlab?patient_id=<?php echo $patient_id ?>&que=<?php echo $id?>&test=<?php echo $test ?>" target="_blank" class="btn btn-primary">Print</a>
                                             <?php if ($approve == 0 && ($_SESSION['elcthospitallevel'] == 'lab technologist')){?>
+                                                <a href="approvereport.php?patientsque_id=<?php echo $id; ?>&admission_id=<?php echo $admission_id ?>&test=<?php echo $test ?>" class="btn btn-primary">Edit</a>
                                         <a href="approvereport.php?patientsque_id=<?php echo $id; ?>&admission_id=<?php echo $admission_id ?>&test=<?php echo $test ?>" class="btn btn-primary">Approve</a>
                                         <?php } ?>
 

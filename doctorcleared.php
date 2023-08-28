@@ -81,7 +81,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                     <table id="example6" class="display" style="min-width: 845px">
                                         <thead>
                                             <tr>
-                                                <th>Que ID</th>
+                                                <th>PIN</th>
                                                 <th>Image</th>
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
@@ -97,6 +97,8 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];
                                                 $admission_id = $row['admission_id'];
+                                                $admintype = $row['admintype'];
+                                                
                                                 // check if patient is admitted 
                                                 $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE status=1 and admission_id='$admission_id'");
                                                 // if (mysqli_num_rows($getadmitted) > 0){
@@ -165,6 +167,18 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                 }
                                                 if (strlen($patient_id) >= 4) {
                                                     $pin = $patient_id;
+                                                }
+                                                // check if admin type is lab technician
+                                                if ($admintype == "lab technician") {
+                                                    $prev= mysqli_query($con,"SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('lab') and status='1' ") or die(mysqli_error($con));
+                                                    $prevrow = mysqli_fetch_array($prev);
+                                                    $patientqu= $prevrow['patientsque_id'];
+                                                    $getpendinglab = mysqli_query($con, "SELECT * FROM labreports where patientsque_id='$patientqu' AND admission_id='$admission_id' and approved=0  and status='1'") or die(mysqli_error($con));  
+                                                    if (mysqli_num_rows($getpendinglab) <= 0 ){
+                                                        
+                                                    }else{
+                                                        continue;
+                                                    }
                                                 }
                                             ?>
                                                 <tr class="gradeA">

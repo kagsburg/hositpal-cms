@@ -1,6 +1,7 @@
 <?php
 include 'includes/conn.php';
 include 'utils/patients.php';
+include 'utils/bills.php';
  if(!isset($_SESSION['elcthospitaladmin'])){
 header('Location:login.php');
    }
@@ -123,20 +124,21 @@ $test= $_GET['test'];
                                $insurancecompany = $row2['insurancecompany'];
                                $ext = $row2['ext'];
                                $patient = get_patient_by_id($pdo, $patient_id);
-                               $paymentype = $patient["paymenttype"];
-                                                    if ($paymentype == "insurance"){
-                                                        $insu=$patient['insurancecompany'];
-                                                        $getinsurance = mysqli_query($con,"SELECT * FROM insurancecompanies WHERE insurancecompany_id ='$insu'")or die(mysqli_error($con));
-                                                        $insur = mysqli_fetch_array($getinsurance);
-                                                        $company=$insur['company'];
-                                                    }else if ($paymentype == "credit"){
-                                                        $rst = $patient['creditclient'];
-                                                        $getinsurance = mysqli_query($con, "SELECT * FROM creditclients where creditclient_id ='$rst'")or die(mysqli_error($con));
-                                                        $cred= mysqli_fetch_array($getinsurance);
-                                                        $company = $cred['clientname'];
-                                                    }else{
-                                                        $company = "Cash";
-                                                    }
+                               $bill= get_bill_by_patient_only($pdo, $patient_id,null, 1);
+                               $paymentype = $bill[0]['payment_method'];
+                               if ($paymentype == "insurance"){
+                                $insu=$row2['insurancecompany'];
+                                $getinsurance = mysqli_query($con,"SELECT * FROM insurancecompanies WHERE insurancecompany_id ='$insu'")or die(mysqli_error($con));
+                                $insur = mysqli_fetch_array($getinsurance);
+                                $company=$insur['company'];
+                            }else if ($paymentype == "credit"){
+                                $rst = $row2['creditclient'];
+                                $getinsurance = mysqli_query($con, "SELECT * FROM creditclients where creditclient_id ='$rst'")or die(mysqli_error($con));
+                                $cred= mysqli_fetch_array($getinsurance);
+                                $company = $cred['clientname'];
+                            }else{
+                                $company = "Cash";
+                            }
 
                                                 if(strlen($patient_id)==1){
       $pin='000'.$patient_id;
@@ -176,7 +178,7 @@ $test= $_GET['test'];
                      <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Test(s) <?php echo $labtests ?></h4>
+                                <h4 class="card-title">Test <?php echo $labtests ?></h4>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -213,11 +215,11 @@ $test= $_GET['test'];
                                             <strong>Order By: <?php echo $user?></strong><br>
                                             <strong>Conducted By : <span><?php echo $user2?></span></strong><br>
                                             <?php if ($approve !=0){ ?>
-                                            <strong>Approved  By : <span><?php 
+                                            <strong>Authorized  By : <span><?php 
                                              $getuser = mysqli_query($con, "SELECT * FROM staff WHERE staff_id ='$approve'") or die(mysqli_error($con));
                                              $rowuser2 = mysqli_fetch_array($getuser);
                                              $user2 = $rowuser2['fullname'];
-                                             echo $user;
+                                             echo $user2;
                                                 ?></span></strong><br>
                                             <?php } ?>
                                         </address>
@@ -245,6 +247,8 @@ $test= $_GET['test'];
                                     $unit_id=$rowtitle['siunit'];
                                     $details=$rowtitle['details'];
                                     $approve = $rowtitle['approved'];
+                                    $start= $rowtitle['start'];
+                                    $end= $rowtitle['end'];
                                     $admin_id2 = $rowtitle['admin_id'];
                                     $getservice = mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'");
                                     $row2 = mysqli_fetch_array($getservice);
@@ -318,12 +322,19 @@ $test= $_GET['test'];
                                         
                                             <h5>RESULT</h5>
                                             <p><?php echo $result ?></p>
-                                        
-                                        </td><td>
-                                       
+                                        </td>
+                                        <td>
+                                            <h5>START TIME</h5>
+                                            <p><?php echo $start ?></p>
+                                        </td>
+                                        <td>
+                                            <h5>END TIME</h5>
+                                            <p><?php echo $end ?></p>
+                                        </td>
+                                        <!-- <td>
                                             <h5>SI Unit</h5>
                                             <p><?php echo $measurement ?></p>
-                                        </td>
+                                        </td> -->
                                         <?php if ($range == 1){?>
                                             <td>
                                             <h5>Flag</h5>
@@ -335,7 +346,7 @@ $test= $_GET['test'];
                                         <?php } ?>
                                         <td>
                                             <h5>Details</h5>
-                                            <p><?php echo $result ?></p>
+                                            <p><?php echo $details ?></p>
                                         
                                         </td>
                                         </tr>
@@ -355,9 +366,6 @@ $test= $_GET['test'];
                                         </tr>
 
                                         </table>
-                                    <!-- <div>
-                                        <a href="printreport.php?patientsque_id=<?php echo $patientsque_id; ?>&id=<?php echo $patient_id ?>" class="btn btn-primary">Print</a>
-                                    </div> -->
 
                                 </div>
                             </div>

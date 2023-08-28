@@ -241,7 +241,7 @@ $id = $_GET['q'];
                                                         // $paymethod = $rowo['paymentmethod'];
                                                         $serviceorder_id = $rowo['radioorder_id'];
                                                         $getordered = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id='$serviceorder_id' AND status=1") or die(mysqli_error($con));
-                                                        print_r($getordered);
+                                                        // print_r($getordered);
                                                         while ($row = mysqli_fetch_array($getordered)) {
                                                             // print_r($row);
                                                             $id2 = $row['patientradio_id'];

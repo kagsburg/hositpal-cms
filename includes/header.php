@@ -309,7 +309,7 @@
             </a>
             <ul aria-expanded="false">
             <li><a href="doctorwaiting?mode=2">Emergency List</a></li>
-              <li><a href="doctorwaiting?mode=1">Waiting List</a></li>
+              <li><a href="doctorwaiting?mode=1">Awaiting List</a></li>
               <li><a href="doctorcleared">Patient With Results</a></li>
             </ul>
           </li>
@@ -327,7 +327,7 @@
                   <span class="nav-text">Operations</span>
                 </a>
                 <ul aria-expanded="false">
-                  <li><a href="operationswaiting">Awaiting Patients</a></li>
+                  <li><a href="operationswaiting">Awaiting List</a></li>
                   <li><a href="operationscleared">Operated Patients</a></li>
                 </ul>
               </li>
@@ -562,7 +562,7 @@
               <span class="nav-text">Outpatients</span>
             </a>
             <ul aria-expanded="false">
-                   <li><a href="waitingpatients">Waiting List </a></li>
+                   <li><a href="waitingpatients">Awaiting List </a></li>
                   <li><a href="outpatients">Outpatients</a></li>
               <!-- <li><a href="registrationrequests">Triage</a></li> -->
             </ul>
@@ -587,7 +587,7 @@
             <ul aria-expanded="false">
               <li><a href="addclinicclient">Add Client</a></li>
               <li><a href="clinicclients">Registered List</a></li>
-              <li><a href="clinicclients?ty=1">Waiting List</a></li>
+              <li><a href="clinicclients?ty=1">Awaiting List</a></li>
               <li><a href="clinicwaiting?ty=medical_service">Attended List</a></li>
             </ul>
           </li>
@@ -625,7 +625,7 @@
               <span class="nav-text">Outpatients</span>
             </a>
             <ul aria-expanded="false">
-                   <li><a href="waitingpatients">Waiting List </a></li>
+                   <li><a href="waitingpatients">Awaiting List </a></li>
                   <li><a href="outpatients">Outpatients</a></li>
             </ul>
           </li>         
@@ -703,7 +703,7 @@
             </a>
             <ul aria-expanded="false">
             <li><a href="doctorwaiting?mode=2">Emergency List</a></li>
-              <li><a href="doctorwaiting?mode=1">Waiting List</a></li>
+              <li><a href="doctorwaiting?mode=1">Awaiting List</a></li>
               <li><a href="doctorcleared">Patient With Results</a></li>
             </ul>
           </li>
@@ -763,14 +763,14 @@
           <li>
             <a class="ai-icon" href="labwaiting" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
-              <span class="nav-text">Waiting Patients</span>
+              <span class="nav-text">Awaiting List</span>
             </a>
 
           </li>
           <li>
             <a class="ai-icon" href="labpending" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
-              <span class="nav-text">Pending Records</span>
+              <span class="nav-text">Pending Results</span>
             </a>
           </li>
           <!-- <li>
@@ -806,13 +806,13 @@
           <li>
             <a class="ai-icon" href="labwaiting" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
-              <span class="nav-text">Awaiting Patients</span>
+              <span class="nav-text">Awaiting List</span>
             </a>
           </li>
           <li>
             <a class="ai-icon" href="labpending" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
-              <span class="nav-text">Pending Records</span>
+              <span class="nav-text">Pending Results</span>
             </a>
           </li>
           <!-- <li>
@@ -871,7 +871,7 @@
           <li>
             <a class="ai-icon" href="radiowaiting" aria-expanded="false">
               <i class="fa fa-user-plus"></i>
-              <span class="nav-text">Awaiting Patients</span>
+              <span class="nav-text">Awaiting List</span>
             </a>
 
           </li>
@@ -920,7 +920,7 @@
               <span class="nav-text">OutPatients</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="pharmacywaiting">Waiting List</a></li>
+              <li><a href="pharmacywaiting">Awaiting List</a></li>
               <li><a href="outpatients">Outpatients</a></li>
             </ul>
           </li>
@@ -1072,7 +1072,7 @@
               <span class="nav-text">Patient Management</span>
             </a>
             <ul aria-expanded="false">
-              <li><a href="anaethwaiting">Waiting Patients</a></li>
+              <li><a href="anaethwaiting">Awaiting List</a></li>
               <li><a href="anaeoperated">Operated Patients</a></li>
             </ul>
           </li>
