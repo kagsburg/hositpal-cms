@@ -137,33 +137,33 @@ $investigation = $row1['investigationtype'];
                                             <label class="form-check-label">Low Range</label>
                                             <div class="mb-3">
                                                 <label for="lowX">X: <span id="low"></span></label>
-                                                <input type="number"  value="<?php echo $lowx ?>" class="form-control" id="lowX" name="lowx">
+                                                <input type="number" step="0.01" value="<?php echo $lowx ?>" class="form-control" id="lowX" name="lowx">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="lowY">Y:</label>
-                                                <input type="number" value="<?php echo $lowy ?>" class="form-control" id="lowY" name="lowy">
+                                                <input type="number"  step="0.01" value="<?php echo $lowy ?>" class="form-control" id="lowY" name="lowy">
                                             </div>
                                             </div>
                                             <div class="col">
                                             <label class="form-check-label">Normal Range</label>
                                             <div class="mb-3">
                                                 <label for="normalX">X:</label>
-                                                <input type="number" value="<?php echo $normalx ?>" class="form-control" id="normalX" name="normalx">
+                                                <input type="number" step="0.01" value="<?php echo $normalx ?>" class="form-control" id="normalX" name="normalx">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="normalY">Y:</label>
-                                                <input type="number" value="<?php echo $normaly ?>" class="form-control" id="normalY" name="normaly">
+                                                <input type="number" step="0.01" value="<?php echo $normaly ?>" class="form-control" id="normalY" name="normaly">
                                             </div>
                                             </div>
                                             <div class="col">
                                             <label class="form-check-label">High Range</label>
                                             <div class="mb-3">
                                                 <label for="highX">X:</label>
-                                                <input type="number" value="<?php echo $highx ?>" class="form-control"  id="highX" name="highx">
+                                                <input type="number"  step="0.01" value="<?php echo $highx ?>" class="form-control"  id="highX" name="highx">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="highY">Y:</label>
-                                                <input type="number" value="<?php echo $highy ?>" class="form-control" id="highY" name="highy">
+                                                <input type="number"  step="0.01" value="<?php echo $highy ?>" class="form-control" id="highY" name="highy">
                                             </div>
                                             </div>
                                         </div>

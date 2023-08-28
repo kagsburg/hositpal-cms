@@ -1023,7 +1023,13 @@
             <ul aria-expanded="false">
               <li><a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">View Stock</a>
               <ul>
-                <li><a href="stock?ty=Medicine">Medicine</a></li>
+                <li><a href="javascript:void()" class="has-arrow ai-icon">Medicine</a>
+                    <ul aria-expanded="false">
+                      <li><a href="stock?ty=Medicine">All</a></li>
+                      <li><a href="stockexp?expire=1&ty=Medicine">About to Expire</a></li>
+                      <li><a href="stockexp?expire=2&ty=Medicine">Expired List</a></li>
+                    </ul>
+              </li>
                 <li><a href="stock?ty=Medical">Medical Items</a></li>
                 <li><a href="stock?ty=Non Medical">Non Medical Items</a></li>
               </ul>

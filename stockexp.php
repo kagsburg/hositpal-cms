@@ -5,8 +5,8 @@ if (($_SESSION['elcthospitallevel'] != 'admin') && (($_SESSION['elcthospitalleve
 }
 $ty = isset($_GET['ty']) ? $_GET['ty']: "";
 $type = mysqli_real_escape_string($con, $ty);
-$store = isset($_GET['store']) ? $_GET['store'] : "";
-$store = mysqli_real_escape_string($con, $store);
+$expire = isset($_GET['expire']) ? $_GET['expire'] : "";
+$expire = mysqli_real_escape_string($con, $expire);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +15,7 @@ $store = mysqli_real_escape_string($con, $store);
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Stock</title>
+    <title>Expired Stock</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -55,33 +55,20 @@ $store = mysqli_real_escape_string($con, $store);
                 <div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Stock</h4>
+                            <h4>Expired Stock</h4>
 
                         </div>
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="items">Items</a></li>
+                            <li class="breadcrumb-item active"><a href="javascript:void()">Items</a></li>
                         </ol>
                     </div>
                 </div>
                 <div class="row">
                 <div class="col-lg-4 mb-3">
                         
-                        <select name="store" id="ty" class="form-control">
-                            <option value="">Filter by Store</option>
-                            <?php 
-                            $getstores = mysqli_query($con, "SELECT * FROM stores WHERE status=1");
-                            while ($row = mysqli_fetch_array($getstores)) {
-                                $store_id = $row['store_id'];
-                                $storename = $row['store'];
-                                ?>
-                                <option value="<?php echo $store_id; ?>" <?php if ($store == $store_id) echo "selected"; ?>><?php echo $storename; ?></option>
-                            <?php } ?>
-                            <!-- <option value="Medical" <?php if ($ty == "Medical") echo "selected"; ?>>Medical</option>
-                            <option value="Non Medical" <?php if ($ty == "Non Medical") echo "selected"; ?>>Non Medical</option> -->
-                        </select>
                         <!-- add print button -->
                         <!-- <a href="" class="btn btn-primary" >Print</a> -->
                         
@@ -158,9 +145,45 @@ $store = mysqli_real_escape_string($con, $store);
                                                 // check if item is expired 
                                                 $today = date('Y-m-d');
                                                 $expiry = $row3['expiry'];
-                                                if ($expiry < $today){
-                                                    $instock = 0;
-                                                }
+                                               
+                                                // check those left with 30 days to expire
+                                                if ($expire == "1"){
+                                                $date1 = new DateTime($today);
+                                                $date2 = new DateTime($expiry);
+                                                $diff = $date1->diff($date2);
+                                                $diff = $diff->format("%a");
+                                                if ($diff <=30){                                                
+                                                ?>
+                                                <tr class="gradeA">
+                                                    <td><?php echo 'ELVD-' . $inventoryitem_id; ?></td>
+                                                    <td><?php echo $itemname; ?></td>
+                                                    <td><?php echo $category; ?></td>
+                                                    <td><?php echo $instock; ?></td>
+                                                    <td><?php echo $row3['expiry']; ?></td>
+                                                    <td><?php echo $measurement; ?></td>
+                                                    <th><?php
+                                                        if ($totalstock <= 100) {
+                                                            echo '<div class="text-danger">LOW</div>';
+                                                        } else if ($totalstock>=101 && $totalstock<=500) {
+                                                            echo '<div class="text-warning">MED</div>';
+                                                        } 
+                                                        else {
+                                                            echo 'HIGH';
+                                                        }
+                                                        ?></th>
+
+                                                    <td>
+                                                        <a href="itemstock?id=<?php echo $inventoryitem_id; ?>&ty=<?php echo $type; ?>" class="btn btn-primary btn-xs">Details</a>
+
+                                                    </td>
+                                                </tr>
+
+                                                <?php
+                                            }}else if ($expire == "2"){
+                                                if ($expiry > $today){
+                                                    continue;
+                                                 }
+                                            
 
                                                 if ($instock > 0){                                                    
                                             ?>
@@ -188,7 +211,7 @@ $store = mysqli_real_escape_string($con, $store);
                                                     </td>
                                                 </tr>
 
-                                            <?php }} ?>
+                                                <?php }} }?>
                                         </tbody>
                                     </table>
                                 </div>

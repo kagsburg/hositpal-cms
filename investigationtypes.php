@@ -266,33 +266,33 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                     <label class="form-check-label">Low Range</label>
                                                     <div class="mb-3">
                                                         <label for="lowX">X: <span id="low"></span></label>
-                                                        <input type="number"  value="" class="form-control" id="lowX" name="lowX1[]">
+                                                        <input type="number"  step="0.01"  value="" class="form-control" id="lowX" name="lowX1[]">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="lowY">Y:</label>
-                                                        <input type="number" class="form-control" id="lowY" name="lowY1[]">
+                                                        <input type="number"  step="0.01" class="form-control" id="lowY" name="lowY1[]">
                                                     </div>
                                                     </div>
                                                     <div class="col">
                                                     <label class="form-check-label">Normal Range</label>
                                                     <div class="mb-3">
                                                         <label for="normalX">X:</label>
-                                                        <input type="number" class="form-control" id="normalX" name="normalX1[]">
+                                                        <input type="number" step="0.01" class="form-control" id="normalX" name="normalX1[]">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="normalY">Y:</label>
-                                                        <input type="number" class="form-control" id="normalY" name="normalY1[]">
+                                                        <input type="number"  step="0.01" class="form-control" id="normalY" name="normalY1[]">
                                                     </div>
                                                     </div>
                                                     <div class="col">
                                                     <label class="form-check-label">High Range</label>
                                                     <div class="mb-3">
                                                         <label for="highX">X:</label>
-                                                        <input type="number" class="form-control"  id="highX" name="highX1[]">
+                                                        <input type="number"  step="0.01" class="form-control"  id="highX" name="highX1[]">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="highY">Y:</label>
-                                                        <input type="number" class="form-control" id="highY" name="highY1[]">
+                                                        <input type="number" step="0.01" class="form-control" id="highY" name="highY1[]">
                                                     </div>
                                                     </div>
                                                 </div>
@@ -316,33 +316,33 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             <label class="form-check-label">Low Range</label>
                                             <div class="mb-3">
                                                 <label for="lowX">X: <span id="low"></span></label>
-                                                <input type="number"  value="" class="form-control" id="lowX" name="lowX">
+                                                <input type="number"  step="0.01"  value="" class="form-control" id="lowX" name="lowX">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="lowY">Y:</label>
-                                                <input type="number" class="form-control" id="lowY" name="lowY">
+                                                <input type="number"  step="0.01" class="form-control" id="lowY" name="lowY">
                                             </div>
                                             </div>
                                             <div class="col">
                                             <label class="form-check-label">Normal Range</label>
                                             <div class="mb-3">
                                                 <label for="normalX">X:</label>
-                                                <input type="number" class="form-control" id="normalX" name="normalX">
+                                                <input type="number"  step="0.01" class="form-control" id="normalX" name="normalX">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="normalY">Y:</label>
-                                                <input type="number" class="form-control" id="normalY" name="normalY">
+                                                <input type="number"   step="0.01" class="form-control" id="normalY" name="normalY">
                                             </div>
                                             </div>
                                             <div class="col">
                                             <label class="form-check-label">High Range</label>
                                             <div class="mb-3">
                                                 <label for="highX">X:</label>
-                                                <input type="number" class="form-control"  id="highX" name="highX">
+                                                <input type="number"   step="0.01" class="form-control"  id="highX" name="highX">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="highY">Y:</label>
-                                                <input type="number" class="form-control" id="highY" name="highY">
+                                                <input type="number"   step="0.01" class="form-control" id="highY" name="highY">
                                             </div>
                                             </div>
                                         </div>
@@ -355,7 +355,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                         <div class='subobj23' style="display: none;">
                                             <div class='row'>
                                                 
-                                                <div class="form-group col-lg-5"><label class="control-label">Answers</label>
+                                                <div class="form-group col-lg-5"><label class="control-label">Results</label>
                                                     <input type="text" name='answers[]' class="form-control" placeholder="Enter Measurement Type Answers">
                                                 </div>
 
@@ -619,33 +619,33 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                     <label class="form-check-label">Low Range</label>
                                                     <div class="mb-3">
                                                         <label for="lowX">X: <span id="low"></span></label>
-                                                        <input type="number"  value="" class="form-control" id="lowX" name="lowX1[]">
+                                                        <input type="number"   step="0.01" value="" class="form-control" id="lowX" name="lowX1[]">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="lowY">Y:</label>
-                                                        <input type="number" class="form-control" id="lowY" name="lowY1[]">
+                                                        <input type="number"  step="0.01" class="form-control" id="lowY" name="lowY1[]">
                                                     </div>
                                                     </div>
                                                     <div class="col">
                                                     <label class="form-check-label">Normal Range</label>
                                                     <div class="mb-3">
                                                         <label for="normalX">X:</label>
-                                                        <input type="number" class="form-control" id="normalX" name="normalX1[]">
+                                                        <input type="number"  step="0.01" class="form-control" id="normalX" name="normalX1[]">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="normalY">Y:</label>
-                                                        <input type="number" class="form-control" id="normalY" name="normalY1[]">
+                                                        <input type="number"  step="0.01" class="form-control" id="normalY" name="normalY1[]">
                                                     </div>
                                                     </div>
                                                     <div class="col">
                                                     <label class="form-check-label">High Range</label>
                                                     <div class="mb-3">
                                                         <label for="highX">X:</label>
-                                                        <input type="number" class="form-control"  id="highX" name="highX1[]">
+                                                        <input type="number"   step="0.01" class="form-control"  id="highX" name="highX1[]">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="highY">Y:</label>
-                                                        <input type="number" class="form-control" id="highY" name="highY1[]">
+                                                        <input type="number"  step="0.01" class="form-control" id="highY" name="highY1[]">
                                                     </div>
                                                     </div>
                                                 </div>
