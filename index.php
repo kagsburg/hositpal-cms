@@ -121,6 +121,119 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 				}
 				
 				?>
+				<?php 
+				  if ($_SESSION['elcthospitallevel']=='lab technologist'){
+					?>
+					<div class="col-xl-6 col-xxl-12">
+					<div class="row">
+						<div class="col-xl-6 col-lg-6 col-sm-6">
+							<div class="widget-stat card bg-danger">
+								<div class="card-body  p-4">
+									<div class="media">
+										<span class="mr-3">
+											<i class="fa fa-user-plus"></i>
+										</span>
+										<div class="media-body text-white text-right">
+											<p class="mb-1">Awaiting Patients</p>
+											<?php
+											$count2=0;
+											$getque = mysqli_query($con, "SELECT * FROM patientsque WHERE  room='lab' AND status=0");
+                                            while ($row = mysqli_fetch_array($getque)) {
+                                                $patientsque_id = $row['patientsque_id'];
+                                                $admission_id = $row['admission_id'];
+                                                $prev_id = $row['prev_id'];
+                                                $timestamp= $row['timestamp'];
+
+                                                $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id' and status ='1'");
+                                                if (mysqli_num_rows($getadmission) > 0){
+													$count2++;
+												}
+											}
+											?>
+											<h3 class="text-white"><?php echo $count2; ?></h3>											
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-xl-6 col-lg-6 col-sm-6">
+							<div class="widget-stat card bg-success">
+								<div class="card-body p-4">
+									<div class="media">
+										<span class="mr-3">
+											<i class="fa fa-home"></i>
+										</span>
+										<div class="media-body text-white text-right">
+											<p class="mb-1">Pending Results</p>
+											<?php
+											$count=0;	
+											$getque=mysqli_query($con,"SELECT * FROM patientsque WHERE payment IN(1,0) AND room='lab' AND status in (1,0)");  
+                                    if (mysqli_num_rows($getque) >0){
+                                        while ($row = mysqli_fetch_array($getque)) {
+                                          $patientsque_id=$row['patientsque_id'];
+                                          $admission_id=$row['admission_id'];
+                                          $room=$row['room'];
+                                                             $getadmission= mysqli_query($con,"SELECT * FROM admissions WHERE admission_id='$admission_id' and status=1");
+                                                             if (mysqli_num_rows($getadmission) >0){
+                                $row1= mysqli_fetch_array($getadmission);
+                               $patient_id=$row1['patient_id'];
+                                     $getpatient=mysqli_query($con,"SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
+                                     $getpendinglab = mysqli_query($con, "SELECT * FROM labreports where patientsque_id='$patientsque_id' AND admission_id='$admission_id' and approved=0  and status='1'") or die(mysqli_error($con));  
+                                     if (mysqli_num_rows($getpendinglab) > 0){
+										$count++;
+									 }
+									}
+								}
+							}
+											?>
+											<h3 class="text-white"><?php echo $count; ?></h3>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-xl-6 col-lg-6 col-sm-6">
+							<div class="widget-stat card bg-info">
+								<div class="card-body p-4">
+									<div class="media">
+										<span class="mr-3">
+											<i class="fa fa-users"></i>
+										</span>
+										<div class="media-body text-white text-right">
+											<p class="mb-1">Total Employees</p>
+											<?php
+											$getstaff = mysqli_query($con, "SELECT * FROM staff WHERE status=1 and (role='lab technician' or role='lab technologist') ");
+											?>
+											<h3 class="text-white"><?php echo mysqli_num_rows($getstaff); ?></h3>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-xl-6 col-lg-6 col-sm-6">
+							<div class="widget-stat card bg-secondary">
+								<div class="card-body p-4">
+									<div class="media">
+										<span class="mr-3">
+											<i class="fa fa-medkit"></i>
+										</span>
+										<div class="media-body text-white text-right">
+											<p class="mb-1">Lab Measurements</p>
+											<?php
+											 $gettypes =  mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1");
+											?>
+											<h3 class="text-white"><?php echo mysqli_num_rows($gettypes); ?></h3>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+					 
+					 <?php
+				  }else{
+					?>
 				<div class="col-xl-6 col-xxl-12">
 					<div class="row">
 						<div class="col-xl-6 col-lg-6 col-sm-6">
@@ -214,8 +327,8 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 							</div>
 						</div>
 					</div>
-
 				</div>
+				<?php }?>
 			</div>
 		</div>
 	</div>

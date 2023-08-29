@@ -92,9 +92,9 @@ include 'includes/header.php';
                             $bloodgroup = $row2['bloodgroup'];
                             $dob = $row2['dob'];
                             $weight = $row2['weight'];
-                            $height = ($row2['height'] != '') ? $row2['height'] : 'NIL';
-                            $temp = ($row2['temp'] != '') ? $row2['temp'] : 'NIL';
-                            $bp = ($row2['bp'] != '') ? $row2['bp'] : 'NIL';
+                            $height = ($row2['height'] != '') ? $row2['height'] : 'N/A';
+                            $temp = ($row2['temp'] != '') ? $row2['temp'] : 'N/A';
+                            $bp = ($row2['bp'] != '') ? $row2['bp'] : 'N/A';
                             $clinic = $row2['clinic'];
                                                 if(strlen($patient_id)==1){
                                             $pin='000'.$patient_id;

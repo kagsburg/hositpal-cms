@@ -14,7 +14,7 @@ $getpatientque = mysqli_query($con,"SELECT * FROM `patientsque`WHERE admission_i
 $row = mysqli_fetch_array($getpatientque);
 $queid=$row['patientsque_id'];
 // add patient to patient history
-$addtohistory = mysqli_query($con,"INSERT INTO patienthistory (admission_id,patient_id,patientque_id,admitted_id,status,timestamp,admin_id) VALUES ('$id','$pat','$queid','','1','UNIX_TIMESTAMP()','" . $_SESSION['elcthospitaladmin'] . "')") or die(mysqli_error($con));
+$addtohistory = mysqli_query($con,"INSERT INTO patienthistory (admission_id,patient_id,patientque_id,admitted_id,status,timestamp,admin_id) VALUES ('$id','$pat','$queid','','1',UNIX_TIMESTAMP(),'" . $_SESSION['elcthospitaladmin'] . "')") or die(mysqli_error($con));
 // update patient status 
 // $changepatient = mysqli_query($con,"UPDATE patients SET level='4' WHERE patient_id='$pat'") or die(mysqli_error($con));
 #get the patient invoice

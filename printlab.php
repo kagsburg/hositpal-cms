@@ -92,6 +92,7 @@ $test= $_GET['test'];
                       <!-- <abbr title="Phone">P:</abbr> +255 28 250 0885 -->
                     </address>
                 </div>
+                <hr>
                 <div class="row">
                      <?php
                                   $getque=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'");  
@@ -124,7 +125,7 @@ $test= $_GET['test'];
                                $insurancecompany = $row2['insurancecompany'];
                                $ext = $row2['ext'];
                                $patient = get_patient_by_id($pdo, $patient_id);
-                               $bill= get_bill_by_patient_only($pdo, $patient_id,null, 1);
+                               $bill= get_bill_by_patient_only($pdo, $patient_id,$admission_id, 2);
                                $paymentype = $bill[0]['payment_method'];
                                if ($paymentype == "insurance"){
                                 $insu=$row2['insurancecompany'];
@@ -182,22 +183,16 @@ $test= $_GET['test'];
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <table style="min-width: 845px">
-
+                                    <table class="table table-bordered" style="min-width: 845px">
+                                        <tbody>
                                     <tr>
                                         <td>
                                         <div class="">
                                         <address>
+                                        <strong>Date: <?php echo date('Y-m-d',$report_date); ?> </strong><br>
+                                        <strong>PIN #: <?php echo $pin ?> </strong><br>
                                         <strong>Names:<?php echo $fullname ?></strong><br>
                                             <strong>Gender:<?php echo $gender ?> </strong><br>
-                                            <strong>PIN #: <?php echo $pin ?> </strong>
-                                        </address>
-                                    </div>
-                                        </td>
-                                        <td>
-                                        <div class="">
-                                        <address>
-                                            <strong>Sponsor: <?php echo $company?></strong><br>
                                             <strong>Age: <span><?php 
                                         $dob1 = date("Y-m-d", strtotime($dob));
                                         $dob2 = new DateTime($dob1);
@@ -205,9 +200,14 @@ $test= $_GET['test'];
                                         $difference = $now->diff($dob2);
                                         echo $difference->y;
                                         ?></span>  </strong><br>
-                                            <strong>Date: <?php echo date('Y-m-d',$report_date); ?> </strong>
                                         </address>
                                     </div>
+                                        </td>
+                                        <td>
+                                        <address>
+                                            <strong>Sponsor: <?php echo $company?></strong>
+
+                                        </address>
                                         </td>
                                         <td>
                                         <div class="">
@@ -226,6 +226,7 @@ $test= $_GET['test'];
                                     </div>
                                         </td>
                                     </tr>
+                                    </tbody>
                                     </table>
                                 </div>
                                 <?php 
@@ -233,11 +234,22 @@ $test= $_GET['test'];
                                 ?>
                                 <div class="basic-form">   
                                 <div class="row ">
+                                <div class="col-lg-12" style="
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;">
+                                    <h3 >TEST DETAILS</h3>
+                                    </div>
                                 <div class="col-lg-12">
                                         <p> <?php echo $title ?></p>
                                     </div>
-                                    <h5>FINDINGS</h5>
-                                <table style="min-width: 845px">
+                                    <div class="col-lg-12 "style="
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;">
+                                        <h5>FINDINGS</h5>
+                                    </div>
+                                <table class="table table-bordered" style="min-width: 845px">
                                 <tbody>
                                 <?php 
                                 $getreport = mysqli_query($con, "SELECT * FROM labreports WHERE status=1 and admission_id='$admission_id'and test='$test'") or die(mysqli_error($con));
@@ -258,9 +270,8 @@ $test= $_GET['test'];
                                                             $has_answer = $row2['has_answers'];
                                                             $getunit =  mysqli_query($con, "SELECT * FROM labunits WHERE status=1 AND measurement_id='$unit_id'");
                                                             if (mysqli_num_rows($getunit) == 0) {
-                                                                $measurement = "";
+                                                                $measurement = "N/A";
                                                             }else{
-                
                                                                 $row1 =  mysqli_fetch_array($getunit);
                                                                 $measurement_id = $row1['measurement_id'];
                                                                 $measurement = $row1['measurement'];
@@ -299,7 +310,12 @@ $test= $_GET['test'];
                                                                     }elseif ($result >= $highx && $result <= $highy) {
                                                                         $interval = $highx .' - '.$highy;
                                                                         $flag = 'H';
-                                                                    }else{
+                                                                    }else if ($result > $highy) {
+                                                                        $interval = $highx .' - '.$highy;
+                                                                        $result = "<span class='text-danger'>".$result."</span>";
+                                                                        $flag = 'H';
+                                                                    }
+                                                                    else{
                                                                         $interval = $lowx .' - '.$lowy;
                                                                         $result = "<span class='text-danger'>".$result."</span>";
                                                                         $flag = 'N/A';
@@ -331,21 +347,21 @@ $test= $_GET['test'];
                                             <h5>END TIME</h5>
                                             <p><?php echo $end ?></p>
                                         </td>
-                                        <!-- <td>
+                                        <td>
                                             <h5>SI Unit</h5>
                                             <p><?php echo $measurement ?></p>
-                                        </td> -->
+                                        </td>
                                         <?php if ($range == 1){?>
                                             <td>
                                             <h5>Flag</h5>
                                             <p><?php echo $flag ?></p>
                                         </td><td>
                                             <h5>RefInterval</h5>
-                                            <p><?php echo $flag ?></p>
+                                            <p><?php echo $interval ?></p>
                                         </td>
                                         <?php } ?>
                                         <td>
-                                            <h5>Details</h5>
+                                            <h5>Conclusion</h5>
                                             <p><?php echo $details ?></p>
                                         
                                         </td>

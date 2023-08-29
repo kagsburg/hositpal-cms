@@ -216,7 +216,7 @@ $admission = $_GET['admission'];
                                                         $serviceorder_id = $rowo['laborder_id'];
                                                         $getordered = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id='$serviceorder_id' AND status=1") or die(mysqli_error($con));
                                                         while ($row = mysqli_fetch_array($getordered)) {
-                                                            $id2 = $row['patientlab_id'];
+                                                            $id3 = $row['patientlab_id'];
                                                             $medicalservice_id = $row['investigationtype_id'];
                                                             $unitcharge = $row['charge'];
                                                             $total = $total + $unitcharge;
@@ -226,7 +226,7 @@ $admission = $_GET['admission'];
 
                                                         ?>
                                                             <tr>
-                                                            <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-id="<?php echo $id2; ?>" name="service[]" value="<?php echo $id2; ?>_<?php echo $unitcharge ?>" ></td>
+                                                            <td><input type="checkbox" class="selectcheck" id="select<?php echo $id3; ?>" data-id="<?php echo $id3; ?>" name="service[]" value="<?php echo $id3; ?>_<?php echo $unitcharge ?>" ></td>
                                                                 <td><?php echo $room; ?></td>
                                                                 <td><?php echo $medicalservice; ?></td>
                                                                 <td><?php echo $unitcharge; ?></td>

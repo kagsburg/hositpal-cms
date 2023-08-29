@@ -1,8 +1,5 @@
 <?php
     include 'includes/conn.php';
-    if(!isset($_SESSION['elcthospitaladmin'])){
-header('Location:login.php');
-   }else{
     if (isset($_POST['submit'])){
        
         $investigationtype_id=mysqli_real_escape_string($con,trim($_POST['investigationtype_id']));
@@ -34,9 +31,10 @@ header('Location:login.php');
                      $row_id=mysqli_fetch_array($checkpending);
                      $patientque2_id=$row_id['patientsque_id'];
                      mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$patientque2_id'") or die(mysqli_error($con));
+                     mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$patientque_id'") or die(mysqli_error($con));
                      $_SESSION['success'] = '<div class="alert alert-success">Laboratory Report Successfully Added</div>';
                      // redirect to radiowaiting
-                     echo '<script>window.location.href = "radiologylist?id='.$patientque_id.'";</script>';exit();
+                     echo '<script>window.location.href = "labwaiting";</script>';exit();
                }else{
                
                   $prev_admin_id=$row_prev_admin_id['admin_id'];
@@ -45,7 +43,7 @@ header('Location:login.php');
                   $_SESSION['success'] = '<div class="alert alert-success">Laboratory Report Successfully Added</div>';
                   mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','lab technician',UNIX_TIMESTAMP(),1,'$prev_id')") or die(mysqli_error($con));
                            // redirect to labwaiting
-                           echo '<script>window.location.href = "labreportlist?id='.$patientque_id.'";</script>';exit();
+                           echo '<script>window.location.href = "labwaiting";</script>';exit();
             }
       }else{
          $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$patientque_id'") or die(mysqli_error($con));
@@ -70,4 +68,4 @@ header('Location:login.php');
 
 
     }
-   }
+      ?> 

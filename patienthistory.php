@@ -181,8 +181,7 @@ if (strlen($patient_id) >= 4) {
                                                 $admission_id=$row3['admission_id'];
                                                 $patient_id=$row3['patient_id'];
                                                 $patientque_id=$row3['patientque_id'];
-                                                print_r($patientque_id);
-                                                print_r($admission_id);
+                                                $timestamp=$row3['timestamp'];
                                                 if (strlen($admission_id) == 1) {
                                                     $pin2 = '000' . $admission_id;
                                                 }

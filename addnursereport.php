@@ -119,9 +119,9 @@ include 'includes/header.php';
                     $bloodgroup = $row2['bloodgroup'];
                     $dob = $row2['dob'];
                     $weight = $row2['weight'];
-                    $height = ($row2['height'] != '') ? $row2['height'] : 'NIL';
-                    $temp = ($row2['temp'] != '') ? $row2['temp'] : 'NIL';
-                    $bp = ($row2['bp'] != '') ? $row2['bp'] : 'NIL';
+                    $height = ($row2['height'] != '') ? $row2['height'] : 'N/A';
+                    $temp = ($row2['temp'] != '') ? $row2['temp'] : 'N/A';
+                    $bp = ($row2['bp'] != '') ? $row2['bp'] : 'N/A';
                                 if(strlen($admission_id)==1){
       $pin='000'.$admission_id;
      }
@@ -211,9 +211,11 @@ include 'includes/header.php';
                                     $row_id=mysqli_fetch_array($checkpending);
                                     $patientque_id=$row_id['patientsque_id'];
                                     mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$patientque_id'") or die(mysqli_error($con));
+                                     mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                    
                                     $_SESSION['success'] = '<div class="alert alert-success">Nurse Report Successfully Added</div>';
                                     // redirect to radiowaiting
-                                    echo '<script>window.location.href = "viewnursedetails?id='.$id.'";</script>';exit();
+                                    echo '<script>window.location.href = "waitingpatients";</script>';exit();
                                 }else{
                                 
                                 $prev_admin_id=$row_prev_admin_id['admin_id'];

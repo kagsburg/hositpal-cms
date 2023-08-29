@@ -11,7 +11,7 @@ header('Location:login.php');
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Pending Patients</title>
+    <title>Pending Results</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
      <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -50,14 +50,14 @@ include 'includes/header.php';
 				<div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Pending Patients</h4>
+                            <h4>Pending Results</h4>
                            
                         </div>
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="#">Pending Patients</a></li>
+                            <li class="breadcrumb-item active"><a href="#">Pending Results</a></li>
                         </ol>
                     </div>
                 </div>
@@ -65,7 +65,7 @@ include 'includes/header.php';
        		<div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">All Pending Patients</h4>
+                                <h4 class="card-title">All Pending Results</h4>
                             </div>
                             <div class="card-body">
                             <div class="table-responsive">

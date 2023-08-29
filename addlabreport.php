@@ -93,9 +93,9 @@ $test = $_GET['test'];
                     $bloodgroup = $row2['bloodgroup'];
                     $dob = $row2['dob'];
                     $weight = $row2['weight'];
-                    $height = ($row2['height'] != '') ? $row2['height'] : 'NIL';
-                    $temp = ($row2['temp'] != '') ? $row2['temp'] : 'NIL';
-                    $bp = ($row2['bp'] != '') ? $row2['bp'] : 'NIL';
+                    $height = ($row2['height'] != '') ? $row2['height'] : 'N/A';
+                    $temp = ($row2['temp'] != '') ? $row2['temp'] : 'N/A';
+                    $bp = ($row2['bp'] != '') ? $row2['bp'] : 'N/A';
                     if (strlen($patient_id) == 1) {
                         $pin = '000' . $patient_id;
                     }
@@ -209,7 +209,7 @@ $test = $_GET['test'];
                                                             $has_answer = $row2['has_answers'];
                                                             $getunit =  mysqli_query($con, "SELECT * FROM labunits WHERE status=1 AND measurement_id='$unit_id'");
                                                             if (mysqli_num_rows($getunit) == 0) {
-                                                                $measurement = "";
+                                                                $measurement = "N/A";
                                                             }else{
                 
                                                                 $row1 =  mysqli_fetch_array($getunit);
@@ -251,6 +251,9 @@ $test = $_GET['test'];
                                                                     <label>Result</label>
                                                                     <input type="number" name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result" required>
                                                                 </div>
+                                                                <div class="form-group"><label class="control-label">* More Details if any</label>
+                                                                        <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details"></textarea>
+                                                                    </div>
                                                             </div>
                                                             <div class="form-group pull-right">
                                                                 <button class="btn btn-primary" type="submit" name="submit">Submit</button>

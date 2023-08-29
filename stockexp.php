@@ -128,7 +128,7 @@ $expire = mysqli_real_escape_string($con, $expire);
                                                 $row2 =  mysqli_fetch_array($getunit);
                                                 $measurement = $row2['measurement'];
                                                 $storeval = empty($store) ? "" : "AND store='$store'";
-                                                $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' $storeval") or die(mysqli_error($con));
+                                                $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' $storeval order by expiry desc") or die(mysqli_error($con));
                                                 $row3 = mysqli_fetch_array($getstock);
                                                 $totalstock = $row3['totalstock'];
                                                 $totalordered = 0;
@@ -162,13 +162,13 @@ $expire = mysqli_real_escape_string($con, $expire);
                                                     <td><?php echo $row3['expiry']; ?></td>
                                                     <td><?php echo $measurement; ?></td>
                                                     <th><?php
-                                                        if ($totalstock <= 100) {
+                                                        if ($instock <= 100) {
                                                             echo '<div class="text-danger">LOW</div>';
-                                                        } else if ($totalstock>=101 && $totalstock<=500) {
-                                                            echo '<div class="text-warning">MED</div>';
+                                                        } else if ($instock>=101 && $instock<=500) {
+                                                            echo '<div class="text-primary">MED</div>';
                                                         } 
                                                         else {
-                                                            echo 'HIGH';
+                                                            echo '<div class="text-success">HIGH</div>';
                                                         }
                                                         ?></th>
 
@@ -195,13 +195,13 @@ $expire = mysqli_real_escape_string($con, $expire);
                                                     <td><?php echo $row3['expiry']; ?></td>
                                                     <td><?php echo $measurement; ?></td>
                                                     <th><?php
-                                                        if ($totalstock <= 100) {
+                                                        if ($instock <= 100) {
                                                             echo '<div class="text-danger">LOW</div>';
-                                                        } else if ($totalstock>=101 && $totalstock<=500) {
-                                                            echo '<div class="text-warning">MED</div>';
+                                                        } else if ($instock>=101 && $instock<=500) {
+                                                            echo '<div class="text-primary">MED</div>';
                                                         } 
                                                         else {
-                                                            echo 'HIGH';
+                                                            echo '<div class="text-success">HIGH</div>';
                                                         }
                                                         ?></th>
 

@@ -105,9 +105,11 @@ if ($count == 1){
         $row_id=mysqli_fetch_array($checkpending);
         $patientque_id=$row_id['patientsque_id'];
         mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$patientque_id'") or die(mysqli_error($con));
+       mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+
         $_SESSION['success'] = '<div class="alert alert-success">Radiology Report Successfully Added</div>';
         // redirect to radiowaiting
-        echo '<script>window.location.href = "radiologylist?id='.$id.'";</script>';exit();
+        echo '<script>window.location.href = "radiowaiting";</script>';exit();
     }else{
     
        $prev_admin_id=$row_prev_admin_id['admin_id'];
@@ -116,7 +118,7 @@ if ($count == 1){
        $_SESSION['success'] = '<div class="alert alert-success">Radiology Report Successfully Added</div>';
        mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','radiographer',UNIX_TIMESTAMP(),1,'$prev_id')") or die(mysqli_error($con));
                 // redirect to radiowaiting
-                echo '<script>window.location.href = "radiologylist?id='.$id.'";</script>';exit();
+                echo '<script>window.location.href = "radiowaiting";</script>';exit();
 }
 }else{
     $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'") or die(mysqli_error($con));
