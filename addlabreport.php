@@ -231,6 +231,10 @@ $test = $_GET['test'];
                                                                     <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="" required/>
                                                                 </div>
                                                                 <div class="form-group col-lg-6">
+                                                                    <label>Sample ID </label>
+                                                                    <input type="text" class="form-control " name="sample[<?php echo $medicalservice_id; ?>]" placeholder="Enter Sample Id" value="" >
+                                                                </div>
+                                                                <div class="form-group col-lg-6">
                                                                     <label>Test </label>
                                                                     <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>">
                                                                     <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $medicalservice; ?>" disabled>
@@ -249,7 +253,7 @@ $test = $_GET['test'];
                                                                 </div>
                                                                 <div class="form-group col-lg-5">
                                                                     <label>Result</label>
-                                                                    <input type="number" name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result" required>
+                                                                    <input type="number"step="0.01" name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result" required>
                                                                 </div>
                                                                 <div class="form-group"><label class="control-label">* More Details if any</label>
                                                                         <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details"></textarea>
@@ -277,6 +281,10 @@ $test = $_GET['test'];
                                                                     <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="" required />
                                                                 </div>
                                                             <div class='row'>
+                                                            <div class="form-group col-lg-6">
+                                                                    <label>Sample ID </label>
+                                                                    <input type="text" class="form-control " name="sample[<?php echo $medicalservice_id; ?>]" placeholder="Enter Sample Id" value="" >
+                                                                </div>
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Test </label>
                                                                     <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>">
@@ -323,7 +331,10 @@ $test = $_GET['test'];
                                                                     <label>Report Title </label>
                                                                     <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="" required />
                                                                 </div>
-
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>Sample ID </label>
+                                                                    <input type="text" class="form-control " name="sample[<?php echo $medicalservice_id; ?>]" placeholder="Enter Sample Id" value="" >
+                                                                </div>
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Test </label>
                                                                     <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>">

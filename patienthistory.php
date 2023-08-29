@@ -59,7 +59,7 @@ if (strlen($patient_id) >= 4) {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Outpatient Report</title>
+    <title>Patient History</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -99,7 +99,7 @@ if (strlen($patient_id) >= 4) {
                 <div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>OutPatient Report</h4>
+                            <h4>Patient History Report</h4>
 
                         </div>
                     </div>

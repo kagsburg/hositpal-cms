@@ -23,31 +23,52 @@ $test= $_GET['test'];
     	<link href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
     <link href="css/style.css?<?php echo time(); ?>" rel="stylesheet">
     <style>
-        @media print {
-  [class*="col-sm-"] {
-    float: left;
+
+  body {
+    font-size: 18px;
+    color: #000;
+    font-family: "Times New Roman"
   }
-}
-       @media print and (max-width: 767px) {
-  .row{
-    display: flex;
-    flex-direction: row;
+
+  .table.table-bordered td,
+  .table.table-bordered th {
+    border-color: #000000;
+    font-family: "Times New Roman"
   }
-  .col-md-3{
-    flex-basis: 25%;
+
+  .table td,
+  .table th {
+    color: #000;
+    font-size: 18px;
+    font-family: "Times New Roman"
   }
-  .col-md-1{
-    flex-basis: 8.33%;
+
+  .table th {
+    font-weight: bold;
+    font-family: "Times New Roman";
   }
-  .col-md-8{
-    flex-basis: 66.67%;
+
+  @media screen {
+
+    body {
+      /*margin: 2em;*/
+      color: #fff;
+
+    }
+
   }
-  .col-md-6{
-    flex-basis: 50%;
+
+  /* print styles */
+  @media print {
+
+    body {
+      margin: 0;
+      color: #000;
+      background-color: #fff;
+    }
+
   }
-}
-        
-    </style>
+</style>
 	
 </head>
 <body>
@@ -74,23 +95,24 @@ $test= $_GET['test'];
      
         <div class="content-body" style="margin-left: 0px">
             <!-- row -->
-			<div class="container-fluid">
+			<div class="invoice-print">
 				
        	<div class="row">
            <div class="col-sm-12">
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                ">
-                <img alt="image" src="<?php echo BASE_URL; ?>/images/ELVD.png"  style="text-align: center;"/>
-            </div>
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    ">
+                    <img alt="image" src="<?php echo BASE_URL; ?>/images/ELVD.png"  style="text-align: center;"/>
+                </div>
                 <h1 class="text-center" style="font-family:Times New roman;color: #000">ELCT-ELVD Nyakato Health Center </h1>
                 <address class="text-center">
                       P.O.BOX 3173<br>
                       Mwanza, Tanzania<br>
                       <!-- <abbr title="Phone">P:</abbr> +255 28 250 0885 -->
                     </address>
+                    <hr style="border-top: 3px solid #0000;" />
                 </div>
                      <?php
                                   $getque=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$patientsque_id'");  
@@ -176,47 +198,58 @@ $test= $_GET['test'];
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <table>
-                                        <tr>
-                                            <td>
-                                            <div class="col-lg-4">
+                                <table class="" style="min-width: 845px">
+                                        <tbody>
+                                    <tr>
+                                        <td>
+                                        <div class="">
                                         <address>
+                                        <strong>Date: <?php echo date('Y-m-d',$report_date); ?> </strong><br>
+                                        <strong>PIN #: <?php echo $pin ?> </strong><br>
                                         <strong>Names:<?php echo $fullname ?></strong><br>
-                                            <strong>Gender:<?php echo $gender ?></strong><br>
-                                            <strong>PIN #: <?php echo $pin ?></strong>
-                                        </address>
-                                    </div>
-                                </td>
-                                <td>
-                                <div class="col-lg-4">
-                                        <address>
-                                            <strong>Sponsor: <?php echo $company?></strong><br>
+                                            <strong>Gender:<?php echo $gender ?> </strong><br>
                                             <strong>Age: <span><?php 
                                         $dob1 = date("Y-m-d", strtotime($dob));
                                         $dob2 = new DateTime($dob1);
                                         $now = new DateTime();
                                         $difference = $now->diff($dob2);
                                         echo $difference->y;
-                                        ?></span> </strong><br>
-                                            <strong> Date: <?php echo date('Y-m-d',$report_date); ?></strong>
+                                        ?></span>  </strong><br>
                                         </address>
                                     </div>
-                                </td>
-                                <td>
-                                <div class="col-lg-4">
+                                        </td>
+                                        <td>
                                         <address>
-                                            <strong>Requested By: <?php echo $orderedby?></strong><br>
+                                            <strong>Sponsor: <?php echo $company?></strong>
+
+                                        </address>
+                                        </td>
+                                        <td>
+                                        <address>
+                                        <strong>Requested By: <?php echo $orderedby?></strong><br>
                                             <strong>Conducted By : <span><?php echo $conductedby?></span></strong><br>
                                         </address>
-                                    </div>
-                                </td>
-                                                </tr>
+                                        </td>
+                                    </tr>
+                                    </tbody>
                                     </table>
                                 </div>
+                                <div class="col-lg-12" style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    ">
                                 <h5>RELEVANT CLINICAL SUMMARY</h5>
+                                </div>
                                 <p><?php echo $summary ?></p>
-                                <div class="basic-form">      
+                                <div class="basic-form"> 
+                                <div class="col-lg-12" style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    ">     
                                 <h5>FINDINGS</h5>
+                                </div>
                                 <div class="row">
                                 <?php 
                                 $getreport = mysqli_query($con, "SELECT * FROM radiologyreports WHERE status=1 and report_id='$report_id' and results='$test'") or die(mysqli_error($con));
@@ -238,7 +271,8 @@ $test= $_GET['test'];
                                             <!-- <h5><?php echo $medicalservice ?></h5> -->
                                             <p><?php echo $description ?></p>
                                         </div>
-                                        <table>
+                                        <table class="table table-bordered">
+                                            <tbody>
                                             <tr>
                                                 <td>
                                         <div class="col-lg-6">
@@ -253,8 +287,15 @@ $test= $_GET['test'];
                                         </div>
                                                 </td>
                                             </tr>
+                                            </tbody>
                                         </table>
                                         <hr>
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                            <tr>
+                                               
+                                            
+                                        
                                         <?php 
                                         $getimages = mysqli_query($con, "SELECT * FROM radiologyimages WHERE status=1 and radiology_report_id='$report_radio_id'") or die(mysqli_error($con));
                                         if (mysqli_num_rows($getimages) == 0) {
@@ -271,27 +312,32 @@ $test= $_GET['test'];
                                                 $pimage = "noimage.png";
                                             
                                             ?>
-                                            <!-- <div class="col-lg-4">
-                                                <img src="<?php echo BASE_URL ?>/images/radiology/<?php echo $pimage; ?>" width="100%">
-                                            </div> -->
+                                             <td>
+                                                <img src="<?php echo BASE_URL ?>/images/radiology/<?php echo $pimage; ?>" width="50%">
+                                            </td>
                                         <?php }} ?>
                                         
                                     <?php } ?>
+                                    </tbody>
+                                    </table>
                                     <div class="col-lg-12">
                                         <h5>CONCLUSION</h5>
                                         <p><?php echo $conculsion ?></p>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td>
                                         <h5>REQUESTED BY</h5>
                                         <p><?php echo $orderedby; ?></p>
-                                        </div>
-                                        <div class="col-lg-4">
-                                        <h5>CONDUCTED BY</h5>
+                                                </td>
+                                                <td>
+                                                <h5>CONDUCTED BY</h5>
                                         <p><?php echo $conductedby; ?></p>
-                                        </div>
-                                    
-                                   
-
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>         
                                 </div>
                             </div>
                             </div>
@@ -342,9 +388,10 @@ $test= $_GET['test'];
 	<!-- <script src="js/dashboard/dashboard-1.js"></script> -->
          <script src="js/chosen/chosen.jquery.js"></script>
          <script>
-               $('document').ready(function(){
-                     window.print(); 
-        }); 
+            window.onload = function() {
+    // Code to trigger print preview here
+    window.print(); 
+};
             </script>
 
 </body>

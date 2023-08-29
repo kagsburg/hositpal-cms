@@ -93,14 +93,11 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             $companies = sizeof($company);
                                             if (isset($_POST['hasrange'])){
                                                 $hasrange = $_POST['hasrange'];
-                                                $lowX =  mysqli_real_escape_string($con, trim($_POST['lowX']));
-                                                $lowY =  mysqli_real_escape_string($con, trim($_POST['lowY']));
                                                 $normalX =  mysqli_real_escape_string($con, trim($_POST['normalX']));
                                                 $normalY =  mysqli_real_escape_string($con, trim($_POST['normalY']));
-                                                $highX =  mysqli_real_escape_string($con, trim($_POST['highX']));
-                                                $highY =  mysqli_real_escape_string($con, trim($_POST['highY']));
-                                                mysqli_query($con, "INSERT INTO investigationtypesrange(investigationtype_id,lowx,lowy,normalx,normaly,highx,highy,timestamp,status,admin_id) 
-                                                VALUES('$last_id','$lowX','$lowY','$normalX','$normalY','$highX','$highY',UNIX_TIMESTAMP(),1,'".$_SESSION['elcthospitaladmin']."')") or die(mysqli_error($con));
+                                               
+                                                mysqli_query($con, "INSERT INTO investigationtypesrange(investigationtype_id,normalx,normaly,timestamp,status,admin_id) 
+                                                VALUES('$last_id','$normalX','$normalY',UNIX_TIMESTAMP(),1,'".$_SESSION['elcthospitaladmin']."')") or die(mysqli_error($con));
 
                                                 mysqli_query($con, "UPDATE investigationtypes SET range_type = 1 WHERE investigationtype_id = '$last_id'") or die(mysqli_error($con));
 
@@ -127,14 +124,10 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                     $sub_id = mysqli_insert_id($con);
                                                     if (isset($_POST['hassubtyperange'])){
                                                         $hasrange = $_POST['hassubtyperange'];
-                                                        $lowX =  $_POST['lowX1'];
-                                                        $lowY =  $_POST['lowY1'];
                                                         $normalX =  $_POST['normalX1'];
                                                         $normalY =  $_POST['normalY1'];
-                                                        $highX =  $_POST['highX1'];
-                                                        $highY =  $_POST['highY1'];
-                                                        mysqli_query($con, "INSERT INTO investigationtypesrange(investigationtype_id,lowx,lowy,normalx,normaly,highx,highy,timestamp,status,admin_id) 
-                                                        VALUES('$sub_id','$lowX[$i]','$lowY[$i]','$normalX[$i]','$normalY[$i]','$highX[$i]','$highY[$i]',UNIX_TIMESTAMP(),1,'".$_SESSION['elcthospitaladmin']."')") or die(mysqli_error($con));
+                                                        mysqli_query($con, "INSERT INTO investigationtypesrange(investigationtype_id,normalx,normaly,timestamp,status,admin_id) 
+                                                        VALUES('$sub_id','$normalX[$i]','$normalY[$i]',UNIX_TIMESTAMP(),1,'".$_SESSION['elcthospitaladmin']."')") or die(mysqli_error($con));
                                                     }
                                                 }
                                                 if (isset($_POST['hassubtyperange'])){
@@ -262,37 +255,16 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                 </div>
                                                 <div class="forsubtyperange" style="display:none">
                                                 <div class="row">
-                                                    <div class="col">
-                                                    <label class="form-check-label">Low Range</label>
+                                                    <div class="col-lg-6">
                                                     <div class="mb-3">
-                                                        <label for="lowX">X: <span id="low"></span></label>
-                                                        <input type="number"  step="0.01"  value="" class="form-control" id="lowX" name="lowX1[]">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="lowY">Y:</label>
-                                                        <input type="number"  step="0.01" class="form-control" id="lowY" name="lowY1[]">
-                                                    </div>
-                                                    </div>
-                                                    <div class="col">
-                                                    <label class="form-check-label">Normal Range</label>
-                                                    <div class="mb-3">
-                                                        <label for="normalX">X:</label>
+                                                        <label for="normalX">Normal Range X:</label>
                                                         <input type="number" step="0.01" class="form-control" id="normalX" name="normalX1[]">
                                                     </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
                                                     <div class="mb-3">
-                                                        <label for="normalY">Y:</label>
+                                                        <label for="normalY">Normal Range Y:</label>
                                                         <input type="number"  step="0.01" class="form-control" id="normalY" name="normalY1[]">
-                                                    </div>
-                                                    </div>
-                                                    <div class="col">
-                                                    <label class="form-check-label">High Range</label>
-                                                    <div class="mb-3">
-                                                        <label for="highX">X:</label>
-                                                        <input type="number"  step="0.01" class="form-control"  id="highX" name="highX1[]">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="highY">Y:</label>
-                                                        <input type="number" step="0.01" class="form-control" id="highY" name="highY1[]">
                                                     </div>
                                                     </div>
                                                 </div>
@@ -312,37 +284,16 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                         </div>
                                         <div class="subrange" style="display:none">
                                         <div class="row">
-                                            <div class="col">
-                                            <label class="form-check-label">Low Range</label>
+                                            <div class="col-lg-6">
                                             <div class="mb-3">
-                                                <label for="lowX">X: <span id="low"></span></label>
-                                                <input type="number"  step="0.01"  value="" class="form-control" id="lowX" name="lowX">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="lowY">Y:</label>
-                                                <input type="number"  step="0.01" class="form-control" id="lowY" name="lowY">
-                                            </div>
-                                            </div>
-                                            <div class="col">
-                                            <label class="form-check-label">Normal Range</label>
-                                            <div class="mb-3">
-                                                <label for="normalX">X:</label>
+                                                <label for="normalX">Normal Range X:</label>
                                                 <input type="number"  step="0.01" class="form-control" id="normalX" name="normalX">
                                             </div>
+                                            </div>
+                                            <div class="col-lg-6">
                                             <div class="mb-3">
-                                                <label for="normalY">Y:</label>
+                                                <label for="normalY">Normal Range Y:</label>
                                                 <input type="number"   step="0.01" class="form-control" id="normalY" name="normalY">
-                                            </div>
-                                            </div>
-                                            <div class="col">
-                                            <label class="form-check-label">High Range</label>
-                                            <div class="mb-3">
-                                                <label for="highX">X:</label>
-                                                <input type="number"   step="0.01" class="form-control"  id="highX" name="highX">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="highY">Y:</label>
-                                                <input type="number"   step="0.01" class="form-control" id="highY" name="highY">
                                             </div>
                                             </div>
                                         </div>
@@ -615,37 +566,16 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                                                             </div>
                                                                                             <div class="forsubtyperange" style="display:`+sty+`;" >
                                                 <div class="row">
-                                                    <div class="col">
-                                                    <label class="form-check-label">Low Range</label>
+                                                    <div class="col-lg-6">
                                                     <div class="mb-3">
-                                                        <label for="lowX">X: <span id="low"></span></label>
-                                                        <input type="number"   step="0.01" value="" class="form-control" id="lowX" name="lowX1[]">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="lowY">Y:</label>
-                                                        <input type="number"  step="0.01" class="form-control" id="lowY" name="lowY1[]">
-                                                    </div>
-                                                    </div>
-                                                    <div class="col">
-                                                    <label class="form-check-label">Normal Range</label>
-                                                    <div class="mb-3">
-                                                        <label for="normalX">X:</label>
+                                                        <label for="normalX"> Normal Range X:</label>
                                                         <input type="number"  step="0.01" class="form-control" id="normalX" name="normalX1[]">
                                                     </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
                                                     <div class="mb-3">
-                                                        <label for="normalY">Y:</label>
+                                                        <label for="normalY">Normal Range Y:</label>
                                                         <input type="number"  step="0.01" class="form-control" id="normalY" name="normalY1[]">
-                                                    </div>
-                                                    </div>
-                                                    <div class="col">
-                                                    <label class="form-check-label">High Range</label>
-                                                    <div class="mb-3">
-                                                        <label for="highX">X:</label>
-                                                        <input type="number"   step="0.01" class="form-control"  id="highX" name="highX1[]">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="highY">Y:</label>
-                                                        <input type="number"  step="0.01" class="form-control" id="highY" name="highY1[]">
                                                     </div>
                                                     </div>
                                                 </div>

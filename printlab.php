@@ -260,6 +260,8 @@ $test= $_GET['test'];
                                     $details=$rowtitle['details'];
                                     $approve = $rowtitle['approved'];
                                     $start= $rowtitle['start'];
+                                    $sample_id=$rowtitle['sample_id'];
+
                                     $end= $rowtitle['end'];
                                     $admin_id2 = $rowtitle['admin_id'];
                                     $getservice = mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'");
@@ -292,33 +294,18 @@ $test= $_GET['test'];
                                                                     $range = "";
                                                                 }else{
                                                                     $row3 = mysqli_fetch_array($getrange);
-                                                                    $lowx = $row3['lowx'];
-                                                                    $lowy = $row3['lowy'];
                                                                     $normalx = $row3['normalx'];
                                                                     $normaly = $row3['normaly'];
-                                                                    $highx = $row3['highx'];
-                                                                    $highy = $row3['highy'];
                                                                     // check if the result is within range
-                                                                    if ($result >= $lowx && $result <= $lowy) {
-                                                                        $interval = $lowx .' - '.$lowy;
-                                                                        $result = "<span class='text-success'>".$result."</span>";
+                                                                    if ($result < $normalx ) {
+                                                                        $interval = $normalx .' - '.$normaly;
                                                                         $flag = 'L';
                                                                     }elseif ($result >= $normalx && $result <= $normaly) {
-                                                                        $interval = $normalx .' - '.$normalx;
-                                                                        $result = "<span class='text-success'>".$result."</span>";
+                                                                        $interval = $normalx .' - '.$normaly;
                                                                         $flag = 'N';
-                                                                    }elseif ($result >= $highx && $result <= $highy) {
-                                                                        $interval = $highx .' - '.$highy;
+                                                                    }else if ($result > $normaly) {
+                                                                        $interval = $normalx .' - '.$normaly;
                                                                         $flag = 'H';
-                                                                    }else if ($result > $highy) {
-                                                                        $interval = $highx .' - '.$highy;
-                                                                        $result = "<span class='text-danger'>".$result."</span>";
-                                                                        $flag = 'H';
-                                                                    }
-                                                                    else{
-                                                                        $interval = $lowx .' - '.$lowy;
-                                                                        $result = "<span class='text-danger'>".$result."</span>";
-                                                                        $flag = 'N/A';
                                                                     }
 
                                                                 }
@@ -329,6 +316,11 @@ $test= $_GET['test'];
 
 
                                                             <tr>
+                                                            <td>
+                                                                    <h5>Sample ID</h5>
+                                                                    <p><?php echo $sample_id ?></p>                                        
+                                                                </td>
+                                                                <td>
                                                                 <td>
                                         
                                             <h5>Test</h5>
@@ -360,25 +352,16 @@ $test= $_GET['test'];
                                             <p><?php echo $interval ?></p>
                                         </td>
                                         <?php } ?>
-                                        <td>
-                                            <h5>Conclusion</h5>
-                                            <p><?php echo $details ?></p>
-                                        
-                                        </td>
                                         </tr>
                                         
                                         <?php } ?>
                                         </tbody>
                                         <tfoot>
-                                        <tr>
-                                        
+                                        <tr>                                        
                                         <td>
-                                       
-                                        </td>
-                                        <td>
-
-                                        </td>
-                                       
+                                        <h5>Conclusion</h5>
+                                            <p><?php echo $details ?></p>
+                                        </td>                                       
                                         </tr>
 
                                         </table>

@@ -5,6 +5,7 @@
         $investigationtype_id=mysqli_real_escape_string($con,trim($_POST['investigationtype_id']));
         $patientlab_id=mysqli_real_escape_string($con,trim($_POST['patientlab_id']));
         $has_answer=mysqli_real_escape_string($con,trim($_POST['has_answer']));
+        $sampe_id=$_POST['sample'];
         $test=$_POST['test'];
         $start=$_POST['start'];
         $end=$_POST['end'];
@@ -15,8 +16,8 @@
         $unit=$_POST['unit'];
         $details=mysqli_real_escape_string($con,trim($_POST['details']));
     
-       mysqli_query($con,"INSERT INTO labreports(title,test,siunit,admission_id,start,end,result,patientsque_id, details,status,timestamp,admin_id,approved) 
-       VALUES('$title[$investigationtype_id]','$investigationtype_id','$unit[$investigationtype_id]','$admission_id','$start[$investigationtype_id]','$end[$investigationtype_id]','$result[$investigationtype_id]','$patientque_id','$details',1,UNIX_TIMESTAMP(),'".$_SESSION['elcthospitaladmin']."',0)") or die(mysqli_error($con));
+       mysqli_query($con,"INSERT INTO labreports(title,sample_id,test,siunit,admission_id,start,end,result,patientsque_id, details,status,timestamp,admin_id,approved) 
+       VALUES('$title[$investigationtype_id]','$sampe_id[$investigationtype_id]','$investigationtype_id','$unit[$investigationtype_id]','$admission_id','$start[$investigationtype_id]','$end[$investigationtype_id]','$result[$investigationtype_id]','$patientque_id','$details',1,UNIX_TIMESTAMP(),'".$_SESSION['elcthospitaladmin']."',0)") or die(mysqli_error($con));
         $last_id = mysqli_insert_id($con);
         $count = $_POST['count'];
        mysqli_query($con,"UPDATE patientlabs SET status='3' WHERE patientlab_id ='$patientlab_id'") or die(mysqli_error($con));
@@ -67,5 +68,26 @@
       }
 
 
+    }
+    if (isset($_POST['updatelabreport'])){
+      $investigationtype_id=mysqli_real_escape_string($con,trim($_POST['investigationtype_id']));
+      $patientlab_id=mysqli_real_escape_string($con,trim($_POST['patientlab_id']));
+      $has_answer=mysqli_real_escape_string($con,trim($_POST['has_answer']));
+      $labreport_id=mysqli_real_escape_string($con,trim($_POST['labreport_id']));
+      $test=$_POST['test'];
+      $sampe_id=$_POST['sample'];
+      $start=$_POST['start'];
+      $end=$_POST['end'];
+      $result=$_POST['result'];
+      $admission_id = $_POST['admission_id'];
+      $patientque_id = $_POST['patientque_id'];
+      $title=$_POST['title'];
+      $unit=$_POST['unit'];
+      $details=mysqli_real_escape_string($con,trim($_POST['details']));
+      mysqli_query($con,"UPDATE labreports set title='$title[$investigationtype_id]',sample_id='$sampe_id[$investigationtype_id]',start='$start[$investigationtype_id]',end='$end[$investigationtype_id]',result='$result[$investigationtype_id]', details='$details' WHERE labreport_id='$labreport_id'") or die(mysqli_error($con));
+      $_SESSION['success'] = '<div class="alert alert-success">Laboratory Report Successfully Updated</div>';
+      // redirect to editlabreport
+      header('Location:'.$_SERVER['HTTP_REFERER']);
+       
     }
       ?> 

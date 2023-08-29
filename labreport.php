@@ -192,10 +192,10 @@ include 'includes/header.php';
                                         <td>
                                         <div class="">
                                         <address>
-                                            <strong>Order By: <?php echo $user?></strong><br>
+                                            <strong>Ordered By: <?php echo $user?></strong><br>
                                             <strong>Conducted By : <span><?php echo $user2?></span></strong><br>
                                             <?php if ($approve !=0){ ?>
-                                            <strong>Authorized  By : <span><?php 
+                                            <strong>Validated   By : <span><?php 
                                              $getuser = mysqli_query($con, "SELECT * FROM staff WHERE staff_id ='$approve'") or die(mysqli_error($con));
                                              $rowuser2 = mysqli_fetch_array($getuser);
                                              $user2 = $rowuser2['fullname'];
@@ -241,6 +241,7 @@ include 'includes/header.php';
                                     $end= $rowtitle['end'];
                                     $details=$rowtitle['details'];
                                     $approve = $rowtitle['approved'];
+                                    $sample_id=$rowtitle['sample_id'];
                                     $admin_id2 = $rowtitle['admin_id'];
                                     $getservice = mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'");
                                     $row2 = mysqli_fetch_array($getservice);
@@ -274,35 +275,19 @@ include 'includes/header.php';
                                                                     $range = "";
                                                                 }else{
                                                                     $row3 = mysqli_fetch_array($getrange);
-                                                                    $lowx = $row3['lowx'];
-                                                                    $lowy = $row3['lowy'];
                                                                     $normalx = $row3['normalx'];
                                                                     $normaly = $row3['normaly'];
-                                                                    $highx = $row3['highx'];
-                                                                    $highy = $row3['highy'];
                                                                     // check if the result is within range
-                                                                    if ($result >= $lowx && $result <= $lowy) {
-                                                                        $interval = $lowx .' - '.$lowy;
-                                                                        $result = "<span class='text-success'>".$result."</span>";
+                                                                    if ($result < $normalx ) {
+                                                                        $interval = $normalx .' - '.$normaly;
                                                                         $flag = 'L';
                                                                     }elseif ($result >= $normalx && $result <= $normaly) {
-                                                                        $interval = $normalx .' - '.$normalx;
-                                                                        $result = "<span class='text-success'>".$result."</span>";
+                                                                        $interval = $normalx .' - '.$normaly;
                                                                         $flag = 'N';
-                                                                    }elseif ($result >= $highx && $result <= $highy) {
-                                                                        $interval = $highx .' - '.$highy;
-                                                                        $flag = 'H';
-                                                                    }else if ($result > $highy) {
-                                                                        $interval = $highx .' - '.$highy;
-                                                                        $result = "<span class='text-danger'>".$result."</span>";
+                                                                    }else if ($result > $normaly) {
+                                                                        $interval = $normalx .' - '.$normaly;
                                                                         $flag = 'H';
                                                                     }
-                                                                    else{
-                                                                        $interval = $lowx .' - '.$lowy;
-                                                                        $result = "<span class='text-danger'>".$result."</span>";
-                                                                        $flag = 'N/A';
-                                                                    }
-
                                                                 }
                                                             }
                                     ?>
@@ -311,12 +296,15 @@ include 'includes/header.php';
 
 
                                                             <tr>
+                                                            <td>
+                                                                    <h5>Sample ID</h5>
+                                                                    <p><?php echo $sample_id ?></p>                                        
+                                                                </td>
                                                                 <td>
-                                        
-                                            <h5>Test</h5>
-                                            <p><?php echo $medicalservice ?></p>
-                                        
-                                                                </td><td>
+                                                                    <h5>Test</h5>
+                                                                    <p><?php echo $medicalservice ?></p>                                        
+                                                                </td>
+                                                                <td>
                                         
                                             <h5>RESULT</h5>
                                             <p><?php echo $result ?></p>
@@ -344,37 +332,30 @@ include 'includes/header.php';
                                             <p><?php echo $interval ?></p>
                                         </td>
                                         <?php } ?>
-                                        <td>
-                                            <h5>Conclusion</h5>
-                                            <p><?php echo $details ?></p>
-                                        
-                                        </td>
                                         </tr>
                                         
                                         <?php } ?>
                                         </tbody>
                                         <tfoot>
+                                            <tr>
+                                                <td>
+                                                <h5>Conclusion</h5>
+                                                    <p><?php echo $details ?></p>
+                                                </td>
+                                            </tr>
+
                                         <tr>
-                                        
-                                        <td>
-                                        </td>
                                         <td>
                                         <a href="printlab?patient_id=<?php echo $patient_id ?>&que=<?php echo $id?>&test=<?php echo $test ?>" target="_blank" class="btn btn-primary">Print</a>
                                             <?php if ($approve == 0 && ($_SESSION['elcthospitallevel'] == 'lab technologist')){?>
-                                                <!-- <a href="editlabreport?id=<?php echo $id; ?>&test=<?php echo $test ?>" target="_blank" class="btn btn-primary">Edit</a> -->
-                                        <a href="approvereport.php?patientsque_id=<?php echo $id; ?>&admission_id=<?php echo $admission_id ?>&test=<?php echo $test ?>" class="btn btn-primary">Approve</a>
+                                                <a href="editlabreport?id=<?php echo $id; ?>&test=<?php echo $test ?>" target="_blank" class="btn btn-success">Edit</a>
+                                        <a href="approvereport.php?patientsque_id=<?php echo $id; ?>&admission_id=<?php echo $admission_id ?>&test=<?php echo $test ?>" onclick="return confirm_approve() " class="btn btn-primary">Validate</a>
                                         <?php } ?>
 
                                         </td>
-                                        <?php if ($approve != 0){?>
-                                        
-                                        <?php } ?>
                                         </tr>
 
                                         </table>
-                                    <!-- <div>
-                                        <a href="printreport.php?patientsque_id=<?php echo $patientsque_id; ?>&id=<?php echo $patient_id ?>" class="btn btn-primary">Print</a>
-                                    </div> -->
 
                                 </div>
                             </div>
@@ -427,6 +408,11 @@ include 'includes/header.php';
         <script language="JavaScript" src="js/gen_validatorv4.js" type="text/javascript"></script>
 	<!-- <script src="js/dashboard/dashboard-1.js"></script> -->
          <script src="js/chosen/chosen.jquery.js"></script>
+         <script>
+              function confirm_approve() {
+                                                return confirm('You are about To Submit Lab Report to Doctor. Are you sure you want to proceed?');
+                                            }
+                                            </script>
 
 </body>
 

@@ -122,7 +122,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 				
 				?>
 				<?php 
-				  if ($_SESSION['elcthospitallevel']=='lab technologist'){
+				  if ($_SESSION['elcthospitallevel']=='lab technologist' || $_SESSION['elcthospitallevel']=='lab technician'){
 					?>
 					<div class="col-xl-6 col-xxl-12">
 					<div class="row">
@@ -156,6 +156,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 								</div>
 							</div>
 						</div>
+						<?php if ($_SESSION['elcthospitallevel']=='lab technologist'){?>
 						<div class="col-xl-6 col-lg-6 col-sm-6">
 							<div class="widget-stat card bg-success">
 								<div class="card-body p-4">
@@ -192,6 +193,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 								</div>
 							</div>
 						</div>
+						<?php }?>
 						<div class="col-xl-6 col-lg-6 col-sm-6">
 							<div class="widget-stat card bg-info">
 								<div class="card-body p-4">
@@ -200,7 +202,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
 											<i class="fa fa-users"></i>
 										</span>
 										<div class="media-body text-white text-right">
-											<p class="mb-1">Total Employees</p>
+											<p class="mb-1">Total Staff</p>
 											<?php
 											$getstaff = mysqli_query($con, "SELECT * FROM staff WHERE status=1 and (role='lab technician' or role='lab technologist') ");
 											?>

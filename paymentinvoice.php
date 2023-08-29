@@ -87,9 +87,9 @@ $admission_id=$_GET['admission'];
               <div class="row">
                 <div class="col-lg-12">
                 <div style="
-    display: flex;
-    justify-content: center;
-    align-items: center;">
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;">
                     <img alt="image" src="<?php echo BASE_URL; ?>/images/ELVD.png" />
                 </div>
                     <h1 class="text-center" style="font-family:Times New roman;color: #000">ELCT-ELVD Nyakato Health Center </h1>

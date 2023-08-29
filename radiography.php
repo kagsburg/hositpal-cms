@@ -155,37 +155,58 @@ include 'includes/header.php';
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-4">
+                                <table class="" style="min-width: 845px">
+                                        <tbody>
+                                    <tr>
+                                        <td>
+                                        <div class="">
                                         <address>
+                                        <strong>Date: <?php echo date('Y-m-d',$report_date); ?> </strong><br>
+                                        <strong>PIN #: <?php echo $pin ?> </strong><br>
                                         <strong>Names:<?php echo $fullname ?></strong><br>
-                                            <strong>Gender:<?php echo $gender ?></strong><br>
-                                            <strong>PIN #: <?php echo $pin ?></strong>
-                                        </address>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <address>
-                                            <strong>Sponsor: <?php echo $company?></strong><br>
+                                            <strong>Gender:<?php echo $gender ?> </strong><br>
                                             <strong>Age: <span><?php 
                                         $dob1 = date("Y-m-d", strtotime($dob));
                                         $dob2 = new DateTime($dob1);
                                         $now = new DateTime();
                                         $difference = $now->diff($dob2);
                                         echo $difference->y;
-                                        ?></span> </strong><br>
-                                            <strong> Date: <?php echo date('Y-m-d',$report_date); ?></strong>
+                                        ?></span>  </strong><br>
                                         </address>
                                     </div>
-                                    <div class="col-lg-4">
+                                        </td>
+                                        <td>
                                         <address>
-                                            <strong>Requested By: <?php echo $orderedby?></strong><br>
+                                            <strong>Sponsor: <?php echo $company?></strong>
+
+                                        </address>
+                                        </td>
+                                        <td>
+                                        <address>
+                                        <strong>Requested By: <?php echo $orderedby?></strong><br>
                                             <strong>Conducted By : <span><?php echo $conductedby?></span></strong><br>
                                         </address>
-                                    </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    </table>
                                 </div>
+                                <div class="col-lg-12" style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    ">
                                 <h5>RELEVANT CLINICAL SUMMARY</h5>
+                                </div>
                                 <p><?php echo $summary ?></p>
-                                <div class="basic-form">      
+                                <div class="basic-form">
+                                <div class="col-lg-12" style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    ">      
                                 <h5>FINDINGS</h5>
+                                </div>
                                 <div class="row">
                                 <?php 
                                 $getreport = mysqli_query($con, "SELECT * FROM radiologyreports WHERE status=1 and report_id='$report_id' and results='$test'") or die(mysqli_error($con));
@@ -238,7 +259,7 @@ include 'includes/header.php';
                                         <?php }} ?>
                                         
                                     <?php } ?>
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-12 mt-2">
                                         <h5>CONCLUSION</h5>
                                         <p><?php echo $conculsion ?></p>
                                     </div>

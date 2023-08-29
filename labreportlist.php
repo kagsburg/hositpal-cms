@@ -167,6 +167,9 @@ $type = isset($_GET['ty'])?$_GET['ty']:0;
                                                                                $doctorreport_s = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$patientsque_id2' and labmeasure ='$medicalservice_id'") or die(mysqli_error($con));
                                                                                  $row_o = mysqli_fetch_array($doctorreport_s);
                                                                                  $details = $row_o['details'];
+                                                                                 if ($type == 1){
+                                                                                 $getpendinglab = mysqli_query($con, "SELECT * FROM labreports where patientsque_id='$id' AND admission_id='$admission_id' and approved=0  and test='$medicalservice_id' and status='1'") or die(mysqli_error($con));  
+                                                                                 if (mysqli_num_rows($getpendinglab) > 0){
                                                                            ?>
                                                                               <tr>
                                                                                  <td><?php echo $itemname; ?></td>
@@ -181,7 +184,22 @@ $type = isset($_GET['ty'])?$_GET['ty']:0;
 
                                                                                  </td>
                                                                               </tr>
-                                                                           <?php } }}?>
+                                                                           <?php }}else{?>
+                                                                              <tr>
+                                                                                 <td><?php echo $itemname; ?></td>
+                                                                                 <td><?php echo $details; ?></td>
+                                                                                 <td>
+                                                                                    <?php if ($status == 1 || $status == 2) { ?>
+                                                                                       <a href="addlabreport.php?id=<?php echo $patientsque_id; ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-xs btn-info">Add Report </a>
+                                                                                    <?php } else { ?>
+                                                                                       <a href="labreport?que=<?php echo $patientsque_id; ?>&patient_id=<?php echo $patient_id ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-primary btn-sm">View Report</a>
+                                                                                   
+                                                                                   <?php  }?>
+
+                                                                                 </td>
+                                                                              </tr>
+                                                                              <?php
+                                                                         }}}}?>
                              
                                  
                                  

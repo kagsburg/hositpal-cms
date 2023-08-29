@@ -70,6 +70,12 @@ $test = $_GET['test'];
                         </ol>
                     </div>
                 </div>
+                <?php
+                if (isset($_SESSION['success'])) {
+                    echo $_SESSION['success'];
+                    unset($_SESSION['success']);
+                }
+                ?>
                 <div class="row">
                     <?php
                     $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE patientsque_id='$id'");
@@ -93,9 +99,9 @@ $test = $_GET['test'];
                     $bloodgroup = $row2['bloodgroup'];
                     $dob = $row2['dob'];
                     $weight = $row2['weight'];
-                    $height = ($row2['height'] != '') ? $row2['height'] : 'NIL';
-                    $temp = ($row2['temp'] != '') ? $row2['temp'] : 'NIL';
-                    $bp = ($row2['bp'] != '') ? $row2['bp'] : 'NIL';
+                    $height = ($row2['height'] != '') ? $row2['height'] : 'N/A';
+                    $temp = ($row2['temp'] != '') ? $row2['temp'] : 'N/A';
+                    $bp = ($row2['bp'] != '') ? $row2['bp'] : 'N/A';
                     if (strlen($patient_id) == 1) {
                         $pin = '000' . $patient_id;
                     }
@@ -176,10 +182,22 @@ $test = $_GET['test'];
                                                             $range = $row2['range_type'];
                                                             $has_answer = $row2['has_answers'];
                                                             $getreport= mysqli_query($con, "SELECT * FROM labreports WHERE status=1 and admission_id='$admission_id' and test='$test'") or die(mysqli_error($con));
+                                                            $rowtitle = mysqli_fetch_array($getreport);
+                                                            $medicalservice_id = $rowtitle['test'];
+                                                            $labreport_id=$rowtitle['labreport_id'];
+                                                            $result=$rowtitle['result'];
+                                                            $title = $rowtitle['title'];
+                                                            $unit_id=$rowtitle['siunit'];
+                                                            $start= $rowtitle['start'];
+                                                            $sample_id=$rowtitle['sample_id'];
+                                                            $end= $rowtitle['end'];
+                                                            $details=$rowtitle['details'];
+                                                            $approve = $rowtitle['approved'];
+                                                            $admin_id2 = $rowtitle['admin_id'];
 
                                                             $getunit =  mysqli_query($con, "SELECT * FROM labunits WHERE status=1 AND measurement_id='$unit_id'");
                                                             if (mysqli_num_rows($getunit) == 0) {
-                                                                $measurement = "";
+                                                                $measurement = "N/A";
                                                             }else{
                 
                                                                 $row1 =  mysqli_fetch_array($getunit);
@@ -196,9 +214,14 @@ $test = $_GET['test'];
                                                                 <input type="hidden" name="admission_id" value="<?php echo $admission_id; ?>">
                                                                 <input type="hidden" name="patientque_id" value="<?php echo $id; ?>">
                                                                 <input type="hidden" name="count" value="<?php echo $count; ?>">
+                                                                <input type="hidden" name="labreport_id" value="<?php echo $labreport_id; ?>">
                                                                 <div class="form-group col-lg-12">
                                                                     <label>Report Title </label>
-                                                                    <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="" required/>
+                                                                    <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="<?php echo $title; ?>" required/>
+                                                                </div>
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>Sample ID </label>
+                                                                    <input type="text" class="form-control " name="sample[<?php echo $medicalservice_id; ?>]" placeholder="Enter Sample Id" value="<?php echo $sample_id; ?>" >
                                                                 </div>
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Test </label>
@@ -212,18 +235,23 @@ $test = $_GET['test'];
                                                                 </div>
                                                                 <div class="form-group col-lg-5">
                                                                     <label>Start Time</label>
-                                                                    <input type="time" name="start[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter Start Time" required>
+                                                                    <input type="time" value="<?php echo $start; ?>" name="start[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter Start Time" required>
                                                                 </div><div class="form-group col-lg-5">
                                                                     <label>End Time</label>
-                                                                    <input type="time" name="end[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter End Time" required>
+                                                                    <input type="time" value="<?php echo $end; ?>" name="end[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter End Time" required>
                                                                 </div>
                                                                 <div class="form-group col-lg-5">
                                                                     <label>Result</label>
-                                                                    <input type="number" name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result" required>
+                                                                    <input type="number" value="<?php echo $result; ?>" name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result" required>
                                                                 </div>
+                                                                <div class="form-group"><label class="control-label">* More Details if any</label>
+                                                                        <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details">
+                                                                        <?php echo $details; ?>
+                                                                        </textarea>
+                                                                    </div>
                                                             </div>
                                                             <div class="form-group pull-right">
-                                                                <button class="btn btn-primary" type="submit" name="submit">Submit</button>
+                                                                <button class="btn btn-primary" type="submit" name="updatelabreport">Submit</button>
                                                             </div>
                                                             </form>
                                                         <?php 
@@ -238,12 +266,18 @@ $test = $_GET['test'];
                                                                 <input type="hidden" name="admission_id" value="<?php echo $admission_id; ?>">
                                                                 <input type="hidden" name="patientque_id" value="<?php echo $id; ?>">
                                                                 <input type="hidden" name="count" value="<?php echo $count; ?>">
+                                                                <input type="hidden" name="labreport_id" value="<?php echo $labreport_id; ?>">
+
 
                                                                 <div class="form-group col-lg-12">
                                                                     <label>Report Title </label>
-                                                                    <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="" required />
+                                                                    <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="<?php echo $title; ?>" required />
                                                                 </div>
                                                             <div class='row'>
+                                                            <div class="form-group col-lg-6">
+                                                                    <label>Sample ID </label>
+                                                                    <input type="text" class="form-control " name="sample[<?php echo $medicalservice_id; ?>]" placeholder="Enter Sample Id" value="<?php echo $sample_id; ?>" >
+                                                                </div>
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Test </label>
                                                                     <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>">
@@ -256,22 +290,24 @@ $test = $_GET['test'];
                                                                 </div>
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Start Time</label>
-                                                                    <input type="time" name="start[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter Start Time" required>
+                                                                    <input type="time" value="<?php echo $start; ?>" name="start[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter Start Time" required>
                                                                 </div><div class="form-group col-lg-5">
                                                                     <label>End Time</label>
-                                                                    <input type="time" name="end[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter End Time" required>
+                                                                    <input type="time" value="<?php echo $end; ?>" name="end[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter End Time" required>
                                                                 </div>
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Result</label>
-                                                                    <input type="text" name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result" required>
+                                                                    <input type="text" value="<?php echo $result; ?>" name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result" required>
                                                                 </div>
                                                                 <div class="form-group"><label class="control-label">* More Details if any</label>
-                                                                        <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details"></textarea>
+                                                                        <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details">
+                                                                        <?php echo $details; ?>
+                                                                        </textarea>
                                                                     </div>
 
                                                             </div>
                                                             <div class="form-group pull-right">
-                                                                <button class="btn btn-primary" type="submit" name="submit">Submit</button>
+                                                                <button class="btn btn-primary" type="submit" name="updatelabreport">Submit</button>
                                                             </div>
                                                             </form>
                                                                 <?php
@@ -285,12 +321,16 @@ $test = $_GET['test'];
                                                                 <input type="hidden" name="investigationtype_id" value="<?php echo $investigationtype_id; ?>">
                                                                 <input type="hidden" name="admission_id" value="<?php echo $admission_id; ?>">
                                                                 <input type="hidden" name="patientque_id" value="<?php echo $id; ?>">
+                                                                <input type="hidden" name="labreport_id" value="<?php echo $labreport_id; ?>">
                                                                 <input type="hidden" name="count" value="<?php echo $count; ?>">
                                                                 <div class="form-group col-lg-12">
                                                                     <label>Report Title </label>
-                                                                    <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="" required />
+                                                                    <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="<?php echo $title; ?>" required />
                                                                 </div>
-
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>Sample ID </label>
+                                                                    <input type="text" class="form-control " name="sample[<?php echo $medicalservice_id; ?>]" placeholder="Enter Sample Id" value="<?php echo $sample_id; ?>" >
+                                                                </div>
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Test </label>
                                                                     <input type="hidden" name="test[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>">
@@ -303,10 +343,10 @@ $test = $_GET['test'];
                                                                 </div>                                                              
                                                                 <div class="form-group col-lg-6">
                                                                     <label>Start Time</label>
-                                                                    <input type="time" name="start[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter Start Time" required>
+                                                                    <input type="time" value="<?php echo $start; ?>" name="start[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter Start Time" required>
                                                                 </div><div class="form-group col-lg-6">
                                                                     <label>End Time</label>
-                                                                    <input type="time" name="end[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter End Time" required>
+                                                                    <input type="time" value="<?php echo $end; ?>" name="end[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter End Time" required>
                                                                 </div>
                                                                 <div class="form-group col-lg-12">
                                                                     <label>Result</label>
@@ -316,17 +356,19 @@ $test = $_GET['test'];
                                                                       $getanwers = mysqli_query($con, "SELECT * FROM investigationselect where investigationtype_id = '$investigationtype_id'") or die(mysqli_error($con));
                                                                       while ($row22= mysqli_fetch_array($getanwers)){
                                                                         ?>
-                                                                        <option value="<?php echo $row22['investigationselect_id']; ?>"><?php echo $row22['answer']; ?></option>                                                                                        
+                                                                        <option value="<?php echo $row22['investigationselect_id']; ?>" <?php if ($result == $row22['investigationselect_id']){ ?> selected <?php }?>><?php echo $row22['answer']; ?></option>                                                                                        
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>
                                                                 <div class="form-group"><label class="control-label">* More Details if any</label>
-                                                                        <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details"></textarea>
+                                                                        <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details">
+                                                                        <?php echo $details; ?>
+                                                                        </textarea>
                                                                     </div>
 
                                                             </div>
                                                             <div class="form-group pull-right">
-                                                                <button class="btn btn-primary" type="submit" name="submit">Submit</button>
+                                                                <button class="btn btn-primary" type="submit" name="updatelabreport">Submit</button>
                                                             </div>
                                                             <!-- </form> -->
                                                                     <?php
