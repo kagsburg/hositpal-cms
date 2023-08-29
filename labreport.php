@@ -239,6 +239,7 @@ include 'includes/header.php';
                                     $unit_id=$rowtitle['siunit'];
                                     $start= $rowtitle['start'];
                                     $end= $rowtitle['end'];
+                                    $labreport_id=$rowtitle['labreport_id'];
                                     $details=$rowtitle['details'];
                                     $approve = $rowtitle['approved'];
                                     $sample_id=$rowtitle['sample_id'];
@@ -270,7 +271,7 @@ include 'includes/header.php';
                                                                 }
                                                             }
                                                             if ($range == 1) {
-                                                                $getrange = mysqli_query($con, "SELECT * FROM investigationtypesrange WHERE status=1 AND investigationtype_id='$investigationtype_id'");
+                                                                $getrange = mysqli_query($con, "SELECT * FROM investigationtypesrange WHERE status=1 AND investigationtype_id='$medicalservice_id'");
                                                                 if (mysqli_num_rows($getrange) == 0) {
                                                                     $range = "";
                                                                 }else{
@@ -278,23 +279,110 @@ include 'includes/header.php';
                                                                     $normalx = $row3['normalx'];
                                                                     $normaly = $row3['normaly'];
                                                                     // check if the result is within range
-                                                                    if ($result < $normalx ) {
+                                                                    if (intval($result) < $normalx ) {
                                                                         $interval = $normalx .' - '.$normaly;
                                                                         $flag = 'L';
-                                                                    }elseif ($result >= $normalx && $result <= $normaly) {
+                                                                    }elseif (intval($result) >= $normalx && intval($result) <= $normaly) {
                                                                         $interval = $normalx .' - '.$normaly;
                                                                         $flag = 'N';
-                                                                    }else if ($result > $normaly) {
+                                                                    }else if (intval($result) > $normaly) {
                                                                         $interval = $normalx .' - '.$normaly;
                                                                         $flag = 'H';
                                                                     }
                                                                 }
                                                             }
+                                                             // check if investigation has subtype 
+                                                             $getsubtype = mysqli_query($con, "SELECT * FROM investigationsubtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'"); 
+                                                             if ((mysqli_num_rows($getsubtype) > 0) && ($range != 0)) {
+                                                                $getlabreportsubtype = mysqli_query($con, "SELECT * FROM labreportsubtype WHERE labreport_id='$labreport_id'");
+                                                                ?>
+                                                                             <tr>
+                                                            <td>
+                                                                    <h5>Sample ID</h5>
+                                                                    <p><?php echo $sample_id ?></p>                                        
+                                                                </td>
+                                                                <td>
+                                                                    <h5>Test</h5>
+                                                                    <p><?php echo $medicalservice ?></p>                                        
+                                                                </td>
+                                                                
+                                        <td>
+                                            <h5>START TIME</h5>
+                                            <p><?php echo $start ?></p>
+                                        </td>
+                                        <td>
+                                            <h5>END TIME</h5>
+                                            <p><?php echo $end ?></p>
+                                        </td>
+                                        </tr>
+                                        
+                                            <?php 
+                                             while ($rowsub=mysqli_fetch_array($getlabreportsubtype)){
+                                                $subtype_id = $rowsub['subtype_id'];
+                                                $unit_id = $rowsub['unit_id'];
+                                                $results = $rowsub['results'];
+                                                $getsubtype = mysqli_query($con, "SELECT * FROM investigationsubtypes WHERE status=1 AND investigationsubtype_id ='$subtype_id'"); 
+                                                $rowsubtype = mysqli_fetch_array($getsubtype);
+                                                $subtype_id = $rowsubtype['investigationsubtype_id'];
+                                                $subtype = $rowsubtype['subtype'];
+                                                $getunit2 =  mysqli_query($con, "SELECT * FROM labunits WHERE status=1 AND measurement_id='$unit_id'");
+                                                if (mysqli_num_rows($getunit2) == 0) {
+                                                    $measurement = "N/A";
+                                                }else{                                                                                                
+                                                        $row1 =  mysqli_fetch_array($getunit2);
+                                                        $measurement_id = $row1['measurement_id'];
+                                                        $measurement = $row1['measurement'];
+                                                    }  
+                                                    // $flag = '';
+                                                    $getrange = mysqli_query($con, "SELECT * FROM investigationtypesrange WHERE status=1 AND investigationsubtype_id='$subtype_id'");
+                                                                if (mysqli_num_rows($getrange) == 0) {
+                                                                    $range = "";
+                                                                }else{
+                                                                    $row3 = mysqli_fetch_array($getrange);
+                                                                    $normalx = $row3['normalx'];
+                                                                    $normaly = $row3['normaly'];
+                                                                    // check if the result is within range
+                                                                    if (intval($results) <  $normalx ) {
+                                                                        $interval = $normalx .' - '.$normaly;
+                                                                        $flag = 'L';
+                                                                    }elseif (intval($results) >= $normalx && intval($results) <= $normaly) {
+                                                                        $interval = $normalx .' - '.$normaly;
+                                                                        $flag = 'N';
+                                                                    }else if (intval($results) > $normaly) {
+                                                                        $interval = $normalx .' - '.$normaly;
+                                                                        $flag = 'H';
+                                                                    }
+                                                                }
+                                            ?>
+                                            <tr>
+                                            <td>
+                                            <h5>Sub Test</h5>
+                                            <p><?php echo $subtype ?></p>
+                                        </td>
+                                        <td>
+                                            <h5>RESULT</h5>
+                                            <p><?php echo $results ?></p>
+                                        </td>
+                                        <td>
+                                            <h5>SI Unit</h5>
+                                            <p><?php echo $measurement ?></p>
+                                        </td>
+                                            <td>
+                                            <h5>Flag</h5>
+                                            <p><?php echo $flag ?></p>
+                                        </td><td>
+                                            <h5>RefInterval</h5>
+                                            <p><?php echo $interval ?></p>
+                                        </td>
+                                        </tr>
+                                        <?php 
+
+
+                                             }
+                                            ?>
+                                                                <?php
+                                                             }else{
                                     ?>
-                                   
-                                   
-
-
                                                             <tr>
                                                             <td>
                                                                     <h5>Sample ID</h5>
@@ -354,7 +442,7 @@ include 'includes/header.php';
 
                                         </td>
                                         </tr>
-
+                                                <?php } ?>
                                         </table>
 
                                 </div>

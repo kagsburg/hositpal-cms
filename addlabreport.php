@@ -216,7 +216,76 @@ $test = $_GET['test'];
                                                                 $measurement_id = $row1['measurement_id'];
                                                                 $measurement = $row1['measurement'];
                                                             }
-                                                            if ($range != 0){
+                                                            // check if investigation has subtype 
+                                                            $getsubtype = mysqli_query($con, "SELECT * FROM investigationsubtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'"); 
+                                                            if ((mysqli_num_rows($getsubtype) > 0) && ($range != 0)) {
+                                                                ?>
+                                                                <form method="post" action="savelabreport">
+                                                                    <div class="row">
+                                                                    <input type="hidden" name="has_answer" value="<?php echo $has_answer; ?>">
+                                                                <input type="hidden" name="patientlab_id" value="<?php echo $patientlab_id; ?>">
+                                                                <input type="hidden" name="investigationtype_id" value="<?php echo $investigationtype_id; ?>">
+                                                                <input type="hidden" name="admission_id" value="<?php echo $admission_id; ?>">
+                                                                <input type="hidden" name="patientque_id" value="<?php echo $id; ?>">
+                                                                <input type="hidden" name="count" value="<?php echo $count; ?>">
+                                                                <div class="form-group col-lg-12">
+                                                                    <label>Report Title </label>
+                                                                    <input type="text" class="form-control " name="title[<?php echo $medicalservice_id; ?>]" placeholder="Enter Title" value="" required/>
+                                                                </div>
+                                                                <div class="form-group col-lg-12">
+                                                                    <label>Sample ID </label>
+                                                                    <input type="text" class="form-control " name="sample[<?php echo $medicalservice_id; ?>]" placeholder="Enter Sample Id" value="" >
+                                                                </div>
+                                                                <div class="form-group col-lg-6">
+                                                                    <label>Start Time</label>
+                                                                    <input type="time" name="start[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter Start Time" required>
+                                                                </div><div class="form-group col-lg-6">
+                                                                    <label>End Time</label>
+                                                                    <input type="time" name="end[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter End Time" required>
+                                                                </div>
+                                                                    <?php
+                                                                while ($row3 = mysqli_fetch_array($getsubtype)){
+                                                                    $investigationsubtype_id = $row3['investigationsubtype_id'];
+                                                                    $subtype = $row3['subtype'];
+                                                                    $unit = $row3['unit_id'];
+                                                                    $getunit2 =  mysqli_query($con, "SELECT * FROM labunits WHERE status=1 AND measurement_id='$unit'");
+                                                                        if (mysqli_num_rows($getunit2) == 0) {
+                                                                            $measurement = "N/A";
+                                                                        }else{                            
+                                                                            $row21 =  mysqli_fetch_array($getunit2);
+                                                                            $measurement_id = $row21['measurement_id'];
+                                                                            $measurement = $row21['measurement'];
+                                                                        }
+                                                                    ?>
+                                                                    <input type="hidden" name="subtype[]" value="<?php echo $investigationsubtype_id; ?>">
+                                                                    <div class="form-group col-lg-6">
+                                                                    <label>Test </label>
+                                                                    <input type="hidden" name="test[<?php echo $investigationsubtype_id; ?>]" placeholder="Enter test" value="<?php echo $medicalservice_id; ?>">
+                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $subtype; ?>" disabled>
+                                                                </div>
+                                                                <div class="form-group col-lg-3">
+                                                                    <label>SI Unit </label>
+                                                                    <input type="hidden" name="unit[<?php echo $investigationsubtype_id; ?>]" placeholder="Enter test" value="<?php echo $measurement_id; ?>">
+                                                                    <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $measurement; ?>" disabled>
+                                                                </div>
+                                                                <div class="form-group col-lg-3">
+                                                                    <label>Result</label>
+                                                                    <input type="number" step="0.0001"  name="result[<?php echo $investigationsubtype_id; ?>]" class="form-control " placeholder="Enter result" >
+                                                                </div>
+                                                                    <?php
+                                                                }
+                                                                ?>
+                                                                <div class="form-group"><label class="control-label">* More Details if any</label>
+                                                                        <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details"></textarea>
+                                                                    </div>
+                                                                    </div>
+                                                                    <div class="form-group pull-right">
+                                                                <button class="btn btn-primary" type="submit" name="submitspecial">Submit</button>
+                                                            </div>
+                                                                </form>
+                                                                <?php
+                                                            }
+                                                            if ($range != 0 && (mysqli_num_rows($getsubtype) == 0)){
                                                             ?>
                                                             <form method="post" action="savelabreport">
                                                             <div class='row'>
@@ -244,16 +313,16 @@ $test = $_GET['test'];
                                                                     <input type="hidden" name="unit[<?php echo $medicalservice_id; ?>]" placeholder="Enter test" value="<?php echo $measurement_id; ?>">
                                                                     <input type="text" class="form-control " placeholder="Enter test" value="<?php echo $measurement; ?>" disabled>
                                                                 </div>
-                                                                <div class="form-group col-lg-5">
+                                                                <div class="form-group col-lg-6">
                                                                     <label>Start Time</label>
                                                                     <input type="time" name="start[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter Start Time" required>
-                                                                </div><div class="form-group col-lg-5">
+                                                                </div><div class="form-group col-lg-6">
                                                                     <label>End Time</label>
                                                                     <input type="time" name="end[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter End Time" required>
                                                                 </div>
                                                                 <div class="form-group col-lg-5">
                                                                     <label>Result</label>
-                                                                    <input type="number"step="0.01" name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result" required>
+                                                                    <input type="number" step="0.0001"  name="result[<?php echo $medicalservice_id; ?>]" class="form-control " placeholder="Enter result" required>
                                                                 </div>
                                                                 <div class="form-group"><label class="control-label">* More Details if any</label>
                                                                         <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details"></textarea>

@@ -126,7 +126,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                         $hasrange = $_POST['hassubtyperange'];
                                                         $normalX =  $_POST['normalX1'];
                                                         $normalY =  $_POST['normalY1'];
-                                                        mysqli_query($con, "INSERT INTO investigationtypesrange(investigationtype_id,normalx,normaly,timestamp,status,admin_id) 
+                                                        mysqli_query($con, "INSERT INTO investigationtypesrange(investigationsubtype_id,normalx,normaly,timestamp,status,admin_id) 
                                                         VALUES('$sub_id','$normalX[$i]','$normalY[$i]',UNIX_TIMESTAMP(),1,'".$_SESSION['elcthospitaladmin']."')") or die(mysqli_error($con));
                                                     }
                                                 }
@@ -258,13 +258,13 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                     <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="normalX">Normal Range X:</label>
-                                                        <input type="number" step="0.01" class="form-control" id="normalX" name="normalX1[]">
+                                                        <input type="number" step="0.0001" class="form-control" id="normalX" name="normalX1[]">
                                                     </div>
                                                     </div>
                                                     <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="normalY">Normal Range Y:</label>
-                                                        <input type="number"  step="0.01" class="form-control" id="normalY" name="normalY1[]">
+                                                        <input type="number"  step="0.0001" class="form-control" id="normalY" name="normalY1[]">
                                                     </div>
                                                     </div>
                                                 </div>
@@ -287,13 +287,13 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="normalX">Normal Range X:</label>
-                                                <input type="number"  step="0.01" class="form-control" id="normalX" name="normalX">
+                                                <input type="number"  step="0.0001" class="form-control" id="normalX" name="normalX">
                                             </div>
                                             </div>
                                             <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="normalY">Normal Range Y:</label>
-                                                <input type="number"   step="0.01" class="form-control" id="normalY" name="normalY">
+                                                <input type="number"   step="0.0001" class="form-control" id="normalY" name="normalY">
                                             </div>
                                             </div>
                                         </div>
@@ -569,13 +569,13 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                     <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="normalX"> Normal Range X:</label>
-                                                        <input type="number"  step="0.01" class="form-control" id="normalX" name="normalX1[]">
+                                                        <input type="number"  step="0.0001" class="form-control" id="normalX" name="normalX1[]">
                                                     </div>
                                                     </div>
                                                     <div class="col-lg-6">
                                                     <div class="mb-3">
                                                         <label for="normalY">Normal Range Y:</label>
-                                                        <input type="number"  step="0.01" class="form-control" id="normalY" name="normalY1[]">
+                                                        <input type="number"  step="0.0001" class="form-control" id="normalY" name="normalY1[]">
                                                     </div>
                                                     </div>
                                                 </div>

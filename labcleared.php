@@ -138,7 +138,7 @@ include 'includes/header.php';
                                             
                                                    <td>   
                                                    
-                                                    <a href="labreportlist?id=<?php echo $patientsque_id; ?>&ty=1" class="btn btn-primary btn-sm">View Lab Report</a>
+                                                    <a href="labreportlist?id=<?php echo $patientsque_id; ?>&ty=2" class="btn btn-primary btn-sm">View Lab Report</a>
           <!-- <a href="labreport?patient_id=<?php echo $patient_id ?>&que=<?php echo $patientsque_id?>" class="btn btn-xs btn-info">Lab Report</a>              -->
                                         </td>
                                          

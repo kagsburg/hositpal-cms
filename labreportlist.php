@@ -99,7 +99,7 @@ $type = isset($_GET['ty'])?$_GET['ty']:0;
                            </thead>
                            <tbody>
                               <?php
-                              if ($type == 1){
+                              if ($type == 1 || $type == 2){
                                  $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE room='lab' AND status in (1,0) AND patientsque_id ='$id' ") or die(mysqli_error($con));
                               }else{
                                  $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE room='lab' AND status=0 AND patientsque_id ='$id' ") or die(mysqli_error($con));
@@ -152,7 +152,7 @@ $type = isset($_GET['ty'])?$_GET['ty']:0;
                                                                            // $rowo = mysqli_fetch_array($getorder);
                                                                            $timestamp = $rowo['timestamp'];
                                                                            $serviceorder_id = $rowo['laborder_id'];
-                                                                           if ($type == 1){
+                                                                           if ($type == 1 || $type == 2){
                                                                            $getordered2 = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id  ='$serviceorder_id' AND status in (3)") or die(mysqli_error($con));
                                                                            }else{
                                                                            $getordered2 = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id  ='$serviceorder_id' AND status in (1,2)") or die(mysqli_error($con));

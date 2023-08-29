@@ -128,13 +128,13 @@ $investigation = $row1['investigationtype'];
                                             <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="normalX">Normal Range X:</label>
-                                                <input type="number" step="0.01" value="<?php echo $normalx ?>" class="form-control" id="normalX" name="normalx">
+                                                <input type="number" step="0.0001" value="<?php echo $normalx ?>" class="form-control" id="normalX" name="normalx">
                                             </div>
                                             </div>
                                             <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="normalY">Normal Range Y:</label>
-                                                <input type="number" step="0.01" value="<?php echo $normaly ?>" class="form-control" id="normalY" name="normaly">
+                                                <input type="number" step="0.0001" value="<?php echo $normaly ?>" class="form-control" id="normalY" name="normaly">
                                             </div>
                                             </div>
                                         </div>
