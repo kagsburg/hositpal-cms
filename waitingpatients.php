@@ -73,12 +73,12 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                                     <table id="example6" class="display" style="min-width: 845px">
                                         <thead>
                                             <tr>
-                                                <th>Que ID</th>
-                                                <th>Image</th>
+                                                <th>Date</th>
+                                                <th>PIN</th>
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
                                                 <th>Room to Visit</th>
-                                                <th>Attendant</th>
+                                                <!-- <th>Attendant</th> -->
                                                 <th>Action</th>
 
                                             </tr>
@@ -91,6 +91,7 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                                                 $admission_id = $row['admission_id'];
                                                 $room = $row['room'];
                                                 $attendant = $row['attendant'];
+                                                $timestamp = $row['timestamp'];
                                                 $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id' and status ='1'");
                                                 if (mysqli_num_rows($getadmission) > 0) {
                                                 $row1 = mysqli_fetch_array($getadmission);
@@ -131,19 +132,20 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                                                
                                             ?>
                                                 <tr class="gradeA">
-                                                    <td><?php echo $patientsque_id; ?></td>
+                                                    <td><?php echo date('Y-m-d', $timestamp) ?></td>
                                                     <td>
-                                                        <a href="images/patients/<?php echo $pimage; ?>" target="_blank">
+                                                    <?php echo $patientsque_id; ?>
+                                                        <!-- <a href="images/patients/<?php echo $pimage; ?>" target="_blank">
                                                             <img src="images/patients/thumbs/<?php echo $pimage; ?>" width="60">
-                                                        </a>
+                                                        </a> -->
                                                     </td>
                                                     <td><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?></td>
                                                     <td><?php echo $gender; ?></td>
                                                     <td><?php echo $room; ?></td>
-                                                    <td><?php echo $fullname; ?></td>
+                                                    <!-- <td><?php echo $fullname; ?></td> -->
                                                     <td>
-
-                                                        <a href="addnursereport?id=<?php echo $patientsque_id; ?>" class="btn btn-xs btn-info">Add Report</a>
+                                                        <a href="viewnursedetails?id=<?php echo $patientsque_id; ?>" class="btn btn-xs btn-primary">View Details</a>
+                                                        <!-- <a href="addnursereport?id=<?php echo $patientsque_id; ?>" class="btn btn-xs btn-info">Add Report</a> -->
                                                         <?php
                                                         $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'   AND status=0 AND admintype='doctor' ");
                                                         if (mysqli_num_rows($getprevque) > 0) {
@@ -151,7 +153,7 @@ if (($_SESSION['elcthospitallevel'] != 'nurse')) {
                                                             $patientsque_id2 = $rowp['patientsque_id'];
                                                             $Zprevid = $rowp['prev_id'];
                                                         ?>
-                                                            <button data-toggle="modal" data-target="#modal<?php echo $patientsque_id; ?>" class="btn btn-xs btn-success">Doctor Report</button>
+                                                            <!-- <button data-toggle="modal" data-target="#modal<?php echo $patientsque_id; ?>" class="btn btn-xs btn-success">Doctor Report</button> -->
                                                             <div class="modal fade" id="modal<?php echo $patientsque_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                                 <div class="modal-dialog" role="document">
                                                                     <div class="modal-content">

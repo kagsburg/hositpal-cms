@@ -226,7 +226,7 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
                                                                     <?php
                                                                     if ($_SESSION['elcthospitallevel'] == 'cashier') {
                                                                     ?>
-                                                                        <a href="addpayment?q=<?php echo $patient_id; ?>" class="btn btn-sm btn-primary">Add Payment</a>
+                                                                        <a href="addpayment?q=<?php echo $patient_id; ?>&admission=<?php echo $admission_id ?>" class="btn btn-sm btn-primary">Add Payment</a>
                                                                         <a href="deletebill?q=<?php echo $patient_id; ?>" onclick="return confirm_delete<?php echo $patient_id; ?>()" class="btn btn-sm btn-danger">Clear</a>
                                                                         <script type="text/javascript">
                                                                             function confirm_delete<?php echo $patient_id; ?>() {

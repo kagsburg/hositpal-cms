@@ -144,7 +144,7 @@ function get_bill_by_patient_only(PDO $conn, $patient_id,$admission_id=null, $st
 {
     if ($status == 1){
         if ($admission_id == null){
-            $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND status IN (1,8)");
+            $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND status IN (1)");
             $stmt->execute([$patient_id]);
     }else{
         $stmt = $conn->prepare("SELECT * FROM bills WHERE patient_id=? AND admission_id=? AND status IN (1,8)");
@@ -210,11 +210,11 @@ function update_bill_status(PDO $conn, $bill_id, $status, $payment_method=null)
     }
 }
 
-function make_bill_payment(PDO $conn, $bill_id, $amount, $payment_method,$countbills,$patient_id, $totalservice)
+function make_bill_payment(PDO $conn, $bill_id, $amount, $payment_method,$countbills,$patient_id, $totalservice,$admission)
 {
     if ($countbills > 1){
         #get all bills amount 
-        $bills = get_bill_by_patient_only($conn, $patient_id, 1);
+        $bills = get_bill_by_patient_only($conn, $patient_id,$admission, 1);
         if ($totalservice >= $amount){
             foreach($bills as $bl){
                 $stmt = $conn->prepare("INSERT INTO bill_payments (bill_id, amount, payment_method) VALUES (?, ?, ?)");

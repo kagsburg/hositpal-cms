@@ -4,13 +4,19 @@ include 'includes/conn.php';
 header('Location:login.php');
    }
 $id=$_GET['id'];
+$test=$_GET['test'];
  // get service order 
  $getservice = mysqli_query($con, "SELECT * FROM serviceorders WHERE patientsque_id='$id' AND status=1");
  $services = array();
  if (mysqli_num_rows($getservice) > 0) {
-     while ($rows = mysqli_fetch_array($getservice)) {
-         $service_id = $rows['serviceorder_id'];
-         $getpatservice = mysqli_query($con, "SELECT * FROM patientservices WHERE serviceorder_id='$service_id' AND status=2");
+    $rows= mysqli_fetch_array($getservice);
+    $service_name = $rows['serviceorder_id'];
+    $getcount = mysqli_query($con, "SELECT * FROM patientservices WHERE serviceorder_id='$service_name' AND status in (1,2)");
+    $count = mysqli_num_rows($getcount);
+    print($count);
+    //  while ($rows = mysqli_fetch_array($getservice)) {
+        //  $service_id = $rows['serviceorder_id'];
+         $getpatservice = mysqli_query($con, "SELECT * FROM patientservices WHERE patientservice_id='$test' AND status in (1,2)");
          if (mysqli_num_rows($getpatservice) > 0) {
             while ($rows = mysqli_fetch_array($getpatservice)) {
                 $service_name = $rows['medicalservice_id'];
@@ -22,12 +28,12 @@ $id=$_GET['id'];
                 } else {
                     $service_name = " ";
                 }
-                $services[$service_id] = $service_name;
+                // $services[$service_id] = $service_name;
             }
          } else {
              $service_name = " ";
          }
-     }
+    //  }
     }
 ?>
 <!DOCTYPE html>
@@ -109,6 +115,13 @@ include 'includes/header.php';
                             $thirdname=$row2['thirdname'];    
                             $gender=$row2['gender'];    
                                $ext=$row2['ext']; 
+                               
+                    $bloodgroup = $row2['bloodgroup'];
+                    $dob = $row2['dob'];
+                    $weight = $row2['weight'];
+                    $height = ($row2['height'] != '') ? $row2['height'] : 'NIL';
+                    $temp = ($row2['temp'] != '') ? $row2['temp'] : 'NIL';
+                    $bp = ($row2['bp'] != '') ? $row2['bp'] : 'NIL';
                                 if(strlen($admission_id)==1){
       $pin='000'.$admission_id;
      }
@@ -124,12 +137,8 @@ include 'includes/header.php';
                                ?>
                                <div class="col-lg-12">
                                 <div class="card">
-                                    <div class="card-header"><h4 class="card-title">Patient Services</h4></div>
-                                    <?php 
-                                    foreach($services as $service){
-                                        echo '<div class=""><p>'.$service.'</p></div>';
-                                    }
-                                    ?>
+                                    <div class="card-header"><h4 class="card-title">Patient Service <?php echo $service_name  ?></h4></div>
+                                    
                                 </div>
                                </div>
                     <div class="col-lg-3">
@@ -145,6 +154,23 @@ include 'includes/header.php';
                                     <h4 class="text-primary"><?php echo $firstname.' '.$secondname.' '.$thirdname; ?></h4>
                                                                
                                            </div>
+                                           <h4 class="text-primary mt-4 mb-4">Medical Information</h4>
+                                <div class="profile-blog mb-5">
+                                    <address>
+                                        <p>Age: <span><?php 
+                                        $dob1 = date("Y-m-d", strtotime($dob));
+                                        $dob2 = new DateTime($dob1);
+                                        $now = new DateTime();
+                                        $difference = $now->diff($dob2);
+                                        echo $difference->y;
+                                        ?></span></p>
+                                        <p>Blood Group : <span><?php echo $bloodgroup; ?></span></p>
+                                        <p>Weight (kgs)  : <span><?php echo $weight; ?></span></p>
+                                        <p>Height : <span><?php echo $height; ?></span></p>
+                                        <p>Temperature : <span><?php echo $temp; ?></span></p>
+                                        <p>Blood Pressure : <span><?php echo $bp; ?></span></p>
+                                    </address>
+                                </div>
                                 </div>
                                 </div>
                                 </div>
@@ -165,9 +191,6 @@ include 'includes/header.php';
                                     if(isset($_POST['submitvitals'])){
                                         // $doctor=$_POST['doctor'];
                                         $details=$_POST['details']; 
-                            
-                       mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$admin_id','1','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),1,'$id')") or die(mysqli_error($con));
-                       mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
                        if(isset($_POST['type'],$_POST['measurement'])){
                                       $type=$_POST['type'];
                                       $measurement=$_POST['measurement'];
@@ -176,43 +199,123 @@ include 'includes/header.php';
                                     mysqli_query($con,"INSERT INTO nursereports(type,measurement,patientsque_id,details,status) VALUES('$type[$i]','$measurement[$i]','$id','$details','1')") or die(mysqli_error($con));
                                 }  
                             }
-                            $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'") or die(mysqli_error($con));
-                            $row_prev_admin_id=mysqli_fetch_array($get_prev_admin_id);
-                            $prev_admin_id=$row_prev_admin_id['admin_id'];
-                            $prev_id = $row_prev_admin_id['prev_id'];
-                            mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
-                            mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),1,'$prev_id')") or die(mysqli_error($con));
+                            mysqli_query($con,"UPDATE patientservices set status='3' WHERE patientservice_id='$test'") or die(mysqli_error($con));
+            
+                            if ($count == 1){
+                                $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                $row_prev_admin_id=mysqli_fetch_array($get_prev_admin_id);
+                                $prev_id = $row_prev_admin_id['prev_id'];
+                                // update conclusion
+                                $checkpending=mysqli_query($con,"SELECT * FROM patientsque WHERE status='8' and admintype='nurse' and prev_id ='$prev_id'") or die(mysqli_error($con));
+                                if(mysqli_num_rows($checkpending)>0){
+                                    $row_id=mysqli_fetch_array($checkpending);
+                                    $patientque_id=$row_id['patientsque_id'];
+                                    mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$patientque_id'") or die(mysqli_error($con));
+                                    $_SESSION['success'] = '<div class="alert alert-success">Nurse Report Successfully Added</div>';
+                                    // redirect to radiowaiting
+                                    echo '<script>window.location.href = "viewnursedetails?id='.$id.'";</script>';exit();
+                                }else{
+                                
+                                $prev_admin_id=$row_prev_admin_id['admin_id'];
+                                $admission_id = $row_prev_admin_id['admission_id'];
+                                mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                $_SESSION['success'] = '<div class="alert alert-success">Radiology Report Successfully Added</div>';
+                                mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),1,'$prev_id')") or die(mysqli_error($con));
+                                            // redirect to radiowaiting
+                                            echo '<script>window.location.href = "viewnursedetails?id='.$id.'";</script>';exit();
+                            }
+                            }else{
+                                $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                $row_prev_admin_id=mysqli_fetch_array($get_prev_admin_id);
+                                $prev_id = $row_prev_admin_id['prev_id'];
+                                // status 8 is for radiology report but all tests are not done
+                                $checkpending=mysqli_query($con,"SELECT * FROM patientsque WHERE status='8' and admintype='nurse' and prev_id ='$prev_id'") or die(mysqli_error($con));
+                                if(mysqli_num_rows($checkpending)>0){
+                                
+                                    // redirect to radiowaiting
+                                    echo '<script>window.location.href = "viewnursedetails?id='.$id.'";</script>';exit();
+                                }else{
+                                $prev_admin_id=$row_prev_admin_id['admin_id'];
+                                $admission_id = $row_prev_admin_id['admission_id'];
+                                //    mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                $_SESSION['success'] = '<div class="alert alert-success">Nurse Report Successfully Added</div>';
+                                mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),8,'$prev_id')") or die(mysqli_error($con));
+                                            // redirect to radiowaiting
+                                            echo '<script>window.location.href = "viewnursedetails?id='.$id.'";</script>';exit();
+                            }      
+                            } 
+                           
     ?>  
                           
  <?php
-echo '<div class="alert alert-success">Patient Report Successfully Added</div>';
                 
     }   
     if (isset($_POST['minordetails'])) {
-        $case=$_POST['case'];
-        $casedetails=$_POST['casedet'];
-        foreach ($case as $key => $value) {
-            $case=$value;
-            $case_details=$casedetails[$key];
-            if($case!=''){
-                mysqli_query($con,"INSERT INTO minor(admission_id,service_id,casetype,details,admin_id,patientsque_id,timestamp,status) VALUES('$admission_id','$key','$case','$case_details','" . $_SESSION['elcthospitaladmin'] . "','$id',UNIX_TIMESTAMP(),'1')") or die(mysqli_error($con));
-            }
+        $case=mysqli_escape_string($con,trim($_POST['case']));
+        $casedetails=mysqli_escape_string($con,trim($_POST['casedetails']));
+        $service_id=$_POST['service_id'];
+        $count=$_POST['count'];
+        if (empty($case) || empty($casedetails)) {
+            echo '<div class="alert alert-danger">Please fill all fields</div>';
+        }else{
+        mysqli_query($con,"INSERT INTO minor(admission_id,service_id,casetype,details,admin_id,patientsque_id,timestamp,status) 
+        VALUES('$admission_id','$service_id','$case','$casedetails','" . $_SESSION['elcthospitaladmin'] . "','$id',UNIX_TIMESTAMP(),'1')") or die(mysqli_error($con));
+    mysqli_query($con,"UPDATE patientservices set status='3' WHERE patientservice_id='$test'") or die(mysqli_error($con));
+            
+        if ($count == 1){
+            $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'") or die(mysqli_error($con));
+               $row_prev_admin_id=mysqli_fetch_array($get_prev_admin_id);
+               $prev_id = $row_prev_admin_id['prev_id'];
+            // update conclusion
+            $checkpending=mysqli_query($con,"SELECT * FROM patientsque WHERE status='8' and admintype='nurse' and prev_id ='$prev_id'") or die(mysqli_error($con));
+            if(mysqli_num_rows($checkpending)>0){
+                $row_id=mysqli_fetch_array($checkpending);
+                $patientque_id=$row_id['patientsque_id'];
+                mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$patientque_id'") or die(mysqli_error($con));
+                $_SESSION['success'] = '<div class="alert alert-success">Nurse Report Successfully Added</div>';
+                // redirect to radiowaiting
+                echo '<script>window.location.href = "viewnursedetails?id='.$id.'";</script>';exit();
+            }else{
+            
+               $prev_admin_id=$row_prev_admin_id['admin_id'];
+               $admission_id = $row_prev_admin_id['admission_id'];
+               mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+               $_SESSION['success'] = '<div class="alert alert-success">Radiology Report Successfully Added</div>';
+               mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),1,'$prev_id')") or die(mysqli_error($con));
+                        // redirect to radiowaiting
+                        echo '<script>window.location.href = "viewnursedetails?id='.$id.'";</script>';exit();
         }
-        $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'") or die(mysqli_error($con));
-       $row_prev_admin_id=mysqli_fetch_array($get_prev_admin_id);
-       $prev_admin_id=$row_prev_admin_id['admin_id'];
-       $prev_id = $row_prev_admin_id['prev_id'];
-       mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
-       mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),1,'$prev_id')") or die(mysqli_error($con));
- 
-        echo '<div class="alert alert-success">Patient Report Successfully Updated</div>';
+        }else{
+            $get_prev_admin_id=mysqli_query($con,"SELECT * FROM patientsque WHERE patientsque_id='$id'") or die(mysqli_error($con));
+               $row_prev_admin_id=mysqli_fetch_array($get_prev_admin_id);
+               $prev_id = $row_prev_admin_id['prev_id'];
+            // status 8 is for radiology report but all tests are not done
+            $checkpending=mysqli_query($con,"SELECT * FROM patientsque WHERE status='8' and admintype='nurse' and prev_id ='$prev_id'") or die(mysqli_error($con));
+            if(mysqli_num_rows($checkpending)>0){
+               
+                // redirect to radiowaiting
+                echo '<script>window.location.href = "viewnursedetails?id='.$id.'";</script>';exit();
+            }else{
+               $prev_admin_id=$row_prev_admin_id['admin_id'];
+               $admission_id = $row_prev_admin_id['admission_id'];
+            //    mysqli_query($con,"UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+               $_SESSION['success'] = '<div class="alert alert-success">Nurse Report Successfully Added</div>';
+               mysqli_query($con,"INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','doctor','$prev_admin_id','1','".$_SESSION['elcthospitaladmin']."','nurse',UNIX_TIMESTAMP(),8,'$prev_id')") or die(mysqli_error($con));
+                        // redirect to radiowaiting
+                        echo '<script>window.location.href = "viewnursedetails?id='.$id.'";</script>';exit();
+        }      
+        } 
+    }
+        echo '<div class="alert alert-success">Nurse Report Successfully Added</div>';
     }
    ?>
           
      <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-vitals" role="tabpanel" aria-labelledby="vitals-tab">
         <form method="post" name='form' class="form" action=""  enctype="multipart/form-data">
-            <div class="col-lg-12"><h4>Measurements taken</h4></div>
+            <input type="hidden" name="count" value="<?php echo $count; ?>">
+            <input type="hidden" name="service_id" value="<?php echo $service_id; ?>">
+            <div class="col-lg-12"><h4>Vitals taken</h4></div>
                             <div class="col-lg-12">
                                         <div class='subobj1'>
                                         <div class='row'>
@@ -231,20 +334,6 @@ echo '<div class="alert alert-success">Patient Report Successfully Added</div>';
             </div>
             </div>
             </div>
-               <!-- <div class="form-group">
-	                 <label>Select Doctor</label>
-                              <select class="form-control room" name="doctor">
-                                  <option selected="selected" value="">Select option..</option>
-                                  <?php 
-                                 $getstaff=mysqli_query($con,"SELECT * FROM staff WHERE status=1 AND role='doctor'");  
-                                        while ($row = mysqli_fetch_array($getstaff)) {
-                                          $staff_id=$row['staff_id'];
-                                           $fullname=$row['fullname'];
-                                           ?>
-                                  <option  value="<?php echo $staff_id; ?>"><?php echo $fullname; ?></option>
-                                        <?php }?>
-                              </select>
-	                    </div> -->
           <div class="form-group"><label class="control-label">* More Details if any</label>
                                   <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="details"></textarea>
                                                                                                         </div>
@@ -252,29 +341,25 @@ echo '<div class="alert alert-success">Patient Report Successfully Added</div>';
                                          <!--<a class="btn btn-success" a href="addpatient3.php">Back</a>-->
                                                                   </div>
                                      <div class="form-group pull-right">
-                               <button class="btn btn-primary" type="submit" name="submitvitals" >Save</button>
+                               <button class="btn btn-primary" type="submit" name="submitvitals" onclick="return confirm_approve()" >Save</button>
                                                                   </div>
         </form>
         </div>
         <div class="tab-pane fade" id="nav-minor" role="tabpanel" aria-labelledby="minor-tab">
         <form method="post" name='form' class="form" action=""  enctype="multipart/form-data">
         <div class="col-lg-12"><h4>Minor theater</h4></div>   
-            <?php
-             foreach ($services as $key => $value) {
-                ?>
+            <input type="hidden" name="service_id" value="<?php echo $service_id; ?>">
+            <input type="hidden" name="count" value="<?php echo $count; ?>">
                 <div class="form-group col-lg-12">
-                   <label>Case  for <?php echo $value ?></label>
-                   <input type="text"  name="case[<?php echo $key; ?>]" class="form-control " placeholder="Enter case" required>
+                   <label>Case  for <?php echo $service_name ?></label>
+                   <input type="text"  name="case" class="form-control " placeholder="Enter case" required>
                 </div>
                 <div class="form-group col-lg-12">
                    <label>Description </label>
-                   <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="casedet[<?php echo $key;?>]"></textarea>
+                   <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="casedetails"></textarea>
                 </div>
-                
-                <?php
-                }?>
                 <div class="form-group pull-right">
-                               <button class="btn btn-primary" type="submit" name="minordetails">Save</button>
+                               <button class="btn btn-primary" type="submit" name="minordetails" onclick="return confirm_approve()">Save</button>
                 </div>
                 </form>
 
@@ -341,6 +426,11 @@ echo '<div class="alert alert-success">Patient Report Successfully Added</div>';
 
     <!-- Datatable -->
     <script src="vendor/select2/js/select2.min.js"></script>
+    <script type="text/javascript">
+                                            function confirm_approve() {
+                                                return confirm('You are about To Submit Report to Doctor. Are you sure you want to proceed?');
+                                            }
+                                        </script>
     <script src="js/plugins-init/select2-init.js"></script>
         <script>
              $('.subobj1_button').click(function(e){ //on add input button click

@@ -216,13 +216,13 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
         </div>
         <div class="col-lg-6">
             <div class="form-group">
-                <label class="control-label">P</label>
+                <label class="control-label">PR</label>
                 <input type="text" name="p" class="form-control" placeholder="Enter P">
             </div>
         </div>
         <div class="col-lg-6">
             <div class="form-group">
-                <label class="control-label">R</label>
+                <label class="control-label">RR</label>
                 <input type="text" name="r" class="form-control" placeholder="Enter R">
             </div>
         </div>

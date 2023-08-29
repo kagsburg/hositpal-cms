@@ -103,7 +103,7 @@ include 'includes/header.php';
                                $gender = $row2['gender'];
                                $insurancecompany = $row2['insurancecompany'];
                                $ext = $row2['ext'];
-                               $bill= get_bill_by_patient_only($pdo, $patient_id,null, 1);
+                               $bill= get_bill_by_patient_only($pdo, $patient_id,$admission_id, 2);
                                $paymentype = $bill[0]['payment_method'];
                             //    $patient = get_patient_by_id($pdo, $patient_id);
                             //    $paymentype = $patient["paymenttype"];
@@ -334,7 +334,7 @@ include 'includes/header.php';
                                         <td>
                                         <a href="printlab?patient_id=<?php echo $patient_id ?>&que=<?php echo $id?>&test=<?php echo $test ?>" target="_blank" class="btn btn-primary">Print</a>
                                             <?php if ($approve == 0 && ($_SESSION['elcthospitallevel'] == 'lab technologist')){?>
-                                                <a href="approvereport.php?patientsque_id=<?php echo $id; ?>&admission_id=<?php echo $admission_id ?>&test=<?php echo $test ?>" class="btn btn-primary">Edit</a>
+                                                <a href="editlabreport?id=<?php echo $id; ?>&test=<?php echo $test ?>" target="_blank" class="btn btn-primary">Edit</a>
                                         <a href="approvereport.php?patientsque_id=<?php echo $id; ?>&admission_id=<?php echo $admission_id ?>&test=<?php echo $test ?>" class="btn btn-primary">Approve</a>
                                         <?php } ?>
 

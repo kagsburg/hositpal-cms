@@ -7,6 +7,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
     header('Location:login.php');
 }
 $id = $_GET['q'];
+$admission = $_GET['admission'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -86,7 +87,7 @@ $id = $_GET['q'];
                                     <div class="table-responsive">
                                         <?php
                                         // $bill = get_bill_by_id($pdo, $id, 1);  
-                                        $bill= get_bill_by_patient_only($pdo, $id,null, 1);  
+                                        $bill= get_bill_by_patient_only($pdo, $id,$admission, 1);  
                                                                         //   print_r($bill);
                                         // $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE  patientsque_id='$id'");
                                         // $row = mysqli_fetch_array($getque);
@@ -166,7 +167,7 @@ $id = $_GET['q'];
                                             </thead>
                                             <tbody>
                                                 <?php
-                                                
+                                                // print (count($bill));
                                                 foreach($bill as $b) {
                                                     // print_r($b);
                                                     $type = $b['type'];
@@ -437,7 +438,7 @@ $id = $_GET['q'];
                                                     $totalservice += intval($service);
                                                 }
                                             }                                            
-                                            make_bill_payment($pdo, $bill_id, $total, $paymentmethod, $count_bills,$patient_id,$totalservice);                                            
+                                            make_bill_payment($pdo, $bill_id, $total, $paymentmethod, $count_bills,$patient_id,$totalservice,$admission);                                            
                                             if ($type == "medical_service"){
                                                 foreach($bill as $b) {
                                                     $type_id = $b['type_id'];
