@@ -930,7 +930,8 @@
               <i class="fa fa-user-plus"></i>
               <span class="nav-text">Inpatients</span>
               <ul aria-expanded="false">
-              <li><a href="admitted">Inpatients</a></li>
+              <li><a href="pharmacyinwaiting">Awaiting List</a></li>
+              <!-- <li><a href="admitted">Inpatients</a></li> -->
               <!-- <li><a href="labstockorders">Lab Stock Orders</a></li>
               <li><a href="nursestockorders">Nurse Stock Orders</a></li> -->
             </ul>

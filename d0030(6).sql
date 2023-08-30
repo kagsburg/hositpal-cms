@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 29, 2023 at 10:28 AM
+-- Generation Time: Aug 30, 2023 at 12:00 PM
 -- Server version: 5.7.42-cll-lve
 -- PHP Version: 7.4.33
 
@@ -1107,8 +1107,8 @@ CREATE TABLE `clinic_clients` (
 --
 
 INSERT INTO `clinic_clients` (`clinic_cl_id`, `name`, `location`, `dob`, `phone`, `weight`, `bloodgroup`, `pregnancy_month`, `partner_name`, `partner_mobile`, `user_id`, `timestamp`, `status`) VALUES
-(1, 'Test Pregnant Patient', 'Meko', NULL, '0755000000', '61', 'B+', '2', 'Test Husband', '0766000000', 166, 1692288878, 2),
-(2, 'Test Clinic Patient', 'Igoma', '1991-08-08', '0700111111', '67', 'A+', 'February', 'Test Partner', '0788234567', 166, 1692301950, 4);
+(1, 'Test Pregnant Patient', 'Meko', NULL, '0755000000', '61', 'B+', '2', 'Test Husband', '0766000000', 166, 1692288878, 1),
+(2, 'Test Clinic Patient', 'Igoma', '1991-08-08', '0700111111', '67', 'A+', 'February', 'Test Partner', '0788234567', 166, 1692301950, 1);
 
 -- --------------------------------------------------------
 
@@ -2729,7 +2729,9 @@ INSERT INTO `insuredinvestigationtypes` (`insuredinvestigationtype_id`, `investi
 (200, 63, 19, '5000', 1),
 (201, 63, 18, '5000', 1),
 (202, 64, 18, '5000', 1),
-(203, 64, 19, '5000', 1);
+(203, 64, 19, '5000', 1),
+(204, 65, 18, '50000', 1),
+(205, 65, 19, '50000', 1);
 
 -- --------------------------------------------------------
 
@@ -3323,7 +3325,26 @@ INSERT INTO `investigationsubtypes` (`investigationsubtype_id`, `investigationty
 (18, 61, 'RPR_test', 0, 1),
 (19, 62, 'Test Sickel Cell', 0, 1),
 (20, 63, 'Test Blood Grouping', 5, 1),
-(21, 64, 'Test Hemoglobin(HB)', 2, 1);
+(21, 64, 'Test Hemoglobin(HB)', 2, 1),
+(22, 65, 'WCB', 18, 1),
+(23, 65, 'Lymph#', 18, 1),
+(24, 65, 'Mid#', 18, 1),
+(25, 65, 'Gran#', 18, 1),
+(26, 65, 'Lymph%', 19, 1),
+(27, 65, 'Mid%', 19, 1),
+(28, 65, 'Gran%', 19, 1),
+(29, 65, 'RBC', 20, 1),
+(30, 65, 'HGB', 2, 1),
+(31, 65, 'HCT', 19, 1),
+(32, 65, 'MCT', 5, 1),
+(33, 65, 'MCH', 6, 1),
+(34, 65, 'MCHC', 2, 1),
+(35, 65, 'RDW-CV', 19, 1),
+(36, 65, 'RDW-SD', 5, 1),
+(37, 65, 'PLT', 18, 1),
+(38, 65, 'MPW', 5, 1),
+(39, 65, 'PDW', 18, 1),
+(40, 65, 'P-LCR', 19, 1);
 
 -- --------------------------------------------------------
 
@@ -3410,7 +3431,8 @@ INSERT INTO `investigationtypes` (`investigationtype_id`, `investigationtype`, `
 (61, 'RPR_test', 5, '10000', '15000', '', 0, 1, 1),
 (62, 'Test Sickel Cell', 3, '5000', '7500', '', 0, 1, 1),
 (63, 'Test Blood Grouping', 3, '5000', '7500', '5', 0, 1, 1),
-(64, 'Test Hemoglobin(HB)', 3, '5000', '7500', '2', 1, 0, 1);
+(64, 'Test Hemoglobin(HB)', 3, '5000', '7500', '2', 1, 0, 1),
+(65, 'Full Blood Picture (FBP)', 3, '50000', '75000', '', 1, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -3420,7 +3442,8 @@ INSERT INTO `investigationtypes` (`investigationtype_id`, `investigationtype`, `
 
 CREATE TABLE `investigationtypesrange` (
   `typesrange_id` int(11) NOT NULL,
-  `investigationtype_id` int(11) NOT NULL,
+  `investigationtype_id` int(11) DEFAULT NULL,
+  `investigationsubtype_id` int(11) DEFAULT NULL,
   `normalx` float DEFAULT NULL,
   `normaly` float DEFAULT NULL,
   `timestamp` int(11) DEFAULT NULL,
@@ -3432,8 +3455,27 @@ CREATE TABLE `investigationtypesrange` (
 -- Dumping data for table `investigationtypesrange`
 --
 
-INSERT INTO `investigationtypesrange` (`typesrange_id`, `investigationtype_id`, `normalx`, `normaly`, `timestamp`, `status`, `admin_id`) VALUES
-(1, 64, 14, 17, 1693040702, 1, 182);
+INSERT INTO `investigationtypesrange` (`typesrange_id`, `investigationtype_id`, `investigationsubtype_id`, `normalx`, `normaly`, `timestamp`, `status`, `admin_id`) VALUES
+(1, 64, NULL, 14, 17, 1693040702, 1, 182),
+(2, 22, NULL, 4, 10, 1693337612, 1, 0),
+(3, 23, NULL, 0.8, 4, 1693337612, 1, 0),
+(4, 24, NULL, 0.1, 1.5, 1693337612, 1, 0),
+(5, 25, NULL, 2, 7, 1693337612, 1, 0),
+(6, 26, NULL, 20, 40, 1693337612, 1, 0),
+(7, 27, NULL, 3, 15, 1693337612, 1, 0),
+(8, 28, NULL, 50, 70, 1693337612, 1, 0),
+(9, 29, NULL, 3.5, 5, 1693337612, 1, 0),
+(10, 30, NULL, 11, 15, 1693337612, 1, 0),
+(11, 31, NULL, 37, 47, 1693337612, 1, 0),
+(12, 32, NULL, 80, 100, 1693337612, 1, 0),
+(13, 33, NULL, 27, 34, 1693337612, 1, 0),
+(14, 34, NULL, 32, 36, 1693337612, 1, 0),
+(15, 35, NULL, 11, 16, 1693337612, 1, 0),
+(16, 36, NULL, 35, 56, 1693337612, 1, 0),
+(17, 37, NULL, 100, 300, 1693337612, 1, 0),
+(18, 38, NULL, 6.5, 12, 1693337612, 1, 0),
+(19, 39, NULL, 15.7, 17, 1693337612, 1, 0),
+(20, 40, NULL, 11, 45, 1693337612, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -3634,6 +3676,7 @@ CREATE TABLE `labreports` (
   `labreport_id` int(11) NOT NULL,
   `title` text,
   `sample_id` text NOT NULL,
+  `subtype` int(11) NOT NULL DEFAULT '0',
   `test` varchar(1000) NOT NULL,
   `siunit` int(11) NOT NULL,
   `admission_id` int(11) NOT NULL,
@@ -3653,43 +3696,57 @@ CREATE TABLE `labreports` (
 -- Dumping data for table `labreports`
 --
 
-INSERT INTO `labreports` (`labreport_id`, `title`, `sample_id`, `test`, `siunit`, `admission_id`, `start`, `end`, `result`, `patientsque_id`, `clinic`, `details`, `status`, `timestamp`, `admin_id`, `approved`) VALUES
-(26, NULL, '', '12', 0, 0, '00:00:00', '00:00:00', '0.4', 165, 0, '<p>She has sufficient blood cycle</p>', 1, 0, 0, 0),
-(27, NULL, '', '14', 0, 0, '00:00:00', '00:00:00', '+4.3 Amoeba', 168, 0, '<p>The patient has normal uric acid but is diagonized with amoeba bacteria&nbsp;</p>', 1, 0, 0, 0),
-(28, NULL, '', '16', 0, 0, '00:00:00', '00:00:00', '-9.6 Moderate yz', 168, 0, '<p>The patient has normal uric acid but is diagonized with amoeba bacteria&nbsp;</p>', 1, 0, 0, 0),
-(29, NULL, '', '14', 0, 0, '00:00:00', '00:00:00', '2 AMB', 174, 0, '<p>The patient has normal uric acid. The patient is diagnosized with Amoeba.</p>', 1, 0, 0, 0),
-(30, NULL, '', '16', 0, 0, '00:00:00', '00:00:00', '0.62', 174, 0, '<p>The patient has normal uric acid. The patient is diagnosized with Amoeba.</p>', 1, 0, 0, 0),
-(31, NULL, '', '6', 0, 0, '00:00:00', '00:00:00', 'NORMAL', 181, 0, '', 1, 0, 0, 0),
-(32, NULL, '', '13', 0, 0, '00:00:00', '00:00:00', 'NEGATIVE', 181, 0, '', 1, 0, 0, 0),
-(33, NULL, '', '14', 0, 0, '00:00:00', '00:00:00', 'NEGATIVE', 181, 0, '', 1, 0, 0, 0),
-(34, NULL, '', '13', 0, 0, '00:00:00', '00:00:00', 'NEGATIVE', 194, 0, '<p>Mkojo wake mchafu sanaa</p>', 1, 0, 0, 0),
-(35, NULL, '', '14', 0, 0, '00:00:00', '00:00:00', 'POSITVE', 194, 0, '<p>Mkojo wake mchafu sanaa</p>', 1, 0, 0, 0),
-(36, NULL, '', '16', 0, 0, '00:00:00', '00:00:00', 'VERY BAD', 194, 0, '<p>Mkojo wake mchafu sanaa</p>', 1, 0, 0, 0),
-(37, NULL, '', '13', 0, 0, '00:00:00', '00:00:00', 'malaria20', 209, 0, '<p>anamalaria nyingi</p>', 1, 0, 0, 0),
-(38, NULL, '', '52', 0, 0, '00:00:00', '00:00:00', 'positive', 224, 0, '', 1, 0, 0, 0),
-(39, NULL, '', '6', 0, 0, '00:00:00', '00:00:00', '12', 247, 0, '<p>anachoo kichafu</p>', 1, 0, 0, 0),
-(40, NULL, '', '14', 0, 0, '00:00:00', '00:00:00', 'yes', 247, 0, '<p>anachoo kichafu</p>', 1, 0, 0, 0),
-(41, NULL, '', '16', 0, 0, '00:00:00', '00:00:00', '450', 231, 0, '<p>normal&nbsp;</p>', 1, 0, 0, 0),
-(42, NULL, '', '45', 0, 0, '00:00:00', '00:00:00', 'positive', 231, 0, '<p>normal&nbsp;</p>', 1, 0, 0, 0),
-(43, NULL, '', '7', 0, 0, '00:00:00', '00:00:00', 'pos', 273, 0, '', 1, 0, 0, 0),
-(44, NULL, '', '8', 0, 0, '00:00:00', '00:00:00', '14', 273, 0, '', 1, 0, 0, 0),
-(45, NULL, '', '12', 0, 0, '00:00:00', '00:00:00', ' nps', 273, 0, '', 1, 0, 0, 0),
-(46, NULL, '', '16', 0, 0, '00:00:00', '00:00:00', '450', 273, 0, '', 1, 0, 0, 0),
-(47, NULL, '', '5', 0, 0, '00:00:00', '00:00:00', '30mmhg/30min', 276, 0, '<p>stool sample not collected</p>', 1, 0, 0, 0),
-(48, NULL, '', '6', 0, 0, '00:00:00', '00:00:00', '14.5g/dl', 276, 0, '<p>stool sample not collected</p>', 1, 0, 0, 0),
-(49, NULL, '', '14', 0, 0, '00:00:00', '00:00:00', '', 276, 0, '<p>stool sample not collected</p>', 1, 0, 0, 0),
-(50, NULL, '', '5', 0, 0, '00:00:00', '00:00:00', '30mmhg/30min', 280, 0, '<p>Stool sample not collected.</p>', 1, 0, 0, 0),
-(51, NULL, '', '6', 0, 0, '00:00:00', '00:00:00', '14.5g/dl', 280, 0, '<p>Stool sample not collected.</p>', 1, 0, 0, 0),
-(52, NULL, '', '14', 0, 0, '00:00:00', '00:00:00', '', 280, 0, '<p>Stool sample not collected.</p>', 1, 0, 0, 0),
-(53, NULL, '', '4', 0, 0, '00:00:00', '00:00:00', '0.4', 311, 0, '<p>these are results</p>', 1, 0, 0, 0),
-(54, NULL, '', '7', 0, 0, '00:00:00', '00:00:00', 'null', 311, 0, '<p>these are results</p>', 1, 0, 0, 0),
-(55, NULL, '', '61', 0, 42, '14:30:00', '14:36:00', '1', 335, 0, '<p>the patient is reacting</p>', 1, 1692877093, 167, 0),
-(56, 'SICKEL CELL TEST TO  DETERMINE THE PATIENT STATUS', '', '62', 0, 43, '12:30:00', '12:36:00', '4', 339, 0, '<p>The patient has problem in generating enough blood due to less cell but he has no sickel cell.</p>', 1, 1693042659, 167, 214),
-(57, 'BLOOD GROUPING OF PATIENT', '', '63', 5, 44, '08:05:00', '08:15:00', '5', 343, 0, '<p>That is what has been found.&nbsp;</p>', 1, 1693285924, 167, 214),
-(58, 'Hemoglobin(HB) TEST EXAMINATION', '', '64', 2, 44, '08:14:00', '20:16:00', '18', 343, 0, '', 1, 1693286394, 167, 214),
-(59, 'well done ', '', '63', 5, 45, '12:07:00', '12:13:00', '7', 347, 0, '<p>well done</p>', 1, 1693291203, 167, 0),
-(60, 'Testing Edited', '', '64', 2, 45, '11:01:00', '11:45:00', '12', 347, 0, '<p>Test completed</p>', 1, 1693291787, 167, 214),
-(61, 'NEW REPORT ', '12', '58', 5, 38, '12:00:00', '12:30:00', '12', 322, 0, '<p>WELL DONE</p>', 1, 1693327276, 167, 0);
+INSERT INTO `labreports` (`labreport_id`, `title`, `sample_id`, `subtype`, `test`, `siunit`, `admission_id`, `start`, `end`, `result`, `patientsque_id`, `clinic`, `details`, `status`, `timestamp`, `admin_id`, `approved`) VALUES
+(26, NULL, '', 0, '12', 0, 0, '00:00:00', '00:00:00', '0.4', 165, 0, '<p>She has sufficient blood cycle</p>', 1, 0, 0, 0),
+(27, NULL, '', 0, '14', 0, 0, '00:00:00', '00:00:00', '+4.3 Amoeba', 168, 0, '<p>The patient has normal uric acid but is diagonized with amoeba bacteria&nbsp;</p>', 1, 0, 0, 0),
+(28, NULL, '', 0, '16', 0, 0, '00:00:00', '00:00:00', '-9.6 Moderate yz', 168, 0, '<p>The patient has normal uric acid but is diagonized with amoeba bacteria&nbsp;</p>', 1, 0, 0, 0),
+(29, NULL, '', 0, '14', 0, 0, '00:00:00', '00:00:00', '2 AMB', 174, 0, '<p>The patient has normal uric acid. The patient is diagnosized with Amoeba.</p>', 1, 0, 0, 0),
+(30, NULL, '', 0, '16', 0, 0, '00:00:00', '00:00:00', '0.62', 174, 0, '<p>The patient has normal uric acid. The patient is diagnosized with Amoeba.</p>', 1, 0, 0, 0),
+(31, NULL, '', 0, '6', 0, 0, '00:00:00', '00:00:00', 'NORMAL', 181, 0, '', 1, 0, 0, 0),
+(32, NULL, '', 0, '13', 0, 0, '00:00:00', '00:00:00', 'NEGATIVE', 181, 0, '', 1, 0, 0, 0),
+(33, NULL, '', 0, '14', 0, 0, '00:00:00', '00:00:00', 'NEGATIVE', 181, 0, '', 1, 0, 0, 0),
+(34, NULL, '', 0, '13', 0, 0, '00:00:00', '00:00:00', 'NEGATIVE', 194, 0, '<p>Mkojo wake mchafu sanaa</p>', 1, 0, 0, 0),
+(35, NULL, '', 0, '14', 0, 0, '00:00:00', '00:00:00', 'POSITVE', 194, 0, '<p>Mkojo wake mchafu sanaa</p>', 1, 0, 0, 0),
+(36, NULL, '', 0, '16', 0, 0, '00:00:00', '00:00:00', 'VERY BAD', 194, 0, '<p>Mkojo wake mchafu sanaa</p>', 1, 0, 0, 0),
+(37, NULL, '', 0, '13', 0, 0, '00:00:00', '00:00:00', 'malaria20', 209, 0, '<p>anamalaria nyingi</p>', 1, 0, 0, 0),
+(38, NULL, '', 0, '52', 0, 0, '00:00:00', '00:00:00', 'positive', 224, 0, '', 1, 0, 0, 0),
+(39, NULL, '', 0, '6', 0, 0, '00:00:00', '00:00:00', '12', 247, 0, '<p>anachoo kichafu</p>', 1, 0, 0, 0),
+(40, NULL, '', 0, '14', 0, 0, '00:00:00', '00:00:00', 'yes', 247, 0, '<p>anachoo kichafu</p>', 1, 0, 0, 0),
+(41, NULL, '', 0, '16', 0, 0, '00:00:00', '00:00:00', '450', 231, 0, '<p>normal&nbsp;</p>', 1, 0, 0, 0),
+(42, NULL, '', 0, '45', 0, 0, '00:00:00', '00:00:00', 'positive', 231, 0, '<p>normal&nbsp;</p>', 1, 0, 0, 0),
+(43, NULL, '', 0, '7', 0, 0, '00:00:00', '00:00:00', 'pos', 273, 0, '', 1, 0, 0, 0),
+(44, NULL, '', 0, '8', 0, 0, '00:00:00', '00:00:00', '14', 273, 0, '', 1, 0, 0, 0),
+(45, NULL, '', 0, '12', 0, 0, '00:00:00', '00:00:00', ' nps', 273, 0, '', 1, 0, 0, 0),
+(46, NULL, '', 0, '16', 0, 0, '00:00:00', '00:00:00', '450', 273, 0, '', 1, 0, 0, 0),
+(47, NULL, '', 0, '5', 0, 0, '00:00:00', '00:00:00', '30mmhg/30min', 276, 0, '<p>stool sample not collected</p>', 1, 0, 0, 0),
+(48, NULL, '', 0, '6', 0, 0, '00:00:00', '00:00:00', '14.5g/dl', 276, 0, '<p>stool sample not collected</p>', 1, 0, 0, 0),
+(49, NULL, '', 0, '14', 0, 0, '00:00:00', '00:00:00', '', 276, 0, '<p>stool sample not collected</p>', 1, 0, 0, 0),
+(50, NULL, '', 0, '5', 0, 0, '00:00:00', '00:00:00', '30mmhg/30min', 280, 0, '<p>Stool sample not collected.</p>', 1, 0, 0, 0),
+(51, NULL, '', 0, '6', 0, 0, '00:00:00', '00:00:00', '14.5g/dl', 280, 0, '<p>Stool sample not collected.</p>', 1, 0, 0, 0),
+(52, NULL, '', 0, '14', 0, 0, '00:00:00', '00:00:00', '', 280, 0, '<p>Stool sample not collected.</p>', 1, 0, 0, 0),
+(53, NULL, '', 0, '4', 0, 0, '00:00:00', '00:00:00', '0.4', 311, 0, '<p>these are results</p>', 1, 0, 0, 0),
+(54, NULL, '', 0, '7', 0, 0, '00:00:00', '00:00:00', 'null', 311, 0, '<p>these are results</p>', 1, 0, 0, 0),
+(55, NULL, '', 0, '61', 0, 42, '14:30:00', '14:36:00', '1', 335, 0, '<p>the patient is reacting</p>', 1, 1692877093, 167, 0),
+(56, 'SICKEL CELL TEST TO  DETERMINE THE PATIENT STATUS', '', 0, '62', 0, 43, '12:30:00', '12:36:00', '4', 339, 0, '<p>The patient has problem in generating enough blood due to less cell but he has no sickel cell.</p>', 1, 1693042659, 167, 214),
+(57, 'BLOOD GROUPING OF PATIENT', '', 0, '63', 5, 44, '08:05:00', '08:15:00', '5', 343, 0, '<p>That is what has been found.&nbsp;</p>', 1, 1693285924, 167, 214),
+(58, 'Hemoglobin(HB) TEST EXAMINATION', '', 0, '64', 2, 44, '08:14:00', '20:16:00', '18', 343, 0, '', 1, 1693286394, 167, 214),
+(59, 'well done ', '', 0, '63', 5, 45, '12:07:00', '12:13:00', '7', 347, 0, '<p>well done</p>', 1, 1693291203, 167, 0),
+(60, 'Testing Edited', '', 0, '64', 2, 45, '11:01:00', '11:45:00', '12', 347, 0, '<p>Test completed</p>', 1, 1693291787, 167, 214),
+(61, 'NEW REPORT ', '12', 0, '58', 5, 38, '12:00:00', '12:30:00', '12', 322, 0, '<p>WELL DONE</p>', 1, 1693327276, 167, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `labreportsubtype`
+--
+
+CREATE TABLE `labreportsubtype` (
+  `labsubtype_id` int(11) NOT NULL,
+  `labreport_id` int(11) NOT NULL,
+  `subtype_id` int(11) NOT NULL,
+  `unit_id` int(11) DEFAULT NULL,
+  `results` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -4416,7 +4473,8 @@ INSERT INTO `patients` (`patient_id`, `firstname`, `secondname`, `thirdname`, `g
 (24, 'mangira', 'fyolo', 'mangira', 'Male', '949438800', '', '', '', '', '', 'mkulima', '+255659406176', 'buhongwa', '', '', '', '', '', 'joram joh', 'kaka', '+255659406176', 'Mwanza', 'insurance', '', '', '', '', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '', '', NULL, NULL, '', '', '', '', '', '', '', '', '', '', '', '', '', 163, 1690445570, 4, '3', NULL, 0),
 (25, 'aaaa', 'bbbb', 'cccc', 'Male', '942354000', '', '', '', '', '', 'FARMER', '0784121204', 'kiloleli', '', '', '', '', '', '', '', '', '', 'insurance', '', '19', '', '', '1234556', '', '', '', '', NULL, '', '', 'secondary', '', '', '', '', '', 'A+', '75', NULL, NULL, '4', '', '', '', '', '', '', '', '', '', '', '', '', 163, 1690447456, 2, '1', '', 0),
 (26, 'biggie', 'jackson', 'skudu', 'Male', '939589200', '', '', '', '', '', 'Teacher', '0714706703', 'MAHINA', '', '', '', '', '', '', '', '', '', 'insurance', '', '', '', '', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '', '', NULL, NULL, '', '', '', '', '', '', '', '', '', '', '', '', '', 163, 1690536744, 3, '1', NULL, 0),
-(27, 'Test', 'Clinic', '', 'Female', '681598800', '', 'Test Partner', '0788234567', '', '', 'Teacher', '0700111111', 'Igoma', '', '', '', '', '', 'Test Partner', 'Partner', '0788234567', 'Nyakato', 'insurance', '', '19', '', '', '093736310188383', '', '', '', '', '09823', '', '10000000', 'primary', '', 'Government', 'Teaching Staff', '', '', 'A+', '61', '32', '0.42', '1.6', '', '', '', '', '', '', '', '', '', '', '', '', 163, 1692309646, 2, '1', '0626984764', 2);
+(27, 'Test', 'Clinic', '', 'Female', '681598800', '', 'Test Partner', '0788234567', '', '', 'Teacher', '0700111111', 'Igoma', '', '', '', '', '', 'Test Partner', 'Partner', '0788234567', 'Nyakato', 'insurance', '', '19', '', '', '093736310188383', '', '', '', '', '09823', '', '10000000', 'primary', '', 'Government', 'Teaching Staff', '', '', 'A+', '61', '32', '0.42', '1.6', '', '', '', '', '', '', '', '', '', '', '', '', 163, 1692309646, 2, '1', '0626984764', 2),
+(28, 'Test', 'Pregnant', '', 'Female', '', '', 'Test Husband', '0766000000', '', '', 'dsfgh', '0755000000', 'Meko', '', '', '', '', '', 'Test Husband', '', '0766000000', '', '', '', '', '', '', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '', '', NULL, NULL, '', '', '', '', '', '', '', '', '', '', '', '', '', 163, 1693339333, 4, '3', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -4924,6 +4982,7 @@ CREATE TABLE `pharmacyorders` (
   `pharmacyorder_id` int(11) NOT NULL,
   `patientsque_id` int(11) NOT NULL,
   `admin_id` int(11) NOT NULL,
+  `admitted_id` int(11) DEFAULT NULL,
   `timestamp` int(11) NOT NULL,
   `payment` int(11) NOT NULL,
   `insurer` int(11) NOT NULL,
@@ -4936,24 +4995,24 @@ CREATE TABLE `pharmacyorders` (
 -- Dumping data for table `pharmacyorders`
 --
 
-INSERT INTO `pharmacyorders` (`pharmacyorder_id`, `patientsque_id`, `admin_id`, `timestamp`, `payment`, `insurer`, `percentage`, `source`, `status`) VALUES
-(1, 217, 165, 1690273685, 0, 0, '0', 'doctor', 0),
-(2, 219, 165, 1690273708, 1, 164, 'insurance', 'doctor', 1),
-(3, 221, 165, 1690273854, 0, 0, '0', 'doctor', 0),
-(4, 229, 165, 1690281362, 0, 0, '0', 'doctor', 0),
-(5, 230, 165, 1690281450, 0, 0, '0', 'doctor', 0),
-(6, 241, 165, 1690285821, 1, 164, 'insurance', 'doctor', 1),
-(7, 242, 165, 1690286668, 1, 164, 'insurance', 'doctor', 1),
-(8, 243, 165, 1690357992, 1, 164, 'insurance', 'doctor', 1),
-(9, 251, 165, 1690432083, 0, 0, '0', 'doctor', 0),
-(10, 267, 165, 1690448874, 1, 164, 'insurance', 'doctor', 1),
-(11, 272, 165, 1690453339, 0, 0, '0', 'doctor', 0),
-(12, 284, 165, 1690461144, 1, 164, 'insurance', 'doctor', 1),
-(13, 287, 165, 1690461856, 1, 164, 'insurance', 'doctor', 1),
-(14, 304, 165, 1692292250, 1, 164, 'cash', 'doctor', 1),
-(15, 307, 165, 1692311878, 1, 164, 'insurance', 'doctor', 1),
-(16, 309, 165, 1692313210, 1, 164, 'insurance', 'doctor', 1),
-(17, 314, 165, 1692434077, 1, 164, 'insurance', 'doctor', 1);
+INSERT INTO `pharmacyorders` (`pharmacyorder_id`, `patientsque_id`, `admin_id`, `admitted_id`, `timestamp`, `payment`, `insurer`, `percentage`, `source`, `status`) VALUES
+(1, 217, 165, NULL, 1690273685, 0, 0, '0', 'doctor', 0),
+(2, 219, 165, NULL, 1690273708, 1, 164, 'insurance', 'doctor', 1),
+(3, 221, 165, NULL, 1690273854, 0, 0, '0', 'doctor', 0),
+(4, 229, 165, NULL, 1690281362, 0, 0, '0', 'doctor', 0),
+(5, 230, 165, NULL, 1690281450, 0, 0, '0', 'doctor', 0),
+(6, 241, 165, NULL, 1690285821, 1, 164, 'insurance', 'doctor', 1),
+(7, 242, 165, NULL, 1690286668, 1, 164, 'insurance', 'doctor', 1),
+(8, 243, 165, NULL, 1690357992, 1, 164, 'insurance', 'doctor', 1),
+(9, 251, 165, NULL, 1690432083, 0, 0, '0', 'doctor', 0),
+(10, 267, 165, NULL, 1690448874, 1, 164, 'insurance', 'doctor', 1),
+(11, 272, 165, NULL, 1690453339, 0, 0, '0', 'doctor', 0),
+(12, 284, 165, NULL, 1690461144, 1, 164, 'insurance', 'doctor', 1),
+(13, 287, 165, NULL, 1690461856, 1, 164, 'insurance', 'doctor', 1),
+(14, 304, 165, NULL, 1692292250, 1, 164, 'cash', 'doctor', 1),
+(15, 307, 165, NULL, 1692311878, 1, 164, 'insurance', 'doctor', 1),
+(16, 309, 165, NULL, 1692313210, 1, 164, 'insurance', 'doctor', 1),
+(17, 314, 165, NULL, 1692434077, 1, 164, 'insurance', 'doctor', 1);
 
 -- --------------------------------------------------------
 
@@ -7116,6 +7175,12 @@ ALTER TABLE `labreports`
   ADD PRIMARY KEY (`labreport_id`);
 
 --
+-- Indexes for table `labreportsubtype`
+--
+ALTER TABLE `labreportsubtype`
+  ADD PRIMARY KEY (`labsubtype_id`);
+
+--
 -- Indexes for table `labunits`
 --
 ALTER TABLE `labunits`
@@ -7868,7 +7933,7 @@ ALTER TABLE `insuredinventoryitems`
 -- AUTO_INCREMENT for table `insuredinvestigationtypes`
 --
 ALTER TABLE `insuredinvestigationtypes`
-  MODIFY `insuredinvestigationtype_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=204;
+  MODIFY `insuredinvestigationtype_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=206;
 
 --
 -- AUTO_INCREMENT for table `insuredradiotypes`
@@ -7904,19 +7969,19 @@ ALTER TABLE `investigationselect`
 -- AUTO_INCREMENT for table `investigationsubtypes`
 --
 ALTER TABLE `investigationsubtypes`
-  MODIFY `investigationsubtype_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `investigationsubtype_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `investigationtypes`
 --
 ALTER TABLE `investigationtypes`
-  MODIFY `investigationtype_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `investigationtype_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `investigationtypesrange`
 --
 ALTER TABLE `investigationtypesrange`
-  MODIFY `typesrange_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `typesrange_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `issueddrugs`
@@ -7947,6 +8012,12 @@ ALTER TABLE `laborders`
 --
 ALTER TABLE `labreports`
   MODIFY `labreport_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+
+--
+-- AUTO_INCREMENT for table `labreportsubtype`
+--
+ALTER TABLE `labreportsubtype`
+  MODIFY `labsubtype_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `labunits`
@@ -8054,7 +8125,7 @@ ALTER TABLE `patientradios`
 -- AUTO_INCREMENT for table `patients`
 --
 ALTER TABLE `patients`
-  MODIFY `patient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `patient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `patientservices`

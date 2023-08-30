@@ -167,10 +167,13 @@ $admission = $_GET['admission'];
                                             </thead>
                                             <tbody>
                                                 <?php
+                                                $types=[];
                                                 // print (count($bill));
                                                 foreach($bill as $b) {
                                                     // print_r($b);
                                                     $type = $b['type'];
+                                                    // add type to array
+                                                    array_push($types,$type);
                                                     $bill_type_id = $b['type_id'];
                                                     $patientque_id = $b['patientsque_id'];
                                                     if ($patientque_id != 0){
@@ -201,7 +204,7 @@ $admission = $_GET['admission'];
 
                                                 ?>
                                                         <tr>
-                                                            <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-id="<?php echo $id2; ?>" name="service[]" value="<?php echo $id2; ?>_<?php echo $unitcharge ?>" ></td>
+                                                            <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-id="<?php echo $id2; ?>" data-type="<?php echo $type ?>" name="service[]" value="<?php echo $id2; ?>_<?php echo $unitcharge ?>" ></td>
                                                             <td><?php echo $room; ?></td>
                                                             <td><?php echo $medicalservice; ?></td>
                                                             <td><?php echo $unitcharge; ?></td>
@@ -226,7 +229,7 @@ $admission = $_GET['admission'];
 
                                                         ?>
                                                             <tr>
-                                                            <td><input type="checkbox" class="selectcheck" id="select<?php echo $id3; ?>" data-id="<?php echo $id3; ?>" name="service[]" value="<?php echo $id3; ?>_<?php echo $unitcharge ?>" ></td>
+                                                            <td><input type="checkbox" class="selectcheck" id="select<?php echo $id3; ?>" data-id="<?php echo $id3; ?>" data-type="<?php echo $type ?>" name="service[]" value="<?php echo $id3; ?>_<?php echo $unitcharge ?>" ></td>
                                                                 <td><?php echo $room; ?></td>
                                                                 <td><?php echo $medicalservice; ?></td>
                                                                 <td><?php echo $unitcharge; ?></td>
@@ -255,7 +258,7 @@ $admission = $_GET['admission'];
 
                                                         ?>
                                                             <tr>
-                                                                <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-id="<?php echo $id2; ?>" name="service[]" value="<?php echo $id2; ?>_<?php echo $unitcharge ?>" ></td>
+                                                                <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-type="<?php echo $type ?>" data-id="<?php echo $id2; ?>" name="service[]" value="<?php echo $id2; ?>_<?php echo $unitcharge ?>" ></td>
                                                                 <td><?php echo $room; ?></td>
                                                                 <td><?php echo $medicalservice; ?></td>
                                                                 <td><?php echo $unitcharge; ?></td>
@@ -272,7 +275,7 @@ $admission = $_GET['admission'];
                                                     // $paymethod = $qpaymenttype;
                                                 ?>
                                                     <tr>
-                                                    <td><input type="checkbox" class="selectcheck" id="select<?php echo $medicalservice_id; ?>" data-id="<?php echo $medicalservice_id; ?>" name="service[]" value="<?php echo $medicalservice_id; ?>_<?php echo $unitcharge ?>" ></td>
+                                                    <td><input type="checkbox" class="selectcheck" id="select<?php echo $medicalservice_id; ?>" data-type="<?php echo $type ?>" data-id="<?php echo $medicalservice_id; ?>" name="service[]" value="<?php echo $medicalservice_id; ?>_<?php echo $unitcharge ?>" ></td>
                                                         <td><?php echo $room; ?></td>
                                                         <td><?php echo $medicalservice; ?></td>
                                                         <td><?php echo $unitcharge; ?></td>
@@ -297,6 +300,7 @@ $admission = $_GET['admission'];
                                                     
                                                 ?>
                                                     <tr>
+                                                    <td><input type="checkbox" class="selectcheck" id="select<?php echo $bed; ?>" data-type="<?php echo $type ?>" data-id="<?php echo $bed; ?>" name="service[]" value="<?php echo $bed; ?>_<?php echo $price ?>" ></td>
                                                         <td><?php echo $room; ?></td>
                                                         <td><?php echo $ward_no ."Ward Bed Number".$bed_no; ?></td>
                                                         <td><?php echo $price; ?></td>
@@ -325,7 +329,7 @@ $admission = $_GET['admission'];
 
                                                         ?>
                                                             <tr>
-                                                                <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-id="<?php echo $id2; ?>" name="service[]" value="<?php echo $id2; ?>_<?php echo $stotal ?>" ></td>
+                                                                <td><input type="checkbox" class="selectcheck" id="select<?php echo $id2; ?>" data-type="<?php echo $type ?>" data-id="<?php echo $id2; ?>" name="service[]" value="<?php echo $id2; ?>_<?php echo $stotal ?>" ></td>
                                                                 <td><?php echo $room; ?></td>
                                                                 <td><?php echo $medicalservice; ?></td>
                                                                 <td><?php echo $stotal; ?></td>
@@ -365,8 +369,7 @@ $admission = $_GET['admission'];
                                         }
                                         if (empty($paymentmethod)) {
                                             $errors[] = 'Select Payment Method';
-                                        }
-                                        
+                                        } 
                                         if ($paymentmethod == 'credit') {
                                             $getclient = mysqli_query($con, "SELECT * FROM creditclients WHERE status=1 AND creditclient_id='$creditclient'") or die(mysqli_error($con));
                                             $row = mysqli_fetch_array($getclient);
@@ -423,60 +426,66 @@ $admission = $_GET['admission'];
                                                 }
                                                 // pay based on selected services 
                                                 $totalservice=0;
-                                                if (isset ($_SESSION['service'])){
-                                                    foreach ($_SESSION['service'] as $service){
-                                                        $totalservice += $service['amount'];
+                                                foreach ($_SESSION['service'] as $service){
+                                                    foreach ($service as $s){
+                                                        $totalservice += intval($s);
                                                     }
-
+                                                    // $totalservice += $service['amount'];
                                                 }
                                                 mysqli_query($con, "INSERT INTO  usedcredit(service_id,creditclient_id,date,amount,status) VALUES('$id','$creditclient_id','$timenow','$total',1)") or die(mysqli_error($con));
                                                 $type_id = $creditclient_id;
                                             }
                                             $totalservice=0;
-                                            if (isset ($_SESSION['service'])){
-                                                foreach ($_SESSION['service'] as $service){
-                                                    $totalservice += intval($service);
+                                            foreach ($_SESSION['service'] as $service){
+                                                foreach ($service as $s){
+                                                    $totalservice += intval($s);
                                                 }
-                                            }                                            
+                                            }                                           
                                             make_bill_payment($pdo, $bill_id, $total, $paymentmethod, $count_bills,$patient_id,$totalservice,$admission);                                            
-                                            if ($type == "medical_service"){
+                                            if (in_array("medical_service",$types)){
                                                 foreach($bill as $b) {
                                                     $type_id = $b['type_id'];
                                                     // update patient services which have been selected to be paid for 
                                                     foreach ($_SESSION['service'] as $key => $service ){
-                                                        mysqli_query($con, "UPDATE patientservices SET status=2 where  patientservice_id='$key'") or die(mysqli_error($con));
+                                                        if ($key == 'medical_service'){
+                                                            foreach ($service as $key2 => $s){
+                                                        mysqli_query($con, "UPDATE patientservices SET status=2 where  patientservice_id='$key2'") or die(mysqli_error($con));
                                                     }
+                                                }}
                                                     mysqli_query($con, "UPDATE serviceorders SET payment='1',approvedby='" . $_SESSION['elcthospitaladmin'] . "',paymentmethod='$paymentmethod',payment_id='$type_id',status=1,timestamp='$timenow' WHERE serviceorder_id='$type_id'") or die(mysqli_error($con));
                                                 }
                                             }
                                             
-                                            else if ($type == "radiography"){
-                                                foreach($bill as $b) {
-                                                    $type_id = $b['type_id'];
+                                            else if (in_array("radiography",$types)){
                                                     foreach ($_SESSION['service'] as $key => $service ){
-                                                        mysqli_query($con, "UPDATE patientradios SET status=2 where patientradio_id='$key'") or die(mysqli_error($con));
+                                                        if ($key == 'radiography'){
+                                                            foreach ($service as $key2 => $s){
+                                                        mysqli_query($con, "UPDATE patientradios SET status=2 where patientradio_id='$key2'") or die(mysqli_error($con));
                                                     }
-                                                    // mysqli_query($con, "UPDATE radiologyorders SET payment='1',insurer='" . $_SESSION['elcthospitaladmin'] . "',percentage='$paymentmethod',status=1 WHERE radiologyorder_id='$type_id'") or die(mysqli_error($con));
+                                                }
                                                 }
                                             }
-                                            else if ($type == "lab"){
-                                                foreach($bill as $b) {
-                                                    $type_id = $b['type_id'];
-                                                    foreach ($_SESSION['service'] as $key => $service ){
-                                                        mysqli_query($con, "UPDATE patientlabs SET status=2 where patientlab_id='$key'") or die(mysqli_error($con));
+                                            else  if (in_array("lab",$types)){
+                                                foreach ($_SESSION['service'] as $key => $service ){
+                                                    if ($key == 'lab'){
+                                                        foreach ($service as $key2 => $s){
+                                                            mysqli_query($con, "UPDATE patientlabs SET status=2 where patientlab_id='$key2'") or die(mysqli_error($con));
+                                                        }
                                                     }
-                                                   
                                                 }
-                                            }
+                                        }  
 
-                                            else if ($type == "unselective" && $bill_type_id == REGISTRATION_SERVICE_ID)
+                                            else if (in_array("unselective",$types) && $bill_type_id == REGISTRATION_SERVICE_ID)
                                                 update_patient_status($pdo, $patient_id, 1);
-                                                else if ($type == "pharmacy"){
+                                                else if (in_array("pharmacy",$types)){
                                                     foreach($bill as $b) {
                                                         $type_id = $b['type_id'];
                                                         foreach ($_SESSION['service'] as $key => $service ){
-                                                            mysqli_query($con, "UPDATE pharmacyordereditems SET status=2 where pharmacyordereditem_id ='$key'") or die(mysqli_error($con));
+                                                            if ($key == 'pharmacy'){
+                                                                foreach ($service as $key2 => $s){
+                                                            mysqli_query($con, "UPDATE pharmacyordereditems SET status=2 where pharmacyordereditem_id ='$key2'") or die(mysqli_error($con));
                                                         }
+                                                    }}
                                                         mysqli_query($con, "UPDATE pharmacyorders SET payment='1',insurer='" . $_SESSION['elcthospitaladmin'] . "',percentage='$paymentmethod',status=1 WHERE pharmacyorder_id='$type_id'") or die(mysqli_error($con));
                                                     }
                                                 }
@@ -708,13 +717,15 @@ $admission = $_GET['admission'];
             $(this).removeClass('selectcheck');
             // add other class to the checked box
             $(this).addClass('selectedcheck');
+            var type = $(this).attr('data-type');
            
             $.ajax({
                 url: 'getpackage.php',
                 type: 'POST',
                 data: {
                     serviceid: serviceid,
-                    cost: cost
+                    cost: cost,
+                    type:type
                 },
                 success: function(response) {
                     // $('#packagename').html(response);
@@ -749,12 +760,13 @@ $admission = $_GET['admission'];
             $(this).removeClass('selectedcheck');
             // add other class to the checked box
             $(this).addClass('selectcheck');
-           
+            var type = $(this).attr('data-type');
             $.ajax({
                 url: 'getpackage.php',
                 type: 'POST',
                 data: {
                     removeid: checkedValue,
+                    type:type
                 },
                 success: function(response) {
                     // $('#packagename').html(response);

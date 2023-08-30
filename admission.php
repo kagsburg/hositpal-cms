@@ -97,7 +97,7 @@ $pque=$_GET['que'];
                             $admin_id = $row['admin_id'];
                             if (($_SESSION['elcthospitallevel'] == 'nurse') && ($status == 1)) {
                             ?>
-                                <a href="addnursingsheet?id=<?php echo $id; ?>" class="btn btn-info mb-2 btn-xs">Add Medication</a>
+                                <a href="addnursingsheet?id=<?php echo $id; ?>" target="_blank" class="btn btn-info mb-2 btn-xs">Add Medication</a>
                                 <button data-toggle="modal" data-target="#medical<?php echo $id; ?>" class="btn btn-primary mb-2 btn-xs">Add Medical Case </button>
                                 <!-- <button data-toggle="modal" data-target="#major<?php echo $id; ?>" class="btn btn-primary mb-2 btn-xs">Add Major Theater </button> -->
                                 <!-- <a href="requestmedication?id=<?php echo $id; ?>" class="btn btn-warning mb-2 btn-xs">Request Medication</a> -->
@@ -106,7 +106,8 @@ $pque=$_GET['que'];
                             <?php 
                             if (($_SESSION['elcthospitallevel'] == 'doctor') && ($status == 1)) {
                             ?>
-                            <a href="outpatientreport?id=<?php echo $pque; ?>" class="btn btn-xs btn-info"> OutPatient Report </a>
+                            <a href="outpatientreport?id=<?php echo $pque; ?>" class="btn btn-xs btn-info" target="_blank"> OutPatient Report </a>
+                            <a href="inpatientreport?id=<?php echo $pque; ?>" class="btn btn-xs btn-info" target="_blank">Add InPatient Report </a>
                             <!-- <a href="updatepatientreport?id=<?php echo $pque; ?>" class="btn btn-xs btn-info"> Patient Report </a> -->
                             <?php } ?>
                             <?php 
@@ -136,7 +137,12 @@ $pque=$_GET['que'];
                             // $headfirstname = $row2['headfirstname'];
                             $lastname = $row2['secondname'];
                             // $headlastname = $row2['headlastname'];
-                            $age = $row2['dob'];
+                            $dob = ($row2['dob'] <= 0) ? 'N/A' : $row2['dob'];
+                            $weight = $row2['weight'];
+                            $bloodgroup = ($row2['bloodgroup']!= '')? $row2['bloodgroup'] : 'N/A';
+                            $height = ($row2['height'] != '') ? $row2['height'] : 'N/A';
+                            $temp = ($row2['temp'] != '') ? $row2['temp'] : 'N/A';
+                            $bp = ($row2['bp'] != '') ? $row2['bp'] : 'N/A';
                             // $agecategory = $row2['agecategory'];
                             $gender = $row2['gender'];
                             // $referred = $row2['referred'];
@@ -195,31 +201,29 @@ $pque=$_GET['que'];
                                                 <tr>
                                                     <th>Age </th>
                                                     <td><?php 
-                                                    if ($age == '') {
-                                                        $age = '';
-                                                    }else{
-                                                    $dob = date('Y', $age);
-                                                    $today = date('Y');
-                                                    $age = $today - $dob;
-                                                }
-                                                    echo $age; ?></td>
+                                                        $dob1 = date("Y-m-d", strtotime($dob));
+                                                        $dob2 = new DateTime($dob1);
+                                                        $now = new DateTime();
+                                                        $difference = $now->diff($dob2);
+                                                        echo $difference->y; ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Gender</th>
-                                                    <td><?php echo $gender; ?></td>
+                                                    <th>Blood Group </th>
+                                                    <td><?php echo $bloodgroup; ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Town</th>
-                                                    <td><?php echo $town; ?></td>
+                                                    <th>Weight (kgs) </th>
+                                                    <td><?php echo $weight; ?></td>
+                                                </tr><tr>
+                                                    <th>Height</th>
+                                                    <td><?php echo $height; ?></td>
+                                                </tr><tr>
+                                                    <th>Temperature</th>
+                                                    <td><?php echo $temp; ?></td>
+                                                </tr><tr>
+                                                    <th>Blood Pressure</th>
+                                                    <td><?php echo $bp; ?></td>
                                                 </tr>
-                                                <!-- <tr>
-                                                    <th>Province</th>
-                                                    <td><?php echo $province; ?></td>
-                                                </tr> -->
-                                                <!-- <tr>
-                                                    <th>Age Group</th>
-                                                    <td><?php echo $agegroup1 . ' (' . $code1 . ')'; ?></td>
-                                                </tr> -->
                                                 <tr>
                                                     <th>Admission Date</th>
                                                     <td><?php echo date('d/M/Y', $admissiondate); ?></td>
@@ -267,6 +271,13 @@ $pque=$_GET['que'];
                                             <a class="nav-link" data-toggle="tab" href="#nursingsheets">
                                                 <strong class="text-primary">
                                                     Nursing Sheets
+                                                </strong>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#pharmacysheets">
+                                                <strong class="text-primary">
+                                                   Pharmacy Sheets
                                                 </strong>
                                             </a>
                                         </li>
@@ -521,6 +532,73 @@ $pque=$_GET['que'];
                                                         </tbody>
                                                     </table>
                                                 <?php } ?>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="pharmacysheets" role="tabpanel">
+                                            <div class="table-responsive pt-4">
+                                                <?php
+                                                $getnusheets = mysqli_query($con, "SELECT * FROM  pharmacyorders WHERE admitted_id='$admitted_id'") or die(mysqli_error($con));                                                
+                                                if (mysqli_num_rows($getnusheets) == 0) {
+                                                    echo '<div class="alert alert-danger">No Pharmarcy Sheet Found</div>';
+                                                }
+                                                    // $date = $row['date'];
+                                                    // $time = $row['time'];
+                                                    // $nursingsheet_id = $row['nursingsheet_id'];
+                                                    // $admin_id = $row['admin_id'];
+                                                    // $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$admin_id'") or die(mysqli_error($con));
+                                                    // $rows = mysqli_fetch_array($getstaff);
+                                                    // $fullname = $rows['fullname'];
+                                                ?><table class="table  table-striped table-responsive-sm table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                    <th>Drug</th>
+                                                        <th>Purpose</th>
+                                                        <th>Units</th>
+                                                        <th>Dosage</th>
+                                                        <th>Frequency</th>
+                                                        <th>Details</th>
+                                                        
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    
+                                                        <?php  
+                                                            while($row22=mysqli_fetch_array($getnusheets)){
+                                                                $patientque = $row22['patientsque_id'];
+                                                                $pharmyorder =$row22['pharmacyorder_id'];
+                                                                $pharmacyordersitem= mysqli_query($con,"SELECT * FROM `pharmacyordereditems` where pharmacyorder_id='$pharmyorder'")or die(mysqli_error($con));
+                                                                if (mysqli_num_rows($pharmacyordersitem) >0){
+                                                                    while($row3=mysqli_fetch_array($pharmacyordersitem)){
+                                                                    $purose = $row3['prescription'];
+                                                                    $item_id = $row3['item_id'];
+                                                                    $unit = $row3['quantity'];
+                                                                    $dosage = $row3['dosage'];
+                                                                    $freq = $row3['freq'];
+                                                                    $details = $row3['details'];
+
+                                                            
+                                                                    $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 and inventoryitem_id='$item_id' ");
+                                                                    $row = mysqli_fetch_array($getitems);
+                                                                    $itemname = $row['itemname'];
+                                                                    $measurement_id = $row['measurement_id'];
+                                                                    $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
+                                                                    $row2 =  mysqli_fetch_array($getunit);
+                                                                    $measurement = $row2['measurement'];
+                                                                    ?>
+                                                    
+                                                        <tr>
+                                                                <td><?php echo $itemname; ?></td>
+                                                                <td><?php echo $purose; ?></td>
+                                                                <td><?php echo $unit; ?></td>
+                                                                <td><?php echo $dosage; ?></td>
+                                                                <td><?php echo $freq; ?></td>
+                                                                <td><?php echo $details; ?></td>
+                                                                </tr>
+                                                                <?php }}}?>
+                                                
+                                                </tbody>
+                                            </table>
+                                                <?php  ?>
                                             </div>
                                         </div>
                                         <div class="tab-pane fade" id="consumeditems" role="tabpanel">

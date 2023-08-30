@@ -57,7 +57,7 @@ if (strlen($patient_id) >= 4) {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Outpatient </title>
+    <title>In patient </title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -100,14 +100,14 @@ if (strlen($patient_id) >= 4) {
                 <div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>OutPatient </h4>
+                            <h4>In Patient </h4>
 
                         </div>
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="#">Outpatient </a></li>
+                            <li class="breadcrumb-item active"><a href="#">In patient </a></li>
                         </ol>
                     </div>
                 </div>
@@ -127,7 +127,7 @@ if (strlen($patient_id) >= 4) {
                                     // SELECT * FROM `admitted` 
                                     $checkadmitted = mysqli_query($con , "SELECT * FROM `admitted` WHERE `admission_id` = '$admission_id' AND `status` = 1");
                                     $countadmitted = mysqli_num_rows($checkadmitted);
-                                    if ($countadmitted ==0){
+                                    if ($countadmitted > 0){
                                 ?>
                                 <div class="col-lg-3">
                                     <div class="card">
@@ -169,7 +169,7 @@ if (strlen($patient_id) >= 4) {
                                             </div>
                                             <?php } ?>
                                             <div class="mb-3">
-                                                <button id="scrollRecent" class="btn btn-primary btn-block">View Recent Report</button>
+                                                <!-- <button id="scrollRecent" class="btn btn-primary btn-block">View Recent Report</button> -->
                                                 <!-- <a href="patientreport?id=<?php echo $id; ?>" target="_blank" class="btn btn-primary btn-block">View Recent Report</a> -->
                                             </div>
                                         </div>
@@ -191,15 +191,17 @@ if (strlen($patient_id) >= 4) {
                                                         <a class="nav-link" href="#pharmacy" data-toggle="tab" data-target="#pharmacy" role="tab" aria-controls="pharmacy" aria-selected="false">Pharmacy</a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link" href="#lab" data-toggle="tab" data-target="#lab" role="tab" aria-controls="lab" aria-selected="false">Lab</a>
+                                                        <!-- <a class="nav-link" href="#lab" data-toggle="tab" data-target="#lab" role="tab" aria-controls="lab" aria-selected="false">Lab</a> -->
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link" href="#radiography" data-toggle="tab" data-target="#radiography" role="tab" aria-controls="radiography" aria-selected="false">Radiology </a>
+                                                        <!-- <a class="nav-link" href="#radiography" data-toggle="tab" data-target="#radiography" role="tab" aria-controls="radiography" aria-selected="false">Radiology </a> -->
                                                     </li>
                                                     <?php 
                                                     // get admitted details
                                                     $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE admission_id='$admission_id' AND status=1");
                                                     if (mysqli_num_rows($getadmitted)>0){
+                                                        $rowadmitted = mysqli_fetch_array($getadmitted);
+                                                        $admitted_id  = $rowadmitted['admitted_id'];
                                                     ?>
                                                     <li class="nav-item">
                                                         <a class="nav-link" href="#anesthesiology" data-toggle="tab" data-target="#anesthesiology" role="tab" aria-controls="anesthesiology" aria-selected="false">Anesthesiology</a>
@@ -511,7 +513,7 @@ if (strlen($patient_id) >= 4) {
                                                                         $details= $reference_obj['details'];
                                                                         $exipry= $reference_obj['expiry'];
                                                                         $allprescriptions = sizeof($drug);
-                                                                        mysqli_query($con, "INSERT INTO pharmacyorders(patientsque_id,admin_id,timestamp,payment,insurer,percentage,source,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),0,'$paymenttype',0,'doctor',0)") or die(mysqli_error($con));
+                                                                        mysqli_query($con, "INSERT INTO pharmacyorders(patientsque_id,admin_id,admitted_id,timestamp,payment,insurer,percentage,source,status) VALUES('$new_patientsque_id','" . $_SESSION['elcthospitaladmin'] . "','$admitted_id',UNIX_TIMESTAMP(),0,'$paymenttype',0,'doctor',0)") or die(mysqli_error($con));
                                                                         $last_id = mysqli_insert_id($con);
                                                                         for ($i = 0; $i < $allprescriptions; $i++) {
                                                                             // create pharmacy order
@@ -600,9 +602,9 @@ if (strlen($patient_id) >= 4) {
                                                             }
                                                             // redirect to doctorwaiting 
                                                                 // set alert message to session message 
-                                                                $_SESSION['success'] = '<div class="alert alert-success">Patient Report Successfully Updated</div>';
+                                                                $_SESSION['success'] = '<div class="alert alert-success">In Patient Report Successfully Updated</div>';
                                                                 // redirect to doctorwaiting
-                                                                echo '<script>window.location.href = "doctorcleared";</script>';
+                                                                echo '<script>window.location.href = "admission?id='.$patient_id.'&que='.$id.'";</script>';
                                                                 
                                                     }
                                                 ?>
@@ -1214,461 +1216,6 @@ if (strlen($patient_id) >= 4) {
                                         </div>
                                         <?php } ?> 
                                         
-
-                                        
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <h4 class="card-title"> <?php  if ($countadmitted ==0){ ?>Recent Report for<?php }else{ echo "Outpatient Report for";} ?> <?php echo $fullname ?></h4>
-                                                        </div>
-                                                        <div class="card-body">
-                                                            
-                                                            <div class="col-lg-12" id="sectionRecent">
-                                                                <div class="card">
-                                                                    <div class="card-header">
-                                                                        <h4 class="card-title"> <?php   if ($countadmitted ==0){ ?>Recent Report <?php } ?></h4>
-                                                                    </div>
-                                                                    <div class="card-body">
-                                                                        <ul class="nav nav-tabs" role="tablist">
-                                                                            <li class="nav-item">
-                                                                                <a class="nav-link active" data-toggle="tab" href="#doctorsreport1">
-                                                                                    <strong class="text-primary">
-                                                                                        Doctor Diagnosis
-                                                                                    </strong>
-                                                                                </a>
-                                                                            </li>
-                                                                            <li class="nav-item">
-                                                                                <a class="nav-link" data-toggle="tab" href="#nurse1">
-                                                                                    <strong class="text-primary">
-                                                                                        Nurse
-                                                                                    </strong>
-                                                                                </a>
-                                                                            </li>
-                                                                            <li class="nav-item">
-                                                                                <a class="nav-link" data-toggle="tab" href="#lab1">
-                                                                                    <strong class="text-primary">
-                                                                                        Lab
-                                                                                    </strong>
-                                                                                </a>
-                                                                            </li>
-                                                                            <li class="nav-item">
-                                                                                <a class="nav-link" data-toggle="tab" href="#pharm1">
-                                                                                    <strong class="text-primary">
-                                                                                        Pharmacy
-                                                                                    </strong>
-                                                                                </a>
-                                                                            </li>
-                                                                            <li class="nav-item">
-                                                                                <a class="nav-link" data-toggle="tab" href="#radio1">
-                                                                                    <strong class="text-primary">
-                                                                                        Radiology
-                                                                                    </strong>
-                                                                                </a>
-                                                                            </li>
-
-                                                                        </ul>
-                                                                        <?php 
-                                                                            $rooms = [];
-                                                                            $patient_ids =[];
-                                                                            $patient_reports= mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room ='doctor'AND status='1'and admission_id='$admission_id'");
-                                                                            if (mysqli_num_rows($patient_reports) > 0){
-                                                                            while($row23 = mysqli_fetch_array($patient_reports)){
-                                                                                $previd = $row23['prev_id'];
-                                                                                $patientsque22_id = $row23['patientsque_id'];
-                                                                                $getprevid = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('nurse','lab','doctor','radiography') and status='1' and patientsque_id < '$patientsque22_id' ORDER BY patientsque_id DESC LIMIT 1");
-                                                                                while ($row = mysqli_fetch_array($getprevid)) {
-                                                                                    $room = $row['room'];
-                                                                                    $rooms[] = $room;
-                                                                                    $patient_ids[] = $row['patientsque_id'];
-                                                                                }
-                                                                            }
-                                                                            }
-                                                                            ?>
-                                                                        <!-- Tab panes -->
-                                                                        <div class="tab-content tabcontent-border">
-                                                                            <div class="tab-pane fade show active" id="doctorsreport1" role="tabpanel">
-                                                                                <div class="table-responsive pt-4">
-                                                                                <h4><strong>Doctor Diagnosis</strong></h4>
-                                                                                <table class="table  table-striped table-responsive-sm table-bordered">
-                                                                                    <thead>
-                                                                                        <tr>
-                                                                                            <th>Main complains</th>
-                                                                                            <th>Physical Examination</th>
-                                                                                            <th>Systematic Examination</th>
-                                                                                            <th>Provisional Diagnosis</th>
-                                                                                            <th>Final Diagnosis</th>
-                                                                                            
-                                                                                        </tr>
-                                                                                    </thead>
-                                                                                    <tbody>
-                                                                                        
-                                                                                            <?php  
-                                                                                            $nursereports = mysqli_query($con, "SELECT * FROM doctorexam WHERE patientque_id='$id'order by `doctorexam_id` desc") or die(mysqli_error($con));
-                                                                                            if (mysqli_num_rows($nursereports)>0){
-                                                                                            while ($row = mysqli_fetch_array($nursereports)) {                                                                    
-                                                                                                $complaint = $row["complaint"];
-                                                                                                    $physical_exam = $row["physical_exam"];
-                                                                                                    $systematic_exam = $row["systematic_exam"];
-                                                                                                    $provisional_diagnosis = $row["provisional_diagnosis"];
-                                                                                                    $final_diagnosis = $row["final_diagnosis"];
-                                                                                            ?><tr>
-                                                                                                    <td><?php echo $complaint; ?></td>
-                                                                                                    <td><?php echo $physical_exam; ?></td>
-                                                                                                    <td><?php echo $systematic_exam; ?></td>
-                                                                                                    <td>
-                                                                                                        <?php 
-                                                                                                        if ($provisional_diagnosis == "") {
-                                                                                                            echo "No Diagnosis";
-                                                                                                        } else {
-                                                                                                            $getdiseases = mysqli_query($con, "SELECT * FROM diseases WHERE disease_id IN ($provisional_diagnosis) AND status=1") or die(mysqli_error($con));
-                                                                                                            if (mysqli_num_rows($getdiseases) > 0) {
-                                                                                                                while ($row = mysqli_fetch_array($getdiseases)) {
-                                                                                                                    echo $row['codename'] . "<br>";
-                                                                                                                }
-                                                                                                            }
-                                                                                                        }
-                                                                                                        ?>
-                                                                                                    </td> 
-                                                                                                    <td>
-                                                                                                        <?php 
-                                                                                                        if ($final_diagnosis == "") {
-                                                                                                            echo "No Diagnosis";
-                                                                                                        } else {
-                                                                                                            $getdiseasesy = mysqli_query($con, "SELECT * FROM diseases WHERE disease_id in ($final_diagnosis) ") or die(mysqli_error($con));
-                                                                                                            if (mysqli_num_rows($getdiseasesy) > 0) {
-                                                                                                                while ($row = mysqli_fetch_array($getdiseasesy)) {
-                                                                                                                    echo $row['codename'] . "<br>";
-                                                                                                                }
-                                                                                                            }
-                                                                                                        }
-                                                                                                        ?>
-                                                                                                    </td>
-                                                                                                    </tr>
-                                                                                                    <?php } }?>
-                                                                                        
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </div>
-                                                                                
-                                                                            </div>
-                                                                            <div class="tab-pane fade" id="nurse1" role="tabpanel">
-                                                                            <?php
-                                                                            $checknurse = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND admintype='nurse' and prev_id='$id' AND status='1'") or die(mysqli_error($con));
-                                                                            if (mysqli_num_rows($checknurse) > 0) {
-                                                                                ?>
-                                                                                <div class="table-responsive pt-4">
-                                                                                        <h4><strong>Nurse Report</strong></h4>
-                                                                                        <table class="table  table-striped table-responsive-sm table-bordered">
-                                                                                            <thead>
-                                                                                                <tr>
-                                                                                                    <th>Vital test</th>
-                                                                                                    <th>Results</th>
-                                                                                                    <th>Details</th>
-                                                                                                    
-                                                                                                </tr>
-                                                                                            </thead>
-                                                                                            <tbody>
-                                                                                                
-                                                                                                    <?php  
-                                                                                                
-                                                                                                        $getnurse = mysqli_query($con, "SELECT * FROM patientsque where admission_id ='$admission_id' and room='nurse' AND status='1' AND admintype='doctor' AND prev_id='$id'")or die(mysqli_error($con));
-                                                                                                        if (mysqli_num_rows($getnurse) > 0){
-                                                                                                            while($rowpharm3 = mysqli_fetch_array($getnurse)){
-                                                                                                                $npatientsque_id = $rowpharm3['patientsque_id'];
-                                                                                                        $getreports = mysqli_query($con, "SELECT * FROM nursereports WHERE patientsque_id='$npatientsque_id'");
-                                                                                                    if (mysqli_num_rows($getreports) > 0) {
-                                                                                                        while ($row = mysqli_fetch_array($getreports)) {
-                                                                                                            $medicalservice_id = $row['nursereport_id'];
-                                                                                                                        $test = $row['type'];
-                                                                                                                        $presult = $row['measurement'];
-                                                                                                                        $details =strip_tags($row['details']);
-                                                                                                    ?><tr>
-                                                                                                            <td><?php echo $test; ?></td>
-                                                                                                            <td><?php echo $presult; ?></td>
-                                                                                                            <td><?php echo $details; ?></td>
-                                                                                                            </tr>
-                                                                                                            <?php }}else{?>
-                                                                                                                <tr>
-                                                                                                                    <td colspan="3">No Nurse Report</td>
-                                                                                                                </tr>
-                                                                                                                <?php }
-                                                                                                        } }else{?>
-                                                                                                                <tr>
-                                                                                                                    <td colspan="3">No Nurse Report</td>
-                                                                                                                </tr>
-                                                                                                            <?php }?>
-                                                                                                
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                        <table class="table  table-striped table-responsive-sm table-bordered">
-                                                                                            <thead>
-                                                                                                <tr>
-                                                                                                    <th>Service</th>
-                                                                                                    <th>Case Type</th>
-                                                                                                    <th>Details</th>
-                                                                                                    
-                                                                                                </tr>
-                                                                                            </thead>
-                                                                                            <tbody>
-                                                                                                
-                                                                                                    <?php  
-                                                                                                    
-                                                                                                        $getnurse = mysqli_query($con, "SELECT * FROM patientsque where admission_id ='$admission_id' and room='nurse' AND status='1' AND admintype='doctor' AND prev_id='$id'")or die(mysqli_error($con));
-                                                                                                        
-                                                                                                        if (mysqli_num_rows($getnurse) > 0){
-                                                                                                            while($rowpharm3 = mysqli_fetch_array($getnurse)){
-                                                                                                                $npatientsque_id = $rowpharm3['patientsque_id'];
-                                                                                                        $getreports = mysqli_query($con, "SELECT * FROM minor WHERE patientsque_id='$npatientsque_id'");
-                                                                                                    if (mysqli_num_rows($getreports) > 0) {
-                                                                                                        while ($row12 = mysqli_fetch_array($getreports)) {
-                                                                                                            $secrive = $row12['service_id'];
-                                                                                                            $casetype = $row12['casetype'];
-                                                                                                            $details =strip_tags($row12['details']);
-                                                                                                            $getservice = mysqli_query($con, "SELECT * FROM medicalservices WHERE medicalservice_id='$secrive' AND status=1");
-                                                                                                            if (mysqli_num_rows($getservice) > 0) {
-                                                                                                                $rows = mysqli_fetch_array($getservice);
-                                                                                                                $service_name = $rows['medicalservice'];
-                                                                                                                $service_id = $rows['medicalservice_id'];
-                                                                                                            } else {
-                                                                                                                $service_name = " ";
-                                                                                                            }
-                                                                                                    ?><tr>
-                                                                                                            <td><?php echo $service_name; ?></td>
-                                                                                                            <td><?php echo $casetype; ?></td>
-                                                                                                            <td><?php echo $details; ?></td>
-                                                                                                            </tr>
-                                                                                                            <?php }}} }?>
-                                                                                                
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                    </div>
-                                                                                <?php } ?>
-                                                                            </div>
-                                                                            <div class="tab-pane fade" id="lab1" role="tabpanel">
-                                                                            <?php
-                                                                            $checklab = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND admintype='lab technician' and prev_id='$id' AND status='1'") or die(mysqli_error($con));
-                                                                            if (mysqli_num_rows($checklab) > 0) {
-                                                                                ?>
-                                                                                <div class="table-responsive pt-4">
-                                                                                        <h4><strong>Lab Report</strong></h4>
-                                                                                        
-                                                                                        <table class="table  table-striped table-responsive-sm table-bordered">
-                                                                                            <thead>
-                                                                                                <tr>
-                                                                                                <th>Test done</th>
-                                                                                                    <!-- <th>Result</th> -->
-                                                                                                    <th>Action</th>
-                                                                                                    
-                                                                                                </tr>
-                                                                                            </thead>
-                                                                                            <tbody>
-                                                                                                
-                                                                                                    <?php  
-                                                                                                    // while($row2=mysqli_fetch_array($checklab)){
-                                                                                                    $getlab = mysqli_query($con, "SELECT * FROM patientsque where admission_id ='$admission_id' and room='lab' AND status in (1,0) AND admintype='doctor' AND prev_id='$id'")or die(mysqli_error($con));
-                                                                                                        
-                                                                                                        // $getlab = mysqli_query($con, "SELECT * FROM patientsque where admission_id ='$admission_id' and room='lab technician' AND status='1' AND admintype='doctor' AND prev_id='$id'")or die(mysqli_error($con));
-                                                                                                        if (mysqli_num_rows($getlab) > 0){
-                                                                                                            while($rowpharm3 = mysqli_fetch_array($getlab)){
-                                                                                                                $npatientsque_id = $rowpharm3['patientsque_id'];
-                                                                                                    $getpendinglab = mysqli_query($con, "SELECT * FROM labreports where patientsque_id='$npatientsque_id' AND admission_id='$admission_id' and approved!=0  and status='1'") or die(mysqli_error($con));  
-                                                                                                    if (mysqli_num_rows($getpendinglab) > 0){
-
-                                                                                                        $doctorreports = mysqli_query($con, "SELECT * FROM laborders WHERE  patientsque_id='$npatientsque_id' ") or die(mysqli_error($con));
-
-                                                                                                        // $getreports = mysqli_query($con, "SELECT * FROM labreports WHERE patientsque_id='$npatientsque_id'");
-                                                                                                        if (mysqli_num_rows($doctorreports) > 0) {
-                                                                                                            while ($rowo = mysqli_fetch_array($doctorreports)) {
-                                                                                                                $timestamp = $rowo['timestamp'];
-                                                                                                        $serviceorder_id = $rowo['laborder_id'];
-                                                                                                        $getordered2 = mysqli_query($con, "SELECT * FROM patientlabs WHERE laborder_id ='$serviceorder_id' AND status in (3)") or die(mysqli_error($con));
-                                
-                                                                                                        if (mysqli_num_rows($getordered2) > 0) {
-                                                                                                            while ($row = mysqli_fetch_array($getordered2)) {
-                                                                                                                $medicalservice_id = $row['investigationtype_id'];
-                                                                                                                $status = $row['status'];
-                                                                                                            $getservice = mysqli_query($con, "SELECT * FROM investigationtypes WHERE status=1 AND investigationtype_id='$medicalservice_id'");
-                                                                                                                        $row2 = mysqli_fetch_array($getservice);
-                                                                                                                        $test = $row2['investigationtype'];
-                                                                                                                        $unit_id = $row2['unit_id'];  
-                                                                                                                ?>
-                                                                                                    
-                                                                                                    <tr>
-                                                                                                            <td><?php echo $test; ?></td>
-                                                                                                            <td>
-                                                                                                                <?php if ($status == 1 || $status == 2) { ?>
-                                                                                                                <!-- <a href="addradiologyreport.php?id=<?php echo $patientsque_id; ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-xs btn-info">Add Test</a> -->
-                                                                                                                <?php } else { ?>
-                                                                                                                <a href="labreport?que=<?php echo $npatientsque_id; ?>&patient_id=<?php echo $patient_id ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-primary btn-sm">View Report</a>
-                                                                                                            
-                                                                                                            <?php  }?>
-                                                                                                            </td>
-                                                                                                            
-                                                                                                            </tr>
-                                                                                                            <?php }}}}}else{
-                                                                                                                echo "<tr><td colspan='2'>No Lab Report</td></tr>";
-                                                                                                            }
-                                                                                                        }}?>
-                                                                                            
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                    </div>
-
-                                                                                <?php } ?>  
-                                                                            
-                                                                            </div>
-                                                                            <div class="tab-pane fade" id="pharm1" role="tabpanel">
-                                                                            <?php 
-                                                                            $checkpharmacy = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND admintype='pharmacy' and prev_id='$id' AND status='1'") or die(mysqli_error($con));
-                                                                                if (mysqli_num_rows($checkpharmacy) > 0){
-                                                                            ?>
-                                                                            <div class="table-responsive pt-4">
-                                                                                        <h4><strong>Pharmacy Report</strong></h4>
-                                                                                        <table class="table  table-striped table-responsive-sm table-bordered">
-                                                                                            <thead>
-                                                                                                <tr>
-                                                                                                <th>Drug</th>
-                                                                                                    <th>Purpose</th>
-                                                                                                    <th>Units</th>
-                                                                                                    <th>Dosage</th>
-                                                                                                    <th>Frequency</th>
-                                                                                                    <th>Details</th>
-                                                                                                    
-                                                                                                </tr>
-                                                                                            </thead>
-                                                                                            <tbody>
-                                                                                                
-                                                                                                    <?php  
-                                                                                                while($row2=mysqli_fetch_array($checkpharmacy)){
-                                                                                                    $getpharmacy = mysqli_query($con, "SELECT * FROM patientsque where admission_id ='$admission_id' and room='pharmacy' AND status='1' AND admintype='doctor' AND prev_id='$id'")or die(mysqli_error($con));
-                                                                                                    if (mysqli_num_rows($getpharmacy) > 0){
-                                                                                                        while($rowpharm = mysqli_fetch_array($getpharmacy)){
-                                                                                                            $npatientsque_id = $rowpharm['patientsque_id'];
-                                                                                                    
-                                                                                                        $pharmacyorder = mysqli_query($con, "SELECT * FROM `pharmacyorders` where patientsque_id='$npatientsque_id'")or die(mysqli_error($con));
-                                                                                                        if (mysqli_num_rows($pharmacyorder) > 0){
-                                                                                                        // get issued drugs 
-
-                                                                                                        while($row22=mysqli_fetch_array($pharmacyorder)){
-                                                                                                            $patientque = $row22['patientsque_id'];
-                                                                                                            $pharmyorder =$row22['pharmacyorder_id'];
-                                                                                                            $pharmacyordersitem= mysqli_query($con,"SELECT * FROM `pharmacyordereditems` where pharmacyorder_id='$pharmyorder'")or die(mysqli_error($con));
-                                                                                                            if (mysqli_num_rows($pharmacyordersitem) >0){
-                                                                                                                while($row3=mysqli_fetch_array($pharmacyordersitem)){
-                                                                                                                $purose = $row3['prescription'];
-                                                                                                                $item_id = $row3['item_id'];
-                                                                                                                $unit = $row3['quantity'];
-                                                                                                                $dosage = $row3['dosage'];
-                                                                                                                $freq = $row3['freq'];
-                                                                                                                $details = $row3['details'];
-
-                                                                                                        
-                                                                                                                $getitems = mysqli_query($con, "SELECT * FROM inventoryitems WHERE status=1 and inventoryitem_id='$item_id' ");
-                                                                                                                $row = mysqli_fetch_array($getitems);
-                                                                                                                $itemname = $row['itemname'];
-                                                                                                                $measurement_id = $row['measurement_id'];
-                                                                                                                $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
-                                                                                                                $row2 =  mysqli_fetch_array($getunit);
-                                                                                                                $measurement = $row2['measurement'];
-                                                                                                                ?>
-                                                                                                
-                                                                                                    <tr>
-                                                                                                            <td><?php echo $itemname; ?></td>
-                                                                                                            <td><?php echo $purose; ?></td>
-                                                                                                            <td><?php echo $unit; ?></td>
-                                                                                                            <td><?php echo $dosage; ?></td>
-                                                                                                            <td><?php echo $freq; ?></td>
-                                                                                                            <td><?php echo $details; ?></td>
-                                                                                                            </tr>
-                                                                                                            <?php }}}} }}}?>
-                                                                                            
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                    </div>
-                                                                            <?php } ?>
-                                                                            </div>
-                                                                            <div class="tab-pane fade" id="radio1" role="tabpanel">
-                                                                            <?php
-                                                                                $checkradio = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND admintype='radiographer' and prev_id='$id' AND status in (1,8)") or die(mysqli_error($con));
-                                                                            if (mysqli_num_rows($checkradio) > 0) {
-                                                                                ?>
-                                                                                <div class="table-responsive pt-4">
-                                                                                        <h4><strong>Radiolody Report</strong></h4>
-                                                                                        <table class="table  table-striped table-responsive-sm table-bordered">
-                                                                                            <thead>
-                                                                                                <tr>
-                                                                                                <th>Test done</th>
-                                                                                                    <!-- <th>Details</th> -->
-                                                                                                    <th>Action</th>
-                                                                                                    <!-- <th>Conclusion</th> -->
-                                                                                                    
-                                                                                                </tr>
-                                                                                            </thead>
-                                                                                            <tbody>
-                                                                                                
-                                                                                                    <?php  
-                                                                                                    
-                                                                                                    $getradio = mysqli_query($con, "SELECT * FROM patientsque where admission_id ='$admission_id' and room='radiography' AND status in (1,0) AND admintype='doctor' AND prev_id='$id'")or die(mysqli_error($con));
-                                                                                                    if (mysqli_num_rows($getradio) > 0){
-                                                                                                        while($rowpharm3 = mysqli_fetch_array($getradio)){
-                                                                                                            $npatientsque_id = $rowpharm3['patientsque_id'];
-                                                                                                        $doctorreports = mysqli_query($con, "SELECT * FROM radioorders WHERE  patientsque_id='$npatientsque_id' ") or die(mysqli_error($con));
-                                                                                                        // $radioreports = mysqli_query($con, "SELECT * FROM radiologyreports WHERE patientsque_id='$npatientsque_id'") or die(mysqli_error($con));
-                                                                                                                
-                                                                                                        if (mysqli_num_rows($doctorreports) > 0) {
-                                                                                                        while ($rowo = mysqli_fetch_array($doctorreports)) {
-                                                                                                            $timestamp = $rowo['timestamp'];
-                                                                                                    $serviceorder_id = $rowo['radioorder_id'];
-                                                                                                    $getordered2 = mysqli_query($con, "SELECT * FROM patientradios WHERE radioorder_id ='$serviceorder_id' AND status in (3)") or die(mysqli_error($con));
-
-                                                                                                    if (mysqli_num_rows($getordered2) > 0) {
-                                                                                                        while ($row = mysqli_fetch_array($getordered2)) {
-                                                                                                            $medicalservice_id = $row['radioinvestigationtype_id'];
-                                                                                                            $status = $row['status'];
-                                                                                                        $getitem = mysqli_query($con, "SELECT * FROM radioinvestigationtypes WHERE status=1 AND radioinvestigationtype_id='$medicalservice_id'");
-                                                                                                        $row1 = mysqli_fetch_array($getitem);
-                                                                                                        $itemname = $row1['investigationtype'];
-                                                                                                                ?>
-                                                                                                    
-                                                                                                    <tr>
-                                                                                                    <td><?php echo $itemname; ?></td>
-                                                                                                            <!-- <td><?php echo $details; ?></td> -->
-                                                                                                            <td>
-                                                                                                                <?php if ($status == 1 || $status == 2) { ?>
-                                                                                                                <a href="addradiologyreport.php?id=<?php echo $patientsque_id; ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-xs btn-info">Add Test</a>
-                                                                                                                <?php } else { ?>
-                                                                                                                <a href="radiography?patientsque_id=<?php echo $npatientsque_id; ?>&id=<?php echo $patient_id ?>&test=<?php echo $medicalservice_id;?>" target="_blank" class="btn btn-primary btn-sm">View Report</a>
-                                                                                                            
-                                                                                                            <?php  }?>
-                                                                                                            </td>
-                                                                                                            
-                                                                                                            </tr>
-                                                                                                            <?php }}
-                                                                                                            else{
-                                                                                                                echo "<tr> <td colspan='3'>No Radiology Report</td></tr>";  
-                                                                                                            }
-                                                                                                            }}
-                                                                                                        }}else{
-                                                                                                            echo "<tr> <td colspan='3'>No Radiology Report</td></tr>";
-                                                                                                        }?>
-                                                                                            
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                    </div>
-
-                                                                                <?php } ?>  
-                                                                            
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
 
                                     </div>
                                 </div>

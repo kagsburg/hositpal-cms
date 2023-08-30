@@ -101,11 +101,11 @@ include 'includes/header.php';
                             
            $getnextque=mysqli_query($con,"SELECT * FROM patientsque WHERE admission_id='$admission_id' AND admin_id='".$_SESSION['elcthospitaladmin']."'");  
                     $rown= mysqli_fetch_array($getnextque);
-                   $attendant=$rown['admin_id'];     
-                      $room=$rown['room'];
-                   $getstaff= mysqli_query($con,"SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));                        
-                            $rows= mysqli_fetch_array($getstaff);
-                            $fullname=$rows['fullname'];
+                //    $attendant=$rown['admin_id'];     
+                    //   $room=$rown['room'];
+                //    $getstaff= mysqli_query($con,"SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));                        
+                //             $rows= mysqli_fetch_array($getstaff);
+                //             $fullname=$rows['fullname'];
         if(strlen($patient_id)==1){
       $pin='000'.$patient_id;
      }

@@ -51,7 +51,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                 <div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Pharmacy Outpatient List</h4>
+                            <h4>Pharmacy Inpatient List</h4>
 
                         </div>
                     </div>
@@ -101,7 +101,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                                 if (mysqli_num_rows($getadmission) > 0) {
                                                     $checkadmitted = mysqli_query($con , "SELECT * FROM `admitted` WHERE `admission_id` = '$admission_id' AND `status` = 1");
                                                     $countadmitted = mysqli_num_rows($checkadmitted);
-                                                    if ($countadmitted ==0){
+                                                    if ($countadmitted >0){
                                                 $row1 = mysqli_fetch_array($getadmission);
                                                 $patient_id = $row1['patient_id'];
                                                 $getpatient = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");

@@ -226,10 +226,32 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                         $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                         $row2 =  mysqli_fetch_array($getunit);
                                         $measurement = $row2['measurement'];
-                                        if ($type == 'Medical') {
+                                        if ($type == 'Medicine') {
+                                            $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2 and status=1") or die(mysqli_error($con));
+                                                                                            
+                                                                                            $row3 = mysqli_fetch_array($getstock);
+                                                                                            $totalstock = $row3['totalstock'];
+                                                                                            $exipry = $row3['expiry'];
+                                                                                            $totalordered = 0;
+                                                                                            $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                                                            while ($row4 = mysqli_fetch_array($getordered)) {
+                                                                                                $stockorder_id = $row4['stockorder_id'];
+                                                                                                $quantity = $row4['quantity'];
+                                                                                                $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
+                                                                                                if (mysqli_num_rows($getorder) > 0) {
+                                                                                                    $totalordered = $totalordered + $quantity;
+                                                                                                }
+                                                                                            }
+                                                                                            $issued = mysqli_query($con, "SELECT * FROM issueddrugs WHERE drug='$inventoryitem_id' AND status=1");
+                                                                                            while ($row5 = mysqli_fetch_array($issued)) {
+                                                                                                $quantity = $row5['quantity'];
+                                                                                                $totalordered = $totalordered + $quantity;
+                                                                                            }
+                                                                                            $instock = $totalstock - $totalordered;
+                                                                                            if ($instock > 0){
                                                   ?>
                     <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname; ?></option>
-                                     <?php }}?>
+                                     <?php }}}?>
            </select>
               </div>
                 <div class="col-lg-3 form-group">
@@ -334,7 +356,30 @@ if((isset($_SESSION['lan']))&&($_SESSION['lan']=='fr')){
                                         $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                         $row2 =  mysqli_fetch_array($getunit);
                                         $measurement = $row2['measurement'];
-                                        if ($type == 'Medical') {  ?>  <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname; ?></option> <?php }}?>  </select>  </div> <div class="col-lg-3 form-group">     <label>Dosage</label>    <input type="text" class="form-control" name="consumption[]" placeholder="Enter consumption"></div><div class="col-lg-3 form-group">
+                                        if ($type == 'Medicine') {  
+                                            $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2 and status=1") or die(mysqli_error($con));
+                                                                                            
+                                                                                            $row3 = mysqli_fetch_array($getstock);
+                                                                                            $totalstock = $row3['totalstock'];
+                                                                                            $exipry = $row3['expiry'];
+                                                                                            $totalordered = 0;
+                                                                                            $getordered = mysqli_query($con, "SELECT * FROM ordereditems WHERE item_id='$inventoryitem_id'") or die(mysqli_error($con));
+                                                                                            while ($row4 = mysqli_fetch_array($getordered)) {
+                                                                                                $stockorder_id = $row4['stockorder_id'];
+                                                                                                $quantity = $row4['quantity'];
+                                                                                                $getorder = mysqli_query($con, "SELECT * FROM stockorders WHERE stockorder_id='$stockorder_id' AND status=1");
+                                                                                                if (mysqli_num_rows($getorder) > 0) {
+                                                                                                    $totalordered = $totalordered + $quantity;
+                                                                                                }
+                                                                                            }
+                                                                                            $issued = mysqli_query($con, "SELECT * FROM issueddrugs WHERE drug='$inventoryitem_id' AND status=1");
+                                                                                            while ($row5 = mysqli_fetch_array($issued)) {
+                                                                                                $quantity = $row5['quantity'];
+                                                                                                $totalordered = $totalordered + $quantity;
+                                                                                            }
+                                                                                            $instock = $totalstock - $totalordered;
+                                                                                            if ($instock > 0){
+                                            ?>  <option value="<?php echo $inventoryitem_id; ?>"><?php echo $itemname; ?></option> <?php }}}?>  </select>  </div> <div class="col-lg-3 form-group">     <label>Dosage</label>    <input type="text" class="form-control" name="consumption[]" placeholder="Enter consumption"></div><div class="col-lg-3 form-group">
                                     <label>Frequency</label>
                                     <input type="text" class="form-control" name="frequency[]" placeholder="Enter Frequency">
                                    </div><div class="col-lg-3 form-group"><div class="form-group"> <label>Root of Admission*</label> <select class="form-control reference" name="admissionroot[]"><option selected="selected" value="">Select Root..</option><option value="  IVD"> IVD</option> <option value="IVL">IVL</option><option value="IM">IM</option><option value="SC">SC</option><option value="Oral">Oral</option>  </select> </div>    </div> </div> </div> <button class="remove_subobj  btn btn-danger" style="height:30px;margin-top:30px"><i class="fa fa-minus"></i></button></div>`); //add input box
