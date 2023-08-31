@@ -204,6 +204,7 @@
             <ul aria-expanded="false">
               <li><a href="addmedicalservice?id=NULL">Add Medical Service</a></li>
               <li><a href="medicalservices">Medical Services</a></li>
+              <li><a href="clinicservices">Clinic Services</a></li>
               <li><a href="unselectiveservices">Mandatory Services</a></li>
               <li><a href="medical_sections">Medical Sections</a></li>
             </ul>

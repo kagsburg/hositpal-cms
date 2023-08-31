@@ -152,8 +152,8 @@ $id = $_GET['id'];
                                                     $getpatient= mysqli_query($con, "SELECT * FROM patients WHERE patient_id='$id'");
                                                     $row = mysqli_fetch_array($getpatient);
                                                     $clinic = $row['clinic'];
-                                                    mysqli_query($con, "UPDATE clinic_clients SET status='4' WHERE clinic_cl_id ='$clinic'") or die(mysqli_error($con));
-                                                    mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$last_id','$room','$attendant','1','" . $_SESSION['elcthospitaladmin'] . "','receptionist',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
+                                                    mysqli_query($con, "UPDATE clinic_clients SET status='1' WHERE clinic_cl_id ='$clinic'") or die(mysqli_error($con));
+                                                    mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$last_id','$room','','1','" . $_SESSION['elcthospitaladmin'] . "','receptionist',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
                                                     $patientsque_id = mysqli_insert_id($con);
                                                     echo '<div class="alert alert-success">Patient Successfully Attended.</div>';
                                                     
@@ -274,7 +274,7 @@ $id = $_GET['id'];
                                             <select class="form-control" name="paymentmethod">
                                                 <option value="">Select option..</option>
                                                 <option value="cash">Cash</option>
-                                                <option value="cash postpaid">Cash Postpaid</option>
+                                                <!-- <option value="cash postpaid">Cash Postpaid</option> -->
                                                 <?php if ($paymenttype == "credit") { ?>
                                                     <option value="credit" selected>Credit - <?php echo $clientname; ?></option>
                                                 <?php } else if ($paymenttype == "insurance") { ?>

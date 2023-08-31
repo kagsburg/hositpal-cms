@@ -121,10 +121,12 @@ if ($mode == '2'){
 
                                                 $filter = empty($prev_id) ? "ORDER BY patientsque_id DESC" : "AND patientsque_id = '$prev_id'";
                                                 $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND patientsque_id < '$patientsque_id'  AND status=1 $filter LIMIT 1");
-                                                $rowp = mysqli_fetch_array($getprevque);
+                                                if (mysqli_num_rows($getprevque) > 0    ){
+                                                    $rowp = mysqli_fetch_array($getprevque);
+                                                    $patientsque_id2 = $rowp['patientsque_id'];
+                                                    $room = $rowp['room'];
+                                                }
                                                 $attendant = $_SESSION['elcthospitaladmin'];
-                                                $patientsque_id2 = $rowp['patientsque_id'];
-                                                $room = $rowp['room'];
                                                 $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
                                                 $rows = mysqli_fetch_array($getstaff);
                                                 $fullname = $rows['fullname'];

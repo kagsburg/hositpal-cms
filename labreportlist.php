@@ -126,10 +126,14 @@ $type = isset($_GET['ty'])?$_GET['ty']:0;
 
                                                 $filter = empty($prev_id) ? "AND patientsque_id < '$patientsque_id' ORDER BY patientsque_id DESC" : "AND patientsque_id = '$prev_id'";
                                                 $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND status=1 $filter");
+                                                if (mysqli_num_rows($getprevque) > 0) {
                                                 $rowp = mysqli_fetch_array($getprevque);
-                                                $attendant = $_SESSION['elcthospitaladmin'];
                                                 $patientsque_id2 = $rowp['patientsque_id'];
                                                 $room = $rowp['room'];
+                                                }else{
+                                                $patientsque_id2 = $patientsque_id;
+                                                }
+                                                $attendant = $_SESSION['elcthospitaladmin'];
                                                 $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
                                                 $rows = mysqli_fetch_array($getstaff);
                                                 $fullname = $rows['fullname'];
@@ -165,8 +169,12 @@ $type = isset($_GET['ty'])?$_GET['ty']:0;
                                                                                $row1 = mysqli_fetch_array($getitem);
                                                                                $itemname = $row1['investigationtype'];
                                                                                $doctorreport_s = mysqli_query($con, "SELECT * FROM doctorreports WHERE patientsque_id='$patientsque_id2' and labmeasure ='$medicalservice_id'") or die(mysqli_error($con));
+                                                                               if (mysqli_num_rows($doctorreport_s) > 0) {
                                                                                  $row_o = mysqli_fetch_array($doctorreport_s);
                                                                                  $details = $row_o['details'];
+                                                                               }else{
+                                                                                 $details = '';
+                                                                                 }
                                                                                  if ($type == 1){
                                                                                  $getpendinglab = mysqli_query($con, "SELECT * FROM labreports where patientsque_id='$id' AND admission_id='$admission_id' and approved=0  and test='$medicalservice_id' and status='1'") or die(mysqli_error($con));  
                                                                                  if (mysqli_num_rows($getpendinglab) > 0){

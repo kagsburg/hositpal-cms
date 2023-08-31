@@ -67,7 +67,7 @@ if (isset($_POST['emergencyaddress'], $_POST['emergencyrelationship'], $_POST['e
         }
     } else {
         mysqli_query($con, "UPDATE patients SET employmentstatus='$employmentstatus',employername='$employername',employeraddress='$employeraddress',employernumber='$employernumber',emergencyname='$emergencyname',emergencyrelationship='$emergencyrelationship',emergencyphone='$emergencyphone',emergencyaddress='$emergencyaddress',level=4,status=3 WHERE patient_id='" . $_SESSION['patientreg'] . "'") or die(mysqli_error($con));
-        
+        mysqli_query($con, "UPDATE clinic_clients SET patient_status=1 WHERE clinic_cl_id='" . $_SESSION['clinic'] . "'") or die(mysqli_error($con));
                                                     
         $_SESSION['flash_message'] = 'Patient Information Successfully Added.';
         unset($_SESSION["patientreg"]);    

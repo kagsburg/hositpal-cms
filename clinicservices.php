@@ -11,7 +11,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Medical Services </title>
+    <title>Clinic Services </title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -50,14 +50,14 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                 <div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Medical Services</h4>
+                            <h4>Clinic Services</h4>
 
                         </div>
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="medicalservices">Medical services</a></li>
+                            <li class="breadcrumb-item active"><a href="clinicservices">Clinic services</a></li>
                         </ol>
                     </div>
                 </div>
@@ -65,7 +65,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Medical Services</h4>
+                                <h4 class="card-title">Clinic Services</h4>
                             </div>
                             <div class="card-body">
                                 <table id="example5" class="display" class="table table-striped" style="width:100%;">
@@ -92,7 +92,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                             $getsection =  mysqli_query($con, "SELECT * FROM sections WHERE status=1 AND section_id='$section_id'");
                                             $row1 =  mysqli_fetch_array($getsection);
                                             $section = $row1['section'];
-                                            if ($clinictype !=1){
+                                            if ($clinictype == 1){
                                         ?>
                                             <tr>
                                                 <td><?php echo $medicalservice; ?></td>
@@ -178,7 +178,7 @@ if (($_SESSION['elcthospitallevel'] != 'admin')) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        <?php }} ?>
+                                        <?php } }?>
                                     </tbody>
                                 </table>
                             </div>

@@ -149,6 +149,7 @@ $patient = get_active_clinic_patient($pdo, $clinic_id);
 
                                 <div class="mb-3">
                                 <button data-toggle="modal" data-target="#basicModal<?php echo $clinic_id; ?>" class="btn btn-xs btn-info">Edit</button>
+                                <a href=""  class="btn btn-xs btn-secondary">Recent Report</a>
 
                                 <div class="modal fade" id="basicModal<?php echo $clinic_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
