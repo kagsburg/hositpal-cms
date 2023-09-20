@@ -143,7 +143,8 @@ $id = $_GET['id'];
                                                 echo '<div class="alert alert-danger">' . $error . '</div>';
                                             }
                                         } else {
-                                            mysqli_query($con, "INSERT INTO admissions(patient_id,mode,timestamp,dischargedate,admin_id,paymethod,status) VALUES('$id','$mode',UNIX_TIMESTAMP(),0,'" . $_SESSION['elcthospitaladmin'] . "','$paymentmethod',1)") or die(mysqli_error($con));
+                                            mysqli_query($con, "INSERT INTO admissions(patient_id,mode,timestamp,dischargedate,admin_id,paymethod,status) 
+                                            VALUES('$id','$mode',UNIX_TIMESTAMP(),0,'" . $_SESSION['elcthospitaladmin'] . "','$paymentmethod',1)") or die(mysqli_error($con));
                                             
                                             if ($mode == 'normal') {
                                                 $last_id = mysqli_insert_id($con);
@@ -209,7 +210,8 @@ $id = $_GET['id'];
                                                 $last_id = mysqli_insert_id($con);
                                                 $admission_id = $last_id;
                                                 $attendant='';
-                                                mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) VALUES('$last_id','doctor','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','receptionist',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
+                                                mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status) 
+                                                VALUES('$last_id','doctor','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','receptionist',UNIX_TIMESTAMP(),0)") or die(mysqli_error($con));
                                                 $patientsque_id = mysqli_insert_id($con);
                                                 if (isset($_POST['medicalservices'])) {
                                                     $cashfallbacks = [];
@@ -250,7 +252,8 @@ $id = $_GET['id'];
                                                         $total_amount = array_sum($mservices);
                                                         create_bill($pdo, $patient_id, $admission_id, $patientsque_id, 'medical_service', $last_id, $total_amount, $paymentmethod);
                                                         foreach ($mservices as $service => $charge)
-                                                            mysqli_query($con, "INSERT INTO patientservices(serviceorder_id,medicalservice_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
+                                                            mysqli_query($con, "INSERT INTO patientservices(serviceorder_id,medicalservice_id,charge,status) 
+                                                            VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
                                                     }
                                                 }
                                                 echo '<div class="alert alert-success">Patient Successfully Attended.</div>';

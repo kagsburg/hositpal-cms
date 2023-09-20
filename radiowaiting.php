@@ -96,7 +96,7 @@ if ($mode == '2'){
                                             //     $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment=1 and room='radiography' AND status=0") or die(mysqli_error($con));
                                             // }
                                            
-                                                $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE  room='radiography' AND status=0") or die(mysqli_error($con));
+                                                $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment=1 and  room='radiography' AND status=0") or die(mysqli_error($con));
                                            
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];
@@ -196,9 +196,82 @@ if ($mode == '2'){
                                             </tr>
                                             
                                             
-                                            <?php } }
-                                        
-                                        }?>
+                                            <?php } }}
+                                            // check for emergcny patients
+                                        $getadmissions = mysqli_query($con, "SELECT * FROM admissions WHERE mode='emergency' AND status='1'");
+                                        if (mysqli_num_rows($getadmissions)>0){
+                                        while ($row = mysqli_fetch_array($getadmissions)) {                              
+                                            $patient_id = $row['patient_id'];
+                                            $admission_id=$row['admission_id'];
+                                            $getque2 = mysqli_query($con, "SELECT * FROM patientsque WHERE  room='radiography' and admission_id='$admission_id'  AND status=0");
+                                            if (mysqli_num_rows($getque2) > 0){
+                                            $row3 = mysqli_fetch_array($getque2);
+                                                $patientsque_id = $row3['patientsque_id'];
+                                                $prev_id = $row3['prev_id'];
+                                                $timestamp= $row3['timestamp'];
+
+                                                $getpatient = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
+                                                $row2 = mysqli_fetch_array($getpatient);
+                                                $firstname = $row2['firstname'];
+                                                $secondname = $row2['secondname'];
+                                                $thirdname = $row2['thirdname'];
+                                                $gender = $row2['gender'];
+                                                $ext = $row2['ext'];
+                                                $mode2=$row['mode'];
+
+                                                $filter = empty($prev_id) ? "ORDER BY patientsque_id DESC" : "AND patientsque_id = '$prev_id'";
+                                                $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND patientsque_id < '$patientsque_id'  AND status=1 $filter LIMIT 1");
+                                                if (mysqli_num_rows($getprevque) > 0    ){
+                                                    $rowp = mysqli_fetch_array($getprevque);
+                                                    $patientsque_id2 = $rowp['patientsque_id'];
+                                                    $room = $rowp['room'];
+                                                }
+                                                $attendant = $_SESSION['elcthospitaladmin'];
+                                                $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
+                                                $rows = mysqli_fetch_array($getstaff);
+                                                $fullname = $rows['fullname'];
+                                                if (strlen($patient_id) == 1) {
+                                                    $pin = '000' . $patient_id;
+                                                }
+                                                if (strlen($patient_id) == 2) {
+                                                    $pin = '00' . $patient_id;
+                                                }
+                                                if (strlen($patient_id) == 3) {
+                                                    $pin = '0' . $patient_id;
+                                                }
+                                                if (strlen($patient_id) >= 4) {
+                                                    $pin = $patient_id;
+                                                }
+
+                                            ?>
+                                            <tr class="gradeA">
+                                                <td><?php echo $patientsque_id; ?></td>
+                                                <!-- <td>
+                                                    <a href="images/patients/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>"
+                                                        target="_blank">
+                                                        <img src="images/patients/thumbs/<?php echo md5($patient_id) . '.' . $ext . '?' .  time(); ?>"
+                                                            width="60">
+                                                    </a>
+                                                </td> -->
+                                                <td><?php echo $firstname . ' ' . $secondname . ' ' . $thirdname; ?>
+                                                </td>
+                                                <td><?php echo $gender; ?></td>
+                                                <td><?php echo $room; ?></td>
+                                                <td><?php echo $fullname; ?></td>
+                                                <td>
+                                                    <!-- <a href="addradiologyreport.php?id=<?php echo $patientsque_id; ?>"
+                                                        class="btn btn-xs btn-info">Add Report</a> -->
+                                                        <a href="radiologylist?id=<?php echo $patientsque_id; ?>"
+                                                        class="btn btn-xs btn-info">Details</a>
+                                                    
+
+                                                </td>
+
+
+                                            </tr>
+
+                                            <?php
+                                        }}}?>
                                         </tbody>
                                     </table>
                                 </div>
