@@ -141,11 +141,11 @@ $type = $_GET['ty'];
                                                         if (mysqli_num_rows($getlabreport) > 0){
                                                             echo '<a href="viewradreport?id='.$patient_id.'" class="btn btn-xs btn-success">View Report</a>';
                                                         }else{
-                                                            echo '<a href="addradclinic?id='.$patient_id.'" class="btn btn-xs btn-info">Add Report</a>';
+                                                            echo '<a href="clinicclient?id='.$patient_id.'" class="btn btn-xs btn-info">Add Report</a>';
                                                         }
                                                     }
                                                     else if ($type == 'medical_service'){
-                                                        $getlabreport = mysqli_query($con,"SELECT * from clinicreport where status=1 and clinic_client_id='$patient_id'") or die(mysqli_error($con));
+                                                        $getlabreport = mysqli_query($con,"SELECT * from clinicreport where status in (1,2) and clinic_client_id='$patient_id'") or die(mysqli_error($con));
                                                         if (mysqli_num_rows($getlabreport) > 0){
                                                             echo '<a href="viewnursereport?id='.$patient_id.'" class="btn btn-xs btn-success">View Report</a>';
                                                             echo '<a href="dischargenurseclinic?id='.$patient_id.'" class="btn btn-xs btn-info">Discharge</a>';

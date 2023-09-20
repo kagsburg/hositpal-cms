@@ -249,7 +249,7 @@ $anareport_id = $_GET['id'];
                                     if (mysqli_num_rows($labs) > 0) {
                                         while ($lab = mysqli_fetch_array($labs)) {
                                             $labname = $lab['type'];
-                                            $labvalue = $lab['result'];
+                                            $labvalue = $lab['value'];
                                             ?>
                                             <div class="col-sm-2">
                                                 <p><?php echo $labname ; ?> : 
@@ -306,7 +306,7 @@ $anareport_id = $_GET['id'];
                                     if (mysqli_num_rows($labs) > 0) {
                                         while ($lab = mysqli_fetch_array($labs)) {
                                             $labname = $lab['type'];
-                                            $labvalue = $lab['result'];
+                                            $labvalue = $lab['value'];
                                             ?>
                                             <div class="col-sm-2">
                                                 <p><?php echo $labname ; ?> : 
@@ -325,7 +325,7 @@ $anareport_id = $_GET['id'];
                                     if (mysqli_num_rows($labs) > 0) {
                                         while ($lab = mysqli_fetch_array($labs)) {
                                             $labname = $lab['type'];
-                                            $labvalue = $lab['result'];
+                                            $labvalue = $lab['value'];
                                             ?>
                                             <div class="col-sm-2">
                                                 <p><?php echo $labname ; ?> : 

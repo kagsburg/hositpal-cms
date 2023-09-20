@@ -176,6 +176,29 @@ function get_bill_by_type_and_patient(PDO $conn, $type, $type_id, $patient_id, $
     $getbill = $stmt->fetch();
     return $getbill;
 }
+//function to add inpatient admission bill
+function create_bill_inpatient(PDO $conn, $patient_id, $admission_id, $queue_id,$type, $admitted_id, $payment_method="", $status=1)
+{
+    $amount = 0;
+    // get bed charge and number of days 
+    $stmt = $conn->prepare("SELECT * FROM admitted WHERE admission_id=? and status=3");
+    $stmt->execute([$admission_id]);
+    $getadmission = $stmt->fetch();
+    $stmt = $conn->prepare("SELECT * FROM beds WHERE bed_id=?");
+    $stmt->execute([$getadmission['bed_id']]);
+    $getbed = $stmt->fetch();
+    // get number of days
+    $disb1 = date("Y-m-d", $getadmission['admissiondate']);
+    $disb2 = date("Y-m-d", $getadmission['dischargedate']);
+    $datetime1 = new DateTime($disb1);
+    $datetime2 = new DateTime($disb2);
+    $interval = $datetime1->diff($datetime2);
+    $days = $interval->format('%a');
+    $amount += ($getbed['bedfee'] * $days);
+    $stmt = $conn->prepare("INSERT INTO bills (patient_id, admission_id, patientsque_id, type, type_id, amount, payment_method, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$patient_id, $admission_id, $queue_id, $type, $admitted_id, $amount, $payment_method, $status]);
+    return $conn->lastInsertId();
+}
 
 // adding patientsque_id for backward compatibility
 function create_bill(PDO $conn, $patient_id, $admission_id, $queue_id, $type, $type_id, $amount, $payment_method="", $status=1)

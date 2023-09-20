@@ -1,5 +1,7 @@
 <?php
 include 'includes/conn.php';
+include 'utils/bills.php';
+include 'utils/patients.php';
 if (!isset($_SESSION['elcthospitaladmin'])) {
     header('Location:login.php');
 }
@@ -85,16 +87,19 @@ $pque=$_GET['que'];
                             <!-- <a href="admissionprint?id=<?php echo $id; ?>" class="btn btn-success mb-2 btn-xs">Print</a> -->
                             <?php
                             // status 2 is for discharged from ward
-                            $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE status IN (1,2) AND admitted_id='$id'");
+                            $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE status IN (1,2,3) AND admitted_id='$id'");
                             $row = mysqli_fetch_array($getadmitted);
                             $admission_id = $row['admission_id'];
                             $admitted_id = $row['admitted_id'];
+                            $getpatient=get_admission($pdo,$admission_id);
+                            $patient_id=$getpatient['patient_id'];
                             $bed_id = $row['bed_id'];
                             $price = $row['price'];
                             $status = $row['status'];
                             $admissiondate = $row['admissiondate'];
                             $dischargedate = $row['dischargedate'];
                             $admin_id = $row['admin_id'];
+                            $paymentmethod=get_payment_method($pdo, $patient_id, $admission_id);
                             if (($_SESSION['elcthospitallevel'] == 'nurse') && ($status == 1)) {
                             ?>
                                 <a href="addnursingsheet?id=<?php echo $id; ?>" target="_blank" class="btn btn-info mb-2 btn-xs">Add Medication</a>
@@ -113,7 +118,7 @@ $pque=$_GET['que'];
                             <?php 
                             if ($status != 2){
                                 ?>
-                            <button data-toggle="modal" data-target="#discharge<?php echo $id; ?>" class="btn btn-success mb-2 btn-xs">Discharge Patient</button>
+                            <button data-toggle="modal" data-target="#discharge<?php echo $id; ?>" class="btn btn-success mb-2 btn-xs">Proceed to Discharge Patient</button>
                             <?php }?>
                         </div>
                         <?php
@@ -176,11 +181,6 @@ $pque=$_GET['que'];
                             if (strlen($patient_id) >= 5) {
                                 $pin = $patient_id;
                             }
-                            // $getgroups = mysqli_query($con, "SELECT * FROM agegroups WHERE status=1 AND agegroup_id='$agegroup'") or die(mysqli_error($con));
-                            // $row1 = mysqli_fetch_array($getgroups);
-                            // $agegroup_id = $row1['agegroup_id'];
-                            // $agegroup1 = $row1['agegroup'];
-                            // $code1 = $row1['code'];
                         ?>
 
                         <div class="col-lg-8">
@@ -201,7 +201,7 @@ $pque=$_GET['que'];
                                                 <tr>
                                                     <th>Age </th>
                                                     <td><?php 
-                                                        $dob1 = date("Y-m-d", strtotime($dob));
+                                                        $dob1 = date("Y-m-d", $dob);
                                                         $dob2 = new DateTime($dob1);
                                                         $now = new DateTime();
                                                         $difference = $now->diff($dob2);
@@ -407,7 +407,49 @@ $pque=$_GET['que'];
                                                 </div>
                                                 <hr>
                                             <?php } ?>
-
+                                            <div class="table-responsive pt-4">
+                                                <?php
+                                                $getprogress = mysqli_query($con, "SELECT * FROM doctorexam WHERE admitted_id='$id'") or die(mysqli_error($con));
+                                                if (mysqli_num_rows($getprogress) == 0) {
+                                                    echo '<div class="alert alert-danger">No Doctor Review Report Found</div>';
+                                                }else{
+                                                
+                                                ?>
+                                                    <h4><strong> Doctor Review Details</strong></h4>
+                                                    <table class="table  table-striped table-responsive-sm table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Date</th>
+                                                                <th>Doctor Review</th>
+                                                                <th>ATTENDANT</th>
+                                                                <!-- <th>PROGRESS</th>
+                                                                <th>TREATMENT</th>
+                                                                <th>DIET</th>
+                                                                 -->
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php 
+                                                            while ($row = mysqli_fetch_array($getprogress)) {
+                                                                $date = $row['timestamp'];
+                                                                $complaint = $row['complaint'];
+                                                                $admin_id = $row['admin_id'];
+                                                                $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$admin_id'") or die(mysqli_error($con));
+                                                                $row= mysqli_fetch_array($getstaff);
+                                                                $fullname = $row['fullname'];
+                                                            ?>
+                                                            <tr>
+                                                                <td><?php echo date('d/M/Y', $date); ?></td>
+                                                                <td><?php echo $complaint; ?></td>
+                                                                <td><?php echo $fullname; ?></td>
+                                                                
+                                                            </tr>
+                                                            <?php } ?>
+                                                        </tbody>
+                                                    </table>
+                                                    <?php } ?>
+                                            </div>
+                                            <hr>
                                             <div class="table-responsive pt-4">
                                                 <?php
                                                 $getprogress = mysqli_query($con, "SELECT * FROM medicalcase WHERE admitted_id='$id'") or die(mysqli_error($con));
@@ -756,11 +798,13 @@ $pque=$_GET['que'];
 
                     $insert = mysqli_query($con, "INSERT INTO discharged (admitted_id, dischargedate, remarks,admin_id,timestamp,status) VALUES ('$id', '$date', '$remarks','".$_SESSION['elcthospitaladmin']."',UNIX_TIMESTAMP(),1)") or die(mysqli_error($con));
                     if ($insert){
-                        $update = mysqli_query($con, "UPDATE admitted SET status=2,dischargedate='$date' WHERE admission_id='$admission_id'") or die(mysqli_error($con));
-                        $update2= mysqli_query($con, "UPDATE admissions set status=2,dischargedate'$date' where admission_id='$admission'") or die(mysqli_error($con));
+                        // pending status 3 discharged status 2
+                        $update = mysqli_query($con, "UPDATE admitted SET status=3,dischargedate='$date' WHERE admitted_id='$id'") or die(mysqli_error($con));
+                        // $update2= mysqli_query($con, "UPDATE admissions set status=2,dischargedate'$date' where admission_id='$admission'") or die(mysqli_error($con));
+                        create_bill_inpatient($pdo,$patient_id,$admission_id,$pque,'admission',$id,$paymentmethod);
                         // echo '<script>alert("Patient Discharged from ward successfully")</script>';
-                        $_SESSION['success'] = "Patient Discharged from ward successfully";
-                                    echo '<script>window.location.href = "admission?id=' . $id . '";</script>';
+                        $_SESSION['success'] = "Patient Discharged from ward successfully, Send them to cashier for payment";
+                                    echo '<script>window.location.href = "admission?id=' . $id . '&que='.$pque.'";</script>';
                     }
 
                 }

@@ -149,8 +149,20 @@ $patient = get_active_clinic_patient($pdo, $clinic_id);
 
                                 <div class="mb-3">
                                 <button data-toggle="modal" data-target="#basicModal<?php echo $clinic_id; ?>" class="btn btn-xs btn-info">Edit</button>
-                                <a href=""  class="btn btn-xs btn-secondary">Recent Report</a>
+                                <?php  
+                                $checkpatient = mysqli_query($con, "SELECT * FROM patients where clinic='$clinic_id' and status=1") or die(mysqli_error($con));
+                                if (mysqli_num_rows($checkpatient) > 0) {
+                                    $checkpatient = mysqli_fetch_array($checkpatient);
+                                    $patient_id = $checkpatient['patient_id'];
+                                    $checkreport = mysqli_query($con, "SELECT * FROM admissions where patient_id='$patient_id' and status=1") or die(mysqli_error($con));
+                                    if (mysqli_num_rows($checkreport) > 0) {
+                                        ?>
+                                        <a href="patientreport?id=<?php echo $clinic_id ?>"  class="btn btn-xs btn-secondary">Recent Report</a>
 
+                                        <?php
+                                    }}
+                                ?>
+                                
                                 <div class="modal fade" id="basicModal<?php echo $clinic_id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">

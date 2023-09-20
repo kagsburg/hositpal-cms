@@ -250,8 +250,33 @@ $id = $_GET['id'];
                                                         $row1 = mysqli_fetch_array($getadmision);
                                                         $admission_id = $row1['admission_id'];
                                                         $paymenttype = get_payment_method($pdo, $patient_id, $admission_id);
-                                                        mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','clinic',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
-                                                        $new_patientsque_id = mysqli_insert_id($con);
+                                                        if ($room!= 'nurse'){
+                                                            mysqli_query($con, "INSERT INTO patientsque(admission_id,room,attendant,payment,admin_id,admintype,timestamp,status,prev_id) 
+                                                            VALUES('$admission_id','$reference','$attendant','0','" . $_SESSION['elcthospitaladmin'] . "','clinic',UNIX_TIMESTAMP(),0,'$id')") or die(mysqli_error($con));
+                                                            $new_patientsque_id = mysqli_insert_id($con);
+                                                        }
+
+                                                        if (!empty($reference_obj['medicalservices'])) {
+                                                            // format: [{id: charge}]
+                                                            $cashfallbacks = [];
+                                                            $mservices = [];
+                                                            $medicalservices = $reference_obj['medicalservices'];
+                                                            $count = count($medicalservices);
+                                                            if ($count > 0){
+                                                            foreach ($medicalservices as $service) {
+                                                                $getmedicalservice =  mysqli_query($con, "SELECT * FROM medicalservices WHERE status=1 AND medicalservice_id='$service'");
+                                                                $row1 =  mysqli_fetch_array($getmedicalservice);
+                                                                $clinictype = $row1['clinictype'];
+                                                                // 1 if for free clinic services and 0 for paid services
+                                                                if ($clinictype == 1) {
+                                                                    $details= $reference_obj['details'];
+                                                                    mysqli_query($con, "INSERT INTO clinicreport (service_id, clinic_client_id, details, admin_id, timestamp,status) 
+                                                                    VALUES ('$service', '$id', '$details', '" . $_SESSION['elcthospitaladmin'] . "',UNIX_TIMESTAMP(),1)");
+                                                                } 
+                                                            }
+                                                        }
+                                                           
+                                                        }
                                                         if (!empty($reference_obj['labmeasure'])) {
                                                             $labmeasures = $reference_obj['labmeasure'];
                                                             // format: [{id: charge}]
@@ -367,11 +392,12 @@ $id = $_GET['id'];
                                                             }
                                                             create_bill($pdo,$patient_id,$admission_id,$new_patientsque_id,'pharmacy',$last_id,$totalbill,$paymenttype);
                                                         }
-                                                        if (isset($reference_obj['medicalservices'])) {
+                                                        if (!empty($reference_obj['medical'])) {
                                                             // format: [{id: charge}]
                                                             $cashfallbacks = [];
                                                             $mservices = [];
-                                                            $medicalservices = $reference_obj['medicalservices'];
+                                                            $medicalservices = $reference_obj['medical'];
+                                                            $details= $reference_obj['details'];
                                                             foreach ($medicalservices as $service) {
                                                                 $getmedicalservice =  mysqli_query($con, "SELECT * FROM medicalservices WHERE status=1 AND medicalservice_id='$service'");
                                                                 $row1 =  mysqli_fetch_array($getmedicalservice);
@@ -409,14 +435,16 @@ $id = $_GET['id'];
                                                                 foreach ($mservices as $service => $charge)
                                                                     mysqli_query($con, "INSERT INTO patientservices(serviceorder_id,medicalservice_id,charge,status) VALUES('$last_id','$service','$charge',1)") or die(mysqli_error($con));
                                                             }
+                                                            // store nurse report 
+                                                            mysqli_query($con, "INSERT INTO clinic_doctor (patientsque_id, details, admission_id,timestamp, admin_id,status) 
+                                                            VALUES ('$new_patientsque_id', '$details','$admission_id',UNIX_TIMESTAMP(), '" . $_SESSION['elcthospitaladmin'] . "',1)");
                                                         }
                                                 }
                                                 //status is for attended patient
-                                                    mysqli_query($con, "UPDATE clinic_clients SET status='2' WHERE clinic_cl_id ='$patient_id'") or die(mysqli_error($con));
+                                                    mysqli_query($con, "UPDATE clinic_clients SET status='2' WHERE clinic_cl_id ='$id'") or die(mysqli_error($con));
                                                   
                                             }
                                         }
-                                            // redirect to doctorwaiting 
                                                 // set alert message to session message 
                                                 $_SESSION['success'] = '<div class="alert alert-success">Clinic Report Successfully Added</div>';
                                                 // redirect to doctorwaiting
@@ -431,7 +459,7 @@ $id = $_GET['id'];
 
                                         <div class="tab-pane nref active" id="nurse" role="tabpanel" aria-labelledby="nurse-tab">                                           
                                         <div class="form-check mb-3">
-                                                <input class="form-check-input reference " style="display: none;" name="reference[]"  type="checkbox" checked value="nurse" data-ref="nurse" id="send-nurse">
+                                                <input class="form-check-input reference " style="display: none;" name="reference[]" checked  type="checkbox"  value="nurse" data-ref="nurse" id="send-nurse">
                                                 <!-- <label class="form-check-label" for="send-nurse">
                                                     Clinic Services
                                                 </label> -->
@@ -590,7 +618,7 @@ $id = $_GET['id'];
                                             </div>
                                             <div class="form-group fordoctor" style="display: none;">
                                                 <label class="control-label">Section</label>
-                                                <select name="ref[patron][section][]" class="sections form-control">
+                                                <select name="ref[doctor][section][]" class="sections form-control">
                                                     <option value="">Select Section</option>
                                                     <?php
                                                     $getsections =  mysqli_query($con, "SELECT * FROM sections WHERE status=1 and section_id ='29'");
@@ -604,7 +632,7 @@ $id = $_GET['id'];
                                             </div>
                                             <div class="form-group fordoctor" style="display: none;">
                                                 <label class="control-label">Medical Services</label>
-                                                <select name="ref[patron][servicename]" class="form-control servicename msnr multi-select_1">
+                                                <select name="ref[doctor][servicename]" class="form-control servicename msnr multi-select_1">
                                                     <option value="">Select Medical Service</option>
                                                 </select>
                                                 <?php
@@ -624,7 +652,7 @@ $id = $_GET['id'];
                                                             <div class="col-lg-6">
                                                                 <div class="form-check form-check-inline">
                                                                     <label class="form-check-label" style="font-size:14px">
-                                                                        <input type="checkbox" class="form-check-input" value="<?php echo $medicalservice_id; ?>" name="ref[patron][medicalservices][]"><?php echo $medicalservice; ?>
+                                                                        <input type="checkbox" class="form-check-input" value="<?php echo $medicalservice_id; ?>" name="ref[doctor][medical][]"><?php echo $medicalservice; ?>
                                                                     </label>
                                                                 </div>
                                                             </div>
@@ -649,7 +677,7 @@ $id = $_GET['id'];
                                             </div> -->
                                             <div class="form-group fordoctor" style="display: none;">
                                                 <label class="control-label">* Details & Instructions</label>
-                                                <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[patron][details]"></textarea>
+                                                <textarea class="ckeditor" cols="70" id="editor1" rows="8" name="ref[doctor][details]"></textarea>
                                             </div>
                                             
                                         </div>

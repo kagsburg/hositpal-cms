@@ -145,7 +145,7 @@ if (strlen($patient_id) >= 4) {
                                             <div class="profile-blog mb-5">
                                                     <address>
                                                     <p>Age: <span><?php 
-                                                    $dob1 = date("Y-m-d", strtotime($dob));
+                                                    $dob1 = date("Y-m-d", $dob);
                                                     $dob2 = new DateTime($dob1);
                                                     $now = new DateTime();
                                                     $difference = $now->diff($dob2);
@@ -238,8 +238,8 @@ if (strlen($patient_id) >= 4) {
                                                         $final_diagnosis = is_array($final_diagnosis) ? implode(",", $final_diagnosis) : $final_diagnosis;
                                                         $provisional_diagnosis = is_array($provisional_diagnosis) ? implode(",", $provisional_diagnosis) : $provisional_diagnosis;
                                                         if (!empty($complaint) || !empty($physical_exam) || !empty($systematic_exam) || !empty($provisional_diagnosis) || !empty($final_diagnosis)){                                        
-                                                         mysqli_query($con, "INSERT INTO `doctorexam`(`admission_id`, `complaint`, `physical_exam`, `systematic_exam`, `provisional_diagnosis`, `final_diagnosis`,`patientque_id`,`timestamp`,`status`) 
-                                                        VALUES ('$admission_id','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','$id','UNIX_TIMESTAMP()','1')");
+                                                         mysqli_query($con, "INSERT INTO `doctorexam`(`admission_id`, `complaint`, `physical_exam`, `systematic_exam`, `provisional_diagnosis`, `final_diagnosis`,`patientque_id`,`timestamp`,`status`,`admin_id`) 
+                                                        VALUES ('$admission_id','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','$id','UNIX_TIMESTAMP()','1','" . $_SESSION['elcthospitaladmin'] . "')");
                                                         $new_exam_id = mysqli_insert_id($con);
                                                         }else{
                                                             $new_exam_id = 0;

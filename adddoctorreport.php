@@ -123,6 +123,7 @@ $id = $_GET['id'];
                     $gender = $row2['gender'];
                     $insurancecompany = $row2['insurancecompany'];
                     $ext = $row2['ext'];
+                    $clinic= $row2['clinic'];
                     
                     $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('nurse','lab') AND status=1 ORDER BY patientsque_id DESC");
                     $rowp = mysqli_fetch_array($getprevque);
@@ -160,7 +161,7 @@ $id = $_GET['id'];
                                 <div class="profile-blog mb-5">
                                     <address>
                                         <p>Age: <span><?php 
-                                        $dob1 = date("Y-m-d", strtotime($dob));
+                                        $dob1 = date("Y-m-d", $dob);
                                         $dob2 = new DateTime($dob1);
                                         $now = new DateTime();
                                         $difference = $now->diff($dob2);
@@ -176,6 +177,20 @@ $id = $_GET['id'];
                                         <p>Pregnancies : <span><?php echo $pregnancies; ?></span></p> -->
                                     </address>
                                 </div>
+                                <?php if($clinic !=0 ){  
+                                    $getnursedetails = mysqli_query($con, "SELECT * FROM clinic_doctor where admission_id ='$admission_id' and patientsque_id='$id'") or die(mysqli_error($con));
+                                    $row3 = mysqli_fetch_array($getnursedetails);
+                                    $nurse_id = $row3['details'];
+
+                                    
+                                    ?>
+                                <div class="profile-blog mb-5">
+                                    <address>
+                                            <p>Nurse Details: <span><?php     echo $nurse_id; ?></span></p>
+                                       
+                                    </address>
+                                </div>
+                                <?php } ?>
                                 <?php  
                                   $checkpathistory = mysqli_query($con, "SELECT * FROM patienthistory WHERE patient_id='$patient_id' AND status=1");
                                   if (mysqli_num_rows($checkpathistory) > 0){
@@ -185,6 +200,10 @@ $id = $_GET['id'];
                                     <a href="patienthistory?patient_id=<?php echo $patient_id; ?>" target="_blank" class="btn btn-primary btn-block">View History</a>
                                 </div>
                                 <?php } ?>
+                                <?php 
+                                    // check if patient has clinic history
+
+                                ?>
                             </div>
                         </div>
                     </div>
@@ -239,7 +258,7 @@ $id = $_GET['id'];
                                 </ul>
                             </div>
                             <div class="card-body">
-                                <?php 
+                            <?php 
                                     if (isset($_POST['submit'])) {
                                         $complaint = $_POST["complaint"];
                                         $physical_exam = $_POST["physical_exam"];
@@ -250,8 +269,8 @@ $id = $_GET['id'];
                                         $final_diagnosis = is_array($final_diagnosis) ? implode(",", $final_diagnosis) : $final_diagnosis;
                                         $provisional_diagnosis = is_array($provisional_diagnosis) ? implode(",", $provisional_diagnosis) : $provisional_diagnosis;
     
-                                        mysqli_query($con, "INSERT INTO `doctorexam`(`admission_id`, `complaint`, `physical_exam`, `systematic_exam`, `provisional_diagnosis`, `final_diagnosis`,`patientque_id`,`timestamp`,`status`) 
-                                        VALUES ('$admission_id','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','$id','UNIX_TIMESTAMP()','1')");
+                                        mysqli_query($con, "INSERT INTO doctorexam(complaint, physical_exam,systematic_exam,provisional_diagnosis,final_diagnosis,timestamp,status,admission_id,patientque_id,admin_id) 
+                                        VALUES ('$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','UNIX_TIMESTAMP()',1,'$admission_id','$id','" . $_SESSION['elcthospitaladmin'] . "')");
                                         $new_exam_id = mysqli_insert_id($con);
 
                                         $references = isset($_POST['reference']) ? $_POST['reference'] : [''];
@@ -484,6 +503,7 @@ $id = $_GET['id'];
                                                     
         
                                                     mysqli_query($con, "UPDATE patientsque SET status='1' WHERE patientsque_id='$id'") or die(mysqli_error($con));
+                                                    
                                                     if ($reference == 'admission'){                                                       
                                                         $ward= $reference_obj['ward'];
                                                         $days= $reference_obj['days'];
@@ -531,7 +551,8 @@ $id = $_GET['id'];
                                                             $measure = $labmeasures;
                                                             $allprescriptions = sizeof($measure);
                                                             for ($i = 0; $i < $allprescriptions; $i++) {
-                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,doctorexam_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','$measure[$i]','','$id','$new_exam_id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
+                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,doctorexam_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) 
+                                                                VALUES('','','','$measure[$i]','','$id','$new_exam_id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
                                                             }
                                                         }
                                                     } elseif ($reference == 'radiography') {
@@ -539,11 +560,13 @@ $id = $_GET['id'];
                                                             $measure = $radiomeasures;
                                                             $allprescriptions = sizeof($measure);
                                                             for ($i = 0; $i < $allprescriptions; $i++) {
-                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,doctorexam_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','','$measure[$i]','$id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
+                                                                mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,doctorexam_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) 
+                                                                VALUES('','','','','$measure[$i]','$id','$new_exam_id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
                                                             }
                                                         }
                                                     } else {
-                                                        mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,doctorexam_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) VALUES('','','','','','$id','$new_exam_id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
+                                                        mysqli_query($con, "INSERT INTO doctorreports(drug,dosage,prescription,labmeasure,radiomeasure,patientsque_id,doctorexam_id,details,complaint, physical_exam, systematic_exam, provisional_diagnosis, final_diagnosis, status) 
+                                                        VALUES('','','','','','$id','$new_exam_id','$details','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','1')") or die(mysqli_error($con));
                                                     }
                                                 }
                                             }
@@ -872,6 +895,27 @@ $id = $_GET['id'];
                                                 </select>
 
                                             </div>
+                                            <?php 
+                                              $getmedicalservices =  mysqli_query($con, "SELECT * FROM specialinvestigations WHERE status=1");
+                                              if (mysqli_num_rows($getmedicalservices) > 0){
+                                            ?>
+                                            <div class="form-group forlab" style="display: none;">
+                                                        <label class="control-label">Special Measurement</label>
+                                                <select name="ref[lab][specialmeasure][]" id="mname" class="form-control select2 msnr multi-select_1" multiple>
+                                                    <option value="">Select Measurement</option>
+                                                    <?php
+                                                    
+                                                    while ($row1 =  mysqli_fetch_array($getmedicalservices)) {
+                                                        $medicalservice_id = $row1['specialinvestigation_id'];
+                                                        $medicalservice = $row1['specialinvestigation'];
+                                                        // $charge = $row1['charge'];
+                                                    ?>
+                                                        <option value="<?php echo $medicalservice_id; ?>"><?php echo $medicalservice; ?></option>
+
+                                                    <?php } ?>
+
+                                            </div>
+                                            <?php } ?>
                                             <!-- <div class="form-group forlab" style="display: none">
                                                 <label>Select Technician</label>
                                                 <select class="form-control room" name="ref[lab][technician]">

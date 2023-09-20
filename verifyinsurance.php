@@ -93,8 +93,8 @@ if (($_SESSION['elcthospitallevel'] != 'insurance officer')) {
                                  $vote = mysqli_real_escape_string($con, trim($_POST['vote']));
                                  $contact = "";
                                  $employmentstatus = "";
-                                 $employername = mysqli_real_escape_string($con, trim($_POST['employername']));
-                                 $employernumber = mysqli_real_escape_string($con, trim($_POST['employernumber']));
+                                 $employername ="";// mysqli_real_escape_string($con, trim($_POST['employername']));
+                                 $employernumber ="";// mysqli_real_escape_string($con, trim($_POST['employernumber']));
 
                                  $getpatients = mysqli_query($con, "SELECT patients.* FROM paymethod LEFT JOIN patients ON patients.patient_id=paymethod.patient_id WHERE paymethod.method='insurance' AND paymethod_id='$id'");
                                  $row = mysqli_fetch_array($getpatients);
@@ -105,7 +105,18 @@ if (($_SESSION['elcthospitallevel'] != 'insurance officer')) {
                                        echo '<div class="alert alert-danger">' . $error . '</div>';
                                     }
                                  } else {
-                                    mysqli_query($con, "UPDATE patients SET vote='$vote', insurancecompany='$insurancecompany',policyidnumber='$membernumber',maximum_coverage='$maximum_coverage',subscriptiontype='$subscriptiontype',primary_name='$primary_name',primary_org='$primary_org',primary_contact='$primary_contact',primary_relationship='$primary_relationship',firstname='$firstname',secondname='$secondname',thirdname='$thirdname',gender='$gender',dob='$dob',phone='$phone',contact='$contact',employmentstatus='$employmentstatus',employername='$employername',employernumber='$employernumber' WHERE patient_id='" . $patient_id . "'") or die(mysqli_error($con));
+                                    mysqli_query($con, "UPDATE patients SET vote='$vote', 
+                                    insurancecompany='$insurancecompany',
+                                    policyidnumber='$membernumber',maximum_coverage='$maximum_coverage',
+                                    subscriptiontype='$subscriptiontype',
+                                    primary_name='$primary_name',
+                                    primary_org='$primary_org',
+                                    primary_contact='$primary_contact',
+                                    primary_relationship='$primary_relationship',
+                                    firstname='$firstname',secondname='$secondname',thirdname='$thirdname',gender='$gender',
+                                    dob='$dob',phone='$phone',contact='$contact',employmentstatus='$employmentstatus',
+                                    employername='$employername',employernumber='$employernumber' WHERE patient_id='" . $patient_id . "'") or die(mysqli_error($con));
+                                    exit();
                                     mysqli_query($con, "UPDATE paymethod SET status='1' WHERE paymethod_id='" . $id . "'") or die(mysqli_error($con));
                                     // $paymenttype = 'insurance';
                                     

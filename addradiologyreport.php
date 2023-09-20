@@ -125,7 +125,7 @@ include 'includes/header.php';
                                 <div class="profile-blog mb-5">
                                     <address>
                                         <p>Age: <span><?php 
-                                        $dob1 = date("Y-m-d", strtotime($dob));
+                                        $dob1 = date("Y-m-d", $dob);
                                         $dob2 = new DateTime($dob1);
                                         $now = new DateTime();
                                         $difference = $now->diff($dob2);

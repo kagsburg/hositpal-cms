@@ -9,6 +9,7 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
 }
 
 $id = $_GET['id'];
+
 $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE patientsque_id='$id'");
 $row = mysqli_fetch_array($getque);
 $patientsque_id = $row['patientsque_id'];
@@ -182,7 +183,7 @@ if (strlen($patient_id) >= 4) {
                                             <div class="card-header" style="padding-bottom: 0.75rem;">
                                                 <ul class="nav nav-tabs card-header-tabs" id="form-list" role="tablist">
                                                     <li class="nav-item">
-                                                        <a class="nav-link active" href="#diagnosis" data-toggle="tab" data-target="#diagnosis" role="tab" aria-controls="diagnosis" aria-selected="true">Diagnosis</a>
+                                                        <a class="nav-link active" href="#diagnosis" data-toggle="tab" data-target="#diagnosis" role="tab" aria-controls="diagnosis" aria-selected="true">Doctor Review</a>
                                                     </li>
                                                     <li class="nav-item">
                                                         <a class="nav-link" href="#nurse" data-toggle="tab" data-target="#nurse" role="tab" aria-controls="nurse" aria-selected="false">Nurse</a>
@@ -232,16 +233,17 @@ if (strlen($patient_id) >= 4) {
                                                 <?php 
                                                     if (isset($_POST['submit'])) {
                                                         $complaint = $_POST["complaint"];
-                                                        $physical_exam = $_POST["physical_exam"];
-                                                        $systematic_exam = $_POST["systematic_exam"];
-                                                        $provisional_diagnosis = $_POST["provisional_diagnosis"];
-                                                        $final_diagnosis = $_POST["final_diagnosis"];
-                                                        
-                                                        $final_diagnosis = is_array($final_diagnosis) ? implode(",", $final_diagnosis) : $final_diagnosis;
-                                                        $provisional_diagnosis = is_array($provisional_diagnosis) ? implode(",", $provisional_diagnosis) : $provisional_diagnosis;
-                                                        if (!empty($complaint) || !empty($physical_exam) || !empty($systematic_exam) || !empty($provisional_diagnosis) || !empty($final_diagnosis)){                                        
-                                                         mysqli_query($con, "INSERT INTO `doctorexam`(`admission_id`, `complaint`, `physical_exam`, `systematic_exam`, `provisional_diagnosis`, `final_diagnosis`,`patientque_id`,`timestamp`,`status`) 
-                                                        VALUES ('$admission_id','$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','$id','UNIX_TIMESTAMP()','1')");
+                                                        // $physical_exam = $_POST["physical_exam"];
+                                                        // $systematic_exam = $_POST["systematic_exam"];
+                                                        // $provisional_diagnosis = $_POST["provisional_diagnosis"];
+                                                        // $final_diagnosis = $_POST["final_diagnosis"];
+                                                        // print_r($complaint);
+                                                        // exit();
+                                                        // $final_diagnosis = is_array($final_diagnosis) ? implode(",", $final_diagnosis) : $final_diagnosis;
+                                                        // $provisional_diagnosis = is_array($provisional_diagnosis) ? implode(",", $provisional_diagnosis) : $provisional_diagnosis;
+                                                        if (!empty($complaint)){                                       
+                                                         mysqli_query($con, "INSERT INTO `doctorexam`(`admission_id`, `complaint`,`patientque_id`,`timestamp`,`status`,`admitted_id`,`admin_id`) 
+                                                        VALUES ('$admission_id','$complaint','$id',UNIX_TIMESTAMP(),'1','$admitted_id','" . $_SESSION['elcthospitaladmin'] . "')")or die(mysqli_error($con));
                                                         $new_exam_id = mysqli_insert_id($con);
                                                         }else{
                                                             $new_exam_id = 0;
@@ -604,7 +606,7 @@ if (strlen($patient_id) >= 4) {
                                                                 // set alert message to session message 
                                                                 $_SESSION['success'] = '<div class="alert alert-success">In Patient Report Successfully Updated</div>';
                                                                 // redirect to doctorwaiting
-                                                                echo '<script>window.location.href = "admission?id='.$patient_id.'&que='.$id.'";</script>';
+                                                                echo '<script>window.location.href = "admission?id='.$admitted_id.'&que='.$id.'";</script>';
                                                                 
                                                     }
                                                 ?>
@@ -612,10 +614,10 @@ if (strlen($patient_id) >= 4) {
                                                 <form method="post" name='form' class="form" action="" enctype="multipart/form-data">
                                                     <div class="tab-content mt-3" id="nextref">
                                                         <div class="tab-pane active" id="diagnosis" role="tabpanel">
-                                                            <div class="form-group"><label class="control-label">Main complains</label>
+                                                            <div class="form-group"><label class="control-label">Main  Doctor Details</label>
                                                                 <textarea class="ckeditor" cols="70" id="complaint" rows="8" name="complaint"></textarea>
                                                             </div>
-                                                            <div class="form-group"><label class="control-label">Physical Examination</label>
+                                                            <!-- <div class="form-group"><label class="control-label">Physical Examination</label>
                                                                 <textarea class="ckeditor" cols="70" id="physical_exam" rows="8" name="physical_exam"></textarea>
                                                             </div>
                                                             <div class="form-group"><label class="control-label">Systematic Examination</label>
@@ -653,7 +655,7 @@ if (strlen($patient_id) >= 4) {
 
                                                                     <?php } ?>
                                                                 </select>
-                                                            </div>
+                                                            </div> -->
                                                         </div>
                                                         
 

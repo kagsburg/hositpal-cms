@@ -9,7 +9,7 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
 }
 
 $id = $_GET['id'];
-$getque = mysqli_query($con, "SELECT * FROM patientsque WHERE patientsque_id='$id'");
+$getque = mysqli_query($con, "SELECT * FROM patientsque WHERE prev_id='$id' and admintype='clinic' AND status='1'");
 $row = mysqli_fetch_array($getque);
 $patientsque_id = $row['patientsque_id'];
 $admission_id = $row['admission_id'];
@@ -137,7 +137,7 @@ if (strlen($patient_id) >= 4) {
                                     <div class="profile-blog mb-5">
                                         <address>
                                         <p>Age: <span><?php 
-                                        $dob1 = date("Y-m-d", strtotime($dob));
+                                        $dob1 = date("Y-m-d", $dob);
                                         $dob2 = new DateTime($dob1);
                                         $now = new DateTime();
                                         $difference = $now->diff($dob2);
@@ -200,23 +200,6 @@ if (strlen($patient_id) >= 4) {
                                                 </li>
 
                                             </ul>
-                                            <?php 
-                                                $rooms = [];
-                                                $patient_ids =[];
-                                                $patient_reports= mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room ='doctor'AND status='1'and admission_id='$admission_id'");
-                                                if (mysqli_num_rows($patient_reports) > 0){
-                                                while($row23 = mysqli_fetch_array($patient_reports)){
-                                                    $previd = $row23['prev_id'];
-                                                    $patientsque22_id = $row23['patientsque_id'];
-                                                    $getprevid = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('nurse','lab','doctor','radiography') and status='1' and patientsque_id < '$patientsque22_id' ORDER BY patientsque_id DESC LIMIT 1");
-                                                    while ($row = mysqli_fetch_array($getprevid)) {
-                                                        $room = $row['room'];
-                                                        $rooms[] = $room;
-                                                        $patient_ids[] = $row['patientsque_id'];
-                                                    }
-                                                }
-                                                }
-                                                ?>
                                             <!-- Tab panes -->
                                             <div class="tab-content tabcontent-border">
                                                 <div class="tab-pane fade show active" id="doctorsreport1" role="tabpanel">

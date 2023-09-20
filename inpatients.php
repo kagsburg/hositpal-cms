@@ -88,10 +88,10 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                         <tbody>
                                             <?php
                                             //admissions
-                                            $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE status=1");
+                                            $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE status=3");
                                             while ($row1 = mysqli_fetch_array($getadmitted)) {
                                                 $admission_id = $row1['admission_id'];
-                                                $getadmission= mysqli_query($con,"SELECT * FROM admissions WHERE admission_id='$admission_id'");
+                                                $getadmission= mysqli_query($con,"SELECT * FROM admissions WHERE admission_id='$admission_id' and status='1'");
                                                 $row2= mysqli_fetch_array($getadmission);
                                                 $patient_id=$row2['patient_id'];
                                                 $timestamp = $row1['admissiondate'];
@@ -102,6 +102,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                 $thirdname = $row['thirdname'];
                                                 $gender = $row['gender'];
                                                 $dob = $row['dob'];
+                                                $pending_bills = mysqli_query($con, "SELECT * FROM bills WHERE status IN (1) AND patient_id='$patient_id'");
                                                 $maritalstatus = $row['maritalstatus'];
                                                 $spousename = $row['spousename'];
                                                 $spouseaddress = $row['spouseaddress'];
@@ -148,7 +149,13 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                         <?php
                                                         if ($_SESSION['elcthospitallevel'] == 'receptionist') {
                                                         ?>
-                                                            <a href="dischargepatient?id=<?php echo $admission_id; ?>" class="btn btn-xs btn-success" onclick="return confirm_delete<?php echo $admission_id; ?>()">Discharge</a>
+                                                            <a href="dischargeinpatient?id=<?php echo $admission_id; ?>&admitted=<?php echo $row1['admitted_id']; ?>" 
+                                                            <?php if (mysqli_num_rows($pending_bills) > 0) { ?>
+                                                                class="btn btn-xs btn-danger disabled"
+                                                            <?php } else { ?>
+                                                             class="btn btn-xs btn-success" 
+                                                            <?php } ?>
+                                                            onclick="return confirm_delete<?php echo $admission_id; ?>()">Discharge</a>
                                                             <script type="text/javascript">
                                                                 function confirm_delete<?php echo $admission_id; ?>() {
                                                                     return confirm('You are about To Discharge Patient. Are you sure you want to proceed?');

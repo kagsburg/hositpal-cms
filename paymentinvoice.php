@@ -176,8 +176,10 @@ $admission_id=$_GET['admission'];
                             $getorder = mysqli_query($con, "SELECT * FROM serviceorders WHERE serviceorder_id='$type_id'");
                             $rowo = mysqli_fetch_array($getorder);
                             $serviceorder_id = $rowo['serviceorder_id'];
+                            $timestamp = $rowo['timestamp'];
+                          }else{
+                            $timestamp = strtotime(date('Y-m-d H:i:s'));
                           }
-                          $timestamp = $rowo['timestamp'];
                           // die($insurancecompany);
                           $insurer = !empty($rowo['insurer']) ? $rowo['insurer'] : (!empty($insurancecompany) ? $insurancecompany : 0);
                           if ($insurer > 0 && $paymethod == "insurance") {
@@ -256,7 +258,7 @@ $admission_id=$_GET['admission'];
                         if (mysqli_num_rows($getorder) > 0){
                         $row1o = mysqli_fetch_array($getorder);
                         $pharmacyorder_id = $row1o['pharmacyorder_id'];
-                        $getordered = mysqli_query($con, "SELECT * FROM pharmacyordereditems WHERE pharmacyorder_id='$pharmacyorder_id' AND status in (2,3)") or die(mysqli_error($con));
+                        $getordered = mysqli_query($con, "SELECT * FROM pharmacyordereditems WHERE pharmacyorder_id='$pharmacyorder_id' AND status in (1,2,3)") or die(mysqli_error($con));
                         while ($row = mysqli_fetch_array($getordered)) {
                           $item_id = $row['item_id'];
                           $prescription = $row['prescription'];

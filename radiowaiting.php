@@ -115,13 +115,23 @@ if ($mode == '2'){
                                                 $gender = $row2['gender'];
                                                 $ext = $row2['ext'];
                                                 $mode2=$row1['mode'];
+                                                $clinic=$row2['clinic'];
+                                               
 
                                                 $filter = empty($prev_id) ? "AND patientsque_id < '$patientsque_id' ORDER BY patientsque_id DESC" : "AND patientsque_id = '$prev_id'";
                                                 $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id' AND status=1 $filter");
-                                                $rowp = mysqli_fetch_array($getprevque);
-                                                $attendant = $_SESSION['elcthospitaladmin'];
-                                                $patientsque_id2 = $rowp['patientsque_id'];
-                                                $room = $rowp['room'];
+                                                if (mysqli_num_rows($getprevque) > 0){
+                                                    $rowp = mysqli_fetch_array($getprevque);
+                                                    $attendant = $_SESSION['elcthospitaladmin'];
+                                                    $patientsque_id2 = $rowp['patientsque_id'];
+                                                    $room = $rowp['room'];
+                                                }else{
+                                                    if ($clinic !=0){
+                                                        $room='clinic';
+                                                        // discharge patient from clinic
+                                                        // $change=  mysqli_query($con,"UPDATE clinic_clients SET status=3 WHERE clinic_cl_id='$clinic' ") or die(mysqli_error($con));
+                                                    }
+                                                }
                                                 $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
                                                 $rows = mysqli_fetch_array($getstaff);
                                                 $fullname = $rows['fullname'];

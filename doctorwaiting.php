@@ -166,7 +166,14 @@ if ($mode == '2'){
                                                         $rows = mysqli_fetch_array($getstaff);
                                                         // $fullname = $rows['fullname'];
                                                         $room = 'reception';
-                                                    } else {
+                                                    }else if ($admintype == 'clinic') {
+                                                        $attendant = isset($rowp) ? $rowp['admin_id'] : "";
+                                                        $getstaff = mysqli_query($con, "SELECT * FROM staff WHERE staff_id='$attendant'") or die(mysqli_error($con));
+                                                        $rows = mysqli_fetch_array($getstaff);
+                                                        // $fullname = $rows['fullname'];
+                                                        $room = 'Clinic';
+                                                    }
+                                                    else {
                                                         $fullname = "";
                                                     }
                                                 }
