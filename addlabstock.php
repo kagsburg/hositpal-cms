@@ -144,9 +144,12 @@ $type = mysqli_escape_string($con,$ty);
                                                 if ($type == "Non Medical"){
                                                     $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =3 and status=1") or die(mysqli_error($con));
                                                 }else{
-                                                    $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2 and status=1") or die(mysqli_error($con));
+                                                    $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2 and status=2") or die(mysqli_error($con));
                                                 }
                                                 // $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store =2") or die(mysqli_error($con));
+                                                if (mysqli_num_rows($getstock) ==0){
+                                                    continue;
+                                                }
                                                 $row3 = mysqli_fetch_array($getstock);
                                                 $totalstock = $row3['totalstock'];
                                                 $totalordered = 0;

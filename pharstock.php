@@ -128,7 +128,10 @@ $store = mysqli_real_escape_string($con, $store);
                                                 $getunit =  mysqli_query($con, "SELECT * FROM unitmeasurements WHERE status=1 AND measurement_id='$measurement_id'");
                                                 $row2 =  mysqli_fetch_array($getunit);
                                                 $measurement = $row2['measurement'];
-                                                $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store=2 and status=1 order by expiry desc") or die(mysqli_error($con));
+                                                $getstock = mysqli_query($con, "SELECT SUM(quantity) as totalstock,expiry FROM stockitems WHERE product_id='$inventoryitem_id' and store=2 and status=2 order by expiry desc") or die(mysqli_error($con));
+                                                if (mysqli_num_rows($getstock) == 0) {
+                                                    continue;
+                                                }
                                                 $row3 = mysqli_fetch_array($getstock);
                                                 $totalstock = $row3['totalstock'];
                                                 $totalordered = 0;

@@ -97,7 +97,7 @@ include 'includes/header.php';
                                             $getorders= mysqli_query($con,"SELECT * FROM restockorders WHERE  status IN (0,1) and supplier_id !=0");
                                          }
                                          else{
-                                            $getorders= mysqli_query($con,"SELECT * FROM pharstockorders WHERE  status IN (0,1)");
+                                            $getorders= mysqli_query($con,"SELECT * FROM pharstockorders WHERE  status IN (0,1,2)");
                                          }
                     while($row= mysqli_fetch_array($getorders)){
                       $restockorder_id=$row['pharstockorder_id'];
@@ -107,7 +107,7 @@ include 'includes/header.php';
                          $getstore=mysqli_query($con,"SELECT * FROM stores WHERE status=1 AND store_id='$store_id'");
                         $row1=  mysqli_fetch_array($getstore);
                           $store=$row1['store'];
-                          $getitems= mysqli_query($con,"SELECT * FROM stockitems WHERE pharstockorder_id='$restockorder_id' AND status IN (3,1)");
+                          $getitems= mysqli_query($con,"SELECT * FROM stockitems WHERE pharstockorder_id='$restockorder_id' AND status IN (3,1,2)");
                           $row2=  mysqli_fetch_array($getitems);
                           $type = $row2['type'];
                        ?>
@@ -116,7 +116,7 @@ include 'includes/header.php';
                                             <td><?php echo $store; ?></td>
                                                <!-- <td><?php echo $suppliername; ?></td> -->
                                                <td><?php echo mysqli_num_rows($getitems); ?></td>
-                                            <td><?php if($status==0){echo '<span class="text-danger">PENDING</span>'; }else if($status == 1) {echo '<span class="text-success">APPROVED</span>'; }else{echo '<span class="text-danger">CANCELLED</span>';}?></td>                                                                                                          
+                                            <td><?php if($status==0){echo '<span class="text-danger">PENDING</span>'; }else if($status == 1) {echo '<span class="text-success">APPROVED</span>'; }else if($status == 2) {echo '<span class="text-success">CONFIRMED</span>'; }else{echo '<span class="text-danger">CANCELLED</span>';}?></td>                                                                                                          
                                                 <td>     
                    <a href="pharstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-primary btn-xs">Details</a>
                    <?php
@@ -145,10 +145,19 @@ include 'includes/header.php';
                         }
                     </script>
                      <?php } 
-                     if ($status == 1 ){
+                     if ($status == 1|| $status == 2 ){
                         ?>
                         <a href="printstockorder?id=<?php echo $restockorder_id; ?>" class="btn btn-info btn-xs">Print</a>
-                        <?php }?>
+                        <?php }
+                        if ($status== 1 && ($_SESSION['elcthospitallevel']=='store manager' )){
+                        ?>
+                        <a href="confirmstockorder?id=<?php echo $restockorder_id; ?>" onclick="return confirm_order<?php echo $restockorder_id; ?>()" class="btn btn-info btn-xs">Confirm</a>
+                        <script type="text/javascript">
+                    function confirm_order<?php echo $restockorder_id; ?>() {
+                            return confirm('You are about To Confirm this List. Are you sure you want to proceed?');
+                        }
+                    </script>
+                            <?php } ?>
                                                                                        </td>
                                   </tr>
 
