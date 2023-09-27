@@ -705,6 +705,8 @@
             <ul aria-expanded="false">
             <li><a href="doctorwaiting?mode=2">Emergency List</a></li>
               <li><a href="doctorwaiting?mode=1">Awaiting List</a></li>
+              <li><a href="doctorattend?mode=1">Attended List</a></li>
+              <li><a href="doctorminor">Operations</a></li>
               <li><a href="doctorcleared">Patient With Results</a></li>
             </ul>
           </li>
