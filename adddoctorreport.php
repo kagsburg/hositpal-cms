@@ -114,16 +114,15 @@ $id = $_GET['id'];
                     $bloodgroup = $row2['bloodgroup'];
                     $dob = $row2['dob'];
                     $weight = $row2['weight'];
-                    $height = $row2['height'];
-                    $temp = $row2['temp'];
-                    $bp = $row2['bp'];
+                    $height = ($row2['height'] != '') ? $row2['height'] : 'N/A';
+                    $temp = ($row2['temp'] != '') ? $row2['temp'] : 'N/A';
+                    $bp = ($row2['bp'] != '') ? $row2['bp'] : 'N/A';
                     $allergies = $row2['allergies'];
                     $diseases = $row2['diseases'];
                     $pregnancies = $row2['pregnancies'];
                     $gender = $row2['gender'];
                     $insurancecompany = $row2['insurancecompany'];
                     $ext = $row2['ext'];
-                    $clinic= $row2['clinic'];
                     
                     $getprevque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('nurse','lab') AND status=1 ORDER BY patientsque_id DESC");
                     $rowp = mysqli_fetch_array($getprevque);
@@ -161,11 +160,16 @@ $id = $_GET['id'];
                                 <div class="profile-blog mb-5">
                                     <address>
                                         <p>Age: <span><?php 
-                                        $dob1 = date("Y-m-d", $dob);
-                                        $dob2 = new DateTime($dob1);
-                                        $now = new DateTime();
-                                        $difference = $now->diff($dob2);
-                                        echo $difference->y;
+                                         $dob1 = date("Y-m-d", $dob);
+                                                        $dob2 = new DateTime($dob1);
+                                                        $now = new DateTime();
+                                                        $difference = $now->diff($dob2);
+                                                        echo $difference->y;
+                                        // $dob1 = date("Y-m-d", strtotime($dob));
+                                        // $dob2 = new DateTime($dob1);
+                                        // $now = new DateTime();
+                                        // $difference = $now->diff($dob2);
+                                        // echo $difference->y;
                                         ?></span></p>
                                         <p>Blood Group : <span><?php echo $bloodgroup; ?></span></p>
                                         <p>Weight (kgs)  : <span><?php echo $weight; ?></span></p>
@@ -177,20 +181,6 @@ $id = $_GET['id'];
                                         <p>Pregnancies : <span><?php echo $pregnancies; ?></span></p> -->
                                     </address>
                                 </div>
-                                <?php if($clinic !=0 ){  
-                                    $getnursedetails = mysqli_query($con, "SELECT * FROM clinic_doctor where admission_id ='$admission_id' and patientsque_id='$id'") or die(mysqli_error($con));
-                                    $row3 = mysqli_fetch_array($getnursedetails);
-                                    $nurse_id = $row3['details'];
-
-                                    
-                                    ?>
-                                <div class="profile-blog mb-5">
-                                    <address>
-                                            <p>Nurse Details: <span><?php     echo $nurse_id; ?></span></p>
-                                       
-                                    </address>
-                                </div>
-                                <?php } ?>
                                 <?php  
                                   $checkpathistory = mysqli_query($con, "SELECT * FROM patienthistory WHERE patient_id='$patient_id' AND status=1");
                                   if (mysqli_num_rows($checkpathistory) > 0){
@@ -200,10 +190,6 @@ $id = $_GET['id'];
                                     <a href="patienthistory?patient_id=<?php echo $patient_id; ?>" target="_blank" class="btn btn-primary btn-block">View History</a>
                                 </div>
                                 <?php } ?>
-                                <?php 
-                                    // check if patient has clinic history
-
-                                ?>
                             </div>
                         </div>
                     </div>
@@ -258,7 +244,7 @@ $id = $_GET['id'];
                                 </ul>
                             </div>
                             <div class="card-body">
-                            <?php 
+                                <?php 
                                     if (isset($_POST['submit'])) {
                                         $complaint = $_POST["complaint"];
                                         $physical_exam = $_POST["physical_exam"];
@@ -269,8 +255,8 @@ $id = $_GET['id'];
                                         $final_diagnosis = is_array($final_diagnosis) ? implode(",", $final_diagnosis) : $final_diagnosis;
                                         $provisional_diagnosis = is_array($provisional_diagnosis) ? implode(",", $provisional_diagnosis) : $provisional_diagnosis;
     
-                                        mysqli_query($con, "INSERT INTO doctorexam(complaint, physical_exam,systematic_exam,provisional_diagnosis,final_diagnosis,timestamp,status,admission_id,patientque_id,admin_id) 
-                                        VALUES ('$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','UNIX_TIMESTAMP()',1,'$admission_id','$id','" . $_SESSION['elcthospitaladmin'] . "')");
+                                        mysqli_query($con, "INSERT INTO doctorexam(complaint, physical_exam,systematic_exam,provisional_diagnosis,final_diagnosis,timestamp,status,admission_id,patientque_id) 
+                                        VALUES ('$complaint','$physical_exam','$systematic_exam','$provisional_diagnosis','$final_diagnosis','UNIX_TIMESTAMP()',1,'$admission_id','$id')");
                                         $new_exam_id = mysqli_insert_id($con);
 
                                         $references = isset($_POST['reference']) ? $_POST['reference'] : [''];
@@ -895,6 +881,27 @@ $id = $_GET['id'];
                                                 </select>
 
                                             </div>
+                                            <?php 
+                                              $getmedicalservices =  mysqli_query($con, "SELECT * FROM specialinvestigations WHERE status=1");
+                                              if (mysqli_num_rows($getmedicalservices) > 0){
+                                            ?>
+                                            <div class="form-group forlab" style="display: none;">
+                                                        <label class="control-label">Special Measurement</label>
+                                                <select name="ref[lab][specialmeasure][]" id="mname" class="form-control select2 msnr multi-select_1" multiple>
+                                                    <option value="">Select Measurement</option>
+                                                    <?php
+                                                    
+                                                    while ($row1 =  mysqli_fetch_array($getmedicalservices)) {
+                                                        $medicalservice_id = $row1['specialinvestigation_id'];
+                                                        $medicalservice = $row1['specialinvestigation'];
+                                                        // $charge = $row1['charge'];
+                                                    ?>
+                                                        <option value="<?php echo $medicalservice_id; ?>"><?php echo $medicalservice; ?></option>
+
+                                                    <?php } ?>
+
+                                            </div>
+                                            <?php } ?>
                                             <!-- <div class="form-group forlab" style="display: none">
                                                 <label>Select Technician</label>
                                                 <select class="form-control room" name="ref[lab][technician]">

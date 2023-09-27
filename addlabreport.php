@@ -125,11 +125,11 @@ $test = $_GET['test'];
                                 <div class="profile-blog mb-5">
                                     <address>
                                         <p>Age: <span><?php 
-                                        $dob1 = date("Y-m-d", $dob);
-                                        $dob2 = new DateTime($dob1);
-                                        $now = new DateTime();
-                                        $difference = $now->diff($dob2);
-                                        echo $difference->y;
+                                       $dob1 = date("Y-m-d", $dob);
+                                                        $dob2 = new DateTime($dob1);
+                                                        $now = new DateTime();
+                                                        $difference = $now->diff($dob2);
+                                                        echo $difference->y;
                                         ?></span></p>
                                         <p>Blood Group : <span><?php echo $bloodgroup; ?></span></p>
                                         <p>Weight (kgs)  : <span><?php echo $weight; ?></span></p>
