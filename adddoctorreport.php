@@ -881,27 +881,7 @@ $id = $_GET['id'];
                                                 </select>
 
                                             </div>
-                                            <?php 
-                                              $getmedicalservices =  mysqli_query($con, "SELECT * FROM specialinvestigations WHERE status=1");
-                                              if (mysqli_num_rows($getmedicalservices) > 0){
-                                            ?>
-                                            <div class="form-group forlab" style="display: none;">
-                                                        <label class="control-label">Special Measurement</label>
-                                                <select name="ref[lab][specialmeasure][]" id="mname" class="form-control select2 msnr multi-select_1" multiple>
-                                                    <option value="">Select Measurement</option>
-                                                    <?php
-                                                    
-                                                    while ($row1 =  mysqli_fetch_array($getmedicalservices)) {
-                                                        $medicalservice_id = $row1['specialinvestigation_id'];
-                                                        $medicalservice = $row1['specialinvestigation'];
-                                                        // $charge = $row1['charge'];
-                                                    ?>
-                                                        <option value="<?php echo $medicalservice_id; ?>"><?php echo $medicalservice; ?></option>
-
-                                                    <?php } ?>
-
-                                            </div>
-                                            <?php } ?>
+                                            
                                             <!-- <div class="form-group forlab" style="display: none">
                                                 <label>Select Technician</label>
                                                 <select class="form-control room" name="ref[lab][technician]">

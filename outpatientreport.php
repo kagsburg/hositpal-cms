@@ -1594,7 +1594,7 @@ if (strlen($patient_id) >= 4) {
                                                                             if (mysqli_num_rows($checkradio) > 0) {
                                                                                 ?>
                                                                                 <div class="table-responsive pt-4">
-                                                                                        <h4><strong>Radiolody Report</strong></h4>
+                                                                                        <h4><strong>Radiology Report</strong></h4>
                                                                                         <table class="table  table-striped table-responsive-sm table-bordered">
                                                                                             <thead>
                                                                                                 <tr>

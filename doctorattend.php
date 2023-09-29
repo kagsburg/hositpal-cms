@@ -93,17 +93,16 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment in (1) AND room ='doctor'AND status in (1) and attendant='" . $_SESSION['elcthospitaladmin'] . "' GROUP BY admission_id");
+                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment in (1,0) AND admintype ='doctor'AND status=0 and admin_id='" . $_SESSION['elcthospitaladmin'] . "' GROUP BY admission_id");
                                             while ($row = mysqli_fetch_array($getque)) {
+                                                // print_r($row);
                                                 $patientsque_id = $row['patientsque_id'];
                                                 $admission_id = $row['admission_id'];
                                                 $admintype = $row['admintype'];
                                                 
                                                 // check if patient is admitted 
                                                 $getadmitted = mysqli_query($con, "SELECT * FROM admitted WHERE status=1 and admission_id='$admission_id'");
-                                                // if (mysqli_num_rows($getadmitted) > 0){
-                                                // }else{
-                                                    // continue;                                               
+                                                                                               
                                                 $prev_id= $row['prev_id'];
                                                 $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id' and status='1'");
                                                 if (mysqli_num_rows($getadmission) > 0){
@@ -130,7 +129,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                 else 
                                                     $pimage = "noimage.png";
                                                     // print_r($prev_id);
-                                                $getnextque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('nurse','lab','doctor','radiographer') and status='1' AND patientsque_id = '$prev_id'");
+                                                $getnextque = mysqli_query($con, "SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('nurse','lab','doctor','radiographer') and status='0' AND patientsque_id = '$prev_id'");
                                                 if (mysqli_num_rows($getnextque) > 0) {
                                                     $rown = mysqli_fetch_array($getnextque);
                                                     $npatientsque_id = $rown['patientsque_id'];                                                
@@ -168,6 +167,7 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                 if (strlen($patient_id) >= 4) {
                                                     $pin = $patient_id;
                                                 }
+
                                                 // check if admin type is lab technician
                                                 if ($admintype == "lab technician") {
                                                     $prev= mysqli_query($con,"SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('lab') ") or die(mysqli_error($con));
@@ -175,9 +175,23 @@ if (!isset($_SESSION['elcthospitaladmin'])) {
                                                     $patientqu= $prevrow['patientsque_id'];
                                                     $getpendinglab = mysqli_query($con, "SELECT * FROM labreports where patientsque_id='$patientqu' AND admission_id='$admission_id' and approved=0  and status='1'") or die(mysqli_error($con));  
                                                     if (mysqli_num_rows($getpendinglab) <= 0 ){
+                                                        continue;
+                                                    }else{
+                                                        // continue;
+                                                    }
+                                                }
+                                                //check if admin type is radiographer 
+                                                if ($admintype == "radiographer"){
+                                                    $prev= mysqli_query($con,"SELECT * FROM patientsque WHERE admission_id='$admission_id'  AND room IN('radiography') ") or die(mysqli_error($con));
+                                                    $prevrow = mysqli_fetch_array($prev);
+                                                    $patientqu= $prevrow['patientsque_id'];
+                                                    $getpendinglab = mysqli_query($con, "SELECT * FROM radioorders where patientsque_id='$patientqu' and status='0'") or die(mysqli_error($con));  
+                                                    if (mysqli_num_rows($getpendinglab) <= 0 ){
+                                                        print_r($getpendinglab);
+                                                        continue;
                                                         
                                                     }else{
-                                                        continue;
+                                                        // continue;
                                                     }
                                                 }
                                             ?>
