@@ -98,9 +98,21 @@ $invest_id = $_GET['id'];
                                         $unit_id = $row['unit_id'];
                                         $unitprice = $row['unitprice'];
                                         $creditprice = $row['creditprice'];
+                                        $range = $row['range_type'];
+                                        $has_answers = $row['has_answers'];
 
                                         
                                         ?>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                            <?php if ($range == 1) { ?>
+                                                        <a href="rangeinvest?id=<?php echo $investigationtype_id; ?>" target="_blank" class="btn btn-xs btn-info">Edit Range Value</a>
+                                                    <?php } ?>
+                                                    <?php if ($has_answers == 1) { ?>
+                                                        <a href="investigationanswers?id=<?php echo $investigationtype_id; ?>" target="_blank" class="btn btn-xs btn-info">Edit Answers</a>
+                                                    <?php } ?>
+                                            </div>
+                                        </div>
                                         <div class="row">
                                             <div class="form-group col-lg-4">
                                                 <label>Measurement Type</label>
