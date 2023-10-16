@@ -227,7 +227,7 @@ $paymentmethod = isset($_GET['paymethod']) ? $_GET['paymethod']: null;
                                                                                                                                                     
                                                                         <!-- <a href="addoutstandingpayment?q=<?php echo $patient_id; ?>" class="btn btn-sm btn-primary">Add Payment</a> -->
                                                                         <?php } ?>
-                                                                        <a href="deletebill?q=<?php echo $patient_id; ?>" onclick="return confirm_delete<?php echo $patient_id; ?>()" class="btn btn-sm btn-danger">Clear</a>
+                                                                        <!-- <a href="deletebill?q=<?php echo $patient_id; ?>" onclick="return confirm_delete<?php echo $patient_id; ?>()" class="btn btn-sm btn-danger">Clear</a> -->
                                                                         <script type="text/javascript">
                                                                             function confirm_delete<?php echo $patient_id; ?>() {
                                                                                 return confirm('You are about To Clear payment. Are you sure you want to proceed?');
