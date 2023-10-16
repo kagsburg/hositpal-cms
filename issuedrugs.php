@@ -4,6 +4,7 @@ include 'includes/conn.php';
 header('Location:login.php');
    }
 $id=$_GET['id'];
+$stat = isset($_GET['status']) ? $_GET['status']:'';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -196,9 +197,13 @@ include 'includes/header.php';
                 </div>
                 <hr>
                <?php }?>
-               <div class="form-group pull-right">
-                               <button class="btn btn-primary" type="submit">Issue</button>
-                                                                  </div>
+               <?php if ($stat ==0){
+                ?>
+
+                    <div class="form-group pull-right">
+                                    <button class="btn btn-primary" type="submit">Issue</button>
+                                                                    </div>
+                <?php }?>
                                      
                             </form>
                                 </div>

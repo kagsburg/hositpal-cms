@@ -924,7 +924,7 @@
             </a>
             <ul aria-expanded="false">
               <li><a href="pharmacywaiting">Awaiting List</a></li>
-              <li><a href="outpatients">Outpatients</a></li>
+              <li><a href="recordspharmacy">Records</a></li>
             </ul>
           </li>
          
