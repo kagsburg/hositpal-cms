@@ -76,7 +76,7 @@ $paymentmethod = isset($_GET['paymethod']) ? $_GET['paymethod']: null;
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table id="example5" class="display" style="min-width: 845px" data-order="[]">
+                                    <table id="example6" class="display" style="min-width: 845px" data-order="[]">
                                         <thead>
                                             <tr>
                                                 <th>DATE</th>
@@ -99,6 +99,7 @@ $paymentmethod = isset($_GET['paymethod']) ? $_GET['paymethod']: null;
                                                 $type = $bill['type'];
                                                 $type_id = $bill['type_id'];
                                                 $paymenttype = $bill['payment_method'];
+                                                $updated_at = $bill['updated_at'];
                                                 
                                                 if (!empty($admission_id)) {
                                                     $row1 = get_admission($pdo, $admission_id);
@@ -203,6 +204,7 @@ $paymentmethod = isset($_GET['paymethod']) ? $_GET['paymethod']: null;
 
                                             ?>
                                                             <tr class="gradeA">
+                                                                <td><?php echo $updated_at; ?></td>
                                                                 <td><?php echo $pin; ?></td>
                                                                 <td><?php echo $pin; ?></td>
                                                                 <td><?php echo $fullname; ?></td>
@@ -220,11 +222,13 @@ $paymentmethod = isset($_GET['paymethod']) ? $_GET['paymethod']: null;
                                                                         <?php 
                                                                         if ($paymenttype == "insurance"){                                                                        
                                                                         ?>
-                                                                        <a href="addoutstandingpayment?q=<?php echo $patient_id; ?>" class="btn btn-sm btn-primary"> Confirm Payment</a>
+                                                                        <a href="paidbills?id=<?php echo $patient_id;?>&type=<?php echo $paymentmethod; ?>" class="btn btn-sm btn-primary"> View Details</a>
                                                                         <?php }else{ ?>
-                                                                        <a href="addoutstandingpayment?q=<?php echo $patient_id; ?>" class="btn btn-sm btn-primary">Add Payment</a>
+                                                                        <a href="paidbills?id=<?php echo $patient_id;?>&type=<?php echo $paymentmethod; ?>" class="btn btn-sm btn-primary"> View Details</a>
+                                                                                                                                                    
+                                                                        <!-- <a href="addoutstandingpayment?q=<?php echo $patient_id; ?>" class="btn btn-sm btn-primary">Add Payment</a> -->
                                                                         <?php } ?>
-                                                                        <a href="deletebill?q=<?php echo $patient_id; ?>" onclick="return confirm_delete<?php echo $patient_id; ?>()" class="btn btn-sm btn-danger">Clear</a>
+                                                                        <!-- <a href="deletebill?q=<?php echo $patient_id; ?>" onclick="return confirm_delete<?php echo $patient_id; ?>()" class="btn btn-sm btn-danger">Clear</a> -->
                                                                         <script type="text/javascript">
                                                                             function confirm_delete<?php echo $patient_id; ?>() {
                                                                                 return confirm('You are about To Clear payment. Are you sure you want to proceed?');
@@ -346,6 +350,14 @@ $paymentmethod = isset($_GET['paymethod']) ? $_GET['paymethod']: null;
     <!-- Datatable -->
     <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="js/plugins-init/datatables.init.js"></script>
+    <script>
+        
+        $('#example6').DataTable({
+            "order": [
+                [0, "desc"]
+            ]
+        });
+    </script>
 </body>
 
 </html>

@@ -11,7 +11,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Waiting Patients</title>
+    <title>Records</title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -51,14 +51,14 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                 <div class="row page-titles mx-0">
                     <div class="col-sm-6 p-md-0">
                         <div class="welcome-text">
-                            <h4>Pharmacy Inpatient List</h4>
+                            <h4>Records List</h4>
 
                         </div>
                     </div>
                     <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index">Home</a></li>
-                            <li class="breadcrumb-item active"><a href="#">Waiting Patients</a></li>
+                            <li class="breadcrumb-item active"><a href="#">Records Patients</a></li>
                         </ol>
                     </div>
                 </div>
@@ -66,7 +66,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">All waiting Patients</h4>
+                                <h4 class="card-title">All Records </h4>
                             </div>
                             <div class="card-body">
                                  <!-- check for session success -->
@@ -81,7 +81,6 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                         <thead>
                                             <tr>
                                                 <th>PIN</th>
-                                                <!-- <th>Image</th> -->
                                                 <th>Full Names</th>
                                                 <th>Gender</th>
                                                 <th>Previous Room</th>
@@ -92,15 +91,16 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room='pharmacy' AND status=0  ORDER BY patientsque_id DESC");
+                                            $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE payment='1' AND room='pharmacy' AND status=1  ORDER BY patientsque_id DESC");
                                             while ($row = mysqli_fetch_array($getque)) {
                                                 $patientsque_id = $row['patientsque_id'];
                                                 $admission_id = $row['admission_id'];
+                                                $status = $row['status'];
                                                 $getadmission = mysqli_query($con, "SELECT * FROM admissions WHERE admission_id='$admission_id' and status='1'");
                                                 if (mysqli_num_rows($getadmission) > 0) {
                                                     $checkadmitted = mysqli_query($con , "SELECT * FROM `admitted` WHERE `admission_id` = '$admission_id' AND `status` = 1");
                                                     $countadmitted = mysqli_num_rows($checkadmitted);
-                                                    if ($countadmitted >0){
+                                                    if ($countadmitted ==0){
                                                 $row1 = mysqli_fetch_array($getadmission);
                                                 $patient_id = $row1['patient_id'];
                                                 $getpatient = mysqli_query($con, "SELECT * FROM patients WHERE status='1' AND patient_id='$patient_id'");
@@ -148,7 +148,7 @@ if (($_SESSION['elcthospitallevel'] != 'pharmacist')) {
                                                         <?php
                                                         if ($_SESSION['elcthospitallevel'] == 'pharmacist') {
                                                         ?>
-                                                            <a href="issuedrugs?id=<?php echo $patientsque_id; ?>" class="btn btn-xs btn-info">Issue Drugs</a>
+                                                            <a href="issuedrugs?id=<?php echo $patientsque_id; ?>&status=<?php echo $status;?>" class="btn btn-xs btn-info">View Details</a>
 
                                                             
                                                         <?php }

@@ -36,7 +36,7 @@ function update_clinic_patient(PDO $conn, $clinic_id, $name, $weight, $bloodgrou
 }
 function get_all_bill_group_patient_accountant(PDO $conn,$payment_method)
 {
-    $stmt = $conn->prepare("SELECT * FROM bills WHERE status IN (1,8) and payment_method=? GROUP BY patient_id");
+    $stmt = $conn->prepare("SELECT * FROM bills WHERE status IN (2,8) and payment_method=? GROUP BY patient_id order by updated_at DESC");
     $stmt->execute([$payment_method]);
     $getallbills = $stmt->fetchAll();
     return $getallbills;
