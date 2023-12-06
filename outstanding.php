@@ -79,6 +79,7 @@ $paymentmethod = isset($_GET['paymethod']) ? $_GET['paymethod']: null;
                                     <table id="example5" class="display" style="min-width: 845px" data-order="[]">
                                         <thead>
                                             <tr>
+                                                <th>DATE</th>
                                                 <th>PIN</th>
                                                 <th>Full Names</th>
                                                 <th>Payment Method</th>
@@ -202,6 +203,7 @@ $paymentmethod = isset($_GET['paymethod']) ? $_GET['paymethod']: null;
 
                                             ?>
                                                             <tr class="gradeA">
+                                                                <td><?php echo $pin; ?></td>
                                                                 <td><?php echo $pin; ?></td>
                                                                 <td><?php echo $fullname; ?></td>
                                                                 <td><?php echo ucfirst($paymenttype); ?></td>

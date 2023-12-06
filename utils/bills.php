@@ -138,7 +138,7 @@ function   get_bill_by_id(PDO $conn, $bill_id, $status=1)
     $stmt->execute([$bill_id, $status]);
     $getbill = $stmt->fetch();
     return $getbill;
-}
+} 
 
 function get_bill_by_patient_only(PDO $conn, $patient_id,$admission_id=null, $status=1)
 {

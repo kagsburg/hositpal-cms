@@ -86,7 +86,7 @@ $admission = $_GET['admission'];
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <?php
-                                        // $bill = get_bill_by_id($pdo, $id, 1);  
+                                        $bill = get_bill_by_id($pdo, $id, 1);  
                                         $bill= get_bill_by_patient_only($pdo, $id,$admission, 1);  
                                                                         //   print_r($bill);
                                         // $getque = mysqli_query($con, "SELECT * FROM patientsque WHERE  patientsque_id='$id'");

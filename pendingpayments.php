@@ -230,7 +230,7 @@ if (!in_array($_SESSION['elcthospitallevel'], $roles)) {
 
                                                 }else{
 
-                                                                                           if ($mode == 'normal') {
+                                                if ($mode == 'normal') {
                                                     
                                                     if (!($plan['plan']==1)){}
                                                     else continue;
